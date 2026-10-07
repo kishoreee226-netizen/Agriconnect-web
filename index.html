@@ -15,6 +15,7 @@
             background-color: #f4f7f4;
             color: #2c3e50;
             line-height: 1.6;
+            overflow-x: hidden;
         }
         /* Header */
         header {
@@ -46,64 +47,64 @@
         .header-brand h1 {
             font-size: 1.15rem;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .nav-links button {
             background: transparent;
             border: none;
             color: white;
-            margin-left: 0.5rem;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: 0.2s;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         .nav-links button:hover, .nav-links button.active-nav {
             color: #1B5E20;
             background-color: #FFD54F;
         }
-        .btn-header-action {
-            background-color: #FFD54F;
-            color: #1B5E20;
-            border: none;
-            padding: 0.45rem 0.9rem;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            cursor: pointer;
+        .btn-hamburger {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
             gap: 5px;
-            transition: 0.2s;
-        }
-        .btn-header-action:hover {
-            background-color: #ffe082;
-            transform: scale(1.03);
-        }
-        .btn-settings-icon {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid #FFD54F;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             cursor: pointer;
-            font-size: 1.1rem;
             transition: 0.2s;
         }
-        .btn-settings-icon:hover {
+        .btn-hamburger:hover {
             background: #FFD54F;
-            color: #1B5E20;
-            transform: rotate(45deg);
+        }
+        .btn-hamburger:hover span {
+            background: #1B5E20;
+        }
+        .btn-hamburger span {
+            display: block;
+            width: 22px;
+            height: 2.5px;
+            background: white;
+            border-radius: 2px;
+            transition: 0.2s;
         }
 
         /* Hero Banner */
@@ -263,7 +264,7 @@
             border-radius: 6px;
         }
 
-        /* SERVICES SECTION */
+        /* SECTION TITLES & LAYOUTS */
         .section-title {
             text-align: center;
             margin: 2.2rem 1rem 0.3rem 1rem;
@@ -276,6 +277,8 @@
             font-size: 0.92rem;
             margin-bottom: 1.5rem;
         }
+
+        /* SERVICES WIDGETS */
         .role-widgets-container {
             max-width: 960px;
             margin: 0 auto 1.5rem auto;
@@ -386,63 +389,145 @@
             color: #4a5568;
             line-height: 1.5;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
 
-        /* Voice Button */
-        .voice-float-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: #1B5E20;
-            color: white;
-            border: 3px solid #FFD54F;
-            border-radius: 50%;
-            width: 65px;
-            height: 65px;
-            font-size: 1.8rem;
+        /* ABOUT US & WHY CHOOSE US VIEWS */
+        .info-page-box {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            padding: 2.2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-top: 5px solid #1B5E20;
+        }
+        .info-page-box h3 {
+            color: #1B5E20;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e8f5e9;
+            padding-bottom: 0.5rem;
+        }
+        .info-page-box p {
+            font-size: 0.98rem;
+            margin-bottom: 1rem;
+            color: #444;
+            line-height: 1.7;
+        }
+        .about-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+        .highlight-item {
+            background: #f9fbf9;
+            border: 1px solid #dcedc8;
+            border-radius: 8px;
+            padding: 1.2rem;
+        }
+        .highlight-item h5 {
+            color: #2e7d32;
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
             display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 9999;
-            transition: 0.3s;
-        }
-        .voice-float-btn:hover {
-            transform: scale(1.1);
-        }
-        .voice-float-btn.listening {
-            background: #d32f2f;
-            border-color: #fff;
-            animation: breathe 1s infinite alternate;
-        }
-        @keyframes breathe {
-            from { box-shadow: 0 0 10px rgba(211,47,47,0.5); }
-            to { box-shadow: 0 0 25px rgba(211,47,47,0.9); }
-        }
-        .voice-status-toast {
-            position: fixed;
-            bottom: 100px;
-            right: 25px;
-            background: #2c3e50;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            display: none;
-            z-index: 9999;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            gap: 6px;
         }
 
-        /* Modals */
+        /* HAMBURGER SIDE DRAWER */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 10001;
+            transition: 0.3s;
+        }
+        .drawer-overlay.open {
+            display: block;
+        }
+        .drawer-sidebar {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 300px;
+            height: 100%;
+            background: white;
+            box-shadow: -4px 0 20px rgba(0,0,0,0.2);
+            z-index: 10002;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .drawer-sidebar.open {
+            right: 0;
+        }
+        .drawer-header {
+            background: #1B5E20;
+            color: white;
+            padding: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .drawer-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .drawer-close {
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: white;
+            background: none;
+            border: none;
+        }
+        .drawer-menu-list {
+            list-style: none;
+            padding: 1rem 0;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .drawer-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.9rem 1.4rem;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: 0.2s;
+            background: none;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            width: 100%;
+            text-align: left;
+        }
+        .drawer-menu-item:hover {
+            background-color: #e8f5e9;
+            color: #1B5E20;
+        }
+        .drawer-menu-item span.icon {
+            font-size: 1.25rem;
+            width: 25px;
+            text-align: center;
+        }
+        .drawer-footer {
+            padding: 1rem 1.4rem;
+            border-top: 1px solid #eee;
+            font-size: 0.8rem;
+            color: #777;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        /* MODALS */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -453,7 +538,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 10000;
+            z-index: 10005;
             padding: 1rem;
         }
         .modal-box {
@@ -555,53 +640,51 @@
             display: none;
             margin-top: 0.8rem;
         }
-        .settings-toggle {
+
+        /* Floating Voice Assistant */
+        .voice-float-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #1B5E20;
+            color: white;
+            border: 3px solid #FFD54F;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            font-size: 1.8rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid #eee;
-        }
-        .settings-toggle span {
-            font-size: 0.9rem;
-            color: #333;
-            font-weight: 500;
-        }
-        .settings-toggle input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            accent-color: #1B5E20;
-            cursor: pointer;
-        }
-
-        /* Legal Box */
-        .legal-box {
-            background: white;
-            max-width: 700px;
-            margin: 2rem auto;
-            padding: 1.8rem;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .legal-box h4 {
-            color: #1B5E20;
-            margin-bottom: 0.8rem;
-        }
-        .legal-btns {
-            display: flex;
             justify-content: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 9999;
+            transition: 0.3s;
         }
-        .legal-btn {
-            background-color: #f1f8e9;
-            color: #1B5E20;
-            padding: 0.7rem 1.4rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            border: 1px solid #c8e6c9;
+        .voice-float-btn:hover {
+            transform: scale(1.1);
+        }
+        .voice-float-btn.listening {
+            background: #d32f2f;
+            border-color: #fff;
+            animation: breathe 1s infinite alternate;
+        }
+        @keyframes breathe {
+            from { box-shadow: 0 0 10px rgba(211,47,47,0.5); }
+            to { box-shadow: 0 0 25px rgba(211,47,47,0.9); }
+        }
+        .voice-status-toast {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            background: #2c3e50;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         /* Footer */
@@ -617,6 +700,16 @@
             color: #FFD54F;
             text-decoration: none;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -628,22 +721,62 @@
             <h1>AgriConnect Technologies</h1>
         </div>
         <div class="nav-actions">
+            <!-- Main Navbar: Home, Services, About Us, Why Choose Us -->
             <div class="nav-links">
-                <button id="nav-btn-home" class="active-nav" onclick="switchView('home')">హోమ్ (Home)</button>
-                <button id="nav-btn-services" onclick="switchView('services')">సేవలు (Services)</button>
-                <a href="privacy.html" style="color: white; text-decoration: none; font-size: 0.85rem; font-weight: 500; margin-left: 6px;">Privacy</a>
-                <a href="terms.html" style="color: white; text-decoration: none; font-size: 0.85rem; font-weight: 500; margin-left: 6px;">Terms</a>
+                <button id="nav-btn-home" class="active-nav" onclick="switchView('home')">🏠 Home</button>
+                <button id="nav-btn-services" onclick="switchView('services')">🌾 Services</button>
+                <button id="nav-btn-about" onclick="switchView('about')">ℹ️ About Us</button>
+                <button id="nav-btn-why" onclick="switchView('why')">⭐ Why Choose Us</button>
             </div>
             
-            <button class="btn-header-action" onclick="openLoginModal()">
-                <span>👤</span> <span id="login-nav-text">లాగిన్</span>
-            </button>
-
-            <button class="btn-settings-icon" onclick="openSettingsModal()" title="సెట్టింగ్స్">
-                ⚙️
+            <!-- 3-Lines Hamburger Menu Button -->
+            <button class="btn-hamburger" onclick="toggleDrawer()" title="మెనూ తెరవండి">
+                <span></span>
+                <span></span>
+                <span></span>
             </button>
         </div>
     </header>
+
+    <!-- Side Drawer (3-Lines Panel) -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+    <div class="drawer-sidebar" id="drawerSidebar">
+        <div class="drawer-header">
+            <h3>🌱 AgriConnect మెనూ</h3>
+            <button class="drawer-close" onclick="toggleDrawer()">&times;</button>
+        </div>
+        <ul class="drawer-menu-list">
+            <li>
+                <button class="drawer-menu-item" onclick="openLoginModalFromDrawer()">
+                    <span class="icon">👤</span> <strong id="drawer-login-text">Login / ప్రొఫైల్</strong>
+                </button>
+            </li>
+            <li>
+                <button class="drawer-menu-item" onclick="openSettingsModalFromDrawer()">
+                    <span class="icon">⚙️</span> Settings & భాష
+                </button>
+            </li>
+            <li>
+                <button class="drawer-menu-item" onclick="openContactModalFromDrawer()">
+                    <span class="icon">📞</span> Contact Us (సంప్రదించండి)
+                </button>
+            </li>
+            <li>
+                <a href="privacy.html" class="drawer-menu-item">
+                    <span class="icon">📄</span> Privacy Policy (22 సెక్షన్లు)
+                </a>
+            </li>
+            <li>
+                <a href="terms.html" class="drawer-menu-item">
+                    <span class="icon">📜</span> Terms & Conditions (24 సెక్షన్లు)
+                </a>
+            </li>
+        </ul>
+        <div class="drawer-footer">
+            AgriConnect Technologies<br>
+            UDYAM-TS-31-0063048 | Warangal
+        </div>
+    </div>
 
     <!-- Hero Banner -->
     <section class="hero">
@@ -653,7 +786,7 @@
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
         <div class="voice-pill">
-            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "సెట్టింగ్స్", లేదా "వాతావరణం" అని తెలుగులో మాట్లాడండి
+            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "గురించి", లేదా "కాంటాక్ట్" అని తెలుగులో మాట్లాడండి
         </div>
     </section>
 
@@ -973,6 +1106,53 @@
         </div>
     </section>
 
+    <!-- ================= VIEW 3: ABOUT US ================= -->
+    <section id="about-view" class="page-view">
+        <div class="info-page-box">
+            <h3>ℹ️ మా గురించి (About AgriConnect Technologies)</h3>
+            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక అత్యాధునిక అగ్రికల్చర్ టెక్నాలజీ వేదిక. సాంప్రదాయ వ్యవసాయాన్ని సరికొత్త డిజిటల్ టెక్నాలజీతో అనుసంధానం చేయడమే మా ప్రధాన ధ్యేయం.</p>
+            <p>భారతదేశంలో ఎక్కువమంది రైతులకు స్మార్ట్‌ఫోన్లలో టైప్ చేయడం లేదా సంక్లిష్టమైన మెనూలను నావిగేట్ చేయడం కష్టతరంగా ఉంటుంది. అందుకే మేము దేశంలోనే మొట్టమొదటిసారిగా పూర్తి స్థాయి <strong>వాయిస్ ఆధారిత (Voice-First Telugu AI)</strong> ప్లాట్‌ఫామ్‌ను రూపొందించాము.</p>
+            
+            <div class="about-highlights">
+                <div class="highlight-item">
+                    <h5>🎯 మా లక్ష్యం (Our Mission)</h5>
+                    <p>రైతులకు, వ్యవసాయ కూలీలకు మరియు వ్యాపారధారులకు మధ్య దళారుల వ్యవస్థను తొలగించి పారదర్శకమైన, లాభదాయకమైన వేదికను అందించడం.</p>
+                </div>
+                <div class="highlight-item">
+                    <h5>💡 మా ప్రత్యేకత (Our Innovation)</h5>
+                    <p>శాటిలైట్ ఇమేజింగ్, ఆర్టిఫిషియల్ ఇంటెలిజెన్స్ (AI క్రాప్ డాక్టర్) మరియు రియల్-టైమ్ మార్కెట్ సమాచారాన్ని తెలుగు వాయిస్ ద్వారా సులభతరం చేయడం.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= VIEW 4: WHY CHOOSE US ================= -->
+    <section id="why-view" class="page-view">
+        <div class="info-page-box">
+            <h3>⭐ మమ్మల్ని ఎందుకు ఎంచుకోవాలి? (Why Choose AgriConnect)</h3>
+            <p>రైతు శ్రేయస్సే ధ్యేయంగా నిర్మించబడిన AgriConnect వేదిక ఇతరుల కంటే ఎందుకు భిన్నమైనదో ఇక్కడ చూడవచ్చు:</p>
+
+            <div class="about-highlights">
+                <div class="highlight-item">
+                    <h5>🚫 దళారుల ప్రమేయం లేదు (Zero Middlemen)</h5>
+                    <p>కూలీల బుకింగ్ అయినా, యంత్రాల అద్దె అయినా లేదా పంట అమ్మకం అయినా – నేరుగా రైతులు, కూలీలు మరియు వ్యాపారులే పరస్పరం ఫోన్ ద్వారా మాట్లాడుకోవచ్చు.</p>
+                </div>
+                <div class="highlight-item">
+                    <h5>🎙️ వాయిస్ బేస్డ్ సపోర్ట్ (100% Voice First)</h5>
+                    <p>టైపింగ్ రాని రైతుల కోసం స్క్రీన్ పై మైక్ బటన్ నొక్కి మాట్లాడితే చాలు, క్షణాల్లో కావలసిన సమాచారం లభిస్తుంది.</p>
+                </div>
+                <div class="highlight-item">
+                    <h5>🛰️ ఖచ్చితమైన శాటిలైట్ మానిటరింగ్</h5>
+                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని, నేలలో తేమను నిరంతరం పర్యవేక్షించవచ్చు.</p>
+                </div>
+                <div class="highlight-item">
+                    <h5>📈 లైవ్ మార్కెట్ పారదర్శకత</h5>
+                    <p>వరంగల్ ఏనుమాముల యార్డ్ తాజా రేట్లు నేరుగా రైతుల మొబైల్‌లో కనిపించడం వల్ల మోసపోకుండా సరైన ధర పొందవచ్చు.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Floating Telugu Voice Assistant -->
     <div id="voice-toast" class="voice-status-toast">🎙️ వింటున్నాము... మాట్లాడండి</div>
     <button class="voice-float-btn" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">
@@ -1072,32 +1252,28 @@
                 <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
             </div>
 
-            <div class="form-group" style="margin-top: 1.2rem;">
-                <label>🔔 నోటిఫికేషన్ సెట్టింగ్స్:</label>
-                <div class="settings-toggle">
-                    <span>వాయిస్ హెచ్చరికలు (Voice Alerts)</span>
-                    <input type="checkbox" id="toggleVoiceAlerts" checked>
-                </div>
-                <div class="settings-toggle">
-                    <span>రోజువారీ వాతావరణ SMS (Weather SMS)</span>
-                    <input type="checkbox" id="toggleWeatherSms" checked>
-                </div>
-            </div>
-
             <button class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
             <button type="button" style="background:#f5f5f5; color:#d32f2f; border:1px solid #ffcdd2; width:100%; padding:0.6rem; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:0.6rem;" onclick="handleLogout()">🚪 లాగౌట్ (Logout)</button>
         </div>
     </div>
 
-    <!-- Legal Documents Box -->
-    <section class="legal-box">
-        <h4>చట్టపరమైన నిబంధనలు & పాలసీలు</h4>
-        <p style="margin-bottom: 1.2rem; color: #666; font-size: 0.9rem;">యాప్ వినియోగానికి సంబంధించిన అధికారిక పత్రాలు:</p>
-        <div class="legal-btns">
-            <a href="privacy.html" class="legal-btn">📄 Privacy Policy</a>
-            <a href="terms.html" class="legal-btn">📜 Terms & Conditions</a>
+    <!-- Modal 3: Contact Us Panel -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeContactModal()">&times;</span>
+            <h3 class="modal-title">📞 మమ్మల్ని సంప్రదించండి (Contact Us)</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">ఏదైనా సమస్య లేదా సహకారం కోసం మా కార్యాలయాన్ని సంప్రదించండి:</p>
+
+            <div style="background:#f9fbf9; border:1px solid #c8e6c9; border-radius:8px; padding:1rem; font-size:0.9rem;">
+                <p>🏢 <strong>కంపెనీ:</strong> AgriConnect Technologies</p>
+                <p>📜 <strong>UDYAM Reg:</strong> UDYAM-TS-31-0063048</p>
+                <p>📍 <strong>చిరునామా:</strong> హనుమకొండ / వరంగల్, తెలంగాణ, భారతదేశం - 506001</p>
+                <p>✉️ <strong>ఈమెయిల్:</strong> <a href="mailto:agriconnect.office@gmail.com" style="color:#1B5E20; font-weight:bold;">agriconnect.office@gmail.com</a></p>
+                <p>📞 <strong>హెల్ప్‌లైన్:</strong> +91 98765 43210</p>
+            </div>
+            <button class="btn-action-primary" onclick="closeContactModal()">సరే (Close)</button>
         </div>
-    </section>
+    </div>
 
     <!-- Footer -->
     <footer>
@@ -1109,29 +1285,59 @@
 
     <!-- Interactive JavaScript Engine -->
     <script>
-        /* 1. Seamless Single-Page View Switcher */
+        /* 1. Seamless Single-Page Multi-View Switcher */
         function switchView(viewName) {
-            const homeView = document.getElementById('home-view');
-            const servicesView = document.getElementById('services-view');
-            const btnHome = document.getElementById('nav-btn-home');
-            const btnServices = document.getElementById('nav-btn-services');
+            const views = ['home', 'services', 'about', 'why'];
+            views.forEach(v => {
+                const el = document.getElementById(v + '-view');
+                if(el) el.classList.remove('active-view');
+                const navBtn = document.getElementById('nav-btn-' + v);
+                if(navBtn) navBtn.classList.remove('active-nav');
+            });
 
-            if (viewName === 'services') {
-                homeView.classList.remove('active-view');
-                servicesView.classList.add('active-view');
-                btnServices.classList.add('active-nav');
-                btnHome.classList.remove('active-nav');
-                servicesView.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                servicesView.classList.remove('active-view');
-                homeView.classList.add('active-view');
-                btnHome.classList.add('active-nav');
-                btnServices.classList.remove('active-nav');
+            const activeEl = document.getElementById(viewName + '-view');
+            if(activeEl) {
+                activeEl.classList.add('active-view');
+                const activeNav = document.getElementById('nav-btn-' + viewName);
+                if(activeNav) activeNav.classList.add('active-nav');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        /* 2. Live Date & Clock Engine */
+        /* 2. Hamburger Side Drawer Controls */
+        function toggleDrawer() {
+            const overlay = document.getElementById('drawerOverlay');
+            const sidebar = document.getElementById('drawerSidebar');
+            overlay.classList.toggle('open');
+            sidebar.classList.toggle('open');
+        }
+
+        function openLoginModalFromDrawer() {
+            toggleDrawer();
+            openLoginModal();
+        }
+
+        function openSettingsModalFromDrawer() {
+            toggleDrawer();
+            openSettingsModal();
+        }
+
+        function openContactModalFromDrawer() {
+            toggleDrawer();
+            openContactModal();
+        }
+
+        /* 3. Modal Controllers */
+        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+        function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+
+        function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
+        function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
+
+        /* 4. Live Date & Clock Engine */
         function updateLiveClock() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('en-US', { hour12: true });
@@ -1144,7 +1350,7 @@
         setInterval(updateLiveClock, 1000);
         updateLiveClock();
 
-        /* 3. Role Sub-Tab Switching inside Services */
+        /* 5. Role Sub-Tab Switching inside Services */
         function showFeature(role, widgetElement) {
             const widgets = document.querySelectorAll('.role-widget');
             widgets.forEach(w => w.classList.remove('active'));
@@ -1159,22 +1365,7 @@
             }
         }
 
-        /* 4. Modal Controls (Login & Settings) */
-        function openLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-        }
-
-        function openSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'flex';
-        }
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'none';
-        }
-
-        /* 5. Mobile & OTP Simulation */
+        /* 6. Mobile & OTP Simulation */
         let otpSent = false;
         function handleOtpFlow() {
             const mobile = document.getElementById('mobileNumberInput').value.trim();
@@ -1202,7 +1393,7 @@
             }
         }
 
-        /* 6. Photo Preview */
+        /* 7. Photo Preview */
         function previewPhoto(event) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -1213,7 +1404,7 @@
             }
         }
 
-        /* 7. GPS Farm Location Capture */
+        /* 8. GPS Farm Location Capture */
         function captureLocation() {
             const gpsText = document.getElementById('gpsStatusText');
             if ("geolocation" in navigator) {
@@ -1233,15 +1424,15 @@
             }
         }
 
-        /* 8. Save Profile & Settings */
+        /* 9. Save Profile & Settings */
         function saveProfile() {
             const name = document.getElementById('farmerNameInput').value.trim();
             if(!name) {
                 alert('దయచేసి మీ పేరు రాయండి.');
                 return;
             }
-            alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ మరియు పొలం లొకేషన్ విజయవంతంగా సేవ్ అయ్యాయి.`);
-            document.getElementById('login-nav-text').innerText = name;
+            alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ మరియు పొలం లొకేషన్ సేవ్ అయ్యాయి.`);
+            document.getElementById('drawer-login-text').innerText = name;
             document.getElementById('settingFarmerName').value = name;
             closeLoginModal();
         }
@@ -1249,17 +1440,16 @@
         function saveSettings() {
             const updatedName = document.getElementById('settingFarmerName').value.trim();
             const lang = document.getElementById('appLanguageSelect').value;
-            
             if (updatedName) {
-                document.getElementById('login-nav-text').innerText = updatedName;
+                document.getElementById('drawer-login-text').innerText = updatedName;
             }
-            alert(`సెట్టింగ్స్ విజయవంతంగా అప్‌డేట్ చేయబడ్డాయి! (ఎంచుకున్న భాష: ${lang.toUpperCase()})`);
+            alert(`సెట్టింగ్స్ సేవ్ చేయబడ్డాయి! (భాష: ${lang.toUpperCase()})`);
             closeSettingsModal();
         }
 
         function handleLogout() {
-            if (confirm('మీరు ఖాతా నుండి లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
-                document.getElementById('login-nav-text').innerText = 'లాగిన్';
+            if (confirm('మీరు లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
+                document.getElementById('drawer-login-text').innerText = 'Login / ప్రొఫైల్';
                 document.getElementById('farmerNameInput').value = '';
                 document.getElementById('mobileNumberInput').value = '';
                 document.getElementById('settingFarmerName').value = '';
@@ -1271,7 +1461,7 @@
             }
         }
 
-        /* 9. Telugu Voice Assistant */
+        /* 10. Telugu Voice Assistant */
         let recognition;
         let isListening = false;
 
@@ -1317,7 +1507,6 @@
             document.getElementById('voice-toast').style.display = 'none';
         }
 
-        /* 10. Voice Command Handler */
         function handleVoiceCommand(cmd) {
             const toast = document.getElementById('voice-toast');
             toast.innerText = `మీరు చెప్పినది: "${cmd}"`;
@@ -1328,8 +1517,16 @@
                 switchView('home');
                 return;
             }
-            if (cmd.includes('సెట్టింగ్') || cmd.includes('settings') || cmd.includes('భాష')) {
-                openSettingsModal();
+            if (cmd.includes('గురించి') || cmd.includes('about')) {
+                switchView('about');
+                return;
+            }
+            if (cmd.includes('ఎందుకు') || cmd.includes('why')) {
+                switchView('why');
+                return;
+            }
+            if (cmd.includes('కాంటాక్ట్') || cmd.includes('సంప్రదించు')) {
+                openContactModal();
                 return;
             }
             if (cmd.includes('సేవలు') || cmd.includes('విభాగాలు') || cmd.includes('features')) {
@@ -1341,7 +1538,6 @@
                 return;
             }
 
-            // Automatic switch to services for specific feature commands
             switchView('services');
             if (cmd.includes('కూలీ') || cmd.includes('కూలీలు')) {
                 showFeature('labor', document.getElementById('tab-labor'));
