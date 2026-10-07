@@ -392,7 +392,7 @@
 
         /* ABOUT US & WHY CHOOSE US VIEWS */
         .info-page-box {
-            max-width: 900px;
+            max-width: 920px;
             margin: 2rem auto;
             background: white;
             padding: 2.2rem;
@@ -402,7 +402,7 @@
         }
         .info-page-box h3 {
             color: #1B5E20;
-            font-size: 1.4rem;
+            font-size: 1.45rem;
             margin-bottom: 1rem;
             border-bottom: 2px solid #e8f5e9;
             padding-bottom: 0.5rem;
@@ -413,11 +413,47 @@
             color: #444;
             line-height: 1.7;
         }
+
+        /* WORLD FIRST HERO HIGHLIGHT CARD */
+        .world-first-card {
+            background: linear-gradient(135deg, #1B5E20, #2E7D32);
+            color: white;
+            border-radius: 14px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 20px rgba(27, 94, 32, 0.25);
+            position: relative;
+            border: 2px solid #FFD54F;
+        }
+        .badge-world-first {
+            background-color: #FFD54F;
+            color: #1B5E20;
+            font-weight: 800;
+            font-size: 0.85rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+        .world-first-card h4 {
+            font-size: 1.45rem;
+            margin-bottom: 0.6rem;
+            color: #fff;
+        }
+        .world-first-card p {
+            color: #f1f8e9;
+            font-size: 0.96rem;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
         .about-highlights {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.2rem;
-            margin-top: 1.5rem;
+            margin-top: 1.2rem;
         }
         .highlight-item {
             background: #f9fbf9;
@@ -512,6 +548,14 @@
         .drawer-menu-item:hover {
             background-color: #e8f5e9;
             color: #1B5E20;
+        }
+        .drawer-menu-item.logout-item {
+            color: #d32f2f;
+            font-weight: 600;
+        }
+        .drawer-menu-item.logout-item:hover {
+            background-color: #ffebee;
+            color: #c62828;
         }
         .drawer-menu-item span.icon {
             font-size: 1.25rem;
@@ -738,7 +782,7 @@
         </div>
     </header>
 
-    <!-- Side Drawer (3-Lines Panel) -->
+    <!-- Side Drawer (3-Lines Panel with Logout) -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer-sidebar" id="drawerSidebar">
         <div class="drawer-header">
@@ -771,6 +815,12 @@
                     <span class="icon">📜</span> Terms & Conditions (24 సెక్షన్లు)
                 </a>
             </li>
+            <li>
+                <!-- Logout Option Added Directly into 3-Lines Drawer -->
+                <button class="drawer-menu-item logout-item" onclick="handleDrawerLogout()">
+                    <span class="icon">🚪</span> లాగౌట్ (Logout)
+                </button>
+            </li>
         </ul>
         <div class="drawer-footer">
             AgriConnect Technologies<br>
@@ -786,7 +836,7 @@
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
         <div class="voice-pill">
-            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "గురించి", లేదా "కాంటాక్ట్" అని తెలుగులో మాట్లాడండి
+            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "ఎందుకు", లేదా "లాగౌట్" అని తెలుగులో మాట్లాడండి
         </div>
     </section>
 
@@ -983,7 +1033,6 @@
                     </div>
 
                     <div id="card-crop" class="feature-card">
-                        <div class="feature-img-icon">🌱</div>
                         <div class="feature-info">
                             <h5>పంటల సమగ్ర సమాచారం (Crop Advisory)</h5>
                             <p>వరి, మిర్చి, పత్తి మొదలైన పంటలకు విత్తన ఎంపిక, ఎరువుల సమతుల్య వాడకం, తెగుళ్ల నివారణ సలహాలు.</p>
@@ -1130,24 +1179,31 @@
     <section id="why-view" class="page-view">
         <div class="info-page-box">
             <h3>⭐ మమ్మల్ని ఎందుకు ఎంచుకోవాలి? (Why Choose AgriConnect)</h3>
-            <p>రైతు శ్రేయస్సే ధ్యేయంగా నిర్మించబడిన AgriConnect వేదిక ఇతరుల కంటే ఎందుకు భిన్నమైనదో ఇక్కడ చూడవచ్చు:</p>
+            
+            <!-- WORLD'S FIRST HIGHLIGHT HERO CARD -->
+            <div class="world-first-card">
+                <span class="badge-world-first">🌍 World's 1st Innovation</span>
+                <h4>హైపర్‌లోకల్ లేబర్ మ్యాచింగ్ విత్ వాయిస్ గైడెన్స్</h4>
+                <p><strong>This is the first time introduced in the world with Voice Guidance!</strong><br>
+                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్ (తెలుగు మాటల సహాయం)</strong> తో సమీప గ్రామాల వారీగా ఖచ్చితమైన వ్యవసాయ కూలీలను అనుసంధానించే <strong>Hyperlocal Labor Matching</strong> సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
+            </div>
 
             <div class="about-highlights">
                 <div class="highlight-item">
-                    <h5>🚫 దళారుల ప్రమేయం లేదు (Zero Middlemen)</h5>
-                    <p>కూలీల బుకింగ్ అయినా, యంత్రాల అద్దె అయినా లేదా పంట అమ్మకం అయినా – నేరుగా రైతులు, కూలీలు మరియు వ్యాపారులే పరస్పరం ఫోన్ ద్వారా మాట్లాడుకోవచ్చు.</p>
+                    <h5>🚫 దళారులు లేని పారదర్శకత (Zero Middlemen)</h5>
+                    <p>కూలీల బుకింగ్ అయినా, యంత్రాల అద్దె అయినా లేదా పంట అమ్మకం అయినా – నేరుగా రైతులే అవతలి వ్యక్తులతో ఫోన్ చేసి నేరుగా డీల్ కుదుర్చుకోవచ్చు.</p>
                 </div>
                 <div class="highlight-item">
-                    <h5>🎙️ వాయిస్ బేస్డ్ సపోర్ట్ (100% Voice First)</h5>
-                    <p>టైపింగ్ రాని రైతుల కోసం స్క్రీన్ పై మైక్ బటన్ నొక్కి మాట్లాడితే చాలు, క్షణాల్లో కావలసిన సమాచారం లభిస్తుంది.</p>
+                    <h5>🎙️ పూర్తి వాయిస్ నావిగేషన్ (Voice First AI)</h5>
+                    <p>యాప్ ఎలా వాడాలో తెలియకపోయినా, మైక్ బటన్ నొక్కి తెలుగులో మాట్లాడితే చాలు – అడిగిన ఫీచర్ స్క్రీన్ పై వెంటనే ప్రత్యక్షమవుతుంది.</p>
                 </div>
                 <div class="highlight-item">
-                    <h5>🛰️ ఖచ్చితమైన శాటిలైట్ మానిటరింగ్</h5>
-                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని, నేలలో తేమను నిరంతరం పర్యవేక్షించవచ్చు.</p>
+                    <h5>🛰️ పొలం శాటిలైట్ మానిటరింగ్</h5>
+                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని, తేమ శాతాన్ని ఎప్పటికప్పుడు విశ్లేషించవచ్చు.</p>
                 </div>
                 <div class="highlight-item">
-                    <h5>📈 లైవ్ మార్కెట్ పారదర్శకత</h5>
-                    <p>వరంగల్ ఏనుమాముల యార్డ్ తాజా రేట్లు నేరుగా రైతుల మొబైల్‌లో కనిపించడం వల్ల మోసపోకుండా సరైన ధర పొందవచ్చు.</p>
+                    <h5>📈 లైవ్ మార్కెట్ యార్డ్ రేట్లు</h5>
+                    <p>వరంగల్ ఏనుమాముల మార్కెట్ రోజువారీ క్వింటాల్ లైవ్ రేట్లను పారదర్శకంగా తెలుసుకుని పంటకు సరైన ధర పొందవచ్చు.</p>
                 </div>
             </div>
         </div>
@@ -1253,7 +1309,6 @@
             </div>
 
             <button class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
-            <button type="button" style="background:#f5f5f5; color:#d32f2f; border:1px solid #ffcdd2; width:100%; padding:0.6rem; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:0.6rem;" onclick="handleLogout()">🚪 లాగౌట్ (Logout)</button>
         </div>
     </div>
 
@@ -1325,6 +1380,21 @@
         function openContactModalFromDrawer() {
             toggleDrawer();
             openContactModal();
+        }
+
+        /* Direct Drawer Logout Handler */
+        function handleDrawerLogout() {
+            toggleDrawer();
+            if (confirm('మీరు ఖాతా నుండి లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
+                document.getElementById('drawer-login-text').innerText = 'Login / ప్రొఫైల్';
+                document.getElementById('farmerNameInput').value = '';
+                document.getElementById('mobileNumberInput').value = '';
+                document.getElementById('settingFarmerName').value = '';
+                document.getElementById('modal-step-login').style.display = 'block';
+                document.getElementById('modal-step-profile').style.display = 'none';
+                otpSent = false;
+                alert('మీరు విజయవంతంగా లాగౌట్ అయ్యారు.');
+            }
         }
 
         /* 3. Modal Controllers */
@@ -1447,20 +1517,6 @@
             closeSettingsModal();
         }
 
-        function handleLogout() {
-            if (confirm('మీరు లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
-                document.getElementById('drawer-login-text').innerText = 'Login / ప్రొఫైల్';
-                document.getElementById('farmerNameInput').value = '';
-                document.getElementById('mobileNumberInput').value = '';
-                document.getElementById('settingFarmerName').value = '';
-                document.getElementById('modal-step-login').style.display = 'block';
-                document.getElementById('modal-step-profile').style.display = 'none';
-                otpSent = false;
-                closeSettingsModal();
-                alert('లాగౌట్ పూర్తయింది.');
-            }
-        }
-
         /* 10. Telugu Voice Assistant */
         let recognition;
         let isListening = false;
@@ -1523,6 +1579,10 @@
             }
             if (cmd.includes('ఎందుకు') || cmd.includes('why')) {
                 switchView('why');
+                return;
+            }
+            if (cmd.includes('లాగౌట్') || cmd.includes('logout')) {
+                handleDrawerLogout();
                 return;
             }
             if (cmd.includes('కాంటాక్ట్') || cmd.includes('సంప్రదించు')) {
