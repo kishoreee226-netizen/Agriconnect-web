@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriConnect - The Voice of Smart Farming</title>
+    <title>AgriConnect Technologies - The Voice of Smart Farming</title>
     <style>
         * {
             margin: 0;
@@ -33,8 +33,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            text-decoration: none;
-            color: white;
             cursor: pointer;
         }
         .header-logo {
@@ -52,20 +50,21 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
-        .nav-links a {
+        .nav-links button {
+            background: transparent;
+            border: none;
             color: white;
-            text-decoration: none;
-            margin-left: 0.8rem;
+            margin-left: 0.5rem;
             font-weight: 600;
             font-size: 0.9rem;
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 5px 10px;
             border-radius: 4px;
             transition: 0.2s;
         }
-        .nav-links a:hover, .nav-links a.active-link {
+        .nav-links button:hover, .nav-links button.active-nav {
             color: #1B5E20;
             background-color: #FFD54F;
         }
@@ -149,7 +148,16 @@
             font-size: 0.85rem;
         }
 
-        /* HOME DASHBOARD GRID */
+        /* MAIN VIEWS */
+        .page-view {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .page-view.active-view {
+            display: block;
+        }
+
+        /* DASHBOARD GRID */
         .dashboard-container {
             max-width: 1100px;
             margin: 2rem auto;
@@ -256,10 +264,6 @@
         }
 
         /* SERVICES SECTION */
-        #services-view {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
         .section-title {
             text-align: center;
             margin: 2.2rem 1rem 0.3rem 1rem;
@@ -392,7 +396,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Voice Assistant Floating Button */
+        /* Voice Button */
         .voice-float-btn {
             position: fixed;
             bottom: 25px;
@@ -438,7 +442,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* Modals: Login & Settings */
+        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -551,8 +555,6 @@
             display: none;
             margin-top: 0.8rem;
         }
-
-        /* Settings Custom Styles */
         .settings-toggle {
             display: flex;
             align-items: center;
@@ -621,24 +623,22 @@
 
     <!-- Header Navigation -->
     <header>
-        <div class="header-brand" onclick="switchMainView('home')">
+        <div class="header-brand" onclick="switchView('home')">
             <img src="logo.png" alt="AgriConnect Logo" class="header-logo" onerror="this.style.display='none'">
             <h1>AgriConnect Technologies</h1>
         </div>
         <div class="nav-actions">
             <div class="nav-links">
-                <a id="nav-home" class="active-link" onclick="switchMainView('home')">హోమ్ (Home)</a>
-                <a id="nav-services" onclick="switchMainView('services')">సేవలు (Services)</a>
-                <a href="privacy.html">Privacy Policy</a>
-                <a href="terms.html">Terms & Conditions</a>
+                <button id="nav-btn-home" class="active-nav" onclick="switchView('home')">హోమ్ (Home)</button>
+                <button id="nav-btn-services" onclick="switchView('services')">సేవలు (Services)</button>
+                <a href="privacy.html" style="color: white; text-decoration: none; font-size: 0.85rem; font-weight: 500; margin-left: 6px;">Privacy</a>
+                <a href="terms.html" style="color: white; text-decoration: none; font-size: 0.85rem; font-weight: 500; margin-left: 6px;">Terms</a>
             </div>
             
-            <!-- Login Button -->
             <button class="btn-header-action" onclick="openLoginModal()">
                 <span>👤</span> <span id="login-nav-text">లాగిన్</span>
             </button>
 
-            <!-- Settings Button -->
             <button class="btn-settings-icon" onclick="openSettingsModal()" title="సెట్టింగ్స్">
                 ⚙️
             </button>
@@ -658,7 +658,7 @@
     </section>
 
     <!-- ================= VIEW 1: HOME DASHBOARD ================= -->
-    <main id="home-view">
+    <main id="home-view" class="page-view active-view">
         <div class="dashboard-container">
             
             <!-- 1. Live Time, Date & Calendar -->
@@ -776,7 +776,7 @@
     </main>
 
     <!-- ================= VIEW 2: SERVICES & ROLES ================= -->
-    <section id="services-view">
+    <section id="services-view" class="page-view">
         <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
         <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి</p>
 
@@ -1048,7 +1048,6 @@
             <h3 class="modal-title">⚙️ యాప్ సెట్టింగ్స్ (Settings)</h3>
             <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">మీ వ్యక్తిగత ఖాతా ప్రాధాన్యతలు సరిచూసుకోండి</p>
 
-            <!-- Language Selection -->
             <div class="form-group">
                 <label>🌐 భాష ఎంపిక (Select Language):</label>
                 <select id="appLanguageSelect">
@@ -1058,25 +1057,21 @@
                 </select>
             </div>
 
-            <!-- Name Correction -->
             <div class="form-group">
                 <label>✏️ రైతు పేరు మార్పు (Edit Name):</label>
                 <input type="text" id="settingFarmerName" placeholder="రైతు పేరును సరిచేయండి">
             </div>
 
-            <!-- Mobile Number Change -->
             <div class="form-group">
                 <label>📱 మొబైల్ నంబర్ మార్పు (Change Mobile):</label>
                 <input type="tel" id="settingMobileNumber" placeholder="కొత్త మొబైల్ నంబర్" maxlength="10">
             </div>
 
-            <!-- Farm Size & Major Crop -->
             <div class="form-group">
                 <label>🌾 ప్రధాన పంట & పొలం విస్తీర్ణం (Acres):</label>
                 <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
             </div>
 
-            <!-- Voice Notifications Toggle -->
             <div class="form-group" style="margin-top: 1.2rem;">
                 <label>🔔 నోటిఫికేషన్ సెట్టింగ్స్:</label>
                 <div class="settings-toggle">
@@ -1112,26 +1107,26 @@
         <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect Technologies. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive JavaScript -->
+    <!-- Interactive JavaScript Engine -->
     <script>
-        /* 1. Main View Switching (Home vs Services) */
-        function switchMainView(viewName) {
+        /* 1. Seamless Single-Page View Switcher */
+        function switchView(viewName) {
             const homeView = document.getElementById('home-view');
             const servicesView = document.getElementById('services-view');
-            const navHome = document.getElementById('nav-home');
-            const navServices = document.getElementById('nav-services');
+            const btnHome = document.getElementById('nav-btn-home');
+            const btnServices = document.getElementById('nav-btn-services');
 
             if (viewName === 'services') {
-                homeView.style.display = 'none';
-                servicesView.style.display = 'block';
-                navServices.classList.add('active-link');
-                navHome.classList.remove('active-link');
-                window.scrollTo({ top: 380, behavior: 'smooth' });
+                homeView.classList.remove('active-view');
+                servicesView.classList.add('active-view');
+                btnServices.classList.add('active-nav');
+                btnHome.classList.remove('active-nav');
+                servicesView.scrollIntoView({ behavior: 'smooth' });
             } else {
-                homeView.style.display = 'block';
-                servicesView.style.display = 'none';
-                navHome.classList.add('active-link');
-                navServices.classList.remove('active-link');
+                servicesView.classList.remove('active-view');
+                homeView.classList.add('active-view');
+                btnHome.classList.add('active-nav');
+                btnServices.classList.remove('active-nav');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
@@ -1164,7 +1159,7 @@
             }
         }
 
-        /* 4. Modal Popup Controls (Login & Settings) */
+        /* 4. Modal Controls (Login & Settings) */
         function openLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
         }
@@ -1179,7 +1174,7 @@
             document.getElementById('settingsModal').style.display = 'none';
         }
 
-        /* 5. Mobile & OTP Flow */
+        /* 5. Mobile & OTP Simulation */
         let otpSent = false;
         function handleOtpFlow() {
             const mobile = document.getElementById('mobileNumberInput').value.trim();
@@ -1330,7 +1325,7 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
 
             if (cmd.includes('హోమ్') || cmd.includes('home')) {
-                switchMainView('home');
+                switchView('home');
                 return;
             }
             if (cmd.includes('సెట్టింగ్') || cmd.includes('settings') || cmd.includes('భాష')) {
@@ -1338,7 +1333,7 @@
                 return;
             }
             if (cmd.includes('సేవలు') || cmd.includes('విభాగాలు') || cmd.includes('features')) {
-                switchMainView('services');
+                switchView('services');
                 return;
             }
             if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) {
@@ -1347,7 +1342,7 @@
             }
 
             // Automatic switch to services for specific feature commands
-            switchMainView('services');
+            switchView('services');
             if (cmd.includes('కూలీ') || cmd.includes('కూలీలు')) {
                 showFeature('labor', document.getElementById('tab-labor'));
                 return;
