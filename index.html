@@ -12,9 +12,9 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
         body {
-            background-color: #f7f9f7;
-            color: #263238;
-            line-height: 1.7;
+            background-color: #f7faf7;
+            color: #2c3e50;
+            line-height: 1.6;
         }
         header {
             background-color: #1B5E20;
@@ -27,7 +27,9 @@
             top: 0;
             z-index: 1000;
         }
-        header h1 { font-size: 1.4rem; }
+        header h1 {
+            font-size: 1.4rem;
+        }
         header nav a {
             color: white;
             text-decoration: none;
@@ -35,14 +37,24 @@
             font-weight: 500;
             font-size: 0.95rem;
         }
+        header nav a:hover {
+            color: #FFD54F;
+        }
         .hero {
             background: linear-gradient(rgba(27, 94, 32, 0.88), rgba(27, 94, 32, 0.88)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
             text-align: center;
-            padding: 3.5rem 1.5rem;
+            padding: 4rem 1.5rem;
         }
-        .hero h2 { font-size: 2rem; margin-bottom: 0.8rem; }
-        .hero p { font-size: 1.1rem; max-width: 650px; margin: 0 auto 1.5rem auto; }
+        .hero h2 {
+            font-size: 2.2rem;
+            margin-bottom: 0.8rem;
+        }
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 650px;
+            margin: 0 auto 1.5rem auto;
+        }
         .btn-download {
             background-color: #FFD54F;
             color: #1B5E20;
@@ -51,61 +63,58 @@
             text-decoration: none;
             font-weight: bold;
             display: inline-block;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .features {
             max-width: 1000px;
-            margin: 2.5rem auto;
+            margin: 3rem auto;
             padding: 0 1rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
         }
         .card {
             background: white;
-            padding: 1.6rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 1.8rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             border-top: 4px solid #1B5E20;
             text-align: center;
         }
-        .card h3 { color: #1B5E20; margin-bottom: 0.6rem; }
-        .legal-wrapper {
-            background-color: #ffffff;
-            max-width: 1000px;
-            margin: 2.5rem auto;
-            padding: 2.5rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-        }
-        .legal-title {
+        .card h3 {
             color: #1B5E20;
-            font-size: 1.6rem;
-            border-bottom: 2px solid #1B5E20;
-            padding-bottom: 0.4rem;
-            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+        }
+        .legal-links-box {
+            background: white;
+            max-width: 700px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .legal-links-box h3 {
+            color: #1B5E20;
             margin-bottom: 1rem;
         }
-        .legal-subtitle {
-            color: #2e7d32;
-            font-size: 1.15rem;
-            margin-top: 1.4rem;
-            margin-bottom: 0.5rem;
+        .legal-btns {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
         }
-        .legal-wrapper p, .legal-wrapper li {
-            font-size: 0.95rem;
-            margin-bottom: 0.6rem;
-        }
-        .legal-wrapper ul {
-            padding-left: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .contact-box {
-            background: #f1f8e9;
-            padding: 1.2rem;
+        .legal-btn {
+            background-color: #e8f5e9;
+            color: #1B5E20;
+            padding: 0.7rem 1.4rem;
             border-radius: 8px;
-            border-left: 4px solid #1B5E20;
-            margin-top: 1.2rem;
-            margin-bottom: 1rem;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #c8e6c9;
+        }
+        .legal-btn:hover {
+            background-color: #c8e6c9;
         }
         footer {
             background-color: #1a221a;
@@ -115,7 +124,10 @@
             margin-top: 3rem;
             font-size: 0.9rem;
         }
-        footer a { color: #FFD54F; text-decoration: none; }
+        footer a {
+            color: #FFD54F;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
@@ -123,9 +135,9 @@
     <header>
         <h1>🌱 AgriConnect</h1>
         <nav>
-            <a href="#features">ఫీచర్లు</a>
-            <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms & Conditions</a>
+            <a href="#features">Features</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms & Conditions</a>
         </nav>
     </header>
 
@@ -150,77 +162,21 @@
         </div>
     </section>
 
-    <main class="legal-wrapper">
+    <section class="legal-links-box">
+        <h3>Legal & Policies</h3>
+        <p style="margin-bottom: 1.2rem; color: #666;">Please read our terms and policy documents carefully:</p>
+        <div class="legal-btns">
+            <a href="privacy.html" class="legal-btn">📄 Privacy Policy</a>
+            <a href="terms.html" class="legal-btn">📜 Terms & Conditions</a>
+        </div>
+    </section>
 
-        <!-- ================= PRIVACY POLICY ================= -->
-        <article id="privacy">
-            <h2 class="legal-title">AGRICONNECT – PRIVACY POLICY</h2>
-            <p><strong>Effective Date:</strong> October 4, 2026</p>
-            <p><strong>Last Updated:</strong> October 4, 2026</p>
+    <footer>
+        <p><strong>AgriConnect Technologies</strong> | UDYAM-TS-31-0063048</p>
+        <p>Hanamkonda / Warangal, Telangana, India</p>
+        <p>Contact: <a href="mailto:agriconnect.office@gmail.com">agriconnect.office@gmail.com</a></p>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect. All Rights Reserved.</p>
+    </footer>
 
-            <p>Welcome to AgriConnect (“AgriConnect”, “we”, “our”, or “us”), a technology platform owned and operated by AgriConnect Technologies, UDYAM Registration No. UDYAM-TS-31-0063048. We respect your privacy and are committed to handling personal data responsibly and securely. This Privacy Policy explains how AgriConnect collects, uses, stores, shares, and protects information when you access or use the AgriConnect mobile application, website, and related services (collectively, the “Platform”). By using AgriConnect, you acknowledge that you have read and understood this Privacy Policy.</p>
-
-            <h3 class="legal-subtitle">1. INFORMATION WE COLLECT</h3>
-            <p>We collect information that is reasonably necessary to create accounts, operate the Platform, connect farmers, workers, traders and buyers, provide location-based agricultural services, maintain security, and improve our services.</p>
-            <h4 style="margin: 8px 0 4px 0; color: #333;">1.1 Information You Provide</h4>
-            <p>Depending on the features you use, we may collect:</p>
-            <ul>
-                <li>Full name</li>
-                <li>Mobile number</li>
-                <li>Profile photograph</li>
-                <li>User role, such as Farmer, Worker, Buyer, Trader, or Service Provider</li>
-                <li>Address or locality</li>
-                <li>District, Mandal, Village/Town and Pincode</li>
-                <li>Agricultural or service-related information</li>
-                <li>Crop, labour, equipment, or trading information submitted by you</li>
-                <li>Information contained in messages, listings, complaints, or support requests</li>
-                <li>Other information that you voluntarily provide to us</li>
-            </ul>
-            <p>You should provide only accurate and lawful information.</p>
-
-            <h3 class="legal-subtitle">2. LOCATION INFORMATION</h3>
-            <p>AgriConnect may use location information to provide hyperlocal agricultural services and opportunities. Depending on your device settings and the permissions you provide, we may process approximate or precise GPS location and selected locality information. Location information may be used to display nearby agricultural workers, opportunities, equipment, services, regional agricultural information, and location-based searches. You may control location permissions through your device settings. Certain location-based features may not work correctly if location access is disabled.</p>
-
-            <h3 class="legal-subtitle">3. MICROPHONE AND VOICE FEATURES</h3>
-            <p>If you use AgriConnect’s voice functionality, the App may request microphone permission. Microphone access may be used for voice-search queries, voice commands, voice-based navigation, and speech-to-text features. AgriConnect will not use microphone access for continuous background recording merely because microphone permission has been granted. Where third-party speech or AI services are used, relevant voice or audio data may be processed as necessary to provide the requested functionality, subject to applicable agreements and privacy requirements.</p>
-
-            <h3 class="legal-subtitle">4. CAMERA AND PHOTOS</h3>
-            <p>If you choose to use camera or media features, AgriConnect may request access to your camera or selected media. This may be used for profile photographs, crop photographs, agricultural equipment photographs, product/produce listings, and service-related photographs. We do not access your camera continuously without your interaction with a feature that requires camera access.</p>
-
-            <h3 class="legal-subtitle">5. MOBILE NUMBER, OTP AND COMMUNICATION</h3>
-            <p>Your mobile number may be used for account registration, OTP verification, account security, login/authentication, important service notifications, customer support, and facilitating communication between users where enabled.</p>
-
-            <h3 class="legal-subtitle">6. DEVICE AND TECHNICAL INFORMATION</h3>
-            <p>We may automatically collect device type/model, operating system and version, App version, network information, permitted device identifiers, IP address or similar technical information, crash reports, and App performance information. This information may be used for security, troubleshooting, analytics, fraud prevention, and improving Platform performance.</p>
-
-            <h3 class="legal-subtitle">7. USAGE INFORMATION</h3>
-            <p>We may collect information about features accessed, searches performed, listings viewed, general interactions, session information, errors, and crash information. We use this information to understand Platform usage and improve reliability and user experience.</p>
-
-            <h3 class="legal-subtitle">8. HOW WE USE YOUR INFORMATION</h3>
-            <p>We may process your information to:</p>
-            <ul>
-                <li>Provide and maintain the Platform.</li>
-                <li>Facilitate connections between farmers, workers, buyers, traders, and service providers.</li>
-                <li>Provide hyperlocal agricultural opportunities, market-related information, weather-related information, local services, workers, equipment, and service availability.</li>
-                <li>Provide voice and AI-assisted features that you voluntarily use.</li>
-                <li>Verify accounts and prevent fraud or unauthorized access.</li>
-                <li>Send OTPs, service notifications, support communications, and security notifications.</li>
-                <li>Fix technical issues and improve Platform performance.</li>
-                <li>Comply with applicable laws, regulations, lawful government requests, and legal processes.</li>
-            </ul>
-
-            <h3 class="legal-subtitle">9. HOW WE SHARE INFORMATION</h3>
-            <p>We do not sell or rent your personal information for money.</p>
-            <p><strong>9.1 With Other AgriConnect Users:</strong> Depending on the feature, information such as your name, user role, profile photograph, general location, agricultural/service listing information, and contact information may be visible or shared as necessary to facilitate Platform functions.</p>
-            <p><strong>9.2 Service Providers:</strong> We may use trusted third-party providers for OTP/SMS, cloud hosting, maps/location, payments, analytics, crash reporting, voice/AI processing, customer support, and security services.</p>
-            <p><strong>9.3 Legal and Regulatory Requirements:</strong> We may disclose information when reasonably necessary to comply with applicable law, court or government orders, prevent fraud or unlawful activity, or protect the rights, property, or safety of users or AgriConnect.</p>
-            <p><strong>9.4 Business Transfers:</strong> In a merger, restructuring, acquisition, sale of assets, or similar transaction, relevant information may be transferred as part of that transaction, subject to applicable law and safeguards.</p>
-
-            <h3 class="legal-subtitle">10. DATA SECURITY</h3>
-            <p>We take reasonable technical and organizational measures to protect personal data against unauthorized access, misuse, alteration, disclosure, loss, or destruction. Security measures may include access controls, authentication, secure transmission where appropriate, monitoring, logging, security updates, and restricted access. However, no electronic transmission or storage system can be guaranteed to be completely secure.</p>
-
-            <h3 class="legal-subtitle">11. DATA RETENTION</h3>
-            <p>We retain personal information only for as long as reasonably necessary for providing services, maintaining accounts, security and fraud prevention, resolving disputes, meeting legal/regulatory obligations, and maintaining legitimate business records. When personal data is no longer required, we may delete, anonymize, or securely dispose of it in accordance with applicable requirements.</p>
-
-            <h3 class="legal-subtitle">12. ACCOUNT DELETION</h3>
-            <p>You may request deletion of your AgriConnect account and personal information by contacting <strong>agriconnect.office@
+</body>
+</html>
