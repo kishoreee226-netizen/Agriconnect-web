@@ -52,14 +52,14 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
         .nav-links a {
             color: white;
             text-decoration: none;
-            margin-left: 1rem;
+            margin-left: 0.8rem;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             cursor: pointer;
             padding: 4px 8px;
             border-radius: 4px;
@@ -69,11 +69,11 @@
             color: #1B5E20;
             background-color: #FFD54F;
         }
-        .btn-login-trigger {
+        .btn-header-action {
             background-color: #FFD54F;
             color: #1B5E20;
             border: none;
-            padding: 0.45rem 1rem;
+            padding: 0.45rem 0.9rem;
             border-radius: 20px;
             font-weight: bold;
             font-size: 0.85rem;
@@ -83,9 +83,28 @@
             gap: 5px;
             transition: 0.2s;
         }
-        .btn-login-trigger:hover {
+        .btn-header-action:hover {
             background-color: #ffe082;
             transform: scale(1.03);
+        }
+        .btn-settings-icon {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid #FFD54F;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: 0.2s;
+        }
+        .btn-settings-icon:hover {
+            background: #FFD54F;
+            color: #1B5E20;
+            transform: rotate(45deg);
         }
 
         /* Hero Banner */
@@ -156,7 +175,6 @@
             border-bottom: 1px solid #edf2ed;
             padding-bottom: 0.5rem;
         }
-        /* Live Time & Calendar Card */
         .clock-display {
             font-size: 1.8rem;
             font-weight: bold;
@@ -171,7 +189,6 @@
             font-size: 0.95rem;
             font-weight: 500;
         }
-        /* Market Rates Table */
         .rates-table {
             width: 100%;
             border-collapse: collapse;
@@ -191,7 +208,6 @@
             color: #2e7d32;
             font-weight: bold;
         }
-        /* Live Weather Display */
         .weather-info {
             display: flex;
             justify-content: space-around;
@@ -206,7 +222,6 @@
             font-weight: bold;
             color: #1B5E20;
         }
-        /* Ads & Equipment Slider Cards */
         .ad-banner-box {
             background: #fff8e1;
             border: 1px dashed #ffa000;
@@ -223,7 +238,6 @@
             font-size: 0.85rem;
             color: #5d4037;
         }
-        /* Helpline Contacts */
         .helpline-item {
             display: flex;
             justify-content: space-between;
@@ -241,7 +255,7 @@
             border-radius: 6px;
         }
 
-        /* SERVICES SECTION (Initially Hidden or Shown via Navigation) */
+        /* SERVICES SECTION */
         #services-view {
             display: none;
             animation: fadeIn 0.4s ease;
@@ -424,7 +438,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* Modal: Login & Profile */
+        /* Modals: Login & Settings */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -461,6 +475,9 @@
             color: #1B5E20;
             font-size: 1.3rem;
             margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .form-group {
             margin-top: 1rem;
@@ -525,10 +542,34 @@
             font-size: 1rem;
             cursor: pointer;
             margin-top: 1.2rem;
+            transition: 0.2s;
+        }
+        .btn-action-primary:hover {
+            background: #2e7d32;
         }
         .otp-inputs {
             display: none;
             margin-top: 0.8rem;
+        }
+
+        /* Settings Custom Styles */
+        .settings-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .settings-toggle span {
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 500;
+        }
+        .settings-toggle input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #1B5E20;
+            cursor: pointer;
         }
 
         /* Legal Box */
@@ -587,12 +628,19 @@
         <div class="nav-actions">
             <div class="nav-links">
                 <a id="nav-home" class="active-link" onclick="switchMainView('home')">హోమ్ (Home)</a>
-                <a id="nav-services" onclick="switchMainView('services')">సేవలు & విభాగాలు (Services)</a>
+                <a id="nav-services" onclick="switchMainView('services')">సేవలు (Services)</a>
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="terms.html">Terms & Conditions</a>
             </div>
-            <button class="btn-login-trigger" onclick="openLoginModal()">
-                <span>👤</span> <span id="login-nav-text">లాగిన్ / ప్రొఫైల్</span>
+            
+            <!-- Login Button -->
+            <button class="btn-header-action" onclick="openLoginModal()">
+                <span>👤</span> <span id="login-nav-text">లాగిన్</span>
+            </button>
+
+            <!-- Settings Button -->
+            <button class="btn-settings-icon" onclick="openSettingsModal()" title="సెట్టింగ్స్">
+                ⚙️
             </button>
         </div>
     </header>
@@ -605,7 +653,7 @@
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
         <div class="voice-pill">
-            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "వాతావరణం", లేదా "లాగిన్" అని తెలుగులో మాట్లాడండి
+            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "సెట్టింగ్స్", లేదా "వాతావరణం" అని తెలుగులో మాట్లాడండి
         </div>
     </section>
 
@@ -732,7 +780,7 @@
         <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
         <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి</p>
 
-        <!-- 3 Clickable Role Widgets -->
+        <!-- 3 Role Widgets -->
         <div class="role-widgets-container">
             <div id="tab-farmer" class="role-widget active" onclick="showFeature('farmer', this)">
                 <div class="role-icon">🌾</div>
@@ -761,7 +809,6 @@
                 <h4>🌾 రైతులకు లభించే సమగ్ర స్మార్ట్ వ్యవసాయ సేవలు:</h4>
                 <div class="features-grid">
                     
-                    <!-- Crop Doctor -->
                     <div id="card-doctor" class="feature-card">
                         <div class="feature-img-icon">🩺</div>
                         <div class="feature-info">
@@ -770,7 +817,6 @@
                         </div>
                     </div>
 
-                    <!-- Weather Report -->
                     <div id="card-weather" class="feature-card">
                         <div class="feature-img-icon">🌦️</div>
                         <div class="feature-info">
@@ -779,7 +825,6 @@
                         </div>
                     </div>
 
-                    <!-- Satellite Features -->
                     <div id="card-satellite" class="feature-card">
                         <div class="feature-img-icon">🛰️</div>
                         <div class="feature-info">
@@ -788,7 +833,6 @@
                         </div>
                     </div>
 
-                    <!-- Government Subsidy -->
                     <div id="card-subsidy" class="feature-card">
                         <div class="feature-img-icon">🏛️</div>
                         <div class="feature-info">
@@ -797,7 +841,6 @@
                         </div>
                     </div>
 
-                    <!-- Electricity Information -->
                     <div id="card-power" class="feature-card">
                         <div class="feature-img-icon">⚡</div>
                         <div class="feature-info">
@@ -806,7 +849,6 @@
                         </div>
                     </div>
 
-                    <!-- Crop Information -->
                     <div id="card-crop" class="feature-card">
                         <div class="feature-img-icon">🌱</div>
                         <div class="feature-info">
@@ -815,7 +857,6 @@
                         </div>
                     </div>
 
-                    <!-- E-Commerce -->
                     <div id="card-ecommerce" class="feature-card">
                         <div class="feature-img-icon">🛒</div>
                         <div class="feature-info">
@@ -824,7 +865,6 @@
                         </div>
                     </div>
 
-                    <!-- Labor Booking -->
                     <div id="card-labor" class="feature-card">
                         <div class="feature-img-icon">👥</div>
                         <div class="feature-info">
@@ -833,7 +873,6 @@
                         </div>
                     </div>
 
-                    <!-- Machinery Rentals -->
                     <div id="card-machinery" class="feature-card">
                         <div class="feature-img-icon">🚜</div>
                         <div class="feature-info">
@@ -842,7 +881,6 @@
                         </div>
                     </div>
 
-                    <!-- Live Market Rates -->
                     <div id="card-market" class="feature-card">
                         <div class="feature-img-icon">📈</div>
                         <div class="feature-info">
@@ -851,7 +889,6 @@
                         </div>
                     </div>
 
-                    <!-- Crop Sales Post -->
                     <div id="card-sales" class="feature-card">
                         <div class="feature-img-icon">📢</div>
                         <div class="feature-info">
@@ -942,7 +979,7 @@
         🎙️
     </button>
 
-    <!-- Modal Popup: Login & Profile -->
+    <!-- Modal 1: Login & Profile Setup -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
@@ -1001,6 +1038,59 @@
                 <button class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేయండి</button>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Modal 2: Settings Panel -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeSettingsModal()">&times;</span>
+            <h3 class="modal-title">⚙️ యాప్ సెట్టింగ్స్ (Settings)</h3>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">మీ వ్యక్తిగత ఖాతా ప్రాధాన్యతలు సరిచూసుకోండి</p>
+
+            <!-- Language Selection -->
+            <div class="form-group">
+                <label>🌐 భాష ఎంపిక (Select Language):</label>
+                <select id="appLanguageSelect">
+                    <option value="te" selected>తెలుగు (Telugu)</option>
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी (Hindi)</option>
+                </select>
+            </div>
+
+            <!-- Name Correction -->
+            <div class="form-group">
+                <label>✏️ రైతు పేరు మార్పు (Edit Name):</label>
+                <input type="text" id="settingFarmerName" placeholder="రైతు పేరును సరిచేయండి">
+            </div>
+
+            <!-- Mobile Number Change -->
+            <div class="form-group">
+                <label>📱 మొబైల్ నంబర్ మార్పు (Change Mobile):</label>
+                <input type="tel" id="settingMobileNumber" placeholder="కొత్త మొబైల్ నంబర్" maxlength="10">
+            </div>
+
+            <!-- Farm Size & Major Crop -->
+            <div class="form-group">
+                <label>🌾 ప్రధాన పంట & పొలం విస్తీర్ణం (Acres):</label>
+                <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
+            </div>
+
+            <!-- Voice Notifications Toggle -->
+            <div class="form-group" style="margin-top: 1.2rem;">
+                <label>🔔 నోటిఫికేషన్ సెట్టింగ్స్:</label>
+                <div class="settings-toggle">
+                    <span>వాయిస్ హెచ్చరికలు (Voice Alerts)</span>
+                    <input type="checkbox" id="toggleVoiceAlerts" checked>
+                </div>
+                <div class="settings-toggle">
+                    <span>రోజువారీ వాతావరణ SMS (Weather SMS)</span>
+                    <input type="checkbox" id="toggleWeatherSms" checked>
+                </div>
+            </div>
+
+            <button class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
+            <button type="button" style="background:#f5f5f5; color:#d32f2f; border:1px solid #ffcdd2; width:100%; padding:0.6rem; border-radius:8px; font-weight:bold; cursor:pointer; margin-top:0.6rem;" onclick="handleLogout()">🚪 లాగౌట్ (Logout)</button>
         </div>
     </div>
 
@@ -1074,12 +1164,19 @@
             }
         }
 
-        /* 4. Modal Popup Controls */
+        /* 4. Modal Popup Controls (Login & Settings) */
         function openLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
         }
         function closeLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function openSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'flex';
+        }
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').style.display = 'none';
         }
 
         /* 5. Mobile & OTP Flow */
@@ -1106,6 +1203,7 @@
                 }
                 document.getElementById('modal-step-login').style.display = 'none';
                 document.getElementById('modal-step-profile').style.display = 'block';
+                document.getElementById('settingMobileNumber').value = mobile;
             }
         }
 
@@ -1140,7 +1238,7 @@
             }
         }
 
-        /* 8. Save Profile */
+        /* 8. Save Profile & Settings */
         function saveProfile() {
             const name = document.getElementById('farmerNameInput').value.trim();
             if(!name) {
@@ -1149,7 +1247,33 @@
             }
             alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ మరియు పొలం లొకేషన్ విజయవంతంగా సేవ్ అయ్యాయి.`);
             document.getElementById('login-nav-text').innerText = name;
+            document.getElementById('settingFarmerName').value = name;
             closeLoginModal();
+        }
+
+        function saveSettings() {
+            const updatedName = document.getElementById('settingFarmerName').value.trim();
+            const lang = document.getElementById('appLanguageSelect').value;
+            
+            if (updatedName) {
+                document.getElementById('login-nav-text').innerText = updatedName;
+            }
+            alert(`సెట్టింగ్స్ విజయవంతంగా అప్‌డేట్ చేయబడ్డాయి! (ఎంచుకున్న భాష: ${lang.toUpperCase()})`);
+            closeSettingsModal();
+        }
+
+        function handleLogout() {
+            if (confirm('మీరు ఖాతా నుండి లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
+                document.getElementById('login-nav-text').innerText = 'లాగిన్';
+                document.getElementById('farmerNameInput').value = '';
+                document.getElementById('mobileNumberInput').value = '';
+                document.getElementById('settingFarmerName').value = '';
+                document.getElementById('modal-step-login').style.display = 'block';
+                document.getElementById('modal-step-profile').style.display = 'none';
+                otpSent = false;
+                closeSettingsModal();
+                alert('లాగౌట్ పూర్తయింది.');
+            }
         }
 
         /* 9. Telugu Voice Assistant */
@@ -1207,6 +1331,10 @@
 
             if (cmd.includes('హోమ్') || cmd.includes('home')) {
                 switchMainView('home');
+                return;
+            }
+            if (cmd.includes('సెట్టింగ్') || cmd.includes('settings') || cmd.includes('భాష')) {
+                openSettingsModal();
                 return;
             }
             if (cmd.includes('సేవలు') || cmd.includes('విభాగాలు') || cmd.includes('features')) {
