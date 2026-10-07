@@ -9,14 +9,13 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
         body {
-            background-color: #f8faf8;
-            color: #333;
-            line-height: 1.6;
+            background-color: #f6f8f6;
+            color: #2c3e50;
+            line-height: 1.7;
         }
-        /* Header */
         header {
             background-color: #1B5E20;
             color: white;
@@ -28,31 +27,22 @@
             top: 0;
             z-index: 1000;
         }
-        header h1 {
-            font-size: 1.5rem;
-        }
+        header h1 { font-size: 1.4rem; }
         header nav a {
             color: white;
             text-decoration: none;
-            margin-left: 1.2rem;
+            margin-left: 1rem;
             font-weight: 500;
+            font-size: 0.95rem;
         }
-        /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(27, 94, 32, 0.85), rgba(27, 94, 32, 0.85)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
+            background: linear-gradient(rgba(27, 94, 32, 0.88), rgba(27, 94, 32, 0.88)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
             text-align: center;
-            padding: 4rem 1.5rem;
+            padding: 3.5rem 1.5rem;
         }
-        .hero h2 {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-        }
-        .hero p {
-            font-size: 1.1rem;
-            max-width: 650px;
-            margin: 0 auto 1.5rem auto;
-        }
+        .hero h2 { font-size: 2rem; margin-bottom: 0.8rem; }
+        .hero p { font-size: 1.1rem; max-width: 650px; margin: 0 auto 1.5rem auto; }
         .btn-download {
             background-color: #FFD54F;
             color: #1B5E20;
@@ -61,12 +51,10 @@
             text-decoration: none;
             font-weight: bold;
             display: inline-block;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
-        /* Features Section */
         .features {
             max-width: 1000px;
-            margin: 3rem auto;
+            margin: 2.5rem auto;
             padding: 0 1rem;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -74,67 +62,78 @@
         }
         .card {
             background: white;
-            padding: 1.8rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             border-top: 4px solid #1B5E20;
             text-align: center;
         }
-        .card h3 {
-            color: #1B5E20;
-            margin-bottom: 0.8rem;
-        }
-        /* Legal Section */
-        .legal-section {
+        .card h3 { color: #1B5E20; margin-bottom: 0.6rem; }
+        .legal-wrapper {
             background-color: #ffffff;
-            max-width: 900px;
+            max-width: 950px;
             margin: 2rem auto;
             padding: 2.5rem;
             border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
-        .legal-section h2 {
+        .legal-title {
             color: #1B5E20;
-            border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 0.5rem;
-            margin-top: 1.5rem;
+            font-size: 1.6rem;
+            border-bottom: 2px solid #1B5E20;
+            padding-bottom: 0.4rem;
+            margin-top: 2rem;
             margin-bottom: 1rem;
         }
-        /* Footer */
+        .legal-subtitle {
+            color: #2e7d32;
+            font-size: 1.15rem;
+            margin-top: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .legal-wrapper p, .legal-wrapper li {
+            font-size: 0.95rem;
+            margin-bottom: 0.6rem;
+        }
+        .legal-wrapper ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .contact-box {
+            background: #f1f8e9;
+            padding: 1.2rem;
+            border-radius: 8px;
+            border-left: 4px solid #1B5E20;
+            margin-top: 1.2rem;
+        }
         footer {
-            background-color: #1e261e;
-            color: #ccc;
+            background-color: #1a221a;
+            color: #bbb;
             text-align: center;
             padding: 2rem 1rem;
             margin-top: 3rem;
             font-size: 0.9rem;
         }
-        footer a {
-            color: #FFD54F;
-            text-decoration: none;
-        }
+        footer a { color: #FFD54F; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header>
         <h1>🌱 AgriConnect</h1>
         <nav>
             <a href="#features">ఫీచర్లు</a>
             <a href="#privacy">Privacy Policy</a>
-            <a href="#terms">Terms</a>
+            <a href="#terms">Terms & Conditions</a>
         </nav>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <h2>రైతు, కూలీ, వ్యాపారుల వారధి</h2>
-        <p>వ్యవసాయ కూలీల లభ్యత, యంత్రాల అద్దె, మరియు ప్రత్యక్ష మార్కెట్ ధరలు – అన్నీ ఒకే వేదికపై!</p>
-        <a href="#download" class="btn-download">📲 Get App on Google Play</a>
+        <p>వ్యవసాయ కూలీల లభ్యత, యంత్రాల అద్దె మరియు ప్రత్యక్ష మార్కెట్ ధరలు – అన్నీ ఒకే వేదికపై!</p>
+        <a href="#features" class="btn-download">📲 AgriConnect Platform</a>
     </section>
 
-    <!-- Features Section -->
     <section class="features" id="features">
         <div class="card">
             <h3>🌾 రైతు వేదిక</h3>
@@ -142,7 +141,7 @@
         </div>
         <div class="card">
             <h3>🚜 యంత్రాల అద్దె</h3>
-            <p>ట్రాక్టర్లు, వరి కోత యంత్రాలు, డ్రోన్ స్ప్రేయింగ్ ఆపరేటర్ల ఫోన్ నంబర్లు క్షణాల్లో పొందండి.</p>
+            <p>ట్రాక్టర్లు, వరి కోత యంత్రాలు, డ్రోన్ స్ప్రేయింగ్ ఆపరేటర్ల వివరాలు క్షణాల్లో పొందండి.</p>
         </div>
         <div class="card">
             <h3>📈 మార్కెట్ యార్డ్ ధరలు</h3>
@@ -150,48 +149,114 @@
         </div>
     </section>
 
-    <!-- Legal Compliance Sections (For Play Store Review) -->
-    <main class="legal-section">
-        <!-- Privacy Policy -->
+    <main class="legal-wrapper">
+
+        <!-- ================= PRIVACY POLICY ================= -->
         <article id="privacy">
-            <h2>Privacy Policy</h2>
-            <p><strong>Effective Date:</strong> October 4, 2026</p>
-            <p style="margin-top: 8px;">
-                Welcome to <strong>AgriConnect</strong>. AgriConnect is operated by <strong>AgriConnect Technologies</strong> (UDYAM: UDYAM-TS-31-0063048). We respect your privacy and are committed to protecting your personal information.
-            </p>
-            <h4 style="margin-top: 12px;">1. Information We Collect</h4>
-            <p>We collect mobile numbers for OTP authentication, user roles (Farmer/Worker/Trader), and precise location data solely to connect you with nearby farm laborers, machinery, and market rates.</p>
-            
-            <h4 style="margin-top: 12px;">2. Permissions Used</h4>
-            <p>The app accesses Location (hyperlocal services), Microphone (optional voice assistance), and Storage/Camera (crop photo uploads).</p>
+            <h2 class="legal-title">PRIVACY POLICY FOR AGRICONNECT</h2>
+            <p><strong>Effective Date:</strong> October 7, 2026</p>
+            <p><strong>Last Updated:</strong> October 7, 2026</p>
 
-            <h4 style="margin-top: 12px;">3. Data Deletion</h4>
-            <p>You can request complete deletion of your account and personal data at any time by emailing us at: <strong>agriconnect.office@gmail.com</strong>.</p>
+            <p>Welcome to <strong>AgriConnect</strong> ("we," "our," or "us"). AgriConnect is owned and operated by <strong>AgriConnect Technologies</strong> (UDYAM Registration: UDYAM-TS-31-0063048). We are dedicated to respecting your privacy and safeguarding your personal information. This Privacy Policy outlines our practices regarding data collection, use, and disclosure when you use the AgriConnect mobile application and related web services.</p>
+
+            <h3 class="legal-subtitle">1. Information We Collect</h3>
+            <ul>
+                <li><strong>Personal Identity Information:</strong> Name, phone number, and primary role (Farmer, Agricultural Laborer, or Trader/Buyer) collected during profile onboarding and authentication.</li>
+                <li><strong>Hyperlocal Location Information:</strong> Approximate or precise GPS location collected to connect farmers with local laborers, nearby machinery operators, and relevant regional market yards (e.g., Warangal Enamamula Market).</li>
+                <li><strong>Agricultural & Listing Data:</strong> Crop listings, produce quantities, expected pricing, crop images, machinery types, and availability schedules uploaded voluntarily by users.</li>
+                <li><strong>Device & Diagnostic Logs:</strong> Device model, operating system version, unique device identifiers, crash logs, and performance metrics to ensure app stability and user support.</li>
+            </ul>
+
+            <h3 class="legal-subtitle">2. How We Use Your Information</h3>
+            <ul>
+                <li>To enable hyperlocal matching between farmers, laborers, and buyers.</li>
+                <li>To display location-specific mandi/market yard price estimates.</li>
+                <li>To authenticate user sessions via secure OTP mechanisms.</li>
+                <li>To facilitate voice assistance and accessibility features in local languages.</li>
+                <li>To enforce our terms, prevent fraudulent activity, and comply with applicable laws.</li>
+            </ul>
+
+            <h3 class="legal-subtitle">3. Device Permissions & Usage</h3>
+            <ul>
+                <li><strong>Location:</strong> Used exclusively to find nearby agricultural workers, machinery, and market pricing within your district.</li>
+                <li><strong>Microphone:</strong> Used solely when voice-search or accessibility speech-to-text features are actively engaged.</li>
+                <li><strong>Storage / Media:</strong> Required only for uploading crop photos or equipment images for sales listings.</li>
+            </ul>
+
+            <h3 class="legal-subtitle">4. Data Sharing & Third Parties</h3>
+            <p>We do not sell, rent, or trade your personal data. Data is shared strictly under the following conditions:</p>
+            <ul>
+                <li><strong>Between Platform Users:</strong> Contact details and crop listings are visible to prospective buyers, workers, or farmers to facilitate agricultural engagement.</li>
+                <li><strong>Service Providers:</strong> Cloud infrastructure (such as Google Cloud/Firebase) and SMS gateway providers for OTP verification.</li>
+                <li><strong>Legal Compliance:</strong> When required by Indian law, judicial decree, or law enforcement authorities.</li>
+            </ul>
+
+            <h3 class="legal-subtitle">5. Data Retention and Account Deletion</h3>
+            <p>We retain user information for as long as your account remains active. You possess the right to delete your account and associated profile data at any time. To request complete data erasure, please email us directly with your registered phone number at <strong>agriconnect.office@gmail.com</strong>. Your records will be permanently removed within 30 days of confirmation.</p>
+
+            <h3 class="legal-subtitle">6. Children's Privacy</h3>
+            <p>AgriConnect does not knowingly collect or solicit personal data from children under the age of 18. If we discover that personal information has been collected from a minor, it will be promptly removed.</p>
+
+            <h3 class="legal-subtitle">7. Contact & Grievance Officer</h3>
+            <div class="contact-box">
+                <p><strong>Entity:</strong> AgriConnect Technologies</p>
+                <p><strong>Registration:</strong> UDYAM-TS-31-0063048</p>
+                <p><strong>Grievance Email:</strong> agriconnect.office@gmail.com</p>
+                <p><strong>Address:</strong> Warangal / Hanamkonda, Telangana, India</p>
+            </div>
         </article>
 
-        <hr style="margin: 2rem 0; border: none; border-top: 1px dashed #ccc;">
+        <hr style="margin: 3rem 0; border: none; border-top: 2px dashed #c8e6c9;">
 
-        <!-- Terms and Conditions -->
+        <!-- ================= TERMS AND CONDITIONS ================= -->
         <article id="terms">
-            <h2>Terms and Conditions</h2>
-            <p><strong>Effective Date:</strong> October 4, 2026</p>
-            <p style="margin-top: 8px;">
-                AgriConnect operates strictly as an intermediary/aggregator platform connecting farmers with laborers, machinery operators, and traders. 
-            </p>
-            <h4 style="margin-top: 12px;">Platform Liability</h4>
-            <p>AgriConnect does not directly employ workers or guarantee commodity transaction prices. All wage negotiations and commercial transactions occur directly between the users.</p>
-            
-            <h4 style="margin-top: 12px;">Jurisdiction</h4>
-            <p>Any disputes arising under these terms are subject to the exclusive jurisdiction of the courts located in Warangal / Hanamkonda, Telangana, India.</p>
+            <h2 class="legal-title">TERMS AND CONDITIONS FOR AGRICONNECT</h2>
+            <p><strong>Effective Date:</strong> October 7, 2026</p>
+            <p><strong>Last Updated:</strong> October 7, 2026</p>
+
+            <h3 class="legal-subtitle">1. Acceptance of Terms</h3>
+            <p>By downloading, registering, or using the AgriConnect application, you acknowledge and agree to comply with these Terms and Conditions and our Privacy Policy. If you do not accept these terms, you must refrain from using the platform.</p>
+
+            <h3 class="legal-subtitle">2. Nature of Platform (Aggregator Model)</h3>
+            <ul>
+                <li><strong>Technology Intermediary:</strong> AgriConnect operates solely as an online directory and matching platform facilitating communication among farmers, agricultural laborers, machinery providers, and commodity traders.</li>
+                <li><strong>No Employment Relationship:</strong> AgriConnect is not an employer, labor contractor, staffing agency, or direct broker. Work agreements, wage rates, hours, and expectations are arranged solely between the participating individuals.</li>
+                <li><strong>Commercial Pricing:</strong> Daily market rates presented on the platform are advisory benchmarks based on local yard data; AgriConnect does not guarantee commodity prices or financial returns.</li>
+            </ul>
+
+            <h3 class="legal-subtitle">3. User Responsibilities & Conduct</h3>
+            <ul>
+                <li>You agree to provide true, current, and accurate contact details and farm listing descriptions.</li>
+                <li>You will not misrepresent crop conditions, harvest dates, or machinery readiness.</li>
+                <li>You agree not to harass, abuse, defraud, or discriminate against other users based on caste, community, or economic background.</li>
+            </ul>
+
+            <h3 class="legal-subtitle">4. Financial Transactions & Disputes</h3>
+            <p>All financial payments, wage distributions, harvest sales, and freight arrangements are conducted directly between the users. AgriConnect Technologies assumes no responsibility for non-payment, defective produce, equipment breakdowns, or delayed deliveries.</p>
+
+            <h3 class="legal-subtitle">5. Limitation of Liability</h3>
+            <p>To the maximum extent permitted by applicable Indian laws, AgriConnect Technologies, its directors, and staff shall not be liable for any direct, indirect, incidental, or consequential damages resulting from platform interactions, work-site accidents, crop losses, or technical interruptions.</p>
+
+            <h3 class="legal-subtitle">6. Intellectual Property</h3>
+            <p>All brand assets, software code, visual design, logos, and digital architectures of AgriConnect are the intellectual property of <strong>AgriConnect Technologies</strong>. Unauthorized copying, reverse-engineering, or scraping is strictly prohibited.</p>
+
+            <h3 class="legal-subtitle">7. Governing Law and Jurisdiction</h3>
+            <p>These terms and any legal actions or disputes related to AgriConnect are governed exclusively by the laws of India, under the jurisdiction of the competent courts in <strong>Warangal / Hanamkonda, Telangana, India</strong>.</p>
+
+            <div class="contact-box">
+                <p><strong>AgriConnect Technologies</strong></p>
+                <p>UDYAM-TS-31-0063048 | Warangal / Hanamkonda, Telangana</p>
+                <p>Support: <a href="mailto:agriconnect.office@gmail.com">agriconnect.office@gmail.com</a></p>
+            </div>
         </article>
+
     </main>
 
-    <!-- Footer -->
     <footer>
         <p><strong>AgriConnect Technologies</strong> | UDYAM-TS-31-0063048</p>
         <p>Hanamkonda / Warangal, Telangana, India</p>
         <p>Contact: <a href="mailto:agriconnect.office@gmail.com">agriconnect.office@gmail.com</a></p>
-        <p style="margin-top: 10px; font-size: 0.8rem; color: #888;">&copy; 2026 AgriConnect. All Rights Reserved.</p>
+        <p style="margin-top: 8px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect. All Rights Reserved.</p>
     </footer>
 
 </body>
