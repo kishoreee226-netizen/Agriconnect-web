@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriConnect - The Voice of Smart Farming</title>
+    <title>AgriConnect Technologies - The Voice of Smart Farming</title>
     <style>
         * {
             margin: 0;
@@ -20,16 +20,34 @@
         header {
             background-color: #1B5E20;
             color: white;
-            padding: 1rem 2rem;
+            padding: 0.8rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
-        header h1 {
-            font-size: 1.4rem;
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+        }
+        .header-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: white;
+            padding: 2px;
+            object-fit: cover;
+        }
+        .header-brand h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
         header nav a {
             color: white;
@@ -43,24 +61,46 @@
         }
         /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(27, 94, 32, 0.88), rgba(27, 94, 32, 0.88)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
+            background: linear-gradient(rgba(27, 94, 32, 0.9), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
             text-align: center;
             padding: 3.5rem 1.5rem;
         }
+        .hero-logo-container {
+            margin-bottom: 1.2rem;
+        }
+        .hero-logo {
+            width: 110px;
+            height: 110px;
+            background: white;
+            border-radius: 50%;
+            padding: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            object-fit: contain;
+        }
         .hero h2 {
             font-size: 2.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        .hero .tagline {
+            color: #FFD54F;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
             margin-bottom: 0.8rem;
         }
         .hero p {
-            font-size: 1.1rem;
-            max-width: 650px;
+            font-size: 1.05rem;
+            max-width: 680px;
             margin: 0 auto;
+            opacity: 0.95;
         }
-        /* Section Title */
+        /* Section Titles */
         .section-title {
             text-align: center;
-            margin: 2.5rem 1rem 1rem 1rem;
+            margin: 2.5rem 1rem 0.4rem 1rem;
             color: #1B5E20;
             font-size: 1.6rem;
         }
@@ -70,7 +110,7 @@
             font-size: 0.95rem;
             margin-bottom: 1.5rem;
         }
-        /* 3 Interactive Widgets */
+        /* Role Tabs/Widgets */
         .role-widgets-container {
             max-width: 960px;
             margin: 0 auto 1.5rem auto;
@@ -82,7 +122,7 @@
         .role-widget {
             background: white;
             border-radius: 12px;
-            padding: 1.5rem;
+            padding: 1.4rem;
             text-align: center;
             cursor: pointer;
             box-shadow: 0 3px 10px rgba(0,0,0,0.06);
@@ -98,22 +138,22 @@
             background-color: #e8f5e9;
         }
         .role-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+            font-size: 2.3rem;
+            margin-bottom: 0.4rem;
         }
         .role-widget h3 {
             color: #1B5E20;
-            font-size: 1.25rem;
-            margin-bottom: 0.3rem;
+            font-size: 1.2rem;
+            margin-bottom: 0.2rem;
         }
         .role-widget span {
             font-size: 0.85rem;
             color: #555;
             font-weight: 500;
         }
-        /* Detailed Features Box */
+        /* Feature Content Boxes */
         .feature-details-box {
-            max-width: 960px;
+            max-width: 1050px;
             margin: 0 auto 2.5rem auto;
             padding: 0 1rem;
         }
@@ -123,7 +163,7 @@
             padding: 2rem;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-            border-left: 6px solid #1B5E20;
+            border-top: 5px solid #1B5E20;
             animation: fadeIn 0.4s ease;
         }
         .feature-content.active {
@@ -131,31 +171,58 @@
         }
         .feature-content h4 {
             color: #1B5E20;
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
+            font-size: 1.35rem;
+            margin-bottom: 1.4rem;
+            border-bottom: 2px solid #e8f5e9;
+            padding-bottom: 0.5rem;
         }
-        .feature-list {
-            list-style: none;
+        /* Grid Cards for Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
         }
-        .feature-list li {
-            position: relative;
-            padding-left: 1.8rem;
-            margin-bottom: 0.8rem;
-            font-size: 0.98rem;
+        .feature-card {
+            background: #fdfdfd;
+            border: 1px solid #e2ece2;
+            border-radius: 10px;
+            padding: 1.2rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            transition: all 0.2s ease;
         }
-        .feature-list li::before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #2e7d32;
-            font-weight: bold;
-            font-size: 1.1rem;
+        .feature-card:hover {
+            border-color: #1B5E20;
+            background: #f4faf4;
+            transform: translateY(-2px);
+        }
+        .feature-img-icon {
+            font-size: 2.1rem;
+            background: #e8f5e9;
+            padding: 0.5rem;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 52px;
+            height: 52px;
+        }
+        .feature-info h5 {
+            color: #1B5E20;
+            font-size: 1.02rem;
+            margin-bottom: 0.3rem;
+        }
+        .feature-info p {
+            font-size: 0.88rem;
+            color: #4a5568;
+            line-height: 1.5;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Legal & Links */
+        /* Legal Documents Box */
         .legal-box {
             background: white;
             max-width: 700px;
@@ -205,9 +272,12 @@
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Header with Logo and Full Company Name -->
     <header>
-        <h1>🌱 AgriConnect</h1>
+        <a href="index.html" class="header-brand">
+            <img src="logo.png" alt="AgriConnect Logo" class="header-logo" onerror="this.style.display='none'">
+            <h1>AgriConnect Technologies</h1>
+        </a>
         <nav>
             <a href="#services">సేవలు</a>
             <a href="privacy.html">Privacy Policy</a>
@@ -217,21 +287,25 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <h2>స్మార్ట్ వ్యవసాయానికి నమ్మకమైన వేదిక</h2>
-        <p>వ్యవసాయ కూలీల లభ్యత, యంత్రాల అద్దె మరియు ప్రత్యక్ష మార్కెట్ ధరలు – అన్నీ ఒకే వేదికపై!</p>
+        <div class="hero-logo-container">
+            <img src="logo.png" alt="AgriConnect Technologies Logo" class="hero-logo" onerror="this.style.display='none'">
+        </div>
+        <h2>AgriConnect Technologies</h2>
+        <div class="tagline">The Voice of Smart Farming</div>
+        <p>వ్యవసాయ కూలీల లభ్యత, యంత్రాల అద్దె, మార్కెట్ ధరలు మరియు సమగ్ర స్మార్ట్ ఫార్మింగ్ సేవలు – అన్నీ ఒకే వేదికపై!</p>
     </section>
 
     <!-- Interactive Section -->
     <div id="services">
         <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
-        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విడ్జెట్ పై క్లిక్ చేయండి</p>
+        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి</p>
 
-        <!-- 3 Clickable Widgets -->
+        <!-- 3 Clickable Role Widgets -->
         <div class="role-widgets-container">
             <div class="role-widget active" onclick="showFeature('farmer', this)">
                 <div class="role-icon">🌾</div>
                 <h3>రైతులు</h3>
-                <span>(Farmers Hub)</span>
+                <span>(Smart Farmers Hub)</span>
             </div>
 
             <div class="role-widget" onclick="showFeature('labor', this)">
@@ -249,31 +323,221 @@
 
         <!-- Dynamic Content Details -->
         <div class="feature-details-box">
-            <!-- Farmers Features -->
+            
+            <!-- Complete Farmers Hub Features -->
             <div id="farmer-feature" class="feature-content active">
-                <h4>🌾 రైతులకు లభించే సేవలు & ఫీచర్లు:</h4>
-                <ul class="feature-list">
-                    <li><strong>కూలీల బుకింగ్:</strong> విత్తనాలు నాటడం, కలుపు తీత, మరియు పంట కోతలకు అవసరమైన స్థానిక కూలీల బృందాలను సులభంగా సంప్రదించవచ్చు.</li>
-                    <li><strong>యంత్రాల అద్దె (Machinery):</strong> ట్రాక్టర్లు, రోటవేటర్లు, వరి కోత మిషన్లు, మరియు డ్రోన్ స్ప్రేయింగ్ ఆపరేటర్ల ఫోన్ నంబర్లు క్షణాల్లో లభిస్తాయి.</li>
-                    <li><strong>పంట అమ్మకం ప్రకటనలు:</strong> మీ వద్ద సిద్ధంగా ఉన్న వరి, మిర్చి, పత్తి మొదలైన పంటల వివరాలు, ఫోటోలు పోస్ట్ చేసి వ్యాపారులను నేరుగా ఆకర్షించవచ్చు.</li>
-                    <li><strong>లైవ్ మార్కెట్ రేట్లు:</strong> వరంగల్ ఏనుమాముల మార్కెట్ యార్డ్ రోజువారీ కనిష్ట, గరిష్ట మరియు మోడల్ ధరల తాజా సమాచారం.</li>
-                </ul>
+                <h4>🌾 రైతులకు లభించే సమగ్ర స్మార్ట్ వ్యవసాయ సేవలు:</h4>
+                <div class="features-grid">
+                    
+                    <!-- Crop Doctor -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🩺</div>
+                        <div class="feature-info">
+                            <h5>క్రాప్ డాక్టర్ (AI Crop Doctor)</h5>
+                            <p>పంట ఆకు లేదా తెగులు సోకిన భాగాన్ని ఫోటో తీసి అప్‌లోడ్ చేస్తే, వ్యాధిని గుర్తించి తక్షణ నివారణ మందులు, సలహాలు అందిస్తుంది.</p>
+                        </div>
+                    </div>
+
+                    <!-- Weather Report -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🌦️</div>
+                        <div class="feature-info">
+                            <h5>వాతావరణ నివేదిక (Weather Report)</h5>
+                            <p>మీ గ్రామానికి సంబంధించిన రోజువారీ వర్ష సూచన, ఉష్ణోగ్రత మరియు గాలి తేమ శాతం వివరాల లైవ్ అప్‌డేట్స్.</p>
+                        </div>
+                    </div>
+
+                    <!-- Satellite Features -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🛰️</div>
+                        <div class="feature-info">
+                            <h5>శాటిలైట్ సేవలు (Satellite Farming)</h5>
+                            <p>ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పొలంలో పంట పచ్చదనం (NDVI), నేలలో తేమ లభ్యత మరియు తెగుళ్ల ముందస్తు అంచనా.</p>
+                        </div>
+                    </div>
+
+                    <!-- Government Subsidy -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🏛️</div>
+                        <div class="feature-info">
+                            <h5>ప్రభుత్వ పథకాలు & సబ్సిడీలు (Govt Subsidy)</h5>
+                            <p>రైతు భరోసా, వ్యవసాయ పరికరాల సబ్సిడీలు, పంట బీమా (PMFBY), డ్రిప్ ఇరిగేషన్ పథకాల సమాచారం మరియు దరఖాస్తు లింకులు.</p>
+                        </div>
+                    </div>
+
+                    <!-- Electricity Information -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">⚡</div>
+                        <div class="feature-info">
+                            <h5>వ్యవసాయ విద్యుత్ సరఫరా (Electricity Info)</h5>
+                            <p>పొలాలకు ఉచిత వ్యవసాయ కరెంట్ సరఫరా వేళలు, షెడ్యూల్డ్ పవర్ కట్స్ మరియు లో-వోల్టేజ్ సమస్యల సమాచారం.</p>
+                        </div>
+                    </div>
+
+                    <!-- Crop Information -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🌱</div>
+                        <div class="feature-info">
+                            <h5>పంటల సమగ్ర సమాచారం (Crop Advisory)</h5>
+                            <p>వరి, మిర్చి, పత్తి మొదలైన పంటలకు విత్తన ఎంపిక, ఎరువుల సమతుల్య వాడకం, తెగుళ్ల నివారణ సలహాలు.</p>
+                        </div>
+                    </div>
+
+                    <!-- E-Commerce -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🛒</div>
+                        <div class="feature-info">
+                            <h5>వ్యవసాయ ఇ-కామర్స్ (Agri E-Commerce)</h5>
+                            <p>నాణ్యమైన విత్తనాలు, సేంద్రీయ ఎరువులు, పిచికారీ మందులు మరియు వ్యవసాయ పనిముట్లను ఆన్‌లైన్‌లో కొనుగోలు చేసే వెసులుబాటు.</p>
+                        </div>
+                    </div>
+
+                    <!-- Labor Booking -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">👥</div>
+                        <div class="feature-info">
+                            <h5>వ్యవసాయ కూలీల బుకింగ్</h5>
+                            <p>నాట్లు వేయడం, కలుపు తీత, మరియు పంట కోత పనులకు స్థానికంగా అందుబాటులో ఉన్న కూలీల బృందాలను నేరుగా పిలవవచ్చు.</p>
+                        </div>
+                    </div>
+
+                    <!-- Machinery Rentals -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🚜</div>
+                        <div class="feature-info">
+                            <h5>యంత్రాల అద్దె (Machinery Rentals)</h5>
+                            <p>ట్రాక్టర్లు, రోటవేటర్లు, హార్వెస్టర్లు మరియు డ్రోన్ స్ప్రేయింగ్ ఆపరేటర్ల వివరాలు, ఫోన్ నంబర్లు క్షణాల్లో లభిస్తాయి.</p>
+                        </div>
+                    </div>
+
+                    <!-- Live Market Rates -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">📈</div>
+                        <div class="feature-info">
+                            <h5>లైవ్ మార్కెట్ యార్డ్ ధరలు</h5>
+                            <p>వరంగల్ ఏనుమాముల యార్డ్ మరియు చుట్టుపక్కల మార్కెట్లలో రోజువారీ కనిష్ట, గరిష్ట మరియు మోడల్ ధరల తాజా వివరాలు.</p>
+                        </div>
+                    </div>
+
+                    <!-- Crop Sales Post -->
+                    <div class="feature-card">
+                        <div class="feature-img-icon">📢</div>
+                        <div class="feature-info">
+                            <h5>పంట అమ్మకం ప్రకటనలు</h5>
+                            <p>మీ వద్ద సిద్ధంగా ఉన్న దిగుబడి వివరాలు, ఫోటోలు పోస్ట్ చేసి వ్యాపారుల నుండి ఉత్తమ ధరను నేరుగా పొందవచ్చు.</p>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             <!-- Labor Features -->
             <div id="labor-feature" class="feature-content">
-                <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు & ఫీచర్లు:</h4>
-                <ul class="feature-list">
-                    <li><strong>పనుల లభ్యత వివరాలు:</strong> మీ పరిసర గ్రామాల్లో రైతులకు అవసరమైన పనుల సమాచారాన్ని రోజూ తెలుసుకోవచ్చు.</li>
-                    <li><strong>నేరుగా రైతులతో మాట్లాడే అవకాశం:</strong> మధ్యవర్తులు లేకుండా నేరుగా రైతులకే ఫోన్ చేసి పని మరియు రోజువారీ కూలీ రేట్లను ఖరారు చేసుకోవచ్చు.</li>
-                    <li><strong>గ్రూప్ లీడర్ ప్రొఫైల్:</strong> కూలీల బృందం లీడర్లు తమ గ్రూప్‌లో ఎంతమంది సభ్యులు ఉన్నారో నమోదు చేసుకుని పెద్ద పనులను పొందవచ్చు.</li>
-                    <li><strong>వాయిస్ అసిస్టెంట్:</strong> చదవడం రాని వారి కోసం సులభమైన వాయిస్ ద్వారా పనుల సమాచారం వినే సదుపాయం.</li>
-                </ul>
+                <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు:</h4>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-img-icon">📋</div>
+                        <div class="feature-info">
+                            <h5>రోజువారీ పనుల సమాచారం</h5>
+                            <p>సమీప గ్రామాల్లో రైతులకు అవసరమైన పనులు మరియు కూలీ వివరాలు రోజూ మొబైల్‌లోనే తెలుసుకోవచ్చు.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-img-icon">📞</div>
+                        <div class="feature-info">
+                            <h5>నేరుగా రైతులతో మాట్లాడే అవకాశం</h5>
+                            <p>దళారులు లేకుండా నేరుగా రైతు ఫోన్ నంబర్‌కు కాల్ చేసి పని మరియు రోజువారీ కూలీ రేట్లను ఖరారు చేసుకోవచ్చు.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-img-icon">👥</div>
+                        <div class="feature-info">
+                            <h5>గ్రూప్ లీడర్ నమోదు</h5>
+                            <p>కూలీల మేస్త్రీ లేదా లీడర్లు తమ గ్రూప్‌లోని సభ్యుల సంఖ్యను నమోదు చేసి పెద్ద కాంట్రాక్ట్ పనులను పొందవచ్చు.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🎙️</div>
+                        <div class="feature-info">
+                            <h5>వాయిస్ అసిస్టెంట్</h5>
+                            <p>చదవడం రాని వారి కోసం సులభంగా తెలుగు వాయిస్ ద్వారా పనుల వివరాలు వినే ప్రత్యేక సదుపాయం.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Trader Features -->
             <div id="trader-feature" class="feature-content">
-                <h4>🏪 వ్యాపారధారులకు లభించే సేవలు & ఫీచర్లు:</h4>
-                <ul class="feature-list">
-                    <li><strong>ప్రత్యక్ష పంట కొనుగోలు:</strong> ప్రాంతాల వారీగా రైతులు అమ్మకానికి పెట్టిన వరి, మిర్చి, మొక్కజొన్న లాట్ల వివరాలను పరిశీలించవచ్చు.</li>
-                    <li><strong>రైతులతో డైరెక్ట్ కమ్యూనికే
+                <h4>🏪 వ్యాపారధారులకు లభించే సేవలు:</h4>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🌾</div>
+                        <div class="feature-info">
+                            <h5>రైతుల నుండి ప్రత్యక్ష కొనుగోలు</h5>
+                            <p>వరి, మిర్చి, పత్తి పంటలను గ్రామాల వారీగా రైతులు అమ్మకానికి ఉంచిన లాట్లను నేరుగా పరిశీలించవచ్చు.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-img-icon">🤝</div>
+                        <div class="feature-info">
+                            <h5>రైతులతో డైరెక్ట్ డీల్స్</h5>
+                            <p>మధ్యవర్తులు లేకుండా నాణ్యమైన పంట కోసం రైతులతో నేరుగా సంప్రదించి వ్యాపార ఒప్పందాలు చేసుకోవచ్చు.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-img-icon">📊</div>
+                        <div class="feature-info">
+                            <h5>పంట దిగుబడి అంచనా</h5>
+                            <p>ప్రాంతాల వారీగా ఏ పంటలు ఎంత పరిమాణంలో కోతకు సిద్ధంగా ఉన్నాయో ముందస్తు మార్కెట్ విశ్లేషణ పొందవచ్చు.</p>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-img-icon">📢</div>
+                        <div class="feature-info">
+                            <h5>కొనుగోలు అవసరాల ప్రకటనలు</h5>
+                            <p>మీకు కావలసిన నాణ్యత, పరిమాణం గల ధాన్యాల కొనుగోలు ప్రకటనలు ఇచ్చి రైతులను ఆకర్షించవచ్చు.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Legal Documents Box -->
+    <section class="legal-box">
+        <h4>చట్టపరమైన నిబంధనలు & పాలసీలు</h4>
+        <p style="margin-bottom: 1.2rem; color: #666; font-size: 0.9rem;">యాప్ వినియోగానికి సంబంధించిన అధికారిక పత్రాలు:</p>
+        <div class="legal-btns">
+            <a href="privacy.html" class="legal-btn">📄 Privacy Policy</a>
+            <a href="terms.html" class="legal-btn">📜 Terms & Conditions</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>AgriConnect Technologies</strong> | UDYAM-TS-31-0063048</p>
+        <p>Hanamkonda / Warangal, Telangana, India</p>
+        <p>Contact: <a href="mailto:agriconnect.office@gmail.com">agriconnect.office@gmail.com</a></p>
+        <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect Technologies. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        function showFeature(role, widgetElement) {
+            const widgets = document.querySelectorAll('.role-widget');
+            widgets.forEach(w => w.classList.remove('active'));
+
+            const contents = document.querySelectorAll('.feature-content');
+            contents.forEach(c => c.classList.remove('active'));
+
+            widgetElement.classList.add('active');
+            const targetFeature = document.getElementById(role + '-feature');
+            if (targetFeature) {
+                targetFeature.classList.add('active');
+            }
+        }
+    </script>
+
+</body>
+</html>
