@@ -20,7 +20,7 @@
         header {
             background-color: #1B5E20;
             color: white;
-            padding: 0.8rem 2rem;
+            padding: 0.8rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -32,83 +32,113 @@
         .header-brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
             color: white;
         }
         .header-logo {
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             background: white;
             padding: 2px;
             object-fit: cover;
         }
         .header-brand h1 {
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
         }
-        header nav a {
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-links a {
             color: white;
             text-decoration: none;
-            margin-left: 1.2rem;
+            margin-left: 1rem;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
-        header nav a:hover {
+        .nav-links a:hover {
             color: #FFD54F;
+        }
+        .btn-login-trigger {
+            background-color: #FFD54F;
+            color: #1B5E20;
+            border: none;
+            padding: 0.45rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+        }
+        .btn-login-trigger:hover {
+            background-color: #ffe082;
+            transform: scale(1.03);
         }
         /* Hero Section */
         .hero {
             background: linear-gradient(rgba(27, 94, 32, 0.9), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
             text-align: center;
-            padding: 3.5rem 1.5rem;
+            padding: 3rem 1.2rem;
         }
         .hero-logo-container {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
         .hero-logo {
-            width: 110px;
-            height: 110px;
+            width: 100px;
+            height: 100px;
             background: white;
             border-radius: 50%;
-            padding: 6px;
+            padding: 5px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.25);
             object-fit: contain;
         }
         .hero h2 {
-            font-size: 2.3rem;
-            margin-bottom: 0.4rem;
+            font-size: 2.2rem;
+            margin-bottom: 0.3rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
         }
         .hero .tagline {
             color: #FFD54F;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-bottom: 0.8rem;
         }
         .hero p {
-            font-size: 1.05rem;
-            max-width: 680px;
-            margin: 0 auto;
+            font-size: 1rem;
+            max-width: 650px;
+            margin: 0 auto 1.2rem auto;
             opacity: 0.95;
+        }
+        .voice-instruction-pill {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px dashed #FFD54F;
+            color: #fff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
         }
         /* Section Titles */
         .section-title {
             text-align: center;
-            margin: 2.5rem 1rem 0.4rem 1rem;
+            margin: 2.5rem 1rem 0.3rem 1rem;
             color: #1B5E20;
-            font-size: 1.6rem;
+            font-size: 1.55rem;
         }
         .section-subtitle {
             text-align: center;
             color: #666;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             margin-bottom: 1.5rem;
         }
         /* Role Tabs/Widgets */
@@ -123,7 +153,7 @@
         .role-widget {
             background: white;
             border-radius: 12px;
-            padding: 1.4rem;
+            padding: 1.3rem;
             text-align: center;
             cursor: pointer;
             box-shadow: 0 3px 10px rgba(0,0,0,0.06);
@@ -198,6 +228,11 @@
             background: #f4faf4;
             transform: translateY(-2px);
         }
+        .feature-card.highlight {
+            border: 2px solid #2e7d32;
+            background-color: #e8f5e9;
+            animation: pulse 1s ease;
+        }
         .feature-img-icon {
             font-size: 2.1rem;
             background: #e8f5e9;
@@ -223,6 +258,174 @@
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Floating Voice Assistant Button */
+        .voice-float-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: #1B5E20;
+            color: white;
+            border: 3px solid #FFD54F;
+            border-radius: 50%;
+            width: 65px;
+            height: 65px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 9999;
+            transition: 0.3s;
+        }
+        .voice-float-btn:hover {
+            transform: scale(1.1);
+        }
+        .voice-float-btn.listening {
+            background: #d32f2f;
+            border-color: #fff;
+            animation: breathe 1s infinite alternate;
+        }
+        @keyframes breathe {
+            from { box-shadow: 0 0 10px rgba(211,47,47,0.5); }
+            to { box-shadow: 0 0 25px rgba(211,47,47,0.9); }
+        }
+        .voice-status-toast {
+            position: fixed;
+            bottom: 100px;
+            right: 25px;
+            background: #2c3e50;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            display: none;
+            z-index: 9999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        /* Modal Popup (Login & Profile Setup) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1rem;
+        }
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 14px;
+            padding: 1.8rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 18px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+        }
+        .modal-title {
+            color: #1B5E20;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group {
+            margin-top: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+        /* Profile Image Upload Preview */
+        .photo-preview-container {
+            text-align: center;
+            margin: 0.8rem 0;
+        }
+        .photo-preview {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #1B5E20;
+            object-fit: cover;
+            background: #f0f0f0;
+            display: inline-block;
+        }
+        .btn-photo-upload {
+            display: inline-block;
+            margin-top: 6px;
+            font-size: 0.8rem;
+            color: #1B5E20;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        /* GPS Location Box */
+        .gps-box {
+            background: #f1f8e9;
+            border: 1px dashed #2e7d32;
+            padding: 0.8rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        .gps-status {
+            font-size: 0.82rem;
+            color: #2e7d32;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+        .btn-action-primary {
+            background: #1B5E20;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1.2rem;
+            transition: 0.2s;
+        }
+        .btn-action-primary:hover {
+            background: #2e7d32;
+        }
+        .otp-inputs {
+            display: none;
+            margin-top: 0.8rem;
+        }
+
         /* Legal Documents Box */
         .legal-box {
             background: white;
@@ -273,20 +476,25 @@
 </head>
 <body>
 
-    <!-- Header with Full Company Name -->
+    <!-- Header -->
     <header>
         <a href="index.html" class="header-brand">
             <img src="logo.png" alt="AgriConnect Logo" class="header-logo" onerror="this.style.display='none'">
             <h1>AgriConnect Technologies</h1>
         </a>
-        <nav>
-            <a href="#services">సేవలు</a>
-            <a href="privacy.html">Privacy Policy</a>
-            <a href="terms.html">Terms & Conditions</a>
-        </nav>
+        <div class="nav-actions">
+            <button class="btn-login-trigger" onclick="openLoginModal()">
+                <span>👤</span> <span id="login-nav-text">లాగిన్ / ప్రొఫైల్</span>
+            </button>
+            <div class="nav-links">
+                <a href="#services">సేవలు</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms & Conditions</a>
+            </div>
+        </div>
     </header>
 
-    <!-- Hero Section with only AgriConnect -->
+    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-logo-container">
             <img src="logo.png" alt="AgriConnect Logo" class="hero-logo" onerror="this.style.display='none'">
@@ -294,28 +502,31 @@
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
         <p>వ్యవసాయ కూలీల లభ్యత, యంత్రాల అద్దె, మార్కెట్ ధరలు మరియు సమగ్ర స్మార్ట్ ఫార్మింగ్ సేవలు – అన్నీ ఒకే వేదికపై!</p>
+        <div class="voice-instruction-pill">
+            🎙️ మైక్ పై నొక్కి "క్రాప్ డాక్టర్", "వాతావరణం", లేదా "లాగిన్" అని తెలుగులో చెప్పండి
+        </div>
     </section>
 
-    <!-- Interactive Section -->
+    <!-- Interactive Role Section -->
     <div id="services">
         <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
-        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి</p>
+        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి (లేదా వాయిస్ వాడండి)</p>
 
-        <!-- 3 Clickable Role Widgets -->
+        <!-- 3 Role Widgets -->
         <div class="role-widgets-container">
-            <div class="role-widget active" onclick="showFeature('farmer', this)">
+            <div id="tab-farmer" class="role-widget active" onclick="showFeature('farmer', this)">
                 <div class="role-icon">🌾</div>
                 <h3>రైతులు</h3>
                 <span>(Smart Farmers Hub)</span>
             </div>
 
-            <div class="role-widget" onclick="showFeature('labor', this)">
+            <div id="tab-labor" class="role-widget" onclick="showFeature('labor', this)">
                 <div class="role-icon">👨‍🌾</div>
                 <h3>వ్యవసాయ కూలీలు</h3>
                 <span>(Farm Laborers)</span>
             </div>
 
-            <div class="role-widget" onclick="showFeature('trader', this)">
+            <div id="tab-trader" class="role-widget" onclick="showFeature('trader', this)">
                 <div class="role-icon">🏪</div>
                 <h3>వ్యాపారధారులు</h3>
                 <span>(Traders & Buyers)</span>
@@ -331,7 +542,7 @@
                 <div class="features-grid">
                     
                     <!-- Crop Doctor -->
-                    <div class="feature-card">
+                    <div id="card-doctor" class="feature-card">
                         <div class="feature-img-icon">🩺</div>
                         <div class="feature-info">
                             <h5>క్రాప్ డాక్టర్ (AI Crop Doctor)</h5>
@@ -340,7 +551,7 @@
                     </div>
 
                     <!-- Weather Report -->
-                    <div class="feature-card">
+                    <div id="card-weather" class="feature-card">
                         <div class="feature-img-icon">🌦️</div>
                         <div class="feature-info">
                             <h5>వాతావరణ నివేదిక (Weather Report)</h5>
@@ -349,16 +560,16 @@
                     </div>
 
                     <!-- Satellite Features -->
-                    <div class="feature-card">
+                    <div id="card-satellite" class="feature-card">
                         <div class="feature-img-icon">🛰️</div>
                         <div class="feature-info">
                             <h5>శాటిలైట్ సేవలు (Satellite Farming)</h5>
-                            <p>ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పొలంలో పంట పచ్చదనం (NDVI), నేలలో తేమ లభ్యత మరియు తెగుళ్ల ముందస్తు అంచనా.</p>
+                            <p>మీ రిజిస్టర్డ్ పొలం లొకేషన్ ఆధారంగా ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పంట పచ్చదనం (NDVI), నేలలో తేమ లభ్యత ముందస్తు అంచనా.</p>
                         </div>
                     </div>
 
                     <!-- Government Subsidy -->
-                    <div class="feature-card">
+                    <div id="card-subsidy" class="feature-card">
                         <div class="feature-img-icon">🏛️</div>
                         <div class="feature-info">
                             <h5>ప్రభుత్వ పథకాలు & సబ్సిడీలు (Govt Subsidy)</h5>
@@ -367,7 +578,7 @@
                     </div>
 
                     <!-- Electricity Information -->
-                    <div class="feature-card">
+                    <div id="card-power" class="feature-card">
                         <div class="feature-img-icon">⚡</div>
                         <div class="feature-info">
                             <h5>వ్యవసాయ విద్యుత్ సరఫరా (Electricity Info)</h5>
@@ -376,7 +587,7 @@
                     </div>
 
                     <!-- Crop Information -->
-                    <div class="feature-card">
+                    <div id="card-crop" class="feature-card">
                         <div class="feature-img-icon">🌱</div>
                         <div class="feature-info">
                             <h5>పంటల సమగ్ర సమాచారం (Crop Advisory)</h5>
@@ -385,7 +596,7 @@
                     </div>
 
                     <!-- E-Commerce -->
-                    <div class="feature-card">
+                    <div id="card-ecommerce" class="feature-card">
                         <div class="feature-img-icon">🛒</div>
                         <div class="feature-info">
                             <h5>వ్యవసాయ ఇ-కామర్స్ (Agri E-Commerce)</h5>
@@ -394,7 +605,7 @@
                     </div>
 
                     <!-- Labor Booking -->
-                    <div class="feature-card">
+                    <div id="card-labor" class="feature-card">
                         <div class="feature-img-icon">👥</div>
                         <div class="feature-info">
                             <h5>వ్యవసాయ కూలీల బుకింగ్</h5>
@@ -403,7 +614,7 @@
                     </div>
 
                     <!-- Machinery Rentals -->
-                    <div class="feature-card">
+                    <div id="card-machinery" class="feature-card">
                         <div class="feature-img-icon">🚜</div>
                         <div class="feature-info">
                             <h5>యంత్రాల అద్దె (Machinery Rentals)</h5>
@@ -412,7 +623,7 @@
                     </div>
 
                     <!-- Live Market Rates -->
-                    <div class="feature-card">
+                    <div id="card-market" class="feature-card">
                         <div class="feature-img-icon">📈</div>
                         <div class="feature-info">
                             <h5>లైవ్ మార్కెట్ యార్డ్ ధరలు</h5>
@@ -421,7 +632,7 @@
                     </div>
 
                     <!-- Crop Sales Post -->
-                    <div class="feature-card">
+                    <div id="card-sales" class="feature-card">
                         <div class="feature-img-icon">📢</div>
                         <div class="feature-info">
                             <h5>పంట అమ్మకం ప్రకటనలు</h5>
@@ -505,6 +716,78 @@
         </div>
     </div>
 
+    <!-- Floating Telugu Voice Assistant Button -->
+    <div id="voice-toast" class="voice-status-toast">🎙️ వింటున్నాము... మాట్లాడండి</div>
+    <button class="voice-float-btn" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">
+        🎙️
+    </button>
+
+    <!-- Modal Popup: Login & Profile Creation -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeLoginModal()">&times;</span>
+            
+            <!-- Step 1: Mobile & OTP -->
+            <div id="modal-step-login">
+                <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
+                <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు OTP ద్వారా సులభంగా లాగిన్ అవ్వండి</p>
+                
+                <div class="form-group">
+                    <label>మొబైల్ నంబర్ (Mobile Number):</label>
+                    <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10">
+                </div>
+
+                <div class="otp-inputs" id="otpSection">
+                    <div class="form-group">
+                        <label>OTP నమోదు చేయండి:</label>
+                        <input type="text" id="otpInput" placeholder="4 అంకెల OTP (ఉదా: 1234)" maxlength="4">
+                    </div>
+                </div>
+
+                <button class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
+            </div>
+
+            <!-- Step 2: Customer Profile Creation -->
+            <div id="modal-step-profile" style="display: none;">
+                <h3 class="modal-title">👤 రైతు ప్రొఫైల్ సెటప్</h3>
+                <p style="font-size: 0.85rem; color: #666;">మీ వివరాలు మరియు పొలం లొకేషన్ నమోదు చేసుకోండి</p>
+
+                <!-- Profile Photo Upload -->
+                <div class="photo-preview-container">
+                    <img id="profilePreviewImg" src="https://via.placeholder.com/90?text=Photo" alt="Profile" class="photo-preview"><br>
+                    <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి (Upload Photo)</label>
+                    <input type="file" id="photoUploadInput" accept="image/*" style="display:none" onchange="previewPhoto(event)">
+                </div>
+
+                <div class="form-group">
+                    <label>రైతు పూర్తి పేరు (Farmer Name):</label>
+                    <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
+                </div>
+
+                <div class="form-group">
+                    <label>మీ విభాగం (Category):</label>
+                    <select id="userCategorySelect">
+                        <option>రైతు (Farmer)</option>
+                        <option>వ్యవసాయ కూలీ (Farm Laborer)</option>
+                        <option>వ్యాపారధారి (Trader/Buyer)</option>
+                    </select>
+                </div>
+
+                <!-- GPS Farm Location Picker for Satellite View -->
+                <div class="form-group">
+                    <label>🛰️ పొలం లొకేషన్ (శాటిలైట్ మానిటరింగ్ కోసం):</label>
+                    <div class="gps-box">
+                        <button type="button" style="background:#2e7d32; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="captureLocation()">📍 నా పొలం లొకేషన్ గుర్తించండి</button>
+                        <div class="gps-status" id="gpsStatusText">లొకేషన్ ఇంకా నమోదు కాలేదు</div>
+                    </div>
+                </div>
+
+                <button class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేయండి</button>
+            </div>
+
+        </div>
+    </div>
+
     <!-- Legal Documents Box -->
     <section class="legal-box">
         <h4>చట్టపరమైన నిబంధనలు & పాలసీలు</h4>
@@ -523,8 +806,9 @@
         <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect Technologies. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive JavaScript -->
+    <!-- Interactive JavaScript Engine -->
     <script>
+        /* 1. Tab Switching Function */
         function showFeature(role, widgetElement) {
             const widgets = document.querySelectorAll('.role-widget');
             widgets.forEach(w => w.classList.remove('active'));
@@ -536,6 +820,192 @@
             const targetFeature = document.getElementById(role + '-feature');
             if (targetFeature) {
                 targetFeature.classList.add('active');
+            }
+        }
+
+        /* 2. Modal Popup Controls */
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        /* 3. Mobile & OTP Login Simulation */
+        let otpSent = false;
+        function handleOtpFlow() {
+            const mobile = document.getElementById('mobileNumberInput').value.trim();
+            const btn = document.getElementById('btnOtpAction');
+            const otpSection = document.getElementById('otpSection');
+
+            if (!otpSent) {
+                if (mobile.length !== 10) {
+                    alert('దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.');
+                    return;
+                }
+                otpSection.style.display = 'block';
+                btn.innerText = 'లాగిన్ అవ్వండి (Verify & Login)';
+                otpSent = true;
+                alert('మీ మొబైల్ కు OTP పంపబడింది! (డెమో కోడ్: 1234)');
+            } else {
+                const otp = document.getElementById('otpInput').value.trim();
+                if (otp === '' || otp.length < 4) {
+                    alert('దయచేసి సరైన 4 అంకెల OTP ని నమోదు చేయండి.');
+                    return;
+                }
+                // Switch to profile step
+                document.getElementById('modal-step-login').style.display = 'none';
+                document.getElementById('modal-step-profile').style.display = 'block';
+            }
+        }
+
+        /* 4. Photo Preview */
+        function previewPhoto(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const output = document.getElementById('profilePreviewImg');
+                output.src = reader.result;
+            };
+            if(event.target.files[0]) {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        /* 5. GPS Farm Location Capture for Satellite */
+        function captureLocation() {
+            const gpsText = document.getElementById('gpsStatusText');
+            if ("geolocation" in navigator) {
+                gpsText.innerText = "శాటిలైట్ సిగ్నల్ వెతుకుతున్నాము...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(5);
+                        const lon = position.coords.longitude.toFixed(5);
+                        gpsText.innerHTML = `✅ లొకేషన్ ఖరారైంది: <strong>Lat: ${lat}, Lon: ${lon}</strong>`;
+                    },
+                    (error) => {
+                        gpsText.innerText = "GPS ఆన్ చేసి మళ్లీ ప్రయత్నించండి.";
+                    }
+                );
+            } else {
+                gpsText.innerText = "మీ పరికరంలో లొకేషన్ సదుపాయం లేదు.";
+            }
+        }
+
+        /* 6. Save Profile */
+        function saveProfile() {
+            const name = document.getElementById('farmerNameInput').value.trim();
+            if(!name) {
+                alert('దయచేసి మీ పేరు రాయండి.');
+                return;
+            }
+            alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ మరియు పొలం లొకేషన్ విజయవంతంగా సేవ్ అయ్యాయి.`);
+            document.getElementById('login-nav-text').innerText = name;
+            closeLoginModal();
+        }
+
+        /* 7. Telugu Voice Assistant (Web Speech API) */
+        let recognition;
+        let isListening = false;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'te-IN'; // Telugu
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                isListening = true;
+                document.getElementById('voiceBtn').classList.add('listening');
+                const toast = document.getElementById('voice-toast');
+                toast.innerText = "🎙️ వింటున్నాము... తెలుగులో మాట్లాడండి";
+                toast.style.display = 'block';
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript.toLowerCase();
+                handleVoiceCommand(transcript);
+            };
+
+            recognition.onerror = function() {
+                stopListening();
+            };
+
+            recognition.onend = function() {
+                stopListening();
+            };
+        }
+
+        function toggleVoiceAssistant() {
+            if (!recognition) {
+                alert('మీ బ్రౌజర్ లో వాయిస్ అసిస్టెంట్ సపోర్ట్ లేదు. Chrome బ్రౌజర్ వాడండి.');
+                return;
+            }
+            if (isListening) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+
+        function stopListening() {
+            isListening = false;
+            document.getElementById('voiceBtn').classList.remove('listening');
+            document.getElementById('voice-toast').style.display = 'none';
+        }
+
+        /* 8. Voice Command Interpreter */
+        function handleVoiceCommand(cmd) {
+            const toast = document.getElementById('voice-toast');
+            toast.innerText = `మీరు చెప్పినది: "${cmd}"`;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+
+            // Command: Login
+            if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) {
+                openLoginModal();
+                return;
+            }
+
+            // Command: Roles
+            if (cmd.includes('కూలీ') || cmd.includes('కూలీలు') || cmd.includes('పని')) {
+                showFeature('labor', document.getElementById('tab-labor'));
+                return;
+            }
+            if (cmd.includes('వ్యాపారి') || cmd.includes('వ్యాపారులు') || cmd.includes('కొనుగోలు')) {
+                showFeature('trader', document.getElementById('tab-trader'));
+                return;
+            }
+            if (cmd.includes('రైతు') || cmd.includes('రైతులు')) {
+                showFeature('farmer', document.getElementById('tab-farmer'));
+                return;
+            }
+
+            // Ensure Farmer tab is open for specific farm features
+            showFeature('farmer', document.getElementById('tab-farmer'));
+
+            let targetCardId = null;
+            if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు') || cmd.includes('వ్యాధి')) {
+                targetCardId = 'card-doctor';
+            } else if (cmd.includes('వాతావరణం') || cmd.includes('వర్షం') || cmd.includes('ఎండ')) {
+                targetCardId = 'card-weather';
+            } else if (cmd.includes('శాటిలైట్') || cmd.includes('ఉపగ్రహం')) {
+                targetCardId = 'card-satellite';
+            } else if (cmd.includes('సబ్సిడీ') || cmd.includes('పథకాలు') || cmd.includes('భరోసా')) {
+                targetCardId = 'card-subsidy';
+            } else if (cmd.includes('కరెంట్') || cmd.includes('విద్యుత్') || cmd.includes('పవర్')) {
+                targetCardId = 'card-power';
+            } else if (cmd.includes('మార్కెట్') || cmd.includes('ధర') || cmd.includes('రేటు')) {
+                targetCardId = 'card-market';
+            } else if (cmd.includes('యంత్రాలు') || cmd.includes('ట్రాక్టర్')) {
+                targetCardId = 'card-machinery';
+            }
+
+            if (targetCardId) {
+                const targetCard = document.getElementById(targetCardId);
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetCard.classList.add('highlight');
+                setTimeout(() => { targetCard.classList.remove('highlight'); }, 3000);
             }
         }
     </script>
