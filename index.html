@@ -158,6 +158,18 @@
             display: block;
         }
 
+        /* SPEAKABLE ITEMS & HIGHLIGHT */
+        .speakable {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .speaking-highlight {
+            border: 3px solid #FF9800 !important;
+            background-color: #fffde7 !important;
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.5) !important;
+        }
+
         /* DASHBOARD GRID */
         .dashboard-container {
             max-width: 1100px;
@@ -414,7 +426,6 @@
             line-height: 1.7;
         }
 
-        /* Innovation Special Card */
         .innovation-banner {
             background: #e8f5e9;
             border-left: 5px solid #2e7d32;
@@ -428,7 +439,6 @@
             margin-bottom: 0.4rem;
         }
 
-        /* Cards inside About Us & Why Choose */
         .about-highlights {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -455,7 +465,6 @@
             gap: 8px;
         }
 
-        /* WORLD FIRST HERO HIGHLIGHT CARD IN WHY CHOOSE US */
         .world-first-card {
             background: linear-gradient(135deg, #1B5E20, #2E7D32);
             color: white;
@@ -705,41 +714,65 @@
             margin-top: 0.8rem;
         }
 
-        /* Floating Voice Assistant */
-        .voice-float-btn {
+        /* FLOATING ACTION DOCK (SPEAKER & MIC) */
+        .floating-dock {
             position: fixed;
             bottom: 25px;
             right: 25px;
-            background: #1B5E20;
-            color: white;
-            border: 3px solid #FFD54F;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            z-index: 9999;
+        }
+        .dock-btn {
             border-radius: 50%;
-            width: 65px;
-            height: 65px;
-            font-size: 1.8rem;
+            width: 60px;
+            height: 60px;
+            font-size: 1.7rem;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 9999;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            border: none;
         }
-        .voice-float-btn:hover {
+        .dock-btn:hover {
             transform: scale(1.1);
         }
-        .voice-float-btn.listening {
+        /* Speaker Button */
+        .btn-speaker {
+            background: #FF8F00;
+            color: white;
+            border: 3px solid #FFF8E1;
+        }
+        .btn-speaker.reading-active {
+            background: #E65100;
+            animation: breathe-orange 1s infinite alternate;
+        }
+        /* Mic Button */
+        .btn-mic {
+            background: #1B5E20;
+            color: white;
+            border: 3px solid #FFD54F;
+        }
+        .btn-mic.listening {
             background: #d32f2f;
             border-color: #fff;
-            animation: breathe 1s infinite alternate;
+            animation: breathe-red 1s infinite alternate;
         }
-        @keyframes breathe {
+        @keyframes breathe-red {
             from { box-shadow: 0 0 10px rgba(211,47,47,0.5); }
             to { box-shadow: 0 0 25px rgba(211,47,47,0.9); }
         }
+        @keyframes breathe-orange {
+            from { box-shadow: 0 0 10px rgba(255,143,0,0.5); }
+            to { box-shadow: 0 0 25px rgba(255,143,0,0.9); }
+        }
+
         .voice-status-toast {
             position: fixed;
-            bottom: 100px;
+            bottom: 160px;
             right: 25px;
             background: #2c3e50;
             color: white;
@@ -785,7 +818,6 @@
             <h1>AgriConnect Technologies</h1>
         </div>
         <div class="nav-actions">
-            <!-- Main Navbar: Home, Services, About Us, Why Choose Us -->
             <div class="nav-links">
                 <button id="nav-btn-home" class="active-nav" onclick="switchView('home')">🏠 Home</button>
                 <button id="nav-btn-services" onclick="switchView('services')">🌾 Services</button>
@@ -793,7 +825,6 @@
                 <button id="nav-btn-why" onclick="switchView('why')">⭐ Why Choose Us</button>
             </div>
             
-            <!-- 3-Lines Hamburger Menu Button -->
             <button class="btn-hamburger" onclick="toggleDrawer()" title="మెనూ తెరవండి">
                 <span></span>
                 <span></span>
@@ -802,7 +833,7 @@
         </div>
     </header>
 
-    <!-- Side Drawer (3-Lines Panel with Logout) -->
+    <!-- Side Drawer -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer-sidebar" id="drawerSidebar">
         <div class="drawer-header">
@@ -855,7 +886,7 @@
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
         <div class="voice-pill">
-            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "గురించి", లేదా "ఎందుకు" అని తెలుగులో మాట్లాడండి
+            🔊 స్పీకర్ నొక్కి ఏ బాక్స్ మీదైనా టచ్ చేయండి – సమాచారం తెలుగులో చదివి వినిపిస్తుంది!
         </div>
     </section>
 
@@ -863,8 +894,8 @@
     <main id="home-view" class="page-view active-view">
         <div class="dashboard-container">
             
-            <!-- 1. Live Time, Date & Calendar -->
-            <div class="dash-card">
+            <!-- 1. Live Time & Date -->
+            <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📅 లైవ్ సమయం & క్యాలెండర్</h4>
                 <div class="clock-display" id="liveClock">00:00:00 AM</div>
                 <div class="date-display" id="liveDate">తేదీ లోడ్ అవుతోంది...</div>
@@ -873,8 +904,8 @@
                 </div>
             </div>
 
-            <!-- 2. Live Weather Report -->
-            <div class="dash-card">
+            <!-- 2. Weather -->
+            <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>🌦️ లైవ్ వాతావరణం (వరంగల్ పరిసరాలు)</h4>
                 <div class="weather-info">
                     <div>
@@ -891,8 +922,8 @@
                 </p>
             </div>
 
-            <!-- 3. Live Mandi / Market Yard Rates -->
-            <div class="dash-card">
+            <!-- 3. Mandi Rates -->
+            <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📈 మార్కెట్ యార్డ్ లైవ్ ధరలు (క్వింటాల్‌కి)</h4>
                 <table class="rates-table">
                     <thead>
@@ -927,8 +958,8 @@
                 </table>
             </div>
 
-            <!-- 4. Agriculture Dept Toll-Free & Contacts -->
-            <div class="dash-card">
+            <!-- 4. Helpline -->
+            <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📞 వ్యవసాయ శాఖ హెల్ప్‌లైన్ నంబర్లు</h4>
                 <div class="helpline-item">
                     <span>కిసాన్ కాల్ సెంటర్ (ఉచితం)</span>
@@ -948,8 +979,8 @@
                 </div>
             </div>
 
-            <!-- 5. Fertilizer & Seeds Ads -->
-            <div class="dash-card">
+            <!-- 5. Fertilizer Ads -->
+            <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📢 విత్తనాలు & ఎరువుల ఆఫర్లు (Agri Ads)</h4>
                 <div class="ad-banner-box">
                     <h5>🌾 హైబ్రిడ్ వరి & మిర్చి విత్తనాలు అందుబాటులో ఉన్నాయి</h5>
@@ -961,8 +992,8 @@
                 </div>
             </div>
 
-            <!-- 6. Machinery & Drone Spraying Ads -->
-            <div class="dash-card">
+            <!-- 6. Machinery Ads -->
+            <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>🚜 యంత్రాల అద్దె & డ్రోన్ పిచికారీ ప్రకటనలు</h4>
                 <div class="ad-banner-box" style="background:#f3e5f5; border-color:#8e24aa;">
                     <h5 style="color:#6a1b9a;">🚁 డ్రోన్ స్ప్రేయింగ్ సేవలు (ఎకరానికి ₹ 399/-)</h5>
@@ -982,36 +1013,33 @@
         <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
         <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి</p>
 
-        <!-- 3 Role Widgets -->
         <div class="role-widgets-container">
-            <div id="tab-farmer" class="role-widget active" onclick="showFeature('farmer', this)">
+            <div id="tab-farmer" class="role-widget active speakable" onclick="showFeature('farmer', this); speakElement(this)">
                 <div class="role-icon">🌾</div>
                 <h3>రైతులు</h3>
                 <span>(Smart Farmers Hub)</span>
             </div>
 
-            <div id="tab-labor" class="role-widget" onclick="showFeature('labor', this)">
+            <div id="tab-labor" class="role-widget speakable" onclick="showFeature('labor', this); speakElement(this)">
                 <div class="role-icon">👨‍🌾</div>
                 <h3>వ్యవసాయ కూలీలు</h3>
                 <span>(Farm Laborers)</span>
             </div>
 
-            <div id="tab-trader" class="role-widget" onclick="showFeature('trader', this)">
+            <div id="tab-trader" class="role-widget speakable" onclick="showFeature('trader', this); speakElement(this)">
                 <div class="role-icon">🏪</div>
                 <h3>వ్యాపారధారులు</h3>
                 <span>(Traders & Buyers)</span>
             </div>
         </div>
 
-        <!-- Dynamic Content Details -->
         <div class="feature-details-box">
-            
-            <!-- Complete Farmers Hub Features -->
+            <!-- Farmers Features -->
             <div id="farmer-feature" class="feature-content active">
                 <h4>🌾 రైతులకు లభించే సమగ్ర స్మార్ట్ వ్యవసాయ సేవలు:</h4>
                 <div class="features-grid">
                     
-                    <div id="card-doctor" class="feature-card">
+                    <div id="card-doctor" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🩺</div>
                         <div class="feature-info">
                             <h5>క్రాప్ డాక్టర్ (AI Crop Doctor)</h5>
@@ -1019,7 +1047,7 @@
                         </div>
                     </div>
 
-                    <div id="card-weather" class="feature-card">
+                    <div id="card-weather" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🌦️</div>
                         <div class="feature-info">
                             <h5>వాతావరణ నివేదిక (Weather Report)</h5>
@@ -1027,23 +1055,23 @@
                         </div>
                     </div>
 
-                    <div id="card-satellite" class="feature-card">
+                    <div id="card-satellite" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🛰️</div>
                         <div class="feature-info">
                             <h5>శాటిలైట్ సేవలు (Satellite Farming)</h5>
-                            <p>మీ పొలం లొకేషన్ ఆధారంగా ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పంట పచ్చదనం (NDVI), నేలలో తేమ లభ్యత ముందస్తు అంచనా.</p>
+                            <p>మీ పొలం లొకేషన్ ఆధారంగా ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పంట పచ్చదనం, నేలలో తేమ లభ్యత ముందస్తు అంచనా.</p>
                         </div>
                     </div>
 
-                    <div id="card-subsidy" class="feature-card">
+                    <div id="card-subsidy" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🏛️</div>
                         <div class="feature-info">
                             <h5>ప్రభుత్వ పథకాలు & సబ్సిడీలు (Govt Subsidy)</h5>
-                            <p>రైతు భరోసా, వ్యవసాయ పరికరాల సబ్సిడీలు, పంట బీమా (PMFBY), డ్రిప్ ఇరిగేషన్ పథకాల సమాచారం మరియు దరఖాస్తు లింకులు.</p>
+                            <p>రైతు భరోసా, వ్యవసాయ పరికరాల సబ్సిడీలు, పంట బీమా, డ్రిప్ ఇరిగేషన్ పథకాల సమాచారం మరియు దరఖాస్తు లింకులు.</p>
                         </div>
                     </div>
 
-                    <div id="card-power" class="feature-card">
+                    <div id="card-power" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">⚡</div>
                         <div class="feature-info">
                             <h5>వ్యవసాయ విద్యుత్ సరఫరా (Electricity Info)</h5>
@@ -1051,31 +1079,31 @@
                         </div>
                     </div>
 
-                    <div id="card-crop" class="feature-card">
+                    <div id="card-crop" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🌱</div>
                         <div class="feature-info">
                             <h5>పంటల సమగ్ర సమాచారం (Crop Advisory)</h5>
-                            <p>వరి, మిర్చి, పత్తి మొదలైన పంటలకు విత్తన ఎంపిక, ఎరువుల సమతుల్య వాడకం, తెగుళ్ల నివారణ సలహాలు.</p>
+                            <p>వరి, మిర్చి, పత్తి పంటలకు విత్తన ఎంపిక, సేంద్రీయ ఎరువుల సమతుల్య వాడకం, తెగుళ్ల నివారణ సలహాలు.</p>
                         </div>
                     </div>
 
-                    <div id="card-ecommerce" class="feature-card">
+                    <div id="card-ecommerce" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🛒</div>
                         <div class="feature-info">
                             <h5>వ్యవసాయ ఇ-కామర్స్ (Agri E-Commerce)</h5>
-                            <p>నాణ్యమైన విత్తనాలు, సేంద్రీయ ఎరువులు, పిచికారీ మందులు మరియు వ్యవసాయ పనిముట్లను ఆన్‌లైన్‌లో కొనుగోలు చేసే వెసులుబాటు.</p>
+                            <p>నాణ్యమైన విత్తనాలు, సేంద్రీయ ఎరువులు, పిచికారీ మందులు మరియు పనిముట్లను ఆన్‌లైన్‌లో కొనుగోలు చేసే వెసులుబాటు.</p>
                         </div>
                     </div>
 
-                    <div id="card-labor" class="feature-card">
+                    <div id="card-labor" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">👥</div>
                         <div class="feature-info">
-                            <h5>వ్యవసాయ కూలీల బుకింగ్</h5>
-                            <p>నాట్లు వేయడం, కలుపు తీత, మరియు పంట కోత పనులకు స్థానికంగా అందుబాటులో ఉన్న కూలీల బృందాలను నేరుగా పిలవవచ్చు.</p>
+                            <h5>వ్యవసాయ కూలీల బుకింగ్ (5-10 KM పరిధి)</h5>
+                            <p>నాట్లు వేయడం, కలుపు తీత, పంట కోత పనులకు సమీపంలో ఉన్న కూలీల బృందాలను నేరుగా పిలవవచ్చు.</p>
                         </div>
                     </div>
 
-                    <div id="card-machinery" class="feature-card">
+                    <div id="card-machinery" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🚜</div>
                         <div class="feature-info">
                             <h5>యంత్రాల అద్దె (Machinery Rentals)</h5>
@@ -1083,19 +1111,19 @@
                         </div>
                     </div>
 
-                    <div id="card-market" class="feature-card">
+                    <div id="card-market" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">📈</div>
                         <div class="feature-info">
                             <h5>లైవ్ మార్కెట్ యార్డ్ ధరలు</h5>
-                            <p>వరంగల్ ఏనుమాముల యార్డ్ మరియు చుట్టుపక్కల మార్కెట్లలో రోజువారీ కనిష్ట, గరిష్ట మరియు మోడల్ ధరల తాజా వివరాలు.</p>
+                            <p>వరంగల్ ఏనుమాముల యార్డ్ మరియు చుట్టుపక్కల మార్కెట్లలో రోజువారీ తాజా ధరల వివరాలు.</p>
                         </div>
                     </div>
 
-                    <div id="card-sales" class="feature-card">
+                    <div id="card-sales" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">📢</div>
                         <div class="feature-info">
                             <h5>పంట అమ్మకం ప్రకటనలు</h5>
-                            <p>మీ వద్ద సిద్ధంగా ఉన్న దిగుబడి వివరాలు, ఫోటోలు పోస్ట్ చేసి వ్యాపారుల నుండి ఉత్తమ ధరను నేరుగా పొందవచ్చు.</p>
+                            <p>మీ వద్ద సిద్ధంగా ఉన్న దిగుబడి వివరాలు పోస్ట్ చేసి కొనుగోలుదారుల నుండి ఉత్తమ ధరను నేరుగా పొందవచ్చు.</p>
                         </div>
                     </div>
 
@@ -1106,32 +1134,18 @@
             <div id="labor-feature" class="feature-content">
                 <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు:</h4>
                 <div class="features-grid">
-                    <div class="feature-card">
+                    <div class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">📋</div>
                         <div class="feature-info">
                             <h5>రోజువారీ పనుల సమాచారం</h5>
                             <p>సమీప గ్రామాల్లో రైతులకు అవసరమైన పనులు మరియు కూలీ వివరాలు రోజూ మొబైల్‌లోనే తెలుసుకోవచ్చు.</p>
                         </div>
                     </div>
-                    <div class="feature-card">
+                    <div class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">📞</div>
                         <div class="feature-info">
                             <h5>నేరుగా రైతులతో మాట్లాడే అవకాశం</h5>
                             <p>దళారులు లేకుండా నేరుగా రైతు ఫోన్ నంబర్‌కు కాల్ చేసి పని మరియు రోజువారీ కూలీ రేట్లను ఖరారు చేసుకోవచ్చు.</p>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-img-icon">👥</div>
-                        <div class="feature-info">
-                            <h5>గ్రూప్ లీడర్ నమోదు</h5>
-                            <p>కూలీల మేస్త్రీ లేదా లీడర్లు తమ గ్రూప్‌లోని సభ్యుల సంఖ్యను నమోదు చేసి పెద్ద కాంట్రాక్ట్ పనులను పొందవచ్చు.</p>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-img-icon">🎙️</div>
-                        <div class="feature-info">
-                            <h5>వాయిస్ అసిస్టెంట్</h5>
-                            <p>చదవడం రాని వారి కోసం సులభంగా తెలుగు వాయిస్ ద్వారా పనుల వివరాలు వినే ప్రత్యేక సదుపాయం.</p>
                         </div>
                     </div>
                 </div>
@@ -1141,32 +1155,18 @@
             <div id="trader-feature" class="feature-content">
                 <h4>🏪 వ్యాపారధారులకు లభించే సేవలు:</h4>
                 <div class="features-grid">
-                    <div class="feature-card">
+                    <div class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🌾</div>
                         <div class="feature-info">
                             <h5>రైతుల నుండి ప్రత్యక్ష కొనుగోలు</h5>
                             <p>వరి, మిర్చి, పత్తి పంటలను గ్రామాల వారీగా రైతులు అమ్మకానికి ఉంచిన లాట్లను నేరుగా పరిశీలించవచ్చు.</p>
                         </div>
                     </div>
-                    <div class="feature-card">
+                    <div class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🤝</div>
                         <div class="feature-info">
                             <h5>రైతులతో డైరెక్ట్ డీల్స్</h5>
                             <p>మధ్యవర్తులు లేకుండా నాణ్యమైన పంట కోసం రైతులతో నేరుగా సంప్రదించి వ్యాపార ఒప్పందాలు చేసుకోవచ్చు.</p>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-img-icon">📊</div>
-                        <div class="feature-info">
-                            <h5>పంట దిగుబడి అంచనా</h5>
-                            <p>ప్రాంతాల వారీగా ఏ పంటలు ఎంత పరిమాణంలో కోతకు సిద్ధంగా ఉన్నాయో ముందస్తు మార్కెట్ విశ్లేషణ పొందవచ్చు.</p>
-                        </div>
-                    </div>
-                    <div class="feature-card">
-                        <div class="feature-img-icon">📢</div>
-                        <div class="feature-info">
-                            <h5>కొనుగోలు అవసరాల ప్రకటనలు</h5>
-                            <p>మీకు కావలసిన నాణ్యత, పరిమాణం గల ధాన్యాల కొనుగోలు ప్రకటనలు ఇచ్చి రైతులను ఆకర్షించవచ్చు.</p>
                         </div>
                     </div>
                 </div>
@@ -1175,53 +1175,41 @@
         </div>
     </section>
 
-    <!-- ================= VIEW 3: ABOUT US (UPDATED WITH MAIN INNOVATIONS) ================= -->
+    <!-- ================= VIEW 3: ABOUT US ================= -->
     <section id="about-view" class="page-view">
         <div class="info-page-box">
             <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
-            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం. గ్రామీణ రైతులు, వ్యవసాయ కూలీలు మరియు వ్యాపారులను అత్యాధునిక సాంకేతికతతో ఒకే తాటిపైకి తీసుకురావడమే మా ప్రధాన ధ్యేయం.</p>
+            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం.</p>
 
-            <!-- Main Innovation Highlights -->
-            <div class="innovation-banner">
+            <div class="innovation-banner speakable" onclick="speakElement(this)">
                 <h4>🚀 మా ప్రధాన ఆవిష్కరణ (Our Core Innovation):</h4>
                 <p>చదవడం, రాయడం రాని నిరుపేద గ్రామీణ రైతులు మరియు వ్యవసాయ కూలీల కోసం <strong>100% తెలుగు వాయిస్ గైడెన్స్ (Voice Guidance)</strong> తో నడిచే ప్రపంచంలోనే మొట్టమొదటి హైపర్‌లోకల్ వేదిక AgriConnect.</p>
             </div>
 
             <div class="about-highlights">
-                <!-- 1. 5-10 KM Hyperlocal Labor Matching -->
-                <div class="highlight-item">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
                     <h5>📍 5-10 కి.మీ హైపర్‌లోకల్ లేబర్ మ్యాచింగ్</h5>
-                    <p>రైతు తన పొలం ఉన్న ప్రాంతం నుండి కేవలం <strong>5 నుండి 10 కిలోమీటర్ల పరిధిలోని</strong> వ్యవసాయ కూలీలను, గ్రూపులను క్షణాల్లో కనుగొనవచ్చు. కూలీల కొరత సమస్యకు ఇది శాశ్వత పరిష్కారం.</p>
+                    <p>రైతు తన పొలం ఉన్న ప్రాంతం నుండి కేవలం <strong>5 నుండి 10 కిలోమీటర్ల పరిధిలోని</strong> వ్యవసాయ కూలీలను, గ్రూపులను క్షణాల్లో కనుగొనవచ్చు.</p>
                 </div>
 
-                <!-- 2. Direct Communication (No Middlemen) -->
-                <div class="highlight-item">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
                     <h5>🤝 రైతు - కూలీ ప్రత్యక్ష సంభాషణ</h5>
-                    <p>మధ్యలో ఎటువంటి దళారులు, ఏజెంట్లు ఉండరు. రైతులు నేరుగా కూలీల ఫోన్ నంబర్‌కు కాల్ చేసి రోజువారీ పనులు మరియు కూలీ రేట్లను నేరుగా నిర్ణయించుకోవచ్చు.</p>
+                    <p>మధ్యలో ఎటువంటి దళారులు ఉండరు. రైతులు నేరుగా కూలీల ఫోన్ నంబర్‌కు కాల్ చేసి పనులను మరియు కూలీ రేట్లను ఖరారు చేసుకోవచ్చు.</p>
                 </div>
 
-                <!-- 3. Direct Crop Selling to Buyers -->
-                <div class="highlight-item">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
                     <h5>🌾 కొనుగోలుదారులకు నేరుగా పంట విక్రయం</h5>
-                    <p>మధ్యవర్తుల మోసాలకు తావులేకుండా రైతులు తాము పండించిన పంటను నేరుగా ట్రేడర్స్ మరియు బయ్యర్లకు అత్యుత్తమ మార్కెట్ ధర వద్ద విక్రయించవచ్చు.</p>
+                    <p>రైతులు తాము పండించిన పంటను నేరుగా ట్రేడర్స్ మరియు బయ్యర్లకు అత్యుత్తమ మార్కెట్ ధర వద్ద విక్రయించవచ్చు.</p>
                 </div>
 
-                <!-- 4. Encouraging Organic Farming -->
-                <div class="highlight-item">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
                     <h5>🌱 సేంద్రీయ వ్యవసాయానికి ప్రోత్సాహం (Organic Farming)</h5>
-                    <p>భూసారాన్ని రక్షించే సహజ సిద్ధమైన సేంద్రీయ ఎరువులు, బయో-ఫెర్టిలైజర్స్ వాడకాన్ని ప్రోత్సహిస్తూ ఆర్గానిక్ పంటలకు ప్రత్యేక మార్కెట్ గుర్తింపు కల్పించడం మా ప్రాధాన్యత.</p>
+                    <p>భూసారాన్ని రక్షించే సహజ సిద్ధమైన సేంద్రీయ ఎరువులు, బయో-ఫెర్టిలైజర్స్ వాడకాన్ని ప్రోత్సహిస్తూ ప్రత్యేక మార్కెట్ కల్పించడం మా ధ్యేయం.</p>
                 </div>
 
-                <!-- 5. All Crop Advisory & Pests Solution in Local Language -->
-                <div class="highlight-item">
-                    <h5>🎙️ స్థానిక భాషలో పంటలు & తెగుళ్ల నివారణ (Voice Guidance)</h5>
-                    <p>వరి, మిర్చి, పత్తితో సహా అన్ని రకాల పంటల వివరాలు, ఆశించే చీడపీడలు మరియు వాటి నివారణ మార్గాలను <strong>స్థానిక తెలుగు భాషలో వాయిస్ ద్వారా స్పష్టంగా విని తెలుసుకునే సదుపాయం</strong> కల్పించబడింది.</p>
-                </div>
-
-                <!-- 6. Mission -->
-                <div class="highlight-item">
-                    <h5>🎯 రైతే రాజు - సాంకేతికతే బలం</h5>
-                    <p>ఆర్టిఫిషియల్ ఇంటెలిజెన్స్, శాటిలైట్ మానిటరింగ్ మరియు వాయిస్ సాంకేతికతను జోడించి ప్రతి రైతును ఆర్థికంగా బలోపేతం చేయడమే AgriConnect లక్ష్యం.</p>
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🎙️ స్థానిక భాషలో పంటలు & తెగుళ్ల నివారణ</h5>
+                    <p>అన్ని రకాల పంటల వివరాలు, ఆశించే చీడపీడలు మరియు నివారణ మార్గాలను <strong>స్థానిక తెలుగు భాషలో వాయిస్ ద్వారా స్పష్టంగా వినే సదుపాయం</strong> కలదు.</p>
                 </div>
             </div>
         </div>
@@ -1232,80 +1220,80 @@
         <div class="info-page-box">
             <h3>⭐ మమ్మల్ని ఎందుకు ఎంచుకోవాలి? (Why Choose AgriConnect)</h3>
             
-            <!-- WORLD'S FIRST HIGHLIGHT HERO CARD -->
-            <div class="world-first-card">
+            <div class="world-first-card speakable" onclick="speakElement(this)">
                 <span class="badge-world-first">🌍 World's 1st Innovation</span>
                 <h4>హైపర్‌లోకల్ లేబర్ మ్యాచింగ్ విత్ వాయిస్ గైడెన్స్</h4>
                 <p><strong>This is the first time introduced in the world with Voice Guidance!</strong><br>
-                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్ (తెలుగు మాటల సహాయం)</strong> తో సమీప గ్రామాల వారీగా ఖచ్చితమైన వ్యవసాయ కూలీలను అనుసంధానించే <strong>Hyperlocal Labor Matching (5-10 KM Range)</strong> సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
+                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్</strong> తో సమీప గ్రామాల వారీగా ఖచ్చితమైన వ్యవసాయ కూలీలను అనుసంధానించే <strong>Hyperlocal Labor Matching (5-10 KM Range)</strong> సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
             </div>
 
             <div class="about-highlights">
-                <div class="highlight-item">
-                    <h5>🚫 దళారులు లేని పారదర్శకత (Zero Middlemen)</h5>
-                    <p>కూలీల బుకింగ్ అయినా, యంత్రాల అద్దె అయినా లేదా పంట అమ్మకం అయినా – నేరుగా రైతులే అవతలి వ్యక్తులతో ఫోన్ చేసి నేరుగా డీల్ కుదుర్చుకోవచ్చు.</p>
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🚫 దళారులు లేని పారదర్శకత</h5>
+                    <p>కూలీల బుకింగ్, యంత్రాల అద్దె లేదా పంట అమ్మకం – నేరుగా రైతులే అవతలి వ్యక్తులతో ఫోన్ చేసి మాట్లాడవచ్చు.</p>
                 </div>
-                <div class="highlight-item">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
                     <h5>🎙️ పూర్తి వాయిస్ నావిగేషన్ (Voice First AI)</h5>
-                    <p>యాప్ ఎలా వాడాలో తెలియకపోయినా, మైక్ బటన్ నొక్కి తెలుగులో మాట్లాడితే చాలు – అడిగిన ఫీచర్ స్క్రీన్ పై వెంటనే ప్రత్యక్షమవుతుంది.</p>
+                    <p>మైక్ బటన్ నొక్కి మాట్లాడితే చాలు – అడిగిన సమాచారం క్షణాల్లో ప్రత్యక్షమవుతుంది.</p>
                 </div>
-                <div class="highlight-item">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
                     <h5>🛰️ పొలం శాటిలైట్ మానిటరింగ్</h5>
-                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని, తేమ శాతాన్ని ఎప్పటికప్పుడు విశ్లేషించవచ్చు.</p>
+                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని ఎప్పటికప్పుడు విశ్లేషించవచ్చు.</p>
                 </div>
-                <div class="highlight-item">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
                     <h5>📈 లైవ్ మార్కెట్ యార్డ్ రేట్లు</h5>
-                    <p>వరంగల్ ఏనుమాముల మార్కెట్ రోజువారీ క్వింటాల్ లైవ్ రేట్లను పారదర్శకంగా తెలుసుకుని పంటకు సరైన ధర పొందవచ్చు.</p>
+                    <p>వరంగల్ ఏనుమాముల మార్కెట్ రోజువారీ లైవ్ రేట్లను తెలుసుకుని సరైన ధరకు పంటను విక్రయించవచ్చు.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Floating Telugu Voice Assistant -->
-    <div id="voice-toast" class="voice-status-toast">🎙️ వింటున్నాము... మాట్లాడండి</div>
-    <button class="voice-float-btn" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">
-        🎙️
-    </button>
+    <!-- FLOATING ACTION DOCK: SPEAKER & MIC BUTTONS -->
+    <div class="floating-dock">
+        <!-- Text-to-Speech Voice Reader Speaker Button -->
+        <button class="dock-btn btn-speaker" id="speakerBtn" onclick="toggleVoiceReader()" title="వాయిస్ రీడర్ (చదివి వినిపించండి)">
+            🔊
+        </button>
 
-    <!-- Modal 1: Login & Profile Setup -->
+        <!-- Voice Recognition Mic Button -->
+        <button class="dock-btn btn-mic" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">
+            🎙️
+        </button>
+    </div>
+
+    <div id="voice-toast" class="voice-status-toast">వింటున్నాము...</div>
+
+    <!-- Modal 1: Login -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
-            
             <div id="modal-step-login">
                 <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
                 <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు OTP ద్వారా సులభంగా లాగిన్ అవ్వండి</p>
-                
                 <div class="form-group">
                     <label>మొబైల్ నంబర్ (Mobile Number):</label>
                     <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10">
                 </div>
-
                 <div class="otp-inputs" id="otpSection">
                     <div class="form-group">
                         <label>OTP నమోదు చేయండి:</label>
                         <input type="text" id="otpInput" placeholder="4 అంకెల OTP (ఉదా: 1234)" maxlength="4">
                     </div>
                 </div>
-
                 <button class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
             </div>
 
             <div id="modal-step-profile" style="display: none;">
                 <h3 class="modal-title">👤 రైతు ప్రొఫైల్ సెటప్</h3>
-                <p style="font-size: 0.85rem; color: #666;">మీ వివరాలు మరియు పొలం లొకేషన్ నమోదు చేసుకోండి</p>
-
                 <div class="photo-preview-container">
                     <img id="profilePreviewImg" src="https://via.placeholder.com/90?text=Photo" alt="Profile" class="photo-preview"><br>
                     <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి (Upload Photo)</label>
                     <input type="file" id="photoUploadInput" accept="image/*" style="display:none" onchange="previewPhoto(event)">
                 </div>
-
                 <div class="form-group">
                     <label>రైతు పూర్తి పేరు (Farmer Name):</label>
                     <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
                 </div>
-
                 <div class="form-group">
                     <label>మీ విభాగం (Category):</label>
                     <select id="userCategorySelect">
@@ -1314,7 +1302,6 @@
                         <option>వ్యాపారధారి (Trader/Buyer)</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>🛰️ పొలం లొకేషన్ (శాటిలైట్ మానిటరింగ్ కోసం):</label>
                     <div class="gps-box">
@@ -1322,20 +1309,16 @@
                         <div class="gps-status" id="gpsStatusText">లొకేషన్ ఇంకా నమోదు కాలేదు</div>
                     </div>
                 </div>
-
                 <button class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేయండి</button>
             </div>
-
         </div>
     </div>
 
-    <!-- Modal 2: Settings Panel -->
+    <!-- Modal 2: Settings -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeSettingsModal()">&times;</span>
             <h3 class="modal-title">⚙️ యాప్ సెట్టింగ్స్ (Settings)</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">మీ వ్యక్తిగత ఖాతా ప్రాధాన్యతలు సరిచూసుకోండి</p>
-
             <div class="form-group">
                 <label>🌐 భాష ఎంపిక (Select Language):</label>
                 <select id="appLanguageSelect">
@@ -1344,33 +1327,23 @@
                     <option value="hi">हिंदी (Hindi)</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>✏️ రైతు పేరు మార్పు (Edit Name):</label>
                 <input type="text" id="settingFarmerName" placeholder="రైతు పేరును సరిచేయండి">
             </div>
-
             <div class="form-group">
                 <label>📱 మొబైల్ నంబర్ మార్పు (Change Mobile):</label>
                 <input type="tel" id="settingMobileNumber" placeholder="కొత్త మొబైల్ నంబర్" maxlength="10">
             </div>
-
-            <div class="form-group">
-                <label>🌾 ప్రధాన పంట & పొలం విస్తీర్ణం (Acres):</label>
-                <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
-            </div>
-
             <button class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
         </div>
     </div>
 
-    <!-- Modal 3: Contact Us Panel -->
+    <!-- Modal 3: Contact Us -->
     <div class="modal-overlay" id="contactModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeContactModal()">&times;</span>
             <h3 class="modal-title">📞 మమ్మల్ని సంప్రదించండి (Contact Us)</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">ఏదైనా సమస్య లేదా సహకారం కోసం మా కార్యాలయాన్ని సంప్రదించండి:</p>
-
             <div style="background:#f9fbf9; border:1px solid #c8e6c9; border-radius:8px; padding:1rem; font-size:0.9rem;">
                 <p>🏢 <strong>కంపెనీ:</strong> AgriConnect Technologies</p>
                 <p>📜 <strong>UDYAM Reg:</strong> UDYAM-TS-31-0063048</p>
@@ -1392,7 +1365,7 @@
 
     <!-- Interactive JavaScript Engine -->
     <script>
-        /* 1. Seamless Single-Page Multi-View Switcher */
+        /* 1. View Switching */
         function switchView(viewName) {
             const views = ['home', 'services', 'about', 'why'];
             views.forEach(v => {
@@ -1411,40 +1384,18 @@
             }
         }
 
-        /* 2. Hamburger Side Drawer Controls */
+        /* 2. Drawer Controls */
         function toggleDrawer() {
-            const overlay = document.getElementById('drawerOverlay');
-            const sidebar = document.getElementById('drawerSidebar');
-            overlay.classList.toggle('open');
-            sidebar.classList.toggle('open');
+            document.getElementById('drawerOverlay').classList.toggle('open');
+            document.getElementById('drawerSidebar').classList.toggle('open');
         }
-
-        function openLoginModalFromDrawer() {
-            toggleDrawer();
-            openLoginModal();
-        }
-
-        function openSettingsModalFromDrawer() {
-            toggleDrawer();
-            openSettingsModal();
-        }
-
-        function openContactModalFromDrawer() {
-            toggleDrawer();
-            openContactModal();
-        }
-
-        /* Direct Drawer Logout Handler */
+        function openLoginModalFromDrawer() { toggleDrawer(); openLoginModal(); }
+        function openSettingsModalFromDrawer() { toggleDrawer(); openSettingsModal(); }
+        function openContactModalFromDrawer() { toggleDrawer(); openContactModal(); }
         function handleDrawerLogout() {
             toggleDrawer();
             if (confirm('మీరు ఖాతా నుండి లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
                 document.getElementById('drawer-login-text').innerText = 'Login / ప్రొఫైల్';
-                document.getElementById('farmerNameInput').value = '';
-                document.getElementById('mobileNumberInput').value = '';
-                document.getElementById('settingFarmerName').value = '';
-                document.getElementById('modal-step-login').style.display = 'block';
-                document.getElementById('modal-step-profile').style.display = 'none';
-                otpSent = false;
                 alert('మీరు విజయవంతంగా లాగౌట్ అయ్యారు.');
             }
         }
@@ -1452,124 +1403,136 @@
         /* 3. Modal Controllers */
         function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
-
         function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
         function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
-
         function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
         function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
 
-        /* 4. Live Date & Clock Engine */
+        /* 4. Live Clock */
         function updateLiveClock() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { hour12: true });
-            document.getElementById('liveClock').innerText = timeString;
-
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateString = now.toLocaleDateString('te-IN', options);
-            document.getElementById('liveDate').innerText = dateString;
+            document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
+            document.getElementById('liveDate').innerText = now.toLocaleDateString('te-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
         setInterval(updateLiveClock, 1000);
         updateLiveClock();
 
-        /* 5. Role Sub-Tab Switching inside Services */
+        /* 5. Role Switching */
         function showFeature(role, widgetElement) {
-            const widgets = document.querySelectorAll('.role-widget');
-            widgets.forEach(w => w.classList.remove('active'));
-
-            const contents = document.querySelectorAll('.feature-content');
-            contents.forEach(c => c.classList.remove('active'));
-
+            document.querySelectorAll('.role-widget').forEach(w => w.classList.remove('active'));
+            document.querySelectorAll('.feature-content').forEach(c => c.classList.remove('active'));
             widgetElement.classList.add('active');
-            const targetFeature = document.getElementById(role + '-feature');
-            if (targetFeature) {
-                targetFeature.classList.add('active');
-            }
+            const target = document.getElementById(role + '-feature');
+            if(target) target.classList.add('active');
         }
 
-        /* 6. Mobile & OTP Simulation */
+        /* 6. Mobile & OTP */
         let otpSent = false;
         function handleOtpFlow() {
             const mobile = document.getElementById('mobileNumberInput').value.trim();
-            const btn = document.getElementById('btnOtpAction');
-            const otpSection = document.getElementById('otpSection');
-
             if (!otpSent) {
-                if (mobile.length !== 10) {
-                    alert('దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.');
-                    return;
-                }
-                otpSection.style.display = 'block';
-                btn.innerText = 'లాగిన్ అవ్వండి (Verify & Login)';
+                if (mobile.length !== 10) { alert('సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.'); return; }
+                document.getElementById('otpSection').style.display = 'block';
+                document.getElementById('btnOtpAction').innerText = 'లాగిన్ అవ్వండి (Verify)';
                 otpSent = true;
-                alert('మీ మొబైల్ కు OTP పంపబడింది! (డెమో కోడ్: 1234)');
+                alert('OTP పంపబడింది! (డెమో కోడ్: 1234)');
             } else {
-                const otp = document.getElementById('otpInput').value.trim();
-                if (otp === '' || otp.length < 4) {
-                    alert('దయచేసి సరైన 4 అంకెల OTP ని నమోదు చేయండి.');
-                    return;
-                }
                 document.getElementById('modal-step-login').style.display = 'none';
                 document.getElementById('modal-step-profile').style.display = 'block';
-                document.getElementById('settingMobileNumber').value = mobile;
             }
         }
-
-        /* 7. Photo Preview */
         function previewPhoto(event) {
             const reader = new FileReader();
-            reader.onload = function() {
-                document.getElementById('profilePreviewImg').src = reader.result;
-            };
-            if(event.target.files[0]) {
-                reader.readAsDataURL(event.target.files[0]);
-            }
+            reader.onload = () => document.getElementById('profilePreviewImg').src = reader.result;
+            if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
         }
-
-        /* 8. GPS Farm Location Capture */
         function captureLocation() {
-            const gpsText = document.getElementById('gpsStatusText');
             if ("geolocation" in navigator) {
-                gpsText.innerText = "శాటిలైట్ సిగ్నల్ వెతుకుతున్నాము...";
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude.toFixed(5);
-                        const lon = position.coords.longitude.toFixed(5);
-                        gpsText.innerHTML = `✅ లొకేషన్ ఖరారైంది: <strong>Lat: ${lat}, Lon: ${lon}</strong>`;
-                    },
-                    () => {
-                        gpsText.innerText = "GPS ఆన్ చేసి మళ్లీ ప్రయత్నించండి.";
-                    }
-                );
-            } else {
-                gpsText.innerText = "మీ పరికరంలో లొకేషన్ సదుపాయం లేదు.";
+                navigator.geolocation.getCurrentPosition((pos) => {
+                    document.getElementById('gpsStatusText').innerHTML = `✅ Lat: ${pos.coords.latitude.toFixed(4)}, Lon: ${pos.coords.longitude.toFixed(4)}`;
+                });
             }
         }
-
-        /* 9. Save Profile & Settings */
         function saveProfile() {
             const name = document.getElementById('farmerNameInput').value.trim();
-            if(!name) {
-                alert('దయచేసి మీ పేరు రాయండి.');
-                return;
-            }
-            alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ మరియు పొలం లొకేషన్ సేవ్ అయ్యాయి.`);
+            if(!name) { alert('పేరు రాయండి.'); return; }
             document.getElementById('drawer-login-text').innerText = name;
-            document.getElementById('settingFarmerName').value = name;
             closeLoginModal();
+            alert(`స్వాగతం, ${name}! ప్రొఫైల్ సేవ్ అయింది.`);
         }
-
         function saveSettings() {
-            const updatedName = document.getElementById('settingFarmerName').value.trim();
-            const lang = document.getElementById('appLanguageSelect').value;
-            if (updatedName) {
-                document.getElementById('drawer-login-text').innerText = updatedName;
-            }
-            alert(`సెట్టింగ్స్ సేవ్ చేయబడ్డాయి! (భాష: ${lang.toUpperCase()})`);
+            alert('సెట్టింగ్స్ సేవ్ అయ్యాయి.');
             closeSettingsModal();
         }
 
-        /* 10. Telugu Voice Assistant */
+        /* ================= 7. FLOATING SPEAKER VOICE READER (TEXT-TO-SPEECH) ================= */
+        let isVoiceReaderActive = false;
+        let activeSpeakingElement = null;
+
+        function toggleVoiceReader() {
+            const speakerBtn = document.getElementById('speakerBtn');
+            const toast = document.getElementById('voice-toast');
+
+            if ('speechSynthesis' in window) {
+                if (isVoiceReaderActive) {
+                    window.speechSynthesis.cancel();
+                    isVoiceReaderActive = false;
+                    speakerBtn.classList.remove('reading-active');
+                    if(activeSpeakingElement) activeSpeakingElement.classList.remove('speaking-highlight');
+                    toast.innerText = "🔇 వాయిస్ రీడర్ ఆపబడింది";
+                    toast.style.display = 'block';
+                    setTimeout(() => toast.style.display = 'none', 2000);
+                } else {
+                    isVoiceReaderActive = true;
+                    speakerBtn.classList.add('reading-active');
+                    toast.innerText = "🔊 వాయిస్ రీడర్ ఆన్ అయింది! ఏదైనా బాక్స్ పై నొక్కండి.";
+                    toast.style.display = 'block';
+                    setTimeout(() => toast.style.display = 'none', 3000);
+                    speakText("వాయిస్ రీడర్ ఆన్ అయింది. మీరు ఏ బాక్స్ పై నొక్కితే ఆ వివరాలను చదివి వినిపిస్తాము.");
+                }
+            } else {
+                alert('మీ బ్రౌజర్‌లో స్పీచ్ సదుపాయం లేదు.');
+            }
+        }
+
+        function speakElement(el) {
+            if (!isVoiceReaderActive) return;
+
+            window.speechSynthesis.cancel();
+            if (activeSpeakingElement) {
+                activeSpeakingElement.classList.remove('speaking-highlight');
+            }
+
+            activeSpeakingElement = el;
+            el.classList.add('speaking-highlight');
+
+            // Extract clean readable text
+            let textToRead = el.innerText.replace(/[\n\r]+/g, '. ').replace(/\s+/g, ' ');
+            speakText(textToRead, () => {
+                el.classList.remove('speaking-highlight');
+            });
+        }
+
+        function speakText(text, onEndCallback) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'te-IN'; // Telugu speech
+            utterance.rate = 0.95; // Clear natural speed
+            utterance.pitch = 1.0;
+
+            utterance.onend = function() {
+                if (onEndCallback) onEndCallback();
+            };
+            utterance.onerror = function() {
+                if (onEndCallback) onEndCallback();
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        /* ================= 8. FLOATING MIC VOICE ASSISTANT (SPEECH-TO-TEXT) ================= */
         let recognition;
         let isListening = false;
 
@@ -1584,29 +1547,23 @@
                 isListening = true;
                 document.getElementById('voiceBtn').classList.add('listening');
                 const toast = document.getElementById('voice-toast');
-                toast.innerText = "🎙️ వింటున్నాము... తెలుగులో మాట్లాడండి";
+                toast.innerText = "🎙️ వింటున్నాము... మాట్లాడండి";
                 toast.style.display = 'block';
             };
 
             recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript.toLowerCase();
-                handleVoiceCommand(transcript);
+                const cmd = event.results[0][0].transcript.toLowerCase();
+                handleVoiceCommand(cmd);
             };
 
-            recognition.onerror = function() { stopListening(); };
-            recognition.onend = function() { stopListening(); };
+            recognition.onerror = () => stopListening();
+            recognition.onend = () => stopListening();
         }
 
         function toggleVoiceAssistant() {
-            if (!recognition) {
-                alert('దయచేసి Chrome బ్రౌజర్ ఉపయోగించండి.');
-                return;
-            }
-            if (isListening) {
-                recognition.stop();
-            } else {
-                recognition.start();
-            }
+            if (!recognition) { alert('Chrome బ్రౌజర్ ఉపయోగించండి.'); return; }
+            if (isListening) recognition.stop();
+            else recognition.start();
         }
 
         function stopListening() {
@@ -1619,63 +1576,13 @@
             const toast = document.getElementById('voice-toast');
             toast.innerText = `మీరు చెప్పినది: "${cmd}"`;
             toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            setTimeout(() => toast.style.display = 'none', 3000);
 
-            if (cmd.includes('హోమ్') || cmd.includes('home')) {
-                switchView('home');
-                return;
-            }
-            if (cmd.includes('గురించి') || cmd.includes('about')) {
-                switchView('about');
-                return;
-            }
-            if (cmd.includes('ఎందుకు') || cmd.includes('why')) {
-                switchView('why');
-                return;
-            }
-            if (cmd.includes('లాగౌట్') || cmd.includes('logout')) {
-                handleDrawerLogout();
-                return;
-            }
-            if (cmd.includes('కాంటాక్ట్') || cmd.includes('సంప్రదించు')) {
-                openContactModal();
-                return;
-            }
-            if (cmd.includes('సేవలు') || cmd.includes('విభాగాలు') || cmd.includes('features')) {
-                switchView('services');
-                return;
-            }
-            if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) {
-                openLoginModal();
-                return;
-            }
-
-            switchView('services');
-            if (cmd.includes('కూలీ') || cmd.includes('కూలీలు')) {
-                showFeature('labor', document.getElementById('tab-labor'));
-                return;
-            }
-            if (cmd.includes('వ్యాపారి') || cmd.includes('వ్యాపారులు')) {
-                showFeature('trader', document.getElementById('tab-trader'));
-                return;
-            }
-
-            showFeature('farmer', document.getElementById('tab-farmer'));
-            let targetCardId = null;
-            if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు')) targetCardId = 'card-doctor';
-            else if (cmd.includes('వాతావరణం') || cmd.includes('వర్షం')) targetCardId = 'card-weather';
-            else if (cmd.includes('శాటిలైట్')) targetCardId = 'card-satellite';
-            else if (cmd.includes('సబ్సిడీ') || cmd.includes('పథకాలు')) targetCardId = 'card-subsidy';
-            else if (cmd.includes('కరెంట్') || cmd.includes('విద్యుత్')) targetCardId = 'card-power';
-            else if (cmd.includes('మార్కెట్') || cmd.includes('ధర')) targetCardId = 'card-market';
-            else if (cmd.includes('యంత్రాలు') || cmd.includes('ట్రాక్టర్')) targetCardId = 'card-machinery';
-
-            if (targetCardId) {
-                const targetCard = document.getElementById(targetCardId);
-                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                targetCard.classList.add('highlight');
-                setTimeout(() => { targetCard.classList.remove('highlight'); }, 3000);
-            }
+            if (cmd.includes('హోమ్') || cmd.includes('home')) switchView('home');
+            else if (cmd.includes('గురించి') || cmd.includes('about')) switchView('about');
+            else if (cmd.includes('ఎందుకు') || cmd.includes('why')) switchView('why');
+            else if (cmd.includes('సేవలు') || cmd.includes('features')) switchView('services');
+            else if (cmd.includes('చదువు') || cmd.includes('స్పీకర్')) toggleVoiceReader();
         }
     </script>
 
