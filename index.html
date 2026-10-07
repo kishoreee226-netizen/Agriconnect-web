@@ -392,7 +392,7 @@
 
         /* ABOUT US & WHY CHOOSE US VIEWS */
         .info-page-box {
-            max-width: 920px;
+            max-width: 950px;
             margin: 2rem auto;
             background: white;
             padding: 2.2rem;
@@ -414,7 +414,48 @@
             line-height: 1.7;
         }
 
-        /* WORLD FIRST HERO HIGHLIGHT CARD */
+        /* Innovation Special Card */
+        .innovation-banner {
+            background: #e8f5e9;
+            border-left: 5px solid #2e7d32;
+            padding: 1.2rem;
+            border-radius: 6px;
+            margin: 1.2rem 0;
+        }
+        .innovation-banner h4 {
+            color: #1B5E20;
+            font-size: 1.2rem;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Cards inside About Us & Why Choose */
+        .about-highlights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.5rem;
+        }
+        .highlight-item {
+            background: #f9fbf9;
+            border: 1px solid #dcedc8;
+            border-radius: 10px;
+            padding: 1.3rem;
+            transition: 0.2s;
+        }
+        .highlight-item:hover {
+            border-color: #2e7d32;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+        }
+        .highlight-item h5 {
+            color: #1B5E20;
+            font-size: 1.05rem;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* WORLD FIRST HERO HIGHLIGHT CARD IN WHY CHOOSE US */
         .world-first-card {
             background: linear-gradient(135deg, #1B5E20, #2E7D32);
             color: white;
@@ -447,27 +488,6 @@
             font-size: 0.96rem;
             margin-bottom: 0;
             line-height: 1.6;
-        }
-
-        .about-highlights {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.2rem;
-            margin-top: 1.2rem;
-        }
-        .highlight-item {
-            background: #f9fbf9;
-            border: 1px solid #dcedc8;
-            border-radius: 8px;
-            padding: 1.2rem;
-        }
-        .highlight-item h5 {
-            color: #2e7d32;
-            font-size: 1.05rem;
-            margin-bottom: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         /* HAMBURGER SIDE DRAWER */
@@ -816,7 +836,6 @@
                 </a>
             </li>
             <li>
-                <!-- Logout Option Added Directly into 3-Lines Drawer -->
                 <button class="drawer-menu-item logout-item" onclick="handleDrawerLogout()">
                     <span class="icon">🚪</span> లాగౌట్ (Logout)
                 </button>
@@ -836,7 +855,7 @@
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
         <div class="voice-pill">
-            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "ఎందుకు", లేదా "లాగౌట్" అని తెలుగులో మాట్లాడండి
+            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "గురించి", లేదా "ఎందుకు" అని తెలుగులో మాట్లాడండి
         </div>
     </section>
 
@@ -850,7 +869,7 @@
                 <div class="clock-display" id="liveClock">00:00:00 AM</div>
                 <div class="date-display" id="liveDate">తేదీ లోడ్ అవుతోంది...</div>
                 <div style="margin-top: 10px; background: #f9fbf9; padding: 8px; border-radius: 6px; font-size: 0.85rem; text-align: center; color: #2e7d32;">
-                    🌾 నేటి సూచన: విత్తనాలు నాటడానికి మరియు ఎరువుల వాడకానికి అనుకూలమైన వాతావరణం.
+                    🌾 నేటి సూచన: విత్తనాలు నాటడానికి మరియు సేంద్రీయ ఎరువుల వాడకానికి అనుకూలమైన వాతావరణం.
                 </div>
             </div>
 
@@ -1033,6 +1052,7 @@
                     </div>
 
                     <div id="card-crop" class="feature-card">
+                        <div class="feature-img-icon">🌱</div>
                         <div class="feature-info">
                             <h5>పంటల సమగ్ర సమాచారం (Crop Advisory)</h5>
                             <p>వరి, మిర్చి, పత్తి మొదలైన పంటలకు విత్తన ఎంపిక, ఎరువుల సమతుల్య వాడకం, తెగుళ్ల నివారణ సలహాలు.</p>
@@ -1155,21 +1175,53 @@
         </div>
     </section>
 
-    <!-- ================= VIEW 3: ABOUT US ================= -->
+    <!-- ================= VIEW 3: ABOUT US (UPDATED WITH MAIN INNOVATIONS) ================= -->
     <section id="about-view" class="page-view">
         <div class="info-page-box">
-            <h3>ℹ️ మా గురించి (About AgriConnect Technologies)</h3>
-            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక అత్యాధునిక అగ్రికల్చర్ టెక్నాలజీ వేదిక. సాంప్రదాయ వ్యవసాయాన్ని సరికొత్త డిజిటల్ టెక్నాలజీతో అనుసంధానం చేయడమే మా ప్రధాన ధ్యేయం.</p>
-            <p>భారతదేశంలో ఎక్కువమంది రైతులకు స్మార్ట్‌ఫోన్లలో టైప్ చేయడం లేదా సంక్లిష్టమైన మెనూలను నావిగేట్ చేయడం కష్టతరంగా ఉంటుంది. అందుకే మేము దేశంలోనే మొట్టమొదటిసారిగా పూర్తి స్థాయి <strong>వాయిస్ ఆధారిత (Voice-First Telugu AI)</strong> ప్లాట్‌ఫామ్‌ను రూపొందించాము.</p>
-            
+            <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
+            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం. గ్రామీణ రైతులు, వ్యవసాయ కూలీలు మరియు వ్యాపారులను అత్యాధునిక సాంకేతికతతో ఒకే తాటిపైకి తీసుకురావడమే మా ప్రధాన ధ్యేయం.</p>
+
+            <!-- Main Innovation Highlights -->
+            <div class="innovation-banner">
+                <h4>🚀 మా ప్రధాన ఆవిష్కరణ (Our Core Innovation):</h4>
+                <p>చదవడం, రాయడం రాని నిరుపేద గ్రామీణ రైతులు మరియు వ్యవసాయ కూలీల కోసం <strong>100% తెలుగు వాయిస్ గైడెన్స్ (Voice Guidance)</strong> తో నడిచే ప్రపంచంలోనే మొట్టమొదటి హైపర్‌లోకల్ వేదిక AgriConnect.</p>
+            </div>
+
             <div class="about-highlights">
+                <!-- 1. 5-10 KM Hyperlocal Labor Matching -->
                 <div class="highlight-item">
-                    <h5>🎯 మా లక్ష్యం (Our Mission)</h5>
-                    <p>రైతులకు, వ్యవసాయ కూలీలకు మరియు వ్యాపారధారులకు మధ్య దళారుల వ్యవస్థను తొలగించి పారదర్శకమైన, లాభదాయకమైన వేదికను అందించడం.</p>
+                    <h5>📍 5-10 కి.మీ హైపర్‌లోకల్ లేబర్ మ్యాచింగ్</h5>
+                    <p>రైతు తన పొలం ఉన్న ప్రాంతం నుండి కేవలం <strong>5 నుండి 10 కిలోమీటర్ల పరిధిలోని</strong> వ్యవసాయ కూలీలను, గ్రూపులను క్షణాల్లో కనుగొనవచ్చు. కూలీల కొరత సమస్యకు ఇది శాశ్వత పరిష్కారం.</p>
                 </div>
+
+                <!-- 2. Direct Communication (No Middlemen) -->
                 <div class="highlight-item">
-                    <h5>💡 మా ప్రత్యేకత (Our Innovation)</h5>
-                    <p>శాటిలైట్ ఇమేజింగ్, ఆర్టిఫిషియల్ ఇంటెలిజెన్స్ (AI క్రాప్ డాక్టర్) మరియు రియల్-టైమ్ మార్కెట్ సమాచారాన్ని తెలుగు వాయిస్ ద్వారా సులభతరం చేయడం.</p>
+                    <h5>🤝 రైతు - కూలీ ప్రత్యక్ష సంభాషణ</h5>
+                    <p>మధ్యలో ఎటువంటి దళారులు, ఏజెంట్లు ఉండరు. రైతులు నేరుగా కూలీల ఫోన్ నంబర్‌కు కాల్ చేసి రోజువారీ పనులు మరియు కూలీ రేట్లను నేరుగా నిర్ణయించుకోవచ్చు.</p>
+                </div>
+
+                <!-- 3. Direct Crop Selling to Buyers -->
+                <div class="highlight-item">
+                    <h5>🌾 కొనుగోలుదారులకు నేరుగా పంట విక్రయం</h5>
+                    <p>మధ్యవర్తుల మోసాలకు తావులేకుండా రైతులు తాము పండించిన పంటను నేరుగా ట్రేడర్స్ మరియు బయ్యర్లకు అత్యుత్తమ మార్కెట్ ధర వద్ద విక్రయించవచ్చు.</p>
+                </div>
+
+                <!-- 4. Encouraging Organic Farming -->
+                <div class="highlight-item">
+                    <h5>🌱 సేంద్రీయ వ్యవసాయానికి ప్రోత్సాహం (Organic Farming)</h5>
+                    <p>భూసారాన్ని రక్షించే సహజ సిద్ధమైన సేంద్రీయ ఎరువులు, బయో-ఫెర్టిలైజర్స్ వాడకాన్ని ప్రోత్సహిస్తూ ఆర్గానిక్ పంటలకు ప్రత్యేక మార్కెట్ గుర్తింపు కల్పించడం మా ప్రాధాన్యత.</p>
+                </div>
+
+                <!-- 5. All Crop Advisory & Pests Solution in Local Language -->
+                <div class="highlight-item">
+                    <h5>🎙️ స్థానిక భాషలో పంటలు & తెగుళ్ల నివారణ (Voice Guidance)</h5>
+                    <p>వరి, మిర్చి, పత్తితో సహా అన్ని రకాల పంటల వివరాలు, ఆశించే చీడపీడలు మరియు వాటి నివారణ మార్గాలను <strong>స్థానిక తెలుగు భాషలో వాయిస్ ద్వారా స్పష్టంగా విని తెలుసుకునే సదుపాయం</strong> కల్పించబడింది.</p>
+                </div>
+
+                <!-- 6. Mission -->
+                <div class="highlight-item">
+                    <h5>🎯 రైతే రాజు - సాంకేతికతే బలం</h5>
+                    <p>ఆర్టిఫిషియల్ ఇంటెలిజెన్స్, శాటిలైట్ మానిటరింగ్ మరియు వాయిస్ సాంకేతికతను జోడించి ప్రతి రైతును ఆర్థికంగా బలోపేతం చేయడమే AgriConnect లక్ష్యం.</p>
                 </div>
             </div>
         </div>
@@ -1185,7 +1237,7 @@
                 <span class="badge-world-first">🌍 World's 1st Innovation</span>
                 <h4>హైపర్‌లోకల్ లేబర్ మ్యాచింగ్ విత్ వాయిస్ గైడెన్స్</h4>
                 <p><strong>This is the first time introduced in the world with Voice Guidance!</strong><br>
-                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్ (తెలుగు మాటల సహాయం)</strong> తో సమీప గ్రామాల వారీగా ఖచ్చితమైన వ్యవసాయ కూలీలను అనుసంధానించే <strong>Hyperlocal Labor Matching</strong> సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
+                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్ (తెలుగు మాటల సహాయం)</strong> తో సమీప గ్రామాల వారీగా ఖచ్చితమైన వ్యవసాయ కూలీలను అనుసంధానించే <strong>Hyperlocal Labor Matching (5-10 KM Range)</strong> సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
             </div>
 
             <div class="about-highlights">
