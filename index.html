@@ -16,6 +16,7 @@
             color: #2c3e50;
             line-height: 1.6;
         }
+        /* Header */
         header {
             background-color: #1B5E20;
             color: white;
@@ -40,82 +41,154 @@
         header nav a:hover {
             color: #FFD54F;
         }
+        /* Hero Section */
         .hero {
             background: linear-gradient(rgba(27, 94, 32, 0.88), rgba(27, 94, 32, 0.88)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
             text-align: center;
-            padding: 4rem 1.5rem;
+            padding: 3.5rem 1.5rem;
         }
         .hero h2 {
-            font-size: 2.2rem;
+            font-size: 2.1rem;
             margin-bottom: 0.8rem;
         }
         .hero p {
             font-size: 1.1rem;
             max-width: 650px;
-            margin: 0 auto 1.5rem auto;
+            margin: 0 auto;
         }
-        .btn-download {
-            background-color: #FFD54F;
+        /* Section Title */
+        .section-title {
+            text-align: center;
+            margin: 2.5rem 1rem 1rem 1rem;
             color: #1B5E20;
-            padding: 0.8rem 1.8rem;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: bold;
-            display: inline-block;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-size: 1.6rem;
         }
-        .features {
-            max-width: 1000px;
-            margin: 3rem auto;
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+        /* 3 Interactive Widgets */
+        .role-widgets-container {
+            max-width: 960px;
+            margin: 0 auto 1.5rem auto;
             padding: 0 1rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
         }
-        .card {
+        .role-widget {
             background: white;
-            padding: 1.8rem;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            border-top: 4px solid #1B5E20;
+            padding: 1.5rem;
             text-align: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
         }
-        .card h3 {
+        .role-widget:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        .role-widget.active {
+            border-color: #1B5E20;
+            background-color: #e8f5e9;
+        }
+        .role-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .role-widget h3 {
             color: #1B5E20;
-            margin-bottom: 0.8rem;
+            font-size: 1.25rem;
+            margin-bottom: 0.3rem;
         }
-        .legal-links-box {
+        .role-widget span {
+            font-size: 0.85rem;
+            color: #555;
+            font-weight: 500;
+        }
+        /* Detailed Features Box */
+        .feature-details-box {
+            max-width: 960px;
+            margin: 0 auto 2.5rem auto;
+            padding: 0 1rem;
+        }
+        .feature-content {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            border-left: 6px solid #1B5E20;
+            animation: fadeIn 0.4s ease;
+        }
+        .feature-content.active {
+            display: block;
+        }
+        .feature-content h4 {
+            color: #1B5E20;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+        .feature-list {
+            list-style: none;
+        }
+        .feature-list li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.98rem;
+        }
+        .feature-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2e7d32;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* Legal & Links */
+        .legal-box {
             background: white;
             max-width: 700px;
             margin: 2rem auto;
-            padding: 2rem;
+            padding: 1.8rem;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .legal-links-box h3 {
+        .legal-box h4 {
             color: #1B5E20;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
         .legal-btns {
             display: flex;
             justify-content: center;
-            gap: 1.5rem;
+            gap: 1rem;
             flex-wrap: wrap;
         }
         .legal-btn {
-            background-color: #e8f5e9;
+            background-color: #f1f8e9;
             color: #1B5E20;
             padding: 0.7rem 1.4rem;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
             border: 1px solid #c8e6c9;
+            transition: 0.2s;
         }
         .legal-btn:hover {
             background-color: #c8e6c9;
         }
+        /* Footer */
         footer {
             background-color: #1a221a;
             color: #bbb;
@@ -132,51 +205,75 @@
 </head>
 <body>
 
+    <!-- Header -->
     <header>
         <h1>🌱 AgriConnect</h1>
         <nav>
-            <a href="#features">Features</a>
+            <a href="#services">సేవలు</a>
             <a href="privacy.html">Privacy Policy</a>
             <a href="terms.html">Terms & Conditions</a>
         </nav>
     </header>
 
+    <!-- Hero Section -->
     <section class="hero">
-        <h2>రైతు, కూలీ, వ్యాపారుల వారధి</h2>
+        <h2>స్మార్ట్ వ్యవసాయానికి నమ్మకమైన వేదిక</h2>
         <p>వ్యవసాయ కూలీల లభ్యత, యంత్రాల అద్దె మరియు ప్రత్యక్ష మార్కెట్ ధరలు – అన్నీ ఒకే వేదికపై!</p>
-        <a href="#features" class="btn-download">📲 AgriConnect Platform</a>
     </section>
 
-    <section class="features" id="features">
-        <div class="card">
-            <h3>🌾 రైతు వేదిక</h3>
-            <p>వరి, మిర్చి, పత్తి పంట అమ్మకం ప్రకటనలు సులభంగా పోస్ట్ చేయండి. సమీపంలోని కూలీలను వెతకండి.</p>
-        </div>
-        <div class="card">
-            <h3>🚜 యంత్రాల అద్దె</h3>
-            <p>ట్రాక్టర్లు, వరి కోత యంత్రాలు, డ్రోన్ స్ప్రేయింగ్ ఆపరేటర్ల వివరాలు క్షణాల్లో పొందండి.</p>
-        </div>
-        <div class="card">
-            <h3>📈 మార్కెట్ యార్డ్ ధరలు</h3>
-            <p>వరంగల్ ఏనుమాముల యార్డ్ మరియు స్థానిక మార్కెట్ రోజువారీ కనిష్ట, గరిష్ట ధరల లైవ్ అప్‌డేట్స్.</p>
-        </div>
-    </section>
+    <!-- Interactive Section -->
+    <div id="services">
+        <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
+        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విడ్జెట్ పై క్లిక్ చేయండి</p>
 
-    <section class="legal-links-box">
-        <h3>Legal & Policies</h3>
-        <p style="margin-bottom: 1.2rem; color: #666;">Please read our terms and policy documents carefully:</p>
-        <div class="legal-btns">
-            <a href="privacy.html" class="legal-btn">📄 Privacy Policy</a>
-            <a href="terms.html" class="legal-btn">📜 Terms & Conditions</a>
+        <!-- 3 Clickable Widgets -->
+        <div class="role-widgets-container">
+            <div class="role-widget active" onclick="showFeature('farmer', this)">
+                <div class="role-icon">🌾</div>
+                <h3>రైతులు</h3>
+                <span>(Farmers Hub)</span>
+            </div>
+
+            <div class="role-widget" onclick="showFeature('labor', this)">
+                <div class="role-icon">👨‍🌾</div>
+                <h3>వ్యవసాయ కూలీలు</h3>
+                <span>(Farm Laborers)</span>
+            </div>
+
+            <div class="role-widget" onclick="showFeature('trader', this)">
+                <div class="role-icon">🏪</div>
+                <h3>వ్యాపారధారులు</h3>
+                <span>(Traders & Buyers)</span>
+            </div>
         </div>
-    </section>
 
-    <footer>
-        <p><strong>AgriConnect Technologies</strong> | UDYAM-TS-31-0063048</p>
-        <p>Hanamkonda / Warangal, Telangana, India</p>
-        <p>Contact: <a href="mailto:agriconnect.office@gmail.com">agriconnect.office@gmail.com</a></p>
-        <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect. All Rights Reserved.</p>
-    </footer>
+        <!-- Dynamic Content Details -->
+        <div class="feature-details-box">
+            <!-- Farmers Features -->
+            <div id="farmer-feature" class="feature-content active">
+                <h4>🌾 రైతులకు లభించే సేవలు & ఫీచర్లు:</h4>
+                <ul class="feature-list">
+                    <li><strong>కూలీల బుకింగ్:</strong> విత్తనాలు నాటడం, కలుపు తీత, మరియు పంట కోతలకు అవసరమైన స్థానిక కూలీల బృందాలను సులభంగా సంప్రదించవచ్చు.</li>
+                    <li><strong>యంత్రాల అద్దె (Machinery):</strong> ట్రాక్టర్లు, రోటవేటర్లు, వరి కోత మిషన్లు, మరియు డ్రోన్ స్ప్రేయింగ్ ఆపరేటర్ల ఫోన్ నంబర్లు క్షణాల్లో లభిస్తాయి.</li>
+                    <li><strong>పంట అమ్మకం ప్రకటనలు:</strong> మీ వద్ద సిద్ధంగా ఉన్న వరి, మిర్చి, పత్తి మొదలైన పంటల వివరాలు, ఫోటోలు పోస్ట్ చేసి వ్యాపారులను నేరుగా ఆకర్షించవచ్చు.</li>
+                    <li><strong>లైవ్ మార్కెట్ రేట్లు:</strong> వరంగల్ ఏనుమాముల మార్కెట్ యార్డ్ రోజువారీ కనిష్ట, గరిష్ట మరియు మోడల్ ధరల తాజా సమాచారం.</li>
+                </ul>
+            </div>
 
-</body>
-</html>
+            <!-- Labor Features -->
+            <div id="labor-feature" class="feature-content">
+                <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు & ఫీచర్లు:</h4>
+                <ul class="feature-list">
+                    <li><strong>పనుల లభ్యత వివరాలు:</strong> మీ పరిసర గ్రామాల్లో రైతులకు అవసరమైన పనుల సమాచారాన్ని రోజూ తెలుసుకోవచ్చు.</li>
+                    <li><strong>నేరుగా రైతులతో మాట్లాడే అవకాశం:</strong> మధ్యవర్తులు లేకుండా నేరుగా రైతులకే ఫోన్ చేసి పని మరియు రోజువారీ కూలీ రేట్లను ఖరారు చేసుకోవచ్చు.</li>
+                    <li><strong>గ్రూప్ లీడర్ ప్రొఫైల్:</strong> కూలీల బృందం లీడర్లు తమ గ్రూప్‌లో ఎంతమంది సభ్యులు ఉన్నారో నమోదు చేసుకుని పెద్ద పనులను పొందవచ్చు.</li>
+                    <li><strong>వాయిస్ అసిస్టెంట్:</strong> చదవడం రాని వారి కోసం సులభమైన వాయిస్ ద్వారా పనుల సమాచారం వినే సదుపాయం.</li>
+                </ul>
+            </div>
+
+            <!-- Trader Features -->
+            <div id="trader-feature" class="feature-content">
+                <h4>🏪 వ్యాపారధారులకు లభించే సేవలు & ఫీచర్లు:</h4>
+                <ul class="feature-list">
+                    <li><strong>ప్రత్యక్ష పంట కొనుగోలు:</strong> ప్రాంతాల వారీగా రైతులు అమ్మకానికి పెట్టిన వరి, మిర్చి, మొక్కజొన్న లాట్ల వివరాలను పరిశీలించవచ్చు.</li>
+                    <li><strong>రైతులతో డైరెక్ట్ కమ్యూనికే
