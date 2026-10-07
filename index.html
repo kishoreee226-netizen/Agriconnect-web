@@ -12,7 +12,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
         body {
-            background-color: #f7faf7;
+            background-color: #f4f7f4;
             color: #2c3e50;
             line-height: 1.6;
         }
@@ -35,6 +35,7 @@
             gap: 10px;
             text-decoration: none;
             color: white;
+            cursor: pointer;
         }
         .header-logo {
             width: 42px;
@@ -51,17 +52,22 @@
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
         }
         .nav-links a {
             color: white;
             text-decoration: none;
             margin-left: 1rem;
-            font-weight: 500;
-            font-size: 0.9rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: 0.2s;
         }
-        .nav-links a:hover {
-            color: #FFD54F;
+        .nav-links a:hover, .nav-links a.active-link {
+            color: #1B5E20;
+            background-color: #FFD54F;
         }
         .btn-login-trigger {
             background-color: #FFD54F;
@@ -81,19 +87,20 @@
             background-color: #ffe082;
             transform: scale(1.03);
         }
-        /* Hero Section */
+
+        /* Hero Banner */
         .hero {
             background: linear-gradient(rgba(27, 94, 32, 0.9), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
             text-align: center;
-            padding: 3rem 1.2rem;
+            padding: 2.8rem 1.2rem;
         }
         .hero-logo-container {
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
         }
         .hero-logo {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             background: white;
             border-radius: 50%;
             padding: 5px;
@@ -102,7 +109,7 @@
         }
         .hero h2 {
             font-size: 2.2rem;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
             font-weight: 700;
         }
         .hero .tagline {
@@ -113,13 +120,7 @@
             text-transform: uppercase;
             margin-bottom: 0.8rem;
         }
-        .hero p {
-            font-size: 1rem;
-            max-width: 650px;
-            margin: 0 auto 1.2rem auto;
-            opacity: 0.95;
-        }
-        .voice-instruction-pill {
+        .voice-pill {
             display: inline-block;
             background: rgba(255, 255, 255, 0.15);
             border: 1px dashed #FFD54F;
@@ -128,12 +129,128 @@
             border-radius: 20px;
             font-size: 0.85rem;
         }
-        /* Section Titles */
+
+        /* HOME DASHBOARD GRID */
+        .dashboard-container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        .dash-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.4rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+            border-top: 4px solid #1B5E20;
+        }
+        .dash-card h4 {
+            color: #1B5E20;
+            font-size: 1.15rem;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #edf2ed;
+            padding-bottom: 0.5rem;
+        }
+        /* Live Time & Calendar Card */
+        .clock-display {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1B5E20;
+            text-align: center;
+            margin: 0.5rem 0;
+            letter-spacing: 1px;
+        }
+        .date-display {
+            text-align: center;
+            color: #555;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        /* Market Rates Table */
+        .rates-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            margin-top: 0.5rem;
+        }
+        .rates-table th, .rates-table td {
+            padding: 8px 6px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .rates-table th {
+            background-color: #f1f8e9;
+            color: #1B5E20;
+        }
+        .rate-high {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+        /* Live Weather Display */
+        .weather-info {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: #e8f5e9;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 0.5rem;
+        }
+        .weather-temp {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1B5E20;
+        }
+        /* Ads & Equipment Slider Cards */
+        .ad-banner-box {
+            background: #fff8e1;
+            border: 1px dashed #ffa000;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+        }
+        .ad-banner-box h5 {
+            color: #b78103;
+            font-size: 0.98rem;
+            margin-bottom: 0.2rem;
+        }
+        .ad-banner-box p {
+            font-size: 0.85rem;
+            color: #5d4037;
+        }
+        /* Helpline Contacts */
+        .helpline-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.88rem;
+        }
+        .helpline-number {
+            font-weight: bold;
+            color: #1B5E20;
+            text-decoration: none;
+            background: #e8f5e9;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        /* SERVICES SECTION (Initially Hidden or Shown via Navigation) */
+        #services-view {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
         .section-title {
             text-align: center;
-            margin: 2.5rem 1rem 0.3rem 1rem;
+            margin: 2.2rem 1rem 0.3rem 1rem;
             color: #1B5E20;
-            font-size: 1.55rem;
+            font-size: 1.6rem;
         }
         .section-subtitle {
             text-align: center;
@@ -141,7 +258,6 @@
             font-size: 0.92rem;
             margin-bottom: 1.5rem;
         }
-        /* Role Tabs/Widgets */
         .role-widgets-container {
             max-width: 960px;
             margin: 0 auto 1.5rem auto;
@@ -182,7 +298,6 @@
             color: #555;
             font-weight: 500;
         }
-        /* Feature Content Boxes */
         .feature-details-box {
             max-width: 1050px;
             margin: 0 auto 2.5rem auto;
@@ -207,7 +322,6 @@
             border-bottom: 2px solid #e8f5e9;
             padding-bottom: 0.5rem;
         }
-        /* Grid Cards for Features */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -264,7 +378,7 @@
             100% { transform: scale(1); }
         }
 
-        /* Floating Voice Assistant Button */
+        /* Voice Assistant Floating Button */
         .voice-float-btn {
             position: fixed;
             bottom: 25px;
@@ -310,7 +424,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* Modal Popup (Login & Profile Setup) */
+        /* Modal: Login & Profile */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -347,9 +461,6 @@
             color: #1B5E20;
             font-size: 1.3rem;
             margin-bottom: 0.3rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         .form-group {
             margin-top: 1rem;
@@ -368,7 +479,6 @@
             border-radius: 8px;
             font-size: 0.95rem;
         }
-        /* Profile Image Upload Preview */
         .photo-preview-container {
             text-align: center;
             margin: 0.8rem 0;
@@ -390,7 +500,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        /* GPS Location Box */
         .gps-box {
             background: #f1f8e9;
             border: 1px dashed #2e7d32;
@@ -416,17 +525,13 @@
             font-size: 1rem;
             cursor: pointer;
             margin-top: 1.2rem;
-            transition: 0.2s;
-        }
-        .btn-action-primary:hover {
-            background: #2e7d32;
         }
         .otp-inputs {
             display: none;
             margin-top: 0.8rem;
         }
 
-        /* Legal Documents Box */
+        /* Legal Box */
         .legal-box {
             background: white;
             max-width: 700px;
@@ -454,11 +559,8 @@
             text-decoration: none;
             font-weight: 600;
             border: 1px solid #c8e6c9;
-            transition: 0.2s;
         }
-        .legal-btn:hover {
-            background-color: #c8e6c9;
-        }
+
         /* Footer */
         footer {
             background-color: #1a221a;
@@ -476,43 +578,161 @@
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- Header Navigation -->
     <header>
-        <a href="index.html" class="header-brand">
+        <div class="header-brand" onclick="switchMainView('home')">
             <img src="logo.png" alt="AgriConnect Logo" class="header-logo" onerror="this.style.display='none'">
             <h1>AgriConnect Technologies</h1>
-        </a>
+        </div>
         <div class="nav-actions">
-            <button class="btn-login-trigger" onclick="openLoginModal()">
-                <span>👤</span> <span id="login-nav-text">లాగిన్ / ప్రొఫైల్</span>
-            </button>
             <div class="nav-links">
-                <a href="#services">సేవలు</a>
+                <a id="nav-home" class="active-link" onclick="switchMainView('home')">హోమ్ (Home)</a>
+                <a id="nav-services" onclick="switchMainView('services')">సేవలు & విభాగాలు (Services)</a>
                 <a href="privacy.html">Privacy Policy</a>
                 <a href="terms.html">Terms & Conditions</a>
             </div>
+            <button class="btn-login-trigger" onclick="openLoginModal()">
+                <span>👤</span> <span id="login-nav-text">లాగిన్ / ప్రొఫైల్</span>
+            </button>
         </div>
     </header>
 
-    <!-- Hero Section -->
+    <!-- Hero Banner -->
     <section class="hero">
         <div class="hero-logo-container">
             <img src="logo.png" alt="AgriConnect Logo" class="hero-logo" onerror="this.style.display='none'">
         </div>
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
-        <p>వ్యవసాయ కూలీల లభ్యత, యంత్రాల అద్దె, మార్కెట్ ధరలు మరియు సమగ్ర స్మార్ట్ ఫార్మింగ్ సేవలు – అన్నీ ఒకే వేదికపై!</p>
-        <div class="voice-instruction-pill">
-            🎙️ మైక్ పై నొక్కి "క్రాప్ డాక్టర్", "వాతావరణం", లేదా "లాగిన్" అని తెలుగులో చెప్పండి
+        <div class="voice-pill">
+            🎙️ మైక్ పై నొక్కి "హోమ్", "సేవలు", "వాతావరణం", లేదా "లాగిన్" అని తెలుగులో మాట్లాడండి
         </div>
     </section>
 
-    <!-- Interactive Role Section -->
-    <div id="services">
-        <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
-        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి (లేదా వాయిస్ వాడండి)</p>
+    <!-- ================= VIEW 1: HOME DASHBOARD ================= -->
+    <main id="home-view">
+        <div class="dashboard-container">
+            
+            <!-- 1. Live Time, Date & Calendar -->
+            <div class="dash-card">
+                <h4>📅 లైవ్ సమయం & క్యాలెండర్</h4>
+                <div class="clock-display" id="liveClock">00:00:00 AM</div>
+                <div class="date-display" id="liveDate">తేదీ లోడ్ అవుతోంది...</div>
+                <div style="margin-top: 10px; background: #f9fbf9; padding: 8px; border-radius: 6px; font-size: 0.85rem; text-align: center; color: #2e7d32;">
+                    🌾 నేటి సూచన: విత్తనాలు నాటడానికి మరియు ఎరువుల వాడకానికి అనుకూలమైన వాతావరణం.
+                </div>
+            </div>
 
-        <!-- 3 Role Widgets -->
+            <!-- 2. Live Weather Report -->
+            <div class="dash-card">
+                <h4>🌦️ లైవ్ వాతావరణం (వరంగల్ పరిసరాలు)</h4>
+                <div class="weather-info">
+                    <div>
+                        <div style="font-size: 2.2rem;">⛅</div>
+                        <div style="font-size: 0.85rem; color: #666;">పాక్షికంగా మేఘావృతం</div>
+                    </div>
+                    <div>
+                        <div class="weather-temp">31°C</div>
+                        <div style="font-size: 0.82rem; color: #444;">తేమ: 68% | గాలి: 12 km/h</div>
+                    </div>
+                </div>
+                <p style="font-size: 0.82rem; color: #555; margin-top: 8px; text-align: center;">
+                    🌧️ రాబోయే 24 గంటల్లో తేలికపాటి జల్లులు కురిసే అవకాశం ఉంది.
+                </p>
+            </div>
+
+            <!-- 3. Live Mandi / Market Yard Rates -->
+            <div class="dash-card">
+                <h4>📈 మార్కెట్ యార్డ్ లైవ్ ధరలు (క్వింటాల్‌కి)</h4>
+                <table class="rates-table">
+                    <thead>
+                        <tr>
+                            <th>పంట పేరు</th>
+                            <th>కనిష్ట ధర</th>
+                            <th>గరిష్ట ధర</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>మిర్చి (తేజ రకం)</td>
+                            <td>₹ 14,500</td>
+                            <td class="rate-high">₹ 18,200</td>
+                        </tr>
+                        <tr>
+                            <td>పత్తి (Cotton)</td>
+                            <td>₹ 6,800</td>
+                            <td class="rate-high">₹ 7,650</td>
+                        </tr>
+                        <tr>
+                            <td>వరి (BPT / సన్నాలు)</td>
+                            <td>₹ 2,320</td>
+                            <td class="rate-high">₹ 2,450</td>
+                        </tr>
+                        <tr>
+                            <td>మొక్కజొన్న (Maize)</td>
+                            <td>₹ 2,050</td>
+                            <td class="rate-high">₹ 2,200</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 4. Agriculture Dept Toll-Free & Contacts -->
+            <div class="dash-card">
+                <h4>📞 వ్యవసాయ శాఖ హెల్ప్‌లైన్ నంబర్లు</h4>
+                <div class="helpline-item">
+                    <span>కిసాన్ కాల్ సెంటర్ (ఉచితం)</span>
+                    <a href="tel:18001801551" class="helpline-number">1800-180-1551</a>
+                </div>
+                <div class="helpline-item">
+                    <span>వరంగల్ జిల్లా వ్యవసాయ అధికారి (DAO)</span>
+                    <a href="tel:08702444123" class="helpline-number">0870-2444123</a>
+                </div>
+                <div class="helpline-item">
+                    <span>వ్యవసాయ విద్యుత్ ఫిర్యాదుల విభాగం</span>
+                    <a href="tel:1912" class="helpline-number">1912</a>
+                </div>
+                <div class="helpline-item">
+                    <span>భూసార పరీక్షల కేంద్రం (హనుమకొండ)</span>
+                    <a href="tel:08702578900" class="helpline-number">0870-2578900</a>
+                </div>
+            </div>
+
+            <!-- 5. Fertilizer & Seeds Ads -->
+            <div class="dash-card">
+                <h4>📢 విత్తనాలు & ఎరువుల ఆఫర్లు (Agri Ads)</h4>
+                <div class="ad-banner-box">
+                    <h5>🌾 హైబ్రిడ్ వరి & మిర్చి విత్తనాలు అందుబాటులో ఉన్నాయి</h5>
+                    <p>ప్రభుత్వ గుర్తింపు పొందిన నాణ్యమైన విత్తనాలపై 15% డిస్కౌంట్. సమీప డీలర్ షాపుల్లో లభ్యం.</p>
+                </div>
+                <div class="ad-banner-box" style="background:#e8f5e9; border-color:#2e7d32;">
+                    <h5 style="color:#1b5e20;">🌱 సేంద్రీయ బయో-ఫెర్టిలైజర్స్ & వేప పిండి</h5>
+                    <p>భూసారాన్ని పెంచే బయో-ఎరువుల హోల్‌సేల్ సప్లై. రైతు గ్రూపులకు ఉచిత డెలివరీ.</p>
+                </div>
+            </div>
+
+            <!-- 6. Machinery & Drone Spraying Ads -->
+            <div class="dash-card">
+                <h4>🚜 యంత్రాల అద్దె & డ్రోన్ పిచికారీ ప్రకటనలు</h4>
+                <div class="ad-banner-box" style="background:#f3e5f5; border-color:#8e24aa;">
+                    <h5 style="color:#6a1b9a;">🚁 డ్రోన్ స్ప్రేయింగ్ సేవలు (ఎకరానికి ₹ 399/-)</h5>
+                    <p>త్వరగా మరియు సమర్థవంతంగా పురుగుమందుల పిచికారీ. బుకింగ్ కోసం సంప్రదించండి.</p>
+                </div>
+                <div class="ad-banner-box">
+                    <h5>🚜 ట్రాక్టర్లు & వరి కోత మిషన్లు అద్దెకు కలవు</h5>
+                    <p>గ్రామాల పరిధిలో సమయానికి నమ్మకమైన యంత్రాల అద్దె సేవలు. రైతులతో డైరెక్ట్ సంప్రదింపులు.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ================= VIEW 2: SERVICES & ROLES ================= -->
+    <section id="services-view">
+        <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
+        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి</p>
+
+        <!-- 3 Clickable Role Widgets -->
         <div class="role-widgets-container">
             <div id="tab-farmer" class="role-widget active" onclick="showFeature('farmer', this)">
                 <div class="role-icon">🌾</div>
@@ -564,7 +784,7 @@
                         <div class="feature-img-icon">🛰️</div>
                         <div class="feature-info">
                             <h5>శాటిలైట్ సేవలు (Satellite Farming)</h5>
-                            <p>మీ రిజిస్టర్డ్ పొలం లొకేషన్ ఆధారంగా ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పంట పచ్చదనం (NDVI), నేలలో తేమ లభ్యత ముందస్తు అంచనా.</p>
+                            <p>మీ పొలం లొకేషన్ ఆధారంగా ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పంట పచ్చదనం (NDVI), నేలలో తేమ లభ్యత ముందస్తు అంచనా.</p>
                         </div>
                     </div>
 
@@ -714,20 +934,19 @@
             </div>
 
         </div>
-    </div>
+    </section>
 
-    <!-- Floating Telugu Voice Assistant Button -->
+    <!-- Floating Telugu Voice Assistant -->
     <div id="voice-toast" class="voice-status-toast">🎙️ వింటున్నాము... మాట్లాడండి</div>
     <button class="voice-float-btn" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">
         🎙️
     </button>
 
-    <!-- Modal Popup: Login & Profile Creation -->
+    <!-- Modal Popup: Login & Profile -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
             
-            <!-- Step 1: Mobile & OTP -->
             <div id="modal-step-login">
                 <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
                 <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు OTP ద్వారా సులభంగా లాగిన్ అవ్వండి</p>
@@ -747,12 +966,10 @@
                 <button class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
             </div>
 
-            <!-- Step 2: Customer Profile Creation -->
             <div id="modal-step-profile" style="display: none;">
                 <h3 class="modal-title">👤 రైతు ప్రొఫైల్ సెటప్</h3>
                 <p style="font-size: 0.85rem; color: #666;">మీ వివరాలు మరియు పొలం లొకేషన్ నమోదు చేసుకోండి</p>
 
-                <!-- Profile Photo Upload -->
                 <div class="photo-preview-container">
                     <img id="profilePreviewImg" src="https://via.placeholder.com/90?text=Photo" alt="Profile" class="photo-preview"><br>
                     <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి (Upload Photo)</label>
@@ -773,7 +990,6 @@
                     </select>
                 </div>
 
-                <!-- GPS Farm Location Picker for Satellite View -->
                 <div class="form-group">
                     <label>🛰️ పొలం లొకేషన్ (శాటిలైట్ మానిటరింగ్ కోసం):</label>
                     <div class="gps-box">
@@ -806,9 +1022,44 @@
         <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect Technologies. All Rights Reserved.</p>
     </footer>
 
-    <!-- Interactive JavaScript Engine -->
+    <!-- Interactive JavaScript -->
     <script>
-        /* 1. Tab Switching Function */
+        /* 1. Main View Switching (Home vs Services) */
+        function switchMainView(viewName) {
+            const homeView = document.getElementById('home-view');
+            const servicesView = document.getElementById('services-view');
+            const navHome = document.getElementById('nav-home');
+            const navServices = document.getElementById('nav-services');
+
+            if (viewName === 'services') {
+                homeView.style.display = 'none';
+                servicesView.style.display = 'block';
+                navServices.classList.add('active-link');
+                navHome.classList.remove('active-link');
+                window.scrollTo({ top: 380, behavior: 'smooth' });
+            } else {
+                homeView.style.display = 'block';
+                servicesView.style.display = 'none';
+                navHome.classList.add('active-link');
+                navServices.classList.remove('active-link');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        /* 2. Live Date & Clock Engine */
+        function updateLiveClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: true });
+            document.getElementById('liveClock').innerText = timeString;
+
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('te-IN', options);
+            document.getElementById('liveDate').innerText = dateString;
+        }
+        setInterval(updateLiveClock, 1000);
+        updateLiveClock();
+
+        /* 3. Role Sub-Tab Switching inside Services */
         function showFeature(role, widgetElement) {
             const widgets = document.querySelectorAll('.role-widget');
             widgets.forEach(w => w.classList.remove('active'));
@@ -823,7 +1074,7 @@
             }
         }
 
-        /* 2. Modal Popup Controls */
+        /* 4. Modal Popup Controls */
         function openLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
         }
@@ -831,7 +1082,7 @@
             document.getElementById('loginModal').style.display = 'none';
         }
 
-        /* 3. Mobile & OTP Login Simulation */
+        /* 5. Mobile & OTP Flow */
         let otpSent = false;
         function handleOtpFlow() {
             const mobile = document.getElementById('mobileNumberInput').value.trim();
@@ -853,25 +1104,23 @@
                     alert('దయచేసి సరైన 4 అంకెల OTP ని నమోదు చేయండి.');
                     return;
                 }
-                // Switch to profile step
                 document.getElementById('modal-step-login').style.display = 'none';
                 document.getElementById('modal-step-profile').style.display = 'block';
             }
         }
 
-        /* 4. Photo Preview */
+        /* 6. Photo Preview */
         function previewPhoto(event) {
             const reader = new FileReader();
             reader.onload = function() {
-                const output = document.getElementById('profilePreviewImg');
-                output.src = reader.result;
+                document.getElementById('profilePreviewImg').src = reader.result;
             };
             if(event.target.files[0]) {
                 reader.readAsDataURL(event.target.files[0]);
             }
         }
 
-        /* 5. GPS Farm Location Capture for Satellite */
+        /* 7. GPS Farm Location Capture */
         function captureLocation() {
             const gpsText = document.getElementById('gpsStatusText');
             if ("geolocation" in navigator) {
@@ -882,7 +1131,7 @@
                         const lon = position.coords.longitude.toFixed(5);
                         gpsText.innerHTML = `✅ లొకేషన్ ఖరారైంది: <strong>Lat: ${lat}, Lon: ${lon}</strong>`;
                     },
-                    (error) => {
+                    () => {
                         gpsText.innerText = "GPS ఆన్ చేసి మళ్లీ ప్రయత్నించండి.";
                     }
                 );
@@ -891,7 +1140,7 @@
             }
         }
 
-        /* 6. Save Profile */
+        /* 8. Save Profile */
         function saveProfile() {
             const name = document.getElementById('farmerNameInput').value.trim();
             if(!name) {
@@ -903,14 +1152,14 @@
             closeLoginModal();
         }
 
-        /* 7. Telugu Voice Assistant (Web Speech API) */
+        /* 9. Telugu Voice Assistant */
         let recognition;
         let isListening = false;
 
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
-            recognition.lang = 'te-IN'; // Telugu
+            recognition.lang = 'te-IN';
             recognition.continuous = false;
             recognition.interimResults = false;
 
@@ -927,18 +1176,13 @@
                 handleVoiceCommand(transcript);
             };
 
-            recognition.onerror = function() {
-                stopListening();
-            };
-
-            recognition.onend = function() {
-                stopListening();
-            };
+            recognition.onerror = function() { stopListening(); };
+            recognition.onend = function() { stopListening(); };
         }
 
         function toggleVoiceAssistant() {
             if (!recognition) {
-                alert('మీ బ్రౌజర్ లో వాయిస్ అసిస్టెంట్ సపోర్ట్ లేదు. Chrome బ్రౌజర్ వాడండి.');
+                alert('దయచేసి Chrome బ్రౌజర్ ఉపయోగించండి.');
                 return;
             }
             if (isListening) {
@@ -954,52 +1198,46 @@
             document.getElementById('voice-toast').style.display = 'none';
         }
 
-        /* 8. Voice Command Interpreter */
+        /* 10. Voice Command Handler */
         function handleVoiceCommand(cmd) {
             const toast = document.getElementById('voice-toast');
             toast.innerText = `మీరు చెప్పినది: "${cmd}"`;
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
 
-            // Command: Login
+            if (cmd.includes('హోమ్') || cmd.includes('home')) {
+                switchMainView('home');
+                return;
+            }
+            if (cmd.includes('సేవలు') || cmd.includes('విభాగాలు') || cmd.includes('features')) {
+                switchMainView('services');
+                return;
+            }
             if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) {
                 openLoginModal();
                 return;
             }
 
-            // Command: Roles
-            if (cmd.includes('కూలీ') || cmd.includes('కూలీలు') || cmd.includes('పని')) {
+            // Automatic switch to services for specific feature commands
+            switchMainView('services');
+            if (cmd.includes('కూలీ') || cmd.includes('కూలీలు')) {
                 showFeature('labor', document.getElementById('tab-labor'));
                 return;
             }
-            if (cmd.includes('వ్యాపారి') || cmd.includes('వ్యాపారులు') || cmd.includes('కొనుగోలు')) {
+            if (cmd.includes('వ్యాపారి') || cmd.includes('వ్యాపారులు')) {
                 showFeature('trader', document.getElementById('tab-trader'));
                 return;
             }
-            if (cmd.includes('రైతు') || cmd.includes('రైతులు')) {
-                showFeature('farmer', document.getElementById('tab-farmer'));
-                return;
-            }
 
-            // Ensure Farmer tab is open for specific farm features
             showFeature('farmer', document.getElementById('tab-farmer'));
-
             let targetCardId = null;
-            if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు') || cmd.includes('వ్యాధి')) {
-                targetCardId = 'card-doctor';
-            } else if (cmd.includes('వాతావరణం') || cmd.includes('వర్షం') || cmd.includes('ఎండ')) {
-                targetCardId = 'card-weather';
-            } else if (cmd.includes('శాటిలైట్') || cmd.includes('ఉపగ్రహం')) {
-                targetCardId = 'card-satellite';
-            } else if (cmd.includes('సబ్సిడీ') || cmd.includes('పథకాలు') || cmd.includes('భరోసా')) {
-                targetCardId = 'card-subsidy';
-            } else if (cmd.includes('కరెంట్') || cmd.includes('విద్యుత్') || cmd.includes('పవర్')) {
-                targetCardId = 'card-power';
-            } else if (cmd.includes('మార్కెట్') || cmd.includes('ధర') || cmd.includes('రేటు')) {
-                targetCardId = 'card-market';
-            } else if (cmd.includes('యంత్రాలు') || cmd.includes('ట్రాక్టర్')) {
-                targetCardId = 'card-machinery';
-            }
+            if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు')) targetCardId = 'card-doctor';
+            else if (cmd.includes('వాతావరణం') || cmd.includes('వర్షం')) targetCardId = 'card-weather';
+            else if (cmd.includes('శాటిలైట్')) targetCardId = 'card-satellite';
+            else if (cmd.includes('సబ్సిడీ') || cmd.includes('పథకాలు')) targetCardId = 'card-subsidy';
+            else if (cmd.includes('కరెంట్') || cmd.includes('విద్యుత్')) targetCardId = 'card-power';
+            else if (cmd.includes('మార్కెట్') || cmd.includes('ధర')) targetCardId = 'card-market';
+            else if (cmd.includes('యంత్రాలు') || cmd.includes('ట్రాక్టర్')) targetCardId = 'card-machinery';
 
             if (targetCardId) {
                 const targetCard = document.getElementById(targetCardId);
