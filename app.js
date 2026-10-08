@@ -12,12 +12,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Global User GPS Coordinates (Default: Hanamkonda/Warangal)
 let currentUserLat = 17.9784;
 let currentUserLng = 79.5941;
 let rawLaborersList = [];
+let currentBalance = 14850.00;
 
-// Live GPS Coordinates detection
+// Device live GPS detection
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -28,20 +28,19 @@ if (navigator.geolocation) {
     );
 }
 
-// ==================== 2. PUSH NOTIFICATIONS (FCM SETUP) ====================
+// ==================== 2. PUSH NOTIFICATIONS (FCM) ====================
 function enablePushNotifications() {
     toggleDrawer();
     if (!('Notification' in window)) {
-        alert('ఈ మొబైల్ బ్రౌజర్ పుష్ నోటిఫికేషన్లను సపోర్ట్ చేయదు.');
+        alert('ఈ బ్రౌజర్ పుష్ నోటిఫికేషన్లను సపోర్ట్ చేయదు.');
         return;
     }
 
     Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
-            alert('🔔 అభినందనలు! పుష్ నోటిఫికేషన్లు ఆన్ చేయబడ్డాయి. కొత్త పనులు పడినప్పుడు మీ స్క్రీన్ పైకి అలర్ట్ వస్తుంది.');
-            // Test notification trigger
+            alert('🔔 అభినందనలు! పుష్ నోటిఫికేషన్లు ఆన్ చేయబడ్డాయి.');
             new Notification('AgriConnect లైవ్ అలర్ట్', {
-                body: 'మీ ప్రాంతంలో వ్యవసాయ కూలీల పనులు మరియు మార్కెట్ ధరలు లైవ్‌లో ఉన్నాయి!',
+                body: 'మీ పరిసరాల్లో కూలీల పనులు మరియు మార్కెట్ ధరలు లైవ్‌లో ఉన్నాయి!',
                 icon: 'logo.png'
             });
         } else {
@@ -51,12 +50,8 @@ function enablePushNotifications() {
 }
 
 // ==================== 3. META WHATSAPP CLOUD API GATEWAY ====================
-// Sends automatic background WhatsApp message to nearby laborers
 function triggerWhatsAppCloudAlert(mestryPhone, farmerName, workDetails, count, location) {
-    // Meta WhatsApp Cloud API Endpoint structure (Uses WhatsApp Direct Scheme as Free Gateway fallback)
-    const alertMessage = `🚨 *AgriConnect కొత్త పని అలర్ట్!*\n\nరైతు పేరు: ${farmerName}\nకావలసిన కూలీలు: ${count} మంది\nపని: ${workDetails}\nప్రాంతం: ${location}\n\nవెంటనే రైతుకు కాల్ చేసి పని ఖరారు చేసుకోండి!`;
-    
-    // Auto-dispatches to Mestry's phone directly
+    const alertMessage = `🚨 *AgriConnect కొత్త పని అలర్ట్!*\n\nరైతు: ${farmerName}\nకూలీలు: ${count} మంది\nపని: ${workDetails}\nప్రాంతం: ${location}\nవెంటనే సంప్రదించండి!`;
     const apiTarget = `https://api.whatsapp.com/send?phone=91${mestryPhone}&text=${encodeURIComponent(alertMessage)}`;
     window.open(apiTarget, '_blank');
 }
@@ -64,7 +59,7 @@ function triggerWhatsAppCloudAlert(mestryPhone, farmerName, workDetails, count, 
 // ==================== 4. 5-10 KM GPS HAVERSINE FORMULA ====================
 function calculateDistanceKm(lat1, lon1, lat2, lon2) {
     if (!lat1 || !lon1 || !lat2 || !lon2) return null;
-    const R = 6371; // Earth radius in KM
+    const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = 
@@ -75,7 +70,74 @@ function calculateDistanceKm(lat1, lon1, lat2, lon2) {
     return (R * c).toFixed(1);
 }
 
-// ==================== 5. NAVIGATION & ACCORDIONS ====================
+// ==================== 5. MODAL OPEN/CLOSE FUNCTIONS ====================
+function openLoginModalFromDrawer() { toggleDrawer(); document.getElementById('loginModal').style.display = 'flex'; }
+function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+
+function openWalletModalFromDrawer() { toggleDrawer(); openWalletModal(); }
+function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
+function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
+
+function openDiaryModalFromDrawer() { toggleDrawer(); document.getElementById('diaryModal').style.display = 'flex'; }
+function closeDiaryModal() { document.getElementById('diaryModal').style.display = 'none'; }
+
+function openAlertsModalFromDrawer() { toggleDrawer(); document.getElementById('alertsModal').style.display = 'flex'; }
+function closeAlertsModal() { document.getElementById('alertsModal').style.display = 'none'; }
+
+function openSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'flex'; }
+function closeSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'none'; }
+
+function openContactModalFromDrawer() { toggleDrawer(); document.getElementById('contactModal').style.display = 'flex'; }
+function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
+
+function handleDrawerLogout() { toggleDrawer(); alert('మీరు లాగౌట్ అయ్యారు.'); }
+
+// Login & OTP
+let otpSent = false;
+function handleOtpFlow() {
+    const mobile = document.getElementById('mobileNumberInput').value.trim();
+    if (!otpSent) {
+        if (mobile.length !== 10) { alert('10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.'); return; }
+        document.getElementById('otpSection').style.display = 'block';
+        document.getElementById('btnOtpAction').innerText = 'లాగిన్ అవ్వండి';
+        otpSent = true;
+        alert('టెస్ట్ OTP: 1234');
+    } else {
+        document.getElementById('modal-step-login').style.display = 'none';
+        document.getElementById('modal-step-profile').style.display = 'block';
+    }
+}
+
+function saveProfile() {
+    const name = document.getElementById('farmerNameInput').value.trim();
+    if (!name) { alert('పేరు నమోదు చేయండి.'); return; }
+    document.getElementById('drawer-login-text').innerText = name;
+    document.getElementById('welcomeUserName').innerText = `స్వాగతం, ${name}!`;
+    document.getElementById('userWelcomeBanner').style.display = 'flex';
+    closeLoginModal();
+    alert(`ప్రొఫైల్ విజయవంతంగా సేవ్ చేయబడింది!`);
+}
+
+function addDiaryEntry() {
+    const desc = document.getElementById('diaryDesc').value.trim();
+    const amt = document.getElementById('diaryAmount').value.trim();
+    if(!desc || !amt) { alert('వివరాలు నమోదు చేయండి.'); return; }
+    alert(`ఖాతా డైరీలో ₹ ${amt} (- ${desc}) విజయవంతంగా నమోదైంది!`);
+    document.getElementById('diaryDesc').value = '';
+    document.getElementById('diaryAmount').value = '';
+    closeDiaryModal();
+}
+
+function savePriceAlert() {
+    alert('ధర అలర్ట్ సెట్ చేయబడింది! మార్కెట్లో ఈ ధర చేరగానే సమాచారం అందుతుంది.');
+    closeAlertsModal();
+}
+
+function playOfflineAudio(tipText) {
+    speakText(tipText);
+}
+
+// ==================== 6. NAVIGATION & ACCORDIONS ====================
 function switchView(viewName) {
     ['home', 'services', 'about', 'why'].forEach(v => {
         const el = document.getElementById(v + '-view');
@@ -107,27 +169,21 @@ function showFeature(role, widgetElement) {
 }
 
 function toggleLaborBookingAccordion() {
-    const body = document.getElementById('bodyLaborBooking');
-    const arrow = document.getElementById('arrowLaborBooking');
-    body.classList.toggle('open');
-    arrow.classList.toggle('rotated');
+    document.getElementById('bodyLaborBooking').classList.toggle('open');
+    document.getElementById('arrowLaborBooking').classList.toggle('rotated');
 }
 
 function toggleMestryRegisterAccordion() {
-    const body = document.getElementById('bodyMestryRegister');
-    const arrow = document.getElementById('arrowMestryRegister');
-    body.classList.toggle('open');
-    arrow.classList.toggle('rotated');
+    document.getElementById('bodyMestryRegister').classList.toggle('open');
+    document.getElementById('arrowMestryRegister').classList.toggle('rotated');
 }
 
 function toggleDailyJobsAccordion() {
-    const body = document.getElementById('bodyDailyJobs');
-    const arrow = document.getElementById('arrowDailyJobs');
-    body.classList.toggle('open');
-    arrow.classList.toggle('rotated');
+    document.getElementById('bodyDailyJobs').classList.toggle('open');
+    document.getElementById('arrowDailyJobs').classList.toggle('rotated');
 }
 
-// ==================== 6. MESTRY REGISTRATION (WITH GPS & UPI) ====================
+// ==================== 7. MESTRY REGISTRATION (WITH GPS & UPI) ====================
 function submitDirectLaborRegistration() {
     const name = document.getElementById('directMestryName').value.trim();
     const phone = document.getElementById('directMestryPhone').value.trim();
@@ -195,7 +251,7 @@ function saveMestryToFirebase(name, phone, upi, count, village, skills, lat, lng
     });
 }
 
-// ==================== 7. REALTIME LISTENER & DISTANCE FILTER ====================
+// ==================== 8. REALTIME LISTENER & DISTANCE FILTER ====================
 function listenForLiveLaborers() {
     db.collection("laborers")
       .orderBy("createdAt", "desc")
@@ -258,7 +314,7 @@ function filterLaborersByDistance() {
     });
 }
 
-// ==================== 8. DIRECT UPI PAYMENT (PHONEPE / GPAY) ====================
+// ==================== 9. DIRECT UPI PAYMENT ====================
 let currentTargetMestryUpi = '';
 let currentTargetMestryName = '';
 
@@ -288,7 +344,7 @@ function processDirectUpiPay() {
     window.location.href = upiUrl;
 }
 
-// ==================== 9. FARMER JOB POSTING & CLOUD BROADCAST ====================
+// ==================== 10. FARMER JOB POSTING & SYNC ====================
 function submitJobRequestToCloud() {
     const farmer = document.getElementById('postFarmerName').value.trim();
     const phone = document.getElementById('postFarmerPhone').value.trim();
@@ -317,8 +373,6 @@ function submitJobRequestToCloud() {
     })
     .then(() => {
         alert(`✅ మీ కూలీల అవసర ప్రకటన విజయవంతంగా పోస్ట్ అయింది!`);
-        
-        // Auto alert nearest mestry via WhatsApp Cloud API if available
         if (rawLaborersList.length > 0 && rawLaborersList[0].phone) {
             triggerWhatsAppCloudAlert(rawLaborersList[0].phone, farmer, work, count, loc);
         }
