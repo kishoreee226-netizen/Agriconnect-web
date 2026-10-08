@@ -112,6 +112,36 @@
             transition: 0.2s;
         }
 
+        /* Direct Install Banner Style */
+        .install-banner {
+            display: none;
+            background: #FFD54F;
+            color: #1B5E20;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 12px auto;
+            max-width: 1100px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border-left: 5px solid #1B5E20;
+        }
+        .install-btn {
+            background: #1B5E20;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+        .install-btn:hover {
+            background: #2e7d32;
+        }
+
         .hero {
             background: linear-gradient(rgba(27, 94, 32, 0.9), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
@@ -933,7 +963,7 @@
                 <button id="nav-btn-why" onclick="switchView('why')">⭐ Why Choose Us</button>
             </div>
             
-            <button class="btn-hamburger" onclick="toggleDrawer()" title="మెనూ తెరవండి">
+            <button class="btn-hamburger" onclick="toggleDrawer()" title="Menu">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -1001,6 +1031,15 @@
         </div>
     </div>
 
+    <!-- Direct In-Page Install Banner -->
+    <div id="pwaInstallBanner" class="install-banner">
+        <div>
+            <strong>📲 AgriConnect మొబైల్ యాప్ అందుబాటులో ఉంది!</strong>
+            <div style="font-size: 0.85rem; color: #333;">హోమ్ స్క్రీన్ లో సులభంగా ఓపెన్ చేసుకోవడానికి ఇప్పుడే ఇన్‌స్టాల్ చేసుకోండి.</div>
+        </div>
+        <button id="pwaInstallBtn" class="install-btn">ఇన్‌స్టాల్ చేయండి (Install)</button>
+    </div>
+
     <!-- Hero Banner -->
     <section class="hero">
         <div class="hero-logo-container">
@@ -1013,7 +1052,7 @@
         </div>
     </section>
 
-    <!-- User Welcome Banner (Dynamic Role Highlight) -->
+    <!-- User Welcome Banner -->
     <div id="userWelcomeBanner" class="user-welcome-banner">
         <div>
             <span id="welcomeUserName" style="font-size: 1.1rem; font-weight: bold; color: #1B5E20;">స్వాగతం!</span>
@@ -1295,7 +1334,7 @@
                         </div>
                     </div>
 
-                    <!-- 12TH NEW FEATURE: LAND LEASE / KAULU & MUNABHA HUB -->
+                    <!-- 12TH FEATURE: LAND LEASE / KAULU -->
                     <div id="card-kaulu" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🏞️</div>
                         <div class="feature-info">
@@ -1477,7 +1516,7 @@
 
     <!-- FLOATING ACTION DOCK: SPEAKER & MIC BUTTONS -->
     <div class="floating-dock">
-        <button class="dock-btn btn-speaker" id="speakerBtn" onclick="toggleVoiceReader()" title="వాయిస్ రీడర్ (చదివి వినిపించండి)">
+        <button class="dock-btn btn-speaker" id="speakerBtn" onclick="toggleVoiceReader()" title="వాయిస్ రీడర్">
             🔊
         </button>
         <button class="dock-btn btn-mic" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">
@@ -2217,6 +2256,35 @@
                 setTimeout(() => { targetCard.classList.remove('highlight'); }, 3000);
             }
         }
+
+        // PWA In-Page Banner Logic
+        let deferredPrompt;
+        const installBanner = document.getElementById('pwaInstallBanner');
+        const installBtn = document.getElementById('pwaInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBanner) installBanner.style.display = 'flex';
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        if (installBanner) installBanner.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                }
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            if (installBanner) installBanner.style.display = 'none';
+            deferredPrompt = null;
+        });
 
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
