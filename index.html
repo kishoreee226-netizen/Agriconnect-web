@@ -13,7 +13,7 @@
     <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- Google Firebase SDKs -->
+    <!-- Google Firebase SDKs (Compat version for pure HTML/JS) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
@@ -112,13 +112,18 @@
         </div>
     </div>
 
-    <!-- Direct In-Page Install Banner -->
+    <!-- Direct In-Page Install Banner (Auto-visible on open) -->
     <div id="pwaInstallBanner" class="install-banner">
         <div>
-            <strong>📲 AgriConnect మొబైల్ యాప్ అందుబాటులో ఉంది!</strong>
-            <div style="font-size: 0.85rem; color: #333;">హోమ్ స్క్రీన్ లో సులభంగా ఓపెన్ చేసుకోవడానికి ఇప్పుడే ఇన్‌స్టాల్ చేసుకోండి.</div>
+            <strong style="font-size: 1rem;">📲 AgriConnect మొబైల్ యాప్ అందుబాటులో ఉంది!</strong>
+            <div style="font-size: 0.85rem; color: #2e4a2e; margin-top: 2px;">
+                హోమ్ స్క్రీన్ పై యాప్ లాగా వేగంగా ఓపెన్ చేసుకోవడానికి ఇప్పుడే ఇన్‌స్టాల్ చేసుకోండి.
+            </div>
         </div>
-        <button id="pwaInstallBtn" class="install-btn">ఇన్‌స్టాల్ చేయండి (Install)</button>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="pwaInstallBtn" class="install-btn">ఇన్‌స్టాల్ చేయండి (Install)</button>
+            <button class="install-close-btn" onclick="dismissInstallBanner()" title="మూసివేయి">&times;</button>
+        </div>
     </div>
 
     <!-- Hero Banner -->
@@ -144,7 +149,7 @@
         </button>
     </div>
 
-    <!-- ================= VIEW 1: HOME DASHBOARD (పూర్తి ఒరిజినల్ కార్డ్స్) ================= -->
+    <!-- ================= VIEW 1: HOME DASHBOARD ================= -->
     <main id="home-view" class="page-view active-view">
         <div class="dashboard-container">
             
@@ -209,7 +214,7 @@
                 </div>
             </div>
 
-            <!-- 4. Agriculture Helpline Widget (పూర్తి నంబర్లు) -->
+            <!-- 4. Agriculture Helpline Widget -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📞 వ్యవసాయ శాఖ హెల్ప్‌లైన్ నంబర్లు</h4>
                 <div class="helpline-item">
@@ -230,7 +235,7 @@
                 </div>
             </div>
 
-            <!-- 5. Fertilizer Ads Widget (పూర్తి ఒరిజినల్ మేటర్) -->
+            <!-- 5. Fertilizer Ads Widget -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📢 విత్తనాలు & ఎరువుల ఆఫర్లు (Agri Ads)</h4>
                 <div class="ad-banner-box">
@@ -243,7 +248,7 @@
                 </div>
             </div>
 
-            <!-- 6. Machinery Ads Widget (పూర్తి ఒరిజినల్ మేటర్) -->
+            <!-- 6. Machinery Ads Widget -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>🚜 యంత్రాల అద్దె & డ్రోన్ పిచికారీ ప్రకటనలు</h4>
                 <div class="ad-banner-box" style="background:#e0f2f1; border-color:#00897b;">
@@ -259,7 +264,7 @@
                 </div>
             </div>
 
-            <!-- 7. Offline Audio Notes Widget (పూర్తి ఒరిజినల్ మేటర్) -->
+            <!-- 7. Offline Audio Notes Widget -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>🎧 ఆఫ్ లైన్ వాయిస్ నోట్స్ (Offline Audio Cache)</h4>
                 <p style="font-size: 0.85rem; color: #555;">ఇంటర్నెట్ లేకపోయినా పొలంలో ఉండి ఈ వాయిస్ సలహాలు వినవచ్చు:</p>
@@ -285,21 +290,21 @@
         <div class="role-widgets-container">
             <div id="tab-farmer" class="role-widget active speakable" onclick="showFeature('farmer', this); speakElement(this)">
                 <span class="role-active-indicator" id="ind-farmer">యాక్టివ్</span>
-                <div class="role-icon">🌾</div>
+                <div class="role-icon" style="font-size:2.3rem;">🌾</div>
                 <h3>రైతులు</h3>
                 <span>(Smart Farmers Hub)</span>
             </div>
 
             <div id="tab-labor" class="role-widget speakable" onclick="showFeature('labor', this); speakElement(this)">
                 <span class="role-active-indicator" id="ind-labor">యాక్టివ్</span>
-                <div class="role-icon">👨‍🌾</div>
+                <div class="role-icon" style="font-size:2.3rem;">👨‍🌾</div>
                 <h3>వ్యవసాయ కూలీలు</h3>
                 <span>(Farm Laborers)</span>
             </div>
 
             <div id="tab-trader" class="role-widget speakable" onclick="showFeature('trader', this); speakElement(this)">
                 <span class="role-active-indicator" id="ind-trader">యాక్టివ్</span>
-                <div class="role-icon">🏪</div>
+                <div class="role-icon" style="font-size:2.3rem;">🏪</div>
                 <h3>వ్యాపారధారులు</h3>
                 <span>(Traders & Buyers)</span>
             </div>
@@ -381,7 +386,7 @@
                             <span class="accordion-arrow" id="arrowLaborBooking">▼</span>
                         </div>
 
-                        <!-- HIDDEN PANEL (OPENS ONLY ON CLICK) -->
+                        <!-- HIDDEN PANEL -->
                         <div class="accordion-body" id="bodyLaborBooking">
                             <div class="labor-interactive-box">
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;">
@@ -414,7 +419,6 @@
                                     </div>
                                     <input type="text" id="postFarmLocation" placeholder="పొలం ఉన్న గ్రామం / ప్రాంతం" style="width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem; margin-top: 6px;">
                                     
-                                    <!-- TWO BUTTONS (WHATSAPP & DIRECT CLOUD) -->
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
                                         <button type="button" onclick="broadcastJobRequest()" style="background: #25D366; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">
                                             📲 WhatsApp ద్వారా
@@ -452,7 +456,6 @@
                         </div>
                     </div>
 
-                    <!-- 12TH FEATURE: LAND LEASE / KAULU -->
                     <div id="card-kaulu" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🏞️</div>
                         <div class="feature-info">
@@ -482,7 +485,6 @@
                             <span class="accordion-arrow" id="arrowDailyJobs">▼</span>
                         </div>
 
-                        <!-- HIDDEN PANEL -->
                         <div class="accordion-body" id="bodyDailyJobs">
                             <div style="background: #f9fbf9; padding: 10px; border-radius: 8px; border: 1px solid #c8e6c9;">
                                 <strong style="color: #1B5E20; font-size: 0.9rem;">🌾 ప్రస్తుత వ్యవసాయ పనులు (లైవ్ క్లౌడ్ లిస్ట్):</strong>
@@ -506,7 +508,6 @@
                             <span class="accordion-arrow" id="arrowMestryRegister">▼</span>
                         </div>
 
-                        <!-- HIDDEN PANEL -->
                         <div class="accordion-body" id="bodyMestryRegister">
                             <div style="background: #f9fbf9; padding: 12px; border-radius: 8px; border: 1px solid #c8e6c9;">
                                 <div class="form-group" style="margin-top: 6px;">
@@ -598,7 +599,7 @@
         </div>
     </section>
 
-    <!-- ================= VIEW 3: ABOUT US (సంపూర్ణ ఒరిజినల్ మేటర్ - 6 హైలైట్స్) ================= -->
+    <!-- ================= VIEW 3: ABOUT US ================= -->
     <section id="about-view" class="page-view">
         <div class="info-page-box">
             <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
@@ -643,7 +644,7 @@
         </div>
     </section>
 
-    <!-- ================= VIEW 4: WHY CHOOSE US (సంపూర్ణ ఒరిజినల్ మేటర్ - WORLD 1ST INNOVATION) ================= -->
+    <!-- ================= VIEW 4: WHY CHOOSE US ================= -->
     <section id="why-view" class="page-view">
         <div class="info-page-box">
             <h3>⭐ మమ్మల్ని ఎందుకు ఎంచుకోవాలి? (Why Choose AgriConnect)</h3>
@@ -686,7 +687,7 @@
 
     <div id="voice-toast" class="voice-status-toast">వింటున్నాము...</div>
 
-    <!-- ================= MODALS SECTION (పూర్తి ఒరిజినల్ మోడల్స్) ================= -->
+    <!-- ================= MODALS SECTION ================= -->
     
     <!-- MODAL 1: LOGIN & PROFILE SETUP -->
     <div class="modal-overlay" id="loginModal">
