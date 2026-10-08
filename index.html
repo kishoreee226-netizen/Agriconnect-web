@@ -112,7 +112,7 @@
             transition: 0.2s;
         }
 
-        /* Direct Install Banner Style */
+        /* Direct Install Banner */
         .install-banner {
             display: none;
             background: #FFD54F;
@@ -136,10 +136,6 @@
             font-weight: bold;
             cursor: pointer;
             white-space: nowrap;
-            transition: 0.2s;
-        }
-        .install-btn:hover {
-            background: #2e7d32;
         }
 
         .hero {
@@ -462,13 +458,14 @@
             line-height: 1.5;
         }
 
-        /* Labor Hub UI Styles */
+        /* Labor Hub Interactive Section */
         .labor-interactive-box {
             background: #f9fdf9;
             border: 1px solid #c8e6c9;
             border-radius: 10px;
             padding: 1rem;
             margin-top: 10px;
+            width: 100%;
         }
         .labor-card-item {
             background: white;
@@ -489,9 +486,6 @@
             text-decoration: none;
             font-size: 0.82rem;
             font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .info-page-box {
@@ -606,10 +600,6 @@
             text-decoration: none;
             transition: 0.2s;
         }
-        .btn-wa-share:hover {
-            background-color: #128C7E;
-            transform: scale(1.04);
-        }
         .wallet-card-box {
             background: linear-gradient(135deg, #0d47a1, #1976d2);
             color: white;
@@ -651,9 +641,6 @@
             font-size: 0.88rem;
             cursor: pointer;
             transition: 0.2s;
-        }
-        .wallet-btn:hover {
-            transform: translateY(-2px);
         }
         .diary-entry-box {
             background: #fff;
@@ -757,15 +744,6 @@
             color: #d32f2f;
             font-weight: 600;
         }
-        .drawer-menu-item.logout-item:hover {
-            background-color: #ffebee;
-            color: #c62828;
-        }
-        .drawer-menu-item span.icon {
-            font-size: 1.25rem;
-            width: 25px;
-            text-align: center;
-        }
         .drawer-footer {
             padding: 1rem 1.4rem;
             border-top: 1px solid #eee;
@@ -775,6 +753,7 @@
             background: #fafafa;
         }
 
+        /* MODAL POPUPS */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -785,7 +764,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            z-index: 10005;
+            z-index: 20000;
             padding: 1rem;
         }
         .modal-box {
@@ -794,7 +773,7 @@
             max-width: 480px;
             border-radius: 14px;
             padding: 1.8rem;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             position: relative;
             max-height: 90vh;
             overflow-y: auto;
@@ -910,9 +889,6 @@
             transition: all 0.3s ease;
             border: none;
         }
-        .dock-btn:hover {
-            transform: scale(1.1);
-        }
         .btn-speaker {
             background: #FF8F00;
             color: white;
@@ -920,7 +896,6 @@
         }
         .btn-speaker.reading-active {
             background: #E65100;
-            animation: breathe-orange 1s infinite alternate;
         }
         .btn-mic {
             background: #1B5E20;
@@ -930,15 +905,6 @@
         .btn-mic.listening {
             background: #d32f2f;
             border-color: #fff;
-            animation: breathe-red 1s infinite alternate;
-        }
-        @keyframes breathe-red {
-            from { box-shadow: 0 0 10px rgba(211,47,47,0.5); }
-            to { box-shadow: 0 0 25px rgba(211,47,47,0.9); }
-        }
-        @keyframes breathe-orange {
-            from { box-shadow: 0 0 10px rgba(255,143,0,0.5); }
-            to { box-shadow: 0 0 25px rgba(255,143,0,0.9); }
         }
 
         .voice-status-toast {
@@ -1017,12 +983,12 @@
                 </button>
             </li>
             <li>
-                <button class="drawer-menu-item" onclick="openLaborPostModal()">
+                <button class="drawer-menu-item" onclick="openLaborPostModalFromDrawer()">
                     <span class="icon">📢</span> <strong>కూలీల అవసర ప్రకటన (Post Job)</strong>
                 </button>
             </li>
             <li>
-                <button class="drawer-menu-item" onclick="openLaborRegisterModal()">
+                <button class="drawer-menu-item" onclick="openLaborRegisterModalFromDrawer()">
                     <span class="icon">👥</span> <strong>మేస్త్రీ / గ్రూప్ నమోదు (Register Group)</strong>
                 </button>
             </li>
@@ -1283,7 +1249,7 @@
 
         <div class="feature-details-box">
             
-            <!-- 1. Farmers Features (Full 12 Cards including Land Lease/Kaulu) -->
+            <!-- 1. Farmers Features (Full 12 Cards) -->
             <div id="farmer-feature" class="feature-content active">
                 <h4>🌾 రైతులకు లభించే సమగ్ర స్మార్ట్ వ్యవసాయ సేవలు (12 ఫీచర్లు):</h4>
                 <div class="features-grid">
@@ -1357,13 +1323,12 @@
                         <div class="labor-interactive-box">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <strong style="color: #1B5E20; font-size: 0.9rem;">📍 అందుబాటులో ఉన్న మేస్త్రీల బృందాలు:</strong>
-                                <button onclick="openLaborPostModal()" style="background:#2e7d32; color:white; border:none; padding:5px 10px; border-radius:6px; font-size:0.78rem; font-weight:bold; cursor:pointer;">
+                                <button type="button" onclick="openLaborPostModal()" style="background:#2e7d32; color:white; border:none; padding:6px 12px; border-radius:6px; font-size:0.8rem; font-weight:bold; cursor:pointer;">
                                     📢 నాకు కూలీలు కావాలి (Post Job)
                                 </button>
                             </div>
 
                             <div id="activeLaborListContainer">
-                                <!-- Pre-filled groups -->
                                 <div class="labor-card-item">
                                     <div>
                                         <div style="font-weight: bold; font-size:0.92rem;">రామయ్య మేస్త్రీ (వరంగల్ పరిసరాలు)</div>
@@ -1382,7 +1347,7 @@
                             </div>
 
                             <div style="text-align: center; margin-top: 10px;">
-                                <button onclick="openLaborRegisterModal()" style="background: none; border: 1px dashed #1B5E20; color: #1B5E20; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer; width: 100%;">
+                                <button type="button" onclick="openLaborRegisterModal()" style="background: none; border: 1px dashed #1B5E20; color: #1B5E20; padding: 8px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; width: 100%;">
                                     ➕ మీ కూలీ గ్రూప్‌ను ఇక్కడ నమోదు చేయండి (Register As Mestry)
                                 </button>
                             </div>
@@ -1413,7 +1378,6 @@
                         </div>
                     </div>
 
-                    <!-- 12TH FEATURE: LAND LEASE / KAULU -->
                     <div id="card-kaulu" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🏞️</div>
                         <div class="feature-info">
@@ -1429,7 +1393,6 @@
             <div id="labor-feature" class="feature-content">
                 <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు:</h4>
                 <div class="features-grid">
-                    
                     <div class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">📋</div>
                         <div class="feature-info">
@@ -1461,7 +1424,6 @@
                             <p>చదవడం రాని వారి కోసం సులభంగా తెలుగు మాటల ద్వారా పనుల వివరాలు వినే ప్రత్యేక సదుపాయం.</p>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -1469,7 +1431,6 @@
             <div id="trader-feature" class="feature-content">
                 <h4>🏪 వ్యాపారధారులకు లభించే సేవలు:</h4>
                 <div class="features-grid">
-                    
                     <div class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🌾</div>
                         <div class="feature-info">
@@ -1501,7 +1462,6 @@
                             <p>మీకు కావలసిన నాణ్యత, పరిమాణం గల ధాన్యాల కొనుగోలు ప్రకటనలు ఇచ్చి రైతులను ఆకర్షించవచ్చు.</p>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -1512,45 +1472,11 @@
     <section id="about-view" class="page-view">
         <div class="info-page-box">
             <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
-            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం. గ్రామీణ రైతులు, వ్యవసాయ కూలీలు మరియు వ్యాపారులను అత్యాధునిక సాంకేతికతతో ఒకే తాటిపైకి తీసుకురావడమే మా ప్రధాన ధ్యేయం.</p>
+            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం.</p>
 
             <div class="innovation-banner speakable" onclick="speakElement(this)">
                 <h4>🚀 మా ప్రధాన ఆవిష్కరణ (Our Core Innovation):</h4>
                 <p>చదవడం, రాయడం రాని నిరుపేద గ్రామీణ రైతులు మరియు వ్యవసాయ కూలీల కోసం <strong>100% తెలుగు వాయిస్ గైడెన్స్ (Voice Guidance)</strong> తో నడిచే ప్రపంచంలోనే మొట్టమొదటి హైపర్‌లోకల్ వేదిక AgriConnect.</p>
-            </div>
-
-            <div class="about-highlights">
-                
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>📍 5-10 కి.మీ హైపర్‌లోకల్ లేబర్ మ్యాచింగ్</h5>
-                    <p>రైతు తన పొలం ఉన్న ప్రాంతం నుండి కేవలం <strong>5 నుండి 10 కిలోమీటర్ల పరిధిలోని</strong> వ్యవసాయ కూలీలను, గ్రూపులను క్షణాల్లో కనుగొనవచ్చు. కూలీల కొరత సమస్యకు ఇది శాశ్వత పరిష్కారం.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🤝 రైతు - కూలీ ప్రత్యక్ష సంభాషణ</h5>
-                    <p>మధ్యలో ఎటువంటి దళారులు, ఏజెంట్లు ఉండరు. రైతులు నేరుగా కూలీల ఫోన్ నంబర్‌కు కాల్ చేసి రోజువారీ పనులు మరియు కూలీ రేట్లను నేరుగా నిర్ణయించుకోవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🌾 కొనుగోలుదారులకు నేరుగా పంట విక్రయం</h5>
-                    <p>మధ్యవర్తుల మోసాలకు తావులేకుండా రైతులు తాము పండించిన పంటను నేరుగా ట్రేడర్స్ మరియు బయ్యర్లకు అత్యుత్తమ మార్కెట్ ధర వద్ద విక్రయించవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🌱 సేంద్రీయ వ్యవసాయానికి ప్రోత్సాహం (Organic Farming)</h5>
-                    <p>భూసారాన్ని రక్షించే సహజ సిద్ధమైన సేంద్రీయ ఎరువులు, బయో-ఫెర్టిలైజర్స్ వాడకాన్ని ప్రోత్సహిస్తూ ఆర్గానిక్ పంటలకు ప్రత్యేక మార్కెట్ గుర్తింపు కల్పించడం మా ప్రాధాన్యత.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🎙️ స్థానిక భాషలో పంటలు & తెగుళ్ల నివారణ</h5>
-                    <p>వరి, మిర్చి, పత్తితో సహా అన్ని రకాల పంటల వివరాలు, ఆశించే చీడపీడలు మరియు వాటి నివారణ మార్గాలను <strong>స్థానిక తెలుగు భాషలో వాయిస్ ద్వారా స్పష్టంగా విని తెలుసుకునే సదుపాయం</strong> కల్పించబడింది.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🎯 రైతే రాజు - సాంకేతికతే బలం</h5>
-                    <p>ఆర్టిఫిషియల్ ఇంటెలిజెన్స్, శాటిలైట్ మానిటరింగ్ మరియు వాయిస్ సాంకేతికతను జోడించి ప్రతి రైతును ఆర్థికంగా బలోపేతం చేయడమే AgriConnect లక్ష్యం.</p>
-                </div>
-
             </div>
         </div>
     </section>
@@ -1559,36 +1485,11 @@
     <section id="why-view" class="page-view">
         <div class="info-page-box">
             <h3>⭐ మమ్మల్ని ఎందుకు ఎంచుకోవాలి? (Why Choose AgriConnect)</h3>
-            
             <div class="world-first-card speakable" onclick="speakElement(this)">
                 <span class="badge-world-first">🌍 World's 1st Innovation</span>
                 <h4>హైపర్‌లోకల్ లేబర్ మ్యాచింగ్ విత్ వాయిస్ గైడెన్స్</h4>
                 <p><strong>This is the first time introduced in the world with Voice Guidance!</strong><br>
-                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్ (తెలుగు మాటల సహాయం)</strong> తో సమీప గ్రామాల వారీగా ఖచ్చితమైన వ్యవసాయ కూలీలను అనుసంధానించే <strong>Hyperlocal Labor Matching (5-10 KM Range)</strong> సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
-            </div>
-
-            <div class="about-highlights">
-                
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🚫 దళారులు లేని పారదర్శకత (Zero Middlemen)</h5>
-                    <p>కూలీల బుకింగ్ అయినా, యంత్రాల అద్దె అయినా లేదా పంట అమ్మకం అయినా – నేరుగా రైతులే అవతలి వ్యక్తులతో ఫోన్ చేసి నేరుగా డీల్ కుదుర్చుకోవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🎙️ పూర్తి వాయిస్ నావిగేషన్ (Voice First AI)</h5>
-                    <p>యాప్ ఎలా వాడాలో తెలియకపోయినా, మైక్ బటన్ నొక్కి తెలుగులో మాట్లాడితే చాలు – అడిగిన ఫీచర్ స్క్రీన్ పై వెంటనే ప్రత్యక్షమవుతుంది.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🛰️ పొలం శాటిలైట్ మానిటరింగ్</h5>
-                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని, తేమ శాతాన్ని ఎప్పటికప్పుడు విశ్లేషించవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>📈 లైవ్ మార్కెట్ యార్డ్ రేట్లు</h5>
-                    <p>వరంగల్ ఏనుమాముల మార్కెట్ రోజువారీ క్వింటాల్ లైవ్ రేట్లను పారదర్శకంగా తెలుసుకుని పంటకు సరైన ధర పొందవచ్చు.</p>
-                </div>
-
+                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్</strong> తో Hyperlocal Labor Matching (5-10 KM Range) సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
             </div>
         </div>
     </section>
@@ -1605,7 +1506,7 @@
 
     <div id="voice-toast" class="voice-status-toast">వింటున్నాము...</div>
 
-    <!-- Modal 1: Login & Profile Setup -->
+    <!-- MODAL 1: LOGIN & PROFILE SETUP -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
@@ -1613,7 +1514,7 @@
                 <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
                 <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు OTP ద్వారా సులభంగా లాగిన్ అవ్వండి</p>
                 <div class="form-group">
-                    <label>మొబైల్ నంబర్ (Mobile Number):</label>
+                    <label>మొబైల్ నంబర్:</label>
                     <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10">
                 </div>
                 <div class="otp-inputs" id="otpSection">
@@ -1622,199 +1523,139 @@
                         <input type="text" id="otpInput" placeholder="4 అంకెల OTP (ఉదా: 1234)" maxlength="4">
                     </div>
                 </div>
-                <button class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
+                <button type="button" class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
             </div>
 
             <div id="modal-step-profile" style="display: none;">
                 <h3 class="modal-title">👤 యూజర్ ప్రొఫైల్ సెటప్</h3>
                 <div class="photo-preview-container">
                     <img id="profilePreviewImg" src="https://via.placeholder.com/90?text=Photo" alt="Profile" class="photo-preview"><br>
-                    <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి (Upload Photo)</label>
+                    <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి</label>
                     <input type="file" id="photoUploadInput" accept="image/*" style="display:none" onchange="previewPhoto(event)">
                 </div>
                 <div class="form-group">
-                    <label>మీ పూర్తి పేరు (Full Name):</label>
+                    <label>మీ పూర్తి పేరు:</label>
                     <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
                 </div>
                 <div class="form-group">
-                    <label>మీ ప్రధాన విభాగం ఎంచుకోండి (Primary Category):</label>
+                    <label>విభాగం ఎంచుకోండి:</label>
                     <select id="userCategorySelect" onchange="handleCategorySelection(this.value)">
                         <option value="farmer">రైతు (Farmer)</option>
                         <option value="laborer">వ్యవసాయ కూలీ (Farm Laborer)</option>
                         <option value="trader">వ్యాపారధారి (Trader/Buyer)</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>🛰️ స్థానిక లొకేషన్ (శాటిలైట్ & మ్యాచింగ్ కోసం):</label>
-                    <div class="gps-box">
-                        <button type="button" style="background:#2e7d32; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="captureLocation()">📍 నా లొకేషన్ గుర్తించండి</button>
-                        <div class="gps-status" id="gpsStatusText">లొకేషన్ ఇంకా నమోదు కాలేదు</div>
-                    </div>
-                </div>
-                <button class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేసి ప్రారంభించండి</button>
+                <button type="button" class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేయండి</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal 2: Settings -->
+    <!-- MODAL 2: SETTINGS -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeSettingsModal()">&times;</span>
-            <h3 class="modal-title">⚙️ యాప్ సెట్టింగ్స్ (Settings)</h3>
+            <h3 class="modal-title">⚙️ యాప్ సెట్టింగ్స్</h3>
             <div class="form-group">
-                <label>🌐 భాష ఎంపిక (Select Language):</label>
+                <label>భాష ఎంపిక:</label>
                 <select id="appLanguageSelect">
                     <option value="te" selected>తెలుగు (Telugu)</option>
                     <option value="en">English</option>
-                    <option value="hi">हिंदी (Hindi)</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>✏️ పేరు మార్పు (Edit Name):</label>
+                <label>పేరు మార్పు:</label>
                 <input type="text" id="settingFarmerName" placeholder="పేరును సరిచేయండి">
             </div>
-            <div class="form-group">
-                <label>📱 మొబైల్ నంబర్ మార్పు (Change Mobile):</label>
-                <input type="tel" id="settingMobileNumber" placeholder="కొత్త మొబైల్ నంబర్" maxlength="10">
-            </div>
-            <div class="form-group">
-                <label>🌾 ప్రధాన పంట & విస్తీర్ణం (Acres):</label>
-                <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
-            </div>
-            <button class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
+            <button type="button" class="btn-action-primary" onclick="saveSettings()">సేవ్ చేయండి</button>
         </div>
     </div>
 
-    <!-- Modal 3: Contact Us -->
+    <!-- MODAL 3: CONTACT US -->
     <div class="modal-overlay" id="contactModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeContactModal()">&times;</span>
-            <h3 class="modal-title">📞 మమ్మల్ని సంప్రదించండి (Contact Us)</h3>
+            <h3 class="modal-title">📞 సంప్రదించండి</h3>
             <div style="background:#f9fbf9; border:1px solid #c8e6c9; border-radius:8px; padding:1rem; font-size:0.9rem;">
                 <p>🏢 <strong>కంపెనీ:</strong> AgriConnect Technologies</p>
-                <p>📜 <strong>UDYAM Reg:</strong> UDYAM-TS-31-0063048</p>
-                <p>📍 <strong>చిరునామా:</strong> హనుమకొండ / వరంగల్, తెలంగాణ, భారతదేశం - 506001</p>
-                <p>✉️ <strong>ఈమెయిల్:</strong> <a href="mailto:agriconnect.office@gmail.com" style="color:#1B5E20; font-weight:bold;">agriconnect.office@gmail.com</a></p>
+                <p>📍 <strong>చిరునామా:</strong> హనుమకొండ / వరంగల్, తెలంగాణ</p>
+                <p>✉️ <strong>ఈమెయిల్:</strong> agriconnect.office@gmail.com</p>
                 <p>📞 <strong>హెల్ప్‌లైన్:</strong> +91 98765 43210</p>
             </div>
-            <button class="btn-action-primary" onclick="closeContactModal()">సరే (Close)</button>
+            <button type="button" class="btn-action-primary" onclick="closeContactModal()">సరే</button>
         </div>
     </div>
 
-    <!-- UNIVERSAL WALLET MODAL -->
+    <!-- MODAL 4: UNIVERSAL WALLET -->
     <div class="modal-overlay" id="walletModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeWalletModal()">&times;</span>
             <h3 class="modal-title">💰 AgriConnect Wallet</h3>
-            
             <div class="wallet-card-box">
-                <span class="wallet-role-badge" id="walletRoleBadge">రైతు ఖాతా (Farmer)</span>
-                <div style="font-size: 0.9rem; opacity: 0.9;">అందుబాటులో ఉన్న బ్యాలెన్స్:</div>
+                <span class="wallet-role-badge" id="walletRoleBadge">రైతు ఖాతా</span>
+                <div style="font-size: 0.9rem; opacity: 0.9;">బ్యాలెన్స్:</div>
                 <div class="wallet-balance-num" id="walletBalance">₹ 14,850.00</div>
                 <div style="font-size: 0.8rem; opacity: 0.85;" id="walletUpiId">UPI: agriconnect.farmer@upi</div>
             </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #e8f5e9; padding: 6px 10px; border-radius: 8px;">
-                <span style="font-size: 0.82rem; font-weight: bold; color: #1B5E20;">వాలెట్ లావాదేవీల మోడ్:</span>
-                <select id="walletModeSwitcher" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #c8e6c9; font-size: 0.82rem;" onchange="switchWalletMode(this.value)">
-                    <option value="farmer">రైతు (Farmer View)</option>
-                    <option value="laborer">కూలీ (Laborer View)</option>
-                    <option value="trader">వ్యాపారి (Trader View)</option>
-                </select>
-            </div>
-
             <div id="dynamicWalletActions" class="wallet-actions-grid"></div>
-
-            <h5 style="margin-top: 1.2rem; color: #1B5E20; border-bottom: 1px solid #eee; padding-bottom: 4px;">తాజా లావాదేవీలు:</h5>
-            <div id="walletTransactions" style="font-size: 0.85rem; max-height: 140px; overflow-y: auto; margin-top: 6px;"></div>
-            
-            <button class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
+            <button type="button" class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
         </div>
     </div>
 
-    <!-- Modal 5: Price Alerts -->
+    <!-- MODAL 5: PRICE ALERTS -->
     <div class="modal-overlay" id="alertsModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeAlertsModal()">&times;</span>
-            <h3 class="modal-title">🔔 స్మార్ట్ ధర హెచ్చరికలు (Price Alerts)</h3>
-            <p style="font-size: 0.85rem; color: #666;">మీరు కోరుకున్న ధర మార్కెట్లో రాగానే మీకు SMS ద్వారా అలర్ట్ వస్తుంది:</p>
-
+            <h3 class="modal-title">🔔 ధర హెచ్చరికలు</h3>
             <div class="form-group">
                 <label>పంట ఎంపిక:</label>
                 <select id="alertCropSelect">
                     <option>మిర్చి (తేజ రకం)</option>
                     <option>పత్తి (Cotton)</option>
                     <option>వరి (BPT / సన్నాలు)</option>
-                    <option>మొక్కజొన్న (Maize)</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>మీరు ఆశిస్తున్న టార్గెట్ ధర (క్వింటాల్‌కి ₹):</label>
+                <label>టార్గెట్ ధర (క్వింటాల్‌కి ₹):</label>
                 <input type="number" id="alertTargetPrice" placeholder="ఉదా: 19000">
             </div>
-            <button class="btn-action-primary" onclick="savePriceAlert()">అలర్ట్ యాక్టివేట్ చేయండి</button>
+            <button type="button" class="btn-action-primary" onclick="savePriceAlert()">అలర్ట్ సెట్ చేయండి</button>
         </div>
     </div>
 
-    <!-- Modal 6: Voice Farm Diary -->
+    <!-- MODAL 6: FARM DIARY -->
     <div class="modal-overlay" id="diaryModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeDiaryModal()">&times;</span>
-            <h3 class="modal-title">📖 రైతు ఖాతా డైరీ (Farm Ledger)</h3>
-            <p style="font-size: 0.85rem; color: #666;">పొలం ఖర్చులు మరియు అమ్మిన లాభాలు సులభంగా రాసుకోండి:</p>
-
+            <h3 class="modal-title">📖 రైతు ఖాతా డైరీ</h3>
             <div class="form-group">
-                <label>వివరణ (ఉదా: విత్తనాలు, కూలీల ఖర్చు, యూరియా):</label>
+                <label>వివరణ:</label>
                 <input type="text" id="diaryDesc" placeholder="ఖర్చు లేదా రాబడి వివరణ">
             </div>
             <div class="form-group">
                 <label>మొత్తం (₹):</label>
                 <input type="number" id="diaryAmount" placeholder="మొత్తం వేయండి">
             </div>
-            <div class="form-group">
-                <label>రకం:</label>
-                <select id="diaryType">
-                    <option value="expense">ఖర్చు (Expense -)</option>
-                    <option value="income">రాబడి (Income +)</option>
-                </select>
-            </div>
-            <button class="btn-action-primary" onclick="addDiaryEntry()">డైరీలో నమోదు చేయండి</button>
-
-            <h5 style="margin-top: 1rem; color: #1B5E20;">నమోదైన లెక్కలు:</h5>
-            <div id="diaryList" style="max-height: 120px; overflow-y: auto; margin-top: 6px;"></div>
+            <button type="button" class="btn-action-primary" onclick="addDiaryEntry()">నమోదు చేయండి</button>
         </div>
     </div>
 
-    <!-- Modal 7: Shared Machinery Group Booking -->
+    <!-- MODAL 7: SHARED MACHINERY -->
     <div class="modal-overlay" id="sharedMachineryModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeSharedMachineryModal()">&times;</span>
             <h3 class="modal-title">🤝 రైతు గ్రూప్ యంత్రాల అద్దె</h3>
-            <p style="font-size: 0.85rem; color: #666;">సమీప పొలాల రైతులతో కలిసి గ్రూప్ బుకింగ్ చేసుకోండి:</p>
-
             <div class="form-group">
                 <label>యంత్రం ఎంపిక:</label>
                 <select>
-                    <option>వరి కోత మిషన్ (హార్వెస్టర్) - ₹ 2,200/గంట</option>
+                    <option>వరి కోత మిషన్ - ₹ 2,200/గంట</option>
                     <option>స్ప్రేయింగ్ డ్రోన్ - ₹ 399/ఎకరం</option>
-                    <option>భారీ ట్రాక్టర్ రోటవేటర్ - ₹ 1,100/గంట</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>కలిసి బుక్ చేసుకునే రైతుల సంఖ్య (రైతులు):</label>
-                <input type="number" min="2" max="6" value="3">
-            </div>
-            <div class="form-group">
-                <label>మొత్తం విస్తీర్ణం (ఎకరాలు):</label>
-                <input type="text" placeholder="ఉదా: 8 ఎకరాలు">
-            </div>
-            <button class="btn-action-primary" onclick="alert('మీ గ్రూప్ బుకింగ్ రిక్వెస్ట్ సమీప యంత్ర ఆపరేటర్లకు పంపబడింది! 30% రాయితీ వర్తిస్తుంది.'); closeSharedMachineryModal();">
-                గ్రూప్ బుకింగ్ ఖరారు చేయండి
-            </button>
+            <button type="button" class="btn-action-primary" onclick="alert('బుకింగ్ విజయవంతమైంది!'); closeSharedMachineryModal();">గ్రూప్ బుకింగ్ ఖరారు చేయండి</button>
         </div>
     </div>
 
-    <!-- MODAL 8: LABOR SELF-REGISTRATION (MESTRY ENROLLMENT) -->
+    <!-- MODAL 8: LABOR SELF-REGISTRATION (MESTRY REGISTRATION) -->
     <div class="modal-overlay" id="laborRegisterModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLaborRegisterModal()">&times;</span>
@@ -1826,53 +1667,53 @@
                 <input type="text" id="regMestryName" placeholder="ఉదా: వెంకన్న మేస్త్రీ">
             </div>
             <div class="form-group">
-                <label>మొబైల్ ఫోన్ నంబర్ (కాల్స్ కోసం):</label>
+                <label>మొబైల్ ఫోన్ నంబర్:</label>
                 <input type="tel" id="regMestryPhone" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10">
             </div>
             <div class="form-group">
-                <label>మీ గ్రూప్‌లో ఉన్న కూలీల సంఖ్య:</label>
+                <label>కూలీల సంఖ్య:</label>
                 <input type="number" id="regMestryCount" placeholder="ఉదా: 15 మంది">
             </div>
             <div class="form-group">
                 <label>గ్రామం & మండలం:</label>
-                <input type="text" id="regMestryVillage" placeholder="ఉదా: ధర్మసాగర్ / వరంగల్">
+                <input type="text" id="regMestryVillage" placeholder="గ్రామం పేరు">
             </div>
             <div class="form-group">
                 <label>చేయగల పనులు:</label>
                 <input type="text" id="regMestrySkills" placeholder="ఉదా: వరి నాట్లు, మిర్చి కోత, పత్తి ఏరడం">
             </div>
-            <button class="btn-action-primary" onclick="submitLaborRegistration()">నమోదు పూర్తి చేయండి</button>
+            <button type="button" class="btn-action-primary" onclick="submitLaborRegistration()">నమోదు పూర్తి చేయండి</button>
         </div>
     </div>
 
-    <!-- MODAL 9: FARMER POST JOB / BROADCAST REQUEST -->
+    <!-- MODAL 9: FARMER POST JOB -->
     <div class="modal-overlay" id="laborPostModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLaborPostModal()">&times;</span>
-            <h3 class="modal-title">📢 కూలీల అవసర ప్రకటన (Job Broadcast)</h3>
-            <p style="font-size: 0.85rem; color: #666;">మీకు అవసరమైన కూలీల వివరాలు చెప్పండి లేదా రాయండి:</p>
+            <h3 class="modal-title">📢 కూలీల అవసర ప్రకటన (Post Job)</h3>
+            <p style="font-size: 0.85rem; color: #666;">మీకు కావలసిన కూలీల వివరాలు చెప్పండి:</p>
 
             <div class="form-group">
                 <label>రైతు పేరు:</label>
                 <input type="text" id="postFarmerName" placeholder="మీ పేరు">
             </div>
             <div class="form-group">
-                <label>మీ ఫోన్ నంబర్:</label>
-                <input type="tel" id="postFarmerPhone" placeholder="రైతు మొబైల్ నంబర్" maxlength="10">
+                <label>రైతు మొబైల్ నంబర్:</label>
+                <input type="tel" id="postFarmerPhone" placeholder="10 అంకెల ఫోన్ నంబర్" maxlength="10">
             </div>
             <div class="form-group">
                 <label>ఎంతమంది కూలీలు కావాలి?</label>
-                <input type="number" id="postLaborCount" placeholder="ఉదా: 10">
+                <input type="number" id="postLaborCount" placeholder="ఉదా: 8">
             </div>
             <div class="form-group">
-                <label>పని వివరాలు (ఏ పని కోసం?):</label>
-                <input type="text" id="postWorkDetails" placeholder="ఉదా: రేపటి వరి నాట్లు / కలుపు తీత">
+                <label>పని వివరాలు:</label>
+                <input type="text" id="postWorkDetails" placeholder="ఉదా: రేపటి వరి నాట్లు">
             </div>
             <div class="form-group">
-                <label>పొలం ఉన్న ప్రదేశం / గ్రామం:</label>
+                <label>పొలం గ్రామం / ప్రదేశం:</label>
                 <input type="text" id="postFarmLocation" placeholder="గ్రామం పేరు">
             </div>
-            <button class="btn-action-primary" onclick="broadcastJobRequest()">మేస్త్రీలకు WhatsApp ద్వారా పంపండి</button>
+            <button type="button" class="btn-action-primary" onclick="broadcastJobRequest()">మేస్త్రీలకు WhatsApp ద్వారా పంపండి</button>
         </div>
     </div>
 
@@ -1881,7 +1722,6 @@
         <p><strong>AgriConnect Technologies</strong> | UDYAM-TS-31-0063048</p>
         <p>Hanamkonda / Warangal, Telangana, India</p>
         <p>Contact: <a href="mailto:agriconnect.office@gmail.com">agriconnect.office@gmail.com</a></p>
-        <p style="margin-top: 10px; font-size: 0.8rem; color: #777;">&copy; 2026 AgriConnect Technologies. All Rights Reserved.</p>
     </footer>
 
     <!-- Interactive JavaScript Engine -->
@@ -1911,53 +1751,51 @@
             document.getElementById('drawerOverlay').classList.toggle('open');
             document.getElementById('drawerSidebar').classList.toggle('open');
         }
+
+        // Drawer Modal Triggers
         function openLoginModalFromDrawer() { toggleDrawer(); openLoginModal(); }
         function openSettingsModalFromDrawer() { toggleDrawer(); openSettingsModal(); }
         function openContactModalFromDrawer() { toggleDrawer(); openContactModal(); }
         function openWalletModalFromDrawer() { toggleDrawer(); openWalletModal(); }
         function openDiaryModalFromDrawer() { toggleDrawer(); openDiaryModal(); }
         function openAlertsModalFromDrawer() { toggleDrawer(); openAlertsModal(); }
+        function openLaborRegisterModalFromDrawer() { toggleDrawer(); openLaborRegisterModal(); }
+        function openLaborPostModalFromDrawer() { toggleDrawer(); openLaborPostModal(); }
 
-        function handleDrawerLogout() {
-            toggleDrawer();
-            if (confirm('మీరు ఖాతా నుండి లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
-                document.getElementById('drawer-login-text').innerText = 'Login / ప్రొఫైల్';
-                document.getElementById('farmerNameInput').value = '';
-                document.getElementById('mobileNumberInput').value = '';
-                document.getElementById('settingFarmerName').value = '';
-                document.getElementById('modal-step-login').style.display = 'block';
-                document.getElementById('modal-step-profile').style.display = 'none';
-                document.getElementById('userWelcomeBanner').style.display = 'none';
-                otpSent = false;
-                applyRoleHighlight('farmer');
-                alert('మీరు విజయవంతంగా లాగౌట్ అయ్యారు.');
-            }
-        }
-
+        // Modal Open / Close Functions
         function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+        
         function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
         function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+        
         function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
         function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
 
-        function openWalletModal() { 
-            renderWalletInterface();
-            document.getElementById('walletModal').style.display = 'flex'; 
-        }
+        function openWalletModal() { renderWalletInterface(); document.getElementById('walletModal').style.display = 'flex'; }
         function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
+
         function openAlertsModal() { document.getElementById('alertsModal').style.display = 'flex'; }
         function closeAlertsModal() { document.getElementById('alertsModal').style.display = 'none'; }
+
         function openDiaryModal() { document.getElementById('diaryModal').style.display = 'flex'; }
         function closeDiaryModal() { document.getElementById('diaryModal').style.display = 'none'; }
+
         function openSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'flex'; }
         function closeSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'none'; }
 
         function openLaborRegisterModal() { document.getElementById('laborRegisterModal').style.display = 'flex'; }
         function closeLaborRegisterModal() { document.getElementById('laborRegisterModal').style.display = 'none'; }
+
         function openLaborPostModal() { document.getElementById('laborPostModal').style.display = 'flex'; }
         function closeLaborPostModal() { document.getElementById('laborPostModal').style.display = 'none'; }
 
+        function handleDrawerLogout() {
+            toggleDrawer();
+            alert('మీరు లాగౌట్ అయ్యారు.');
+        }
+
+        // Live Clock
         function updateLiveClock() {
             const now = new Date();
             document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
@@ -1974,91 +1812,7 @@
             if(target) target.classList.add('active');
         }
 
-        let otpSent = false;
-        function handleOtpFlow() {
-            const mobile = document.getElementById('mobileNumberInput').value.trim();
-            if (!otpSent) {
-                if (mobile.length !== 10) { alert('సరైన 10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.'); return; }
-                document.getElementById('otpSection').style.display = 'block';
-                document.getElementById('btnOtpAction').innerText = 'లాగిన్ అవ్వండి (Verify & Login)';
-                otpSent = true;
-                alert('OTP పంపబడింది! (డెమో కోడ్: 1234)');
-            } else {
-                const otp = document.getElementById('otpInput').value.trim();
-                if (otp === '' || otp.length < 4) { alert('దయచేసి సరైన 4 అంకెల OTP ని నమోదు చేయండి.'); return; }
-                document.getElementById('modal-step-login').style.display = 'none';
-                document.getElementById('modal-step-profile').style.display = 'block';
-                document.getElementById('settingMobileNumber').value = mobile;
-            }
-        }
-        function previewPhoto(event) {
-            const reader = new FileReader();
-            reader.onload = () => document.getElementById('profilePreviewImg').src = reader.result;
-            if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
-        }
-        function captureLocation() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition((pos) => {
-                    document.getElementById('gpsStatusText').innerHTML = `✅ Lat: ${pos.coords.latitude.toFixed(4)}, Lon: ${pos.coords.longitude.toFixed(4)}`;
-                });
-            }
-        }
-
-        function handleCategorySelection(val) {
-            currentUserRole = val;
-            applyRoleHighlight(val);
-        }
-
-        function applyRoleHighlight(role) {
-            currentUserRole = role;
-            switchWalletMode(role);
-
-            const tabFarmer = document.getElementById('tab-farmer');
-            const tabLabor = document.getElementById('tab-labor');
-            const tabTrader = document.getElementById('tab-trader');
-
-            if(role === 'farmer') {
-                showFeature('farmer', tabFarmer);
-            } else if(role === 'laborer') {
-                showFeature('labor', tabLabor);
-            } else if(role === 'trader') {
-                showFeature('trader', tabTrader);
-            }
-        }
-
-        function saveProfile() {
-            const name = document.getElementById('farmerNameInput').value.trim();
-            const cat = document.getElementById('userCategorySelect').value;
-            if(!name) { alert('పేరు రాయండి.'); return; }
-            
-            currentUserRole = cat;
-            applyRoleHighlight(cat);
-
-            let roleNameText = (cat === 'farmer') ? 'రైతు' : (cat === 'laborer' ? 'కూలీ' : 'వ్యాపారి');
-            document.getElementById('drawer-login-text').innerText = `${name} (${roleNameText})`;
-            document.getElementById('settingFarmerName').value = name;
-            document.getElementById('postFarmerName').value = name;
-
-            const banner = document.getElementById('userWelcomeBanner');
-            banner.style.display = 'flex';
-            document.getElementById('welcomeUserName').innerText = `నమస్కారం, ${name}! (${roleNameText})`;
-            document.getElementById('welcomeUserRoleBadge').innerText = `మీ ${roleNameText} డాష్‌బోర్డ్ ఆటోమేటిక్‌గా హైలైట్ చేయబడింది.`;
-
-            closeLoginModal();
-            alert(`స్వాగతం, ${name}! విధానం B ప్రకారం మీ ${roleNameText} డాష్‌బోర్డ్ ముందుగా తెరవబడింది.`);
-        }
-
-        function saveSettings() {
-            const updatedName = document.getElementById('settingFarmerName').value.trim();
-            const lang = document.getElementById('appLanguageSelect').value;
-            if (updatedName) {
-                document.getElementById('drawer-login-text').innerText = updatedName;
-            }
-            alert(`సెట్టింగ్స్ సేవ్ చేయబడ్డాయి! (భాష: ${lang.toUpperCase()})`);
-            closeSettingsModal();
-        }
-
-        // Labor Module Dynamic Handlers
+        // Mestry Registration Logic
         function submitLaborRegistration() {
             const name = document.getElementById('regMestryName').value.trim();
             const phone = document.getElementById('regMestryPhone').value.trim();
@@ -2083,17 +1837,15 @@
             `;
             container.prepend(newCard);
 
-            alert(`✅ అభినందనలు ${name}! మీ కూలీ బృందం (${count} మంది) విజయవంతంగా నమోదైంది. రైతులు మిమ్మల్ని నేరుగా సంప్రదిస్తారు.`);
+            alert(`✅ అభినందనలు ${name}! మీ కూలీ బృందం (${count} మంది) నమోదైంది. రైతులు మిమ్మల్ని నేరుగా సంప్రదిస్తారు.`);
             closeLaborRegisterModal();
 
-            // Clear inputs
             document.getElementById('regMestryName').value = '';
             document.getElementById('regMestryPhone').value = '';
             document.getElementById('regMestryCount').value = '';
-            document.getElementById('regMestryVillage').value = '';
-            document.getElementById('regMestrySkills').value = '';
         }
 
+        // Farmer Job Posting Logic
         function broadcastJobRequest() {
             const farmer = document.getElementById('postFarmerName').value.trim() || 'రైతు';
             const phone = document.getElementById('postFarmerPhone').value.trim() || '';
@@ -2106,402 +1858,131 @@
                 return;
             }
 
-            const msg = `🚨 *AgriConnect వ్యవసాయ కూలీల తక్షణ అవసరం!* \n\nరైతు పేరు: ${farmer} \nకావలసిన కూలీలు: ${count} మంది \nపని: ${work} \nప్రాంతం: ${loc} \nసంప్రదించాల్సిన నంబర్: ${phone || 'వెంటనే సంప్రదించండి'}`;
+            const msg = `🚨 *AgriConnect వ్యవసాయ కూలీల అవసరం!* \n\nరైతు: ${farmer} \nకూలీలు: ${count} మంది \nపని: ${work} \nప్రాంతం: ${loc} \nఫోన్: ${phone || 'వెంటనే సంప్రదించండి'}`;
             shareToWhatsApp(msg);
             closeLaborPostModal();
         }
 
-        function switchWalletMode(role) {
-            currentUserRole = role;
-            document.getElementById('walletModeSwitcher').value = role;
-            
-            if(role === 'farmer') {
-                currentBalance = 14850.00;
-                document.getElementById('walletRoleBadge').innerText = 'రైతు ఖాతా (Farmer)';
-                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.farmer@upi';
-            } else if(role === 'laborer') {
-                currentBalance = 2450.00;
-                document.getElementById('walletRoleBadge').innerText = 'కూలీ ఖాతా (Laborer)';
-                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.labor@upi';
-            } else if(role === 'trader') {
-                currentBalance = 150000.00;
-                document.getElementById('walletRoleBadge').innerText = 'వ్యాపారి ఖాతా (Trader/Buyer)';
-                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.trader@upi';
+        function shareToWhatsApp(msg) {
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('farmerNameInput').value.trim();
+            if(!name) { alert('పేరు రాయండి.'); return; }
+            document.getElementById('drawer-login-text').innerText = name;
+            closeLoginModal();
+            alert(`స్వాగతం, ${name}!`);
+        }
+
+        let otpSent = false;
+        function handleOtpFlow() {
+            const mobile = document.getElementById('mobileNumberInput').value.trim();
+            if (!otpSent) {
+                if (mobile.length !== 10) { alert('10 అంకెల మొబైల్ నంబర్ ఇవ్వండి.'); return; }
+                document.getElementById('otpSection').style.display = 'block';
+                document.getElementById('btnOtpAction').innerText = 'లాగిన్ అవ్వండి';
+                otpSent = true;
+                alert('OTP: 1234');
+            } else {
+                document.getElementById('modal-step-login').style.display = 'none';
+                document.getElementById('modal-step-profile').style.display = 'block';
             }
-            renderWalletInterface();
+        }
+
+        function previewPhoto(event) {
+            const reader = new FileReader();
+            reader.onload = () => document.getElementById('profilePreviewImg').src = reader.result;
+            if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
         }
 
         function renderWalletInterface() {
-            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-            const actionsContainer = document.getElementById('dynamicWalletActions');
-            const txContainer = document.getElementById('walletTransactions');
-
-            if(currentUserRole === 'farmer') {
-                actionsContainer.innerHTML = `
-                    <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayLabor()">
-                        💸 కూలీల వేతనం చెల్లించండి
-                    </button>
-                    <button class="wallet-btn" style="background:#1565c0;" onclick="promptAddMoney()">
-                        ➕ ఖాతాలో జమ (Add Money)
-                    </button>
-                    <button class="wallet-btn" style="background:#f57c00; grid-column: span 2;" onclick="promptPayMachinery()">
-                        🚜 యంత్రాలు & డ్రోన్ అద్దె చెల్లింపు
-                    </button>
-                `;
-                txContainer.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                        <span>వరి పంట విక్రయం (వ్యాపారి నుండి జమ)</span>
-                        <strong style="color:#2e7d32;">+ ₹ 16,000</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                        <span>కలుపు తీత కూలీలు (4 మంది)</span>
-                        <strong style="color:#c62828;">- ₹ 1,150</strong>
-                    </div>
-                `;
-            } 
-            else if(currentUserRole === 'laborer') {
-                actionsContainer.innerHTML = `
-                    <button class="wallet-btn" style="background:#0288d1;" onclick="promptWithdrawLabor()">
-                        🏦 బ్యాంక్ / UPI కి విత్‌డ్రా
-                    </button>
-                    <button class="wallet-btn" style="background:#388e3c;" onclick="promptRequestWage()">
-                        📩 రైతుకు వేతన బిల్లు పంపండి
-                    </button>
-                    <button class="wallet-btn" style="background:#7b1fa2; grid-column: span 2;" onclick="alert('మీ రోజువారీ కూలీ రికార్డు సరిగ్గా అప్‌డేట్ అయింది.')">
-                        📋 కూలీల హాజరు & పే-స్లిప్
-                    </button>
-                `;
-                txContainer.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                        <span>వరి కోత కూలీ (రామయ్య పొలం)</span>
-                        <strong style="color:#2e7d32;">+ ₹ 750</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                        <span>బ్యాంక్ ఖాతాకు ట్రాన్స్‌ఫర్ (PhonePe)</span>
-                        <strong style="color:#c62828;">- ₹ 2,000</strong>
-                    </div>
-                `;
-            } 
-            else if(currentUserRole === 'trader') {
-                actionsContainer.innerHTML = `
-                    <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayFarmer()">
-                        🌾 రైతుకు పంట నగదు చెల్లించండి
-                    </button>
-                    <button class="wallet-btn" style="background:#1565c0;" onclick="promptAddMoney()">
-                        ➕ వ్యాపార పెట్టుబడి లోడ్ (Add Funds)
-                    </button>
-                    <button class="wallet-btn" style="background:#e65100; grid-column: span 2;" onclick="promptEscrowAdvance()">
-                        🛡️ ఎస్క్రో అడ్వాన్స్ హోల్డ్ (Secure Advance)
-                    </button>
-                `;
-                txContainer.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                        <span>కరెంట్ ఖాతా నుండి జమ</span>
-                        <strong style="color:#2e7d32;">+ ₹ 1,00,000</strong>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                        <span>మిర్చి లాట్ చెల్లింపు (రైతు కిషోర్)</span>
-                        <strong style="color:#c62828;">- ₹ 54,600</strong>
-                    </div>
-                `;
-            }
-        }
-
-        function promptPayLabor() {
-            const amt = prompt("కూలీకి చెల్లించవలసిన మొత్తం నమోదు చేయండి (₹):", "400");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                if (n > currentBalance) { alert("వాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు!"); return; }
-                currentBalance -= n;
-                appendTx(`కూలీ వేతనం బదిలీ`, -n);
-            }
-        }
-
-        function promptPayMachinery() {
-            const amt = prompt("యంత్రాలు లేదా డ్రోన్ అద్దె మొత్తం నమోదు చేయండి (₹):", "1200");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                if (n > currentBalance) { alert("వాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు!"); return; }
-                currentBalance -= n;
-                appendTx(`యంత్రాల అద్దె చెల్లింపు`, -n);
-            }
-        }
-
-        function promptWithdrawLabor() {
-            const amt = prompt("బ్యాంకుకు బదిలీ చేయవలసిన మొత్తం (₹):", "1000");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                if (n > currentBalance) { alert("వాలెట్‌లో తగినంత బ్యాలెన్స్ లేదు!"); return; }
-                currentBalance -= n;
-                appendTx(`బ్యాంక్ ఖాతాకు విత్‌డ్రా`, -n);
-            }
-        }
-
-        function promptRequestWage() {
-            const amt = prompt("రైతుకు పంపవలసిన కూలీ మొత్తం (₹):", "400");
-            if (amt && !isNaN(amt)) {
-                alert(`వేతన చెల్లింపు అభ్యర్థన (₹ ${amt}) రైతుకు SMS మరియు వాలెట్ నోటిఫికేషన్ ద్వారా పంపబడింది!`);
-            }
-        }
-
-        function promptPayFarmer() {
-            const amt = prompt("రైతుకు పంట కొనుగోలు సొమ్ము బదిలీ చేయండి (₹):", "25000");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                if (n > currentBalance) { alert("వ్యాపార ఖాతాలో సరిపడా నిధులు లేవు!"); return; }
-                currentBalance -= n;
-                appendTx(`రైతుకు పంట చెల్లింపు`, -n);
-            }
-        }
-
-        function promptEscrowAdvance() {
-            const amt = prompt("రైతుకు పంట అడ్వాన్స్ హోల్డ్ చేయవలసిన మొత్తం (₹):", "10000");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                if (n > currentBalance) { alert("సరిపడా బ్యాలెన్స్ లేదు!"); return; }
-                currentBalance -= n;
-                appendTx(`సురక్షిత అడ్వాన్స్ హోల్డ్ (Escrow)`, -n);
-            }
-        }
-
-        function promptAddMoney() {
-            const amt = prompt("ఖాతాకు జమ చేయవలసిన మొత్తం నమోదు చేయండి (₹):", "2000");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                currentBalance += n;
-                appendTx(`బ్యాంక్ ఖాతా నుండి జమ`, n);
-            }
-        }
-
-        function appendTx(title, amt) {
-            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
-            const list = document.getElementById('walletTransactions');
-            const item = document.createElement('div');
-            item.style = "display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;";
-            item.innerHTML = `<span>${title}</span><strong style="color:${amt>0?'#2e7d32':'#c62828'};">${amt>0?'+':''} ₹ ${Math.abs(amt).toLocaleString('en-IN')}</strong>`;
-            list.prepend(item);
-            alert(`లావాదేవీ విజయవంతమైంది! ప్రస్తుత బ్యాలెన్స్: ₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`);
-        }
-
-        function shareToWhatsApp(msg) {
-            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
-            window.open(url, '_blank');
+            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN')}`;
+            document.getElementById('dynamicWalletActions').innerHTML = `
+                <button type="button" class="wallet-btn" style="background:#2e7d32;" onclick="alert('కూలీ వేతనం చెల్లించబడింది')">💸 కూలీల వేతనం చెల్లింపు</button>
+                <button type="button" class="wallet-btn" style="background:#1565c0;" onclick="alert('ఖాతాలో జమ చేయబడింది')">➕ ఖాతాలో జమ</button>
+            `;
         }
 
         function savePriceAlert() {
-            const crop = document.getElementById('alertCropSelect').value;
-            const price = document.getElementById('alertTargetPrice').value;
-            if (!price) { alert("టార్గెట్ ధర నమోదు చేయండి."); return; }
-            alert(`✅ అలర్ట్ సెట్ అయింది! ${crop} ధర ₹ ${price} చేరగానే మీ మొబైల్‌కు మెసేజ్ వస్తుంది.`);
+            alert('ధర అలర్ట్ సెట్ చేయబడింది!');
             closeAlertsModal();
         }
 
         function addDiaryEntry() {
-            const desc = document.getElementById('diaryDesc').value.trim();
-            const amt = document.getElementById('diaryAmount').value.trim();
-            const type = document.getElementById('diaryType').value;
-            if (!desc || !amt) { alert("వివరణ మరియు మొత్తం నమోదు చేయండి."); return; }
-
-            const list = document.getElementById('diaryList');
-            const entry = document.createElement('div');
-            entry.className = "diary-entry-box";
-            entry.innerHTML = `<span>${desc}</span><strong style="color:${type==='income'?'#2e7d32':'#c62828'}">${type==='income'?'+':'-'} ₹ ${amt}</strong>`;
-            list.prepend(entry);
-
-            document.getElementById('diaryDesc').value = '';
-            document.getElementById('diaryAmount').value = '';
-            alert("ఖాతా డైరీలో నమోదు చేయబడింది!");
+            alert('డైరీలో నమోదు చేయబడింది!');
+            closeDiaryModal();
         }
 
         function playOfflineAudio(tipText) {
             speakText(tipText);
         }
 
+        // Voice Engine
         let isVoiceReaderActive = false;
-        let activeSpeakingElement = null;
-
         function toggleVoiceReader() {
             const speakerBtn = document.getElementById('speakerBtn');
-            const toast = document.getElementById('voice-toast');
-
             if ('speechSynthesis' in window) {
                 if (isVoiceReaderActive) {
                     window.speechSynthesis.cancel();
                     isVoiceReaderActive = false;
                     speakerBtn.classList.remove('reading-active');
-                    if(activeSpeakingElement) activeSpeakingElement.classList.remove('speaking-highlight');
-                    toast.innerText = "🔇 వాయిస్ రీడర్ ఆపబడింది";
-                    toast.style.display = 'block';
-                    setTimeout(() => toast.style.display = 'none', 2000);
                 } else {
                     isVoiceReaderActive = true;
                     speakerBtn.classList.add('reading-active');
-                    toast.innerText = "🔊 వాయిస్ రీడర్ ఆన్ అయింది! ఏదైనా బాక్స్ పై నొక్కండి.";
-                    toast.style.display = 'block';
-                    setTimeout(() => toast.style.display = 'none', 3000);
-                    speakText("వాయిస్ రీడర్ ఆన్ అయింది. మీరు ఏ బాక్స్ పై నొక్కితే ఆ వివరాలను చదివి వినిపిస్తాము.");
+                    speakText("వాయిస్ రీడర్ ఆన్ అయింది. ఏదైనా బాక్స్ పై నొక్కండి.");
                 }
-            } else {
-                alert('మీ బ్రౌజర్‌లో స్పీచ్ సదుపాయం లేదు.');
             }
         }
 
         function speakElement(el) {
             if (!isVoiceReaderActive) return;
-            window.speechSynthesis.cancel();
-            if (activeSpeakingElement) activeSpeakingElement.classList.remove('speaking-highlight');
-            activeSpeakingElement = el;
-            el.classList.add('speaking-highlight');
-
-            let textToRead = el.innerText.replace(/[\n\r]+/g, '. ').replace(/\s+/g, ' ');
-            speakText(textToRead, () => {
-                el.classList.remove('speaking-highlight');
-            });
+            speakText(el.innerText);
         }
 
-        function speakText(text, onEndCallback) {
+        function speakText(text) {
             if (!('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'te-IN';
-            utterance.rate = 0.95;
-            utterance.pitch = 1.0;
-            utterance.onend = () => { if (onEndCallback) onEndCallback(); };
-            utterance.onerror = () => { if (onEndCallback) onEndCallback(); };
             window.speechSynthesis.speak(utterance);
         }
 
         let recognition;
-        let isListening = false;
-
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.lang = 'te-IN';
-            recognition.continuous = false;
-            recognition.interimResults = false;
-
-            recognition.onstart = function() {
-                isListening = true;
-                document.getElementById('voiceBtn').classList.add('listening');
-                const toast = document.getElementById('voice-toast');
-                toast.innerText = "🎙️ వింటున్నాము... తెలుగులో మాట్లాడండి";
-                toast.style.display = 'block';
-            };
-
             recognition.onresult = function(event) {
                 const cmd = event.results[0][0].transcript.toLowerCase();
-                handleVoiceCommand(cmd);
+                if (cmd.includes('కూలీలు') || cmd.includes('పని')) {
+                    openLaborPostModal();
+                }
             };
-
-            recognition.onerror = () => stopListening();
-            recognition.onend = () => stopListening();
         }
 
         function toggleVoiceAssistant() {
-            if (!recognition) { alert('దయచేసి Chrome బ్రౌజర్ ఉపయోగించండి.'); return; }
-            if (isListening) recognition.stop();
-            else recognition.start();
+            if (recognition) recognition.start();
         }
 
-        function stopListening() {
-            isListening = false;
-            document.getElementById('voiceBtn').classList.remove('listening');
-            document.getElementById('voice-toast').style.display = 'none';
-        }
-
-        function handleVoiceCommand(cmd) {
-            const toast = document.getElementById('voice-toast');
-            toast.innerText = `మీరు చెప్పినది: "${cmd}"`;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
-
-            if (cmd.includes('హోమ్') || cmd.includes('home')) { switchView('home'); return; }
-            if (cmd.includes('గురించి') || cmd.includes('about')) { switchView('about'); return; }
-            if (cmd.includes('ఎందుకు') || cmd.includes('why')) { switchView('why'); return; }
-            if (cmd.includes('లాగౌట్') || cmd.includes('logout')) { handleDrawerLogout(); return; }
-            if (cmd.includes('కాంటాక్ట్') || cmd.includes('సంప్రదించు')) { openContactModal(); return; }
-            if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) { openLoginModal(); return; }
-            if (cmd.includes('వాలెట్') || cmd.includes('wallet') || cmd.includes('డబ్బులు') || cmd.includes('పైసలు')) { openWalletModal(); return; }
-            if (cmd.includes('డైరీ') || cmd.includes('ఖాతా')) { openDiaryModal(); return; }
-            if (cmd.includes('అలర్ట్') || cmd.includes('హెచ్చరిక')) { openAlertsModal(); return; }
-            if (cmd.includes('చదువు') || cmd.includes('స్పీకర్')) { toggleVoiceReader(); return; }
-
-            // Voice Command to Open Labor Post or Labor Hub
-            if (cmd.includes('కూలీలు కావాలి') || cmd.includes('కూలీ కావాలి') || cmd.includes('పని ఉంది')) {
-                openLaborPostModal();
-                return;
-            }
-
-            switchView('services');
-            if (cmd.includes('కూలీ') || cmd.includes('కూలీలు') || cmd.includes('పని')) {
-                showFeature('labor', document.getElementById('tab-labor'));
-                return;
-            }
-            if (cmd.includes('వ్యాపారి') || cmd.includes('వ్యాపారులు') || cmd.includes('కొనుగోలు')) {
-                showFeature('trader', document.getElementById('tab-trader'));
-                return;
-            }
-
-            showFeature('farmer', document.getElementById('tab-farmer'));
-            let targetCardId = null;
-            if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు') || cmd.includes('వ్యాధి')) targetCardId = 'card-doctor';
-            else if (cmd.includes('వాతావరణం') || cmd.includes('వర్షం')) targetCardId = 'card-weather';
-            else if (cmd.includes('శాటిలైట్') || cmd.includes('ఉపగ్రహం')) targetCardId = 'card-satellite';
-            else if (cmd.includes('సబ్సిడీ') || cmd.includes('పథకాలు') || cmd.includes('భరోసా')) targetCardId = 'card-subsidy';
-            else if (cmd.includes('కరెంట్') || cmd.includes('విద్యుత్')) targetCardId = 'card-power';
-            else if (cmd.includes('మార్కెట్') || cmd.includes('ధర') || cmd.includes('రేటు')) targetCardId = 'card-market';
-            else if (cmd.includes('యంత్రాలు') || cmd.includes('ట్రాక్టర్')) targetCardId = 'card-machinery';
-            else if (cmd.includes('అమ్మకం') || cmd.includes('పంట')) targetCardId = 'card-sales';
-            else if (cmd.includes('కౌలు') || cmd.includes('మునాభా') || cmd.includes('భూమి') || cmd.includes('లీజు')) targetCardId = 'card-kaulu';
-            else if (cmd.includes('కూలీల బుకింగ్') || cmd.includes('మేస్త్రీ')) targetCardId = 'card-labor';
-
-            if (targetCardId) {
-                const targetCard = document.getElementById(targetCardId);
-                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                targetCard.classList.add('highlight');
-                setTimeout(() => { targetCard.classList.remove('highlight'); }, 3000);
-            }
-        }
-
-        // PWA In-Page Banner Logic
+        // PWA Banner Trigger
         let deferredPrompt;
-        const installBanner = document.getElementById('pwaInstallBanner');
-        const installBtn = document.getElementById('pwaInstallBtn');
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (installBanner) installBanner.style.display = 'flex';
+            const b = document.getElementById('pwaInstallBanner');
+            if (b) b.style.display = 'flex';
         });
 
-        if (installBtn) {
-            installBtn.addEventListener('click', async () => {
+        const pBtn = document.getElementById('pwaInstallBtn');
+        if (pBtn) {
+            pBtn.addEventListener('click', async () => {
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
-                    const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        if (installBanner) installBanner.style.display = 'none';
-                    }
                     deferredPrompt = null;
                 }
             });
         }
-
-        window.addEventListener('appinstalled', () => {
-            if (installBanner) installBanner.style.display = 'none';
-            deferredPrompt = null;
-        });
-
-        // PWA Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('AgriConnect PWA Ready!', reg))
-                    .catch(err => console.log('ServiceWorker Error:', err));
-            });
-        }
     </script>
-
 </body>
 </html>
