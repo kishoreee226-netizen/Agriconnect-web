@@ -1,6 +1,6 @@
 // ==========================================================================
-// AgriConnect Technologies - Core Application Engine (app.js)
-// Real-time Cloud Sync | GPS Hyperlocal | FCM | Direct UPI | Voice AI Engine
+// AgriConnect Technologies - Complete Application Engine (app.js)
+// Realtime Cloud Sync | GPS Hyperlocal | Direct UPI | SMS | Voice AI Engine
 // UDYAM-TS-31-0063048 | Warangal & Hanamkonda
 // ==========================================================================
 
@@ -21,8 +21,8 @@ const db = firebase.firestore();
 // Global App States
 let currentUserRole = 'farmer'; 
 let currentWalletBalance = 14850.00;
-let currentUserLat = 17.9784; // Hanamkonda fallback
-let currentUserLng = 79.5941; // Warangal fallback
+let currentUserLat = 17.9784; // Hanamkonda default
+let currentUserLng = 79.5941; // Warangal default
 let rawLaborersList = [];
 let deferredInstallPrompt = null;
 let currentTargetMestryUpi = '';
@@ -51,7 +51,7 @@ function initDeviceGeolocation() {
     }
 }
 
-// Haversine Distance Formula (Returns distance in KM)
+// Haversine Distance Formula (Distance in KM)
 function calculateDistanceKm(lat1, lon1, lat2, lon2) {
     if (!lat1 || !lon1 || !lat2 || !lon2) return null;
     const earthRadiusKm = 6371;
@@ -82,16 +82,40 @@ function enablePushNotifications() {
                 badge: 'logo.png'
             });
         } else {
-            alert('నోటిఫికేషన్ అనుమతి నిరాకరించబడింది. ఫోన్ సెట్టింగ్స్‌లో పర్మిషన్ ఎనేబుల్ చేయండి.');
+            alert('నోటిఫికేషన్ అనుమతి నిరాకరించబడింది.');
         }
     });
 }
 
-// ==================== 4. META WHATSAPP CLOUD GATEWAY ====================
+// ==================== 4. META WHATSAPP & SMS GATEWAYS ====================
 function triggerWhatsAppCloudAlert(mestryPhone, farmerName, workDetails, count, location) {
     const message = `🚨 *AgriConnect కొత్త వ్యవసాయ పని అలర్ట్!*\n\nరైతు పేరు: ${farmerName}\nకావలసిన కూలీలు: ${count} మంది\nపని: ${workDetails}\nగ్రామం/ప్రాంతం: ${location}\n\nవెంటనే రైతుకు కాల్ చేసి పని ఖరారు చేసుకోండి!`;
-    const targetUrl = `[https://api.whatsapp.com/send?phone=91$](https://api.whatsapp.com/send?phone=91$){mestryPhone}&text=${encodeURIComponent(message)}`;
+    const targetUrl = `https://api.whatsapp.com/send?phone=91${mestryPhone}&text=${encodeURIComponent(message)}`;
     window.open(targetUrl, '_blank');
+}
+
+function sendDirectSmsToMestry(phone, name) {
+    const text = `నమస్తే ${name} గారు, నాకు AgriConnect ద్వారా వ్యవసాయ కూలీలు కావాలి. వెంటనే సంప్రదించండి.`;
+    const smsUri = `sms:${phone}?body=${encodeURIComponent(text)}`;
+    window.location.href = smsUri;
+}
+
+function sendJobSmsDirect() {
+    const farmer = document.getElementById('postFarmerName').value.trim() || 'రైతు';
+    const count = document.getElementById('postLaborCount').value.trim();
+    const work = document.getElementById('postWorkDetails').value.trim();
+    const loc = document.getElementById('postFarmLocation').value.trim() || 'వరంగల్ పరిసరాలు';
+    const phone = document.getElementById('postFarmerPhone').value.trim() || '';
+
+    if (!count || !work) {
+        alert('దయచేసి కూలీల సంఖ్య మరియు పని వివరాలను నమోదు చేయండి.');
+        return;
+    }
+
+    const msg = `AgriConnect కూలీల అవసరం: రైతు: ${farmer}, పని: ${work}, కూలీలు: ${count} మంది, ప్రాంతం: ${loc}, ఫోన్: ${phone}`;
+    const targetPhone = (rawLaborersList.length > 0 && rawLaborersList[0].phone) ? rawLaborersList[0].phone : '';
+    const smsUri = targetPhone ? `sms:${targetPhone}?body=${encodeURIComponent(msg)}` : `sms:?body=${encodeURIComponent(msg)}`;
+    window.location.href = smsUri;
 }
 
 // ==================== 5. NAVIGATION & ACCORDIONS ====================
@@ -528,7 +552,7 @@ function filterLaborersByDistance() {
     listWithDistances.forEach(mestry => {
         const distBadge = mestry.distanceKm ? `📍 ${mestry.distanceKm} KM దూరం` : '📍 స్థానిక పరిధి';
         const upiPayButton = mestry.upiId ? 
-            `<button class="btn-upi-pay" onclick="openUpiPaymentModal('${mestry.name}', '${mestry.upiId}')">💸 UPI పే</button>` : '';
+            `<button class="btn-upi-pay" onclick="openUpiPaymentModal('${mestry.name}', '${mestry.upiId}')">💸 UPI</button>` : '';
 
         const item = document.createElement('div');
         item.className = 'labor-card-item';
@@ -540,6 +564,7 @@ function filterLaborersByDistance() {
             </div>
             <div class="labor-actions-btns">
                 <a href="tel:${mestry.phone}" class="btn-call-labor">📞 కాల్</a>
+                <button class="btn-sms-labor" onclick="sendDirectSmsToMestry('${mestry.phone}', '${mestry.name}')">✉️ SMS</button>
                 ${upiPayButton}
             </div>
         `;
@@ -569,7 +594,6 @@ function processDirectUpiPay() {
         return;
     }
 
-    // Standard Direct UPI URI Scheme for all Indian UPI Apps
     const upiDeepLink = `upi://pay?pa=${encodeURIComponent(currentTargetMestryUpi)}&pn=${encodeURIComponent(currentTargetMestryName)}&am=${encodeURIComponent(amountVal)}&cu=INR&tn=${encodeURIComponent(noteVal)}`;
     closeUpiModal();
     window.location.href = upiDeepLink;
@@ -646,7 +670,10 @@ function listenForLiveJobs() {
                       <div style="font-weight: bold; font-size:0.92rem;">${job.farmer} (${job.location})</div>
                       <div style="font-size: 0.8rem; color: #555;">🌾 ${job.work} | 👥 ${job.count} మంది కూలీలు అవసరం</div>
                   </div>
-                  <a href="tel:${job.phone}" class="btn-call-labor">📞 రైతుకు కాల్</a>
+                  <div class="labor-actions-btns">
+                      <a href="tel:${job.phone}" class="btn-call-labor">📞 కాల్</a>
+                      <a href="sms:${job.phone}?body=${encodeURIComponent('నమస్తే, నేను AgriConnect లో మీ పని చూశాను. మేము పని చేయడానికి సిద్ధంగా ఉన్నాము.')}" class="btn-sms-labor">✉️ SMS</a>
+                  </div>
               `;
               container.appendChild(item);
           });
@@ -668,11 +695,11 @@ function broadcastJobRequest() {
     }
 
     const msg = `🚨 *AgriConnect వ్యవసాయ కూలీల అవసరం!*\n\nరైతు పేరు: ${farmer}\nకావలసిన కూలీలు: ${count} మంది\nపని: ${work}\nప్రాంతం: ${loc}\nఫోన్ నంబర్: ${phone || 'వెంటనే కాల్ చేయండి'}`;
-    window.open(`[https://api.whatsapp.com/send?text=$](https://api.whatsapp.com/send?text=$){encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 function shareToWhatsApp(msg) {
-    window.open(`[https://api.whatsapp.com/send?text=$](https://api.whatsapp.com/send?text=$){encodeURIComponent(msg)}`, '_blank');
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
 // ==================== 13. CLOCK & AUDIO CACHE ====================
@@ -708,7 +735,6 @@ function triggerAutomaticWelcomeVoice() {
     const welcomeMsg = "Welcome to AgriConnect Technologies, AgriConnect కి స్వాగతం!";
     showVoiceToast("🔊 " + welcomeMsg, 4000);
     
-    // Slight delay so the audio engine is ready
     setTimeout(() => {
         speakText(welcomeMsg);
     }, 600);
@@ -865,11 +891,11 @@ window.addEventListener('DOMContentLoaded', () => {
     listenForLiveLaborers();
     listenForLiveJobs();
 
-    // Trigger Welcome Voice on initial page load / user interaction
+    // Trigger Welcome Voice on load & interaction
     triggerAutomaticWelcomeVoice();
     window.addEventListener('click', () => {
         if (!welcomeVoicePlayed) triggerAutomaticWelcomeVoice();
     }, { once: true });
 
-    console.log("AgriConnect Fully Initialized with Cloud Sync, GPS, Voice AI, Auto-Welcome & Highlights.");
+    console.log("AgriConnect Engine fully loaded.");
 });
