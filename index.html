@@ -149,6 +149,20 @@
             font-size: 0.85rem;
         }
 
+        /* User Active Banner */
+        .user-welcome-banner {
+            max-width: 1100px;
+            margin: 1rem auto -1rem auto;
+            padding: 0.8rem 1.4rem;
+            background: #ffffff;
+            border-left: 6px solid #2e7d32;
+            border-radius: 8px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
         /* MAIN VIEWS */
         .page-view {
             display: none;
@@ -308,6 +322,7 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.06);
             border: 2px solid #e0e0e0;
             transition: all 0.3s ease;
+            position: relative;
         }
         .role-widget:hover {
             transform: translateY(-4px);
@@ -316,6 +331,23 @@
         .role-widget.active {
             border-color: #1B5E20;
             background-color: #e8f5e9;
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(27, 94, 32, 0.15);
+        }
+        .role-active-indicator {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: #2e7d32;
+            color: white;
+            font-size: 0.72rem;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: none;
+        }
+        .role-widget.active .role-active-indicator {
+            display: inline-block;
         }
         .role-icon {
             font-size: 2.3rem;
@@ -499,7 +531,7 @@
             line-height: 1.6;
         }
 
-        /* 6 ADVANCED FEATURES STYLES */
+        /* ADVANCED STYLES & WALLET */
         .btn-wa-share {
             background-color: #25D366;
             color: white;
@@ -989,6 +1021,17 @@
         </div>
     </section>
 
+    <!-- User Welcome Banner (Dynamic Role Highlight) -->
+    <div id="userWelcomeBanner" class="user-welcome-banner">
+        <div>
+            <span id="welcomeUserName" style="font-size: 1.1rem; font-weight: bold; color: #1B5E20;">స్వాగతం!</span>
+            <div id="welcomeUserRoleBadge" style="font-size: 0.85rem; color: #555;">రైతు డాష్‌బోర్డ్ యాక్టివ్‌గా ఉంది</div>
+        </div>
+        <button style="background: #e8f5e9; border: 1px solid #c8e6c9; color: #1B5E20; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="openWalletModal()">
+            💰 వాలెట్ ఓపెన్ చేయండి
+        </button>
+    </div>
+
     <!-- ================= VIEW 1: HOME DASHBOARD ================= -->
     <main id="home-view" class="page-view active-view">
         <div class="dashboard-container">
@@ -1144,18 +1187,21 @@
 
         <div class="role-widgets-container">
             <div id="tab-farmer" class="role-widget active speakable" onclick="showFeature('farmer', this); speakElement(this)">
+                <span class="role-active-indicator" id="ind-farmer">యాక్టివ్</span>
                 <div class="role-icon">🌾</div>
                 <h3>రైతులు</h3>
                 <span>(Smart Farmers Hub)</span>
             </div>
 
             <div id="tab-labor" class="role-widget speakable" onclick="showFeature('labor', this); speakElement(this)">
+                <span class="role-active-indicator" id="ind-labor">యాక్టివ్</span>
                 <div class="role-icon">👨‍🌾</div>
                 <h3>వ్యవసాయ కూలీలు</h3>
                 <span>(Farm Laborers)</span>
             </div>
 
             <div id="tab-trader" class="role-widget speakable" onclick="showFeature('trader', this); speakElement(this)">
+                <span class="role-active-indicator" id="ind-trader">యాక్టివ్</span>
                 <div class="role-icon">🏪</div>
                 <h3>వ్యాపారధారులు</h3>
                 <span>(Traders & Buyers)</span>
@@ -1472,7 +1518,7 @@
                     <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
                 </div>
                 <div class="form-group">
-                    <label>మీ విభాగం ఎంచుకోండి (Category):</label>
+                    <label>మీ ప్రధాన విభాగం ఎంచుకోండి (Primary Category):</label>
                     <select id="userCategorySelect" onchange="handleCategorySelection(this.value)">
                         <option value="farmer">రైతు (Farmer)</option>
                         <option value="laborer">వ్యవసాయ కూలీ (Farm Laborer)</option>
@@ -1486,7 +1532,7 @@
                         <div class="gps-status" id="gpsStatusText">లొకేషన్ ఇంకా నమోదు కాలేదు</div>
                     </div>
                 </div>
-                <button class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేయండి</button>
+                <button class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేసి ప్రారంభించండి</button>
             </div>
         </div>
     </div>
@@ -1536,7 +1582,7 @@
         </div>
     </div>
 
-    <!-- NEW SMART UNIVERSAL WALLET (FOR FARMERS, LABORERS & TRADERS) -->
+    <!-- UNIVERSAL WALLET MODAL -->
     <div class="modal-overlay" id="walletModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeWalletModal()">&times;</span>
@@ -1549,9 +1595,9 @@
                 <div style="font-size: 0.8rem; opacity: 0.85;" id="walletUpiId">UPI: agriconnect.farmer@upi</div>
             </div>
 
-            <!-- Role Selector directly inside Wallet for easy testing -->
-            <div style="display: flex; gap: 6px; margin-bottom: 12px; background: #e8f5e9; padding: 6px; border-radius: 8px;">
-                <span style="font-size: 0.8rem; font-weight: bold; color: #1B5E20; align-self: center;">వాలెట్ మోడ్:</span>
+            <!-- Role Selector directly inside Wallet -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #e8f5e9; padding: 6px 10px; border-radius: 8px;">
+                <span style="font-size: 0.82rem; font-weight: bold; color: #1B5E20;">వాలెట్ లావాదేవీల మోడ్:</span>
                 <select id="walletModeSwitcher" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #c8e6c9; font-size: 0.82rem;" onchange="switchWalletMode(this.value)">
                     <option value="farmer">రైతు (Farmer View)</option>
                     <option value="laborer">కూలీ (Laborer View)</option>
@@ -1559,15 +1605,11 @@
                 </select>
             </div>
 
-            <!-- DYNAMIC WALLET ACTIONS CONTAINER -->
-            <div id="dynamicWalletActions" class="wallet-actions-grid">
-                <!-- Dynamically injected via JavaScript -->
-            </div>
+            <!-- DYNAMIC ACTIONS -->
+            <div id="dynamicWalletActions" class="wallet-actions-grid"></div>
 
             <h5 style="margin-top: 1.2rem; color: #1B5E20; border-bottom: 1px solid #eee; padding-bottom: 4px;">తాజా లావాదేవీలు:</h5>
-            <div id="walletTransactions" style="font-size: 0.85rem; max-height: 140px; overflow-y: auto; margin-top: 6px;">
-                <!-- Dynamically injected via JavaScript -->
-            </div>
+            <div id="walletTransactions" style="font-size: 0.85rem; max-height: 140px; overflow-y: auto; margin-top: 6px;"></div>
             
             <button class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
         </div>
@@ -1666,7 +1708,7 @@
     <!-- Interactive JavaScript Engine -->
     <script>
         /* Global Current User Role State */
-        let currentUserRole = 'farmer'; // 'farmer', 'laborer', 'trader'
+        let currentUserRole = 'farmer'; 
         let currentBalance = 14850.00;
 
         /* 1. View Switching */
@@ -1709,8 +1751,9 @@
                 document.getElementById('settingFarmerName').value = '';
                 document.getElementById('modal-step-login').style.display = 'block';
                 document.getElementById('modal-step-profile').style.display = 'none';
+                document.getElementById('userWelcomeBanner').style.display = 'none';
                 otpSent = false;
-                switchWalletMode('farmer');
+                applyRoleHighlight('farmer');
                 alert('మీరు విజయవంతంగా లాగౌట్ అయ్యారు.');
             }
         }
@@ -1786,22 +1829,50 @@
 
         function handleCategorySelection(val) {
             currentUserRole = val;
-            switchWalletMode(val);
+            applyRoleHighlight(val);
+        }
+
+        /* METHOD B: SMART HIGHLIGHT & AUTO-FOCUS ENGINE */
+        function applyRoleHighlight(role) {
+            currentUserRole = role;
+            switchWalletMode(role);
+
+            // 1. Auto-select and focus the corresponding service tab
+            const tabFarmer = document.getElementById('tab-farmer');
+            const tabLabor = document.getElementById('tab-labor');
+            const tabTrader = document.getElementById('tab-trader');
+
+            if(role === 'farmer') {
+                showFeature('farmer', tabFarmer);
+            } else if(role === 'laborer') {
+                showFeature('labor', tabLabor);
+            } else if(role === 'trader') {
+                showFeature('trader', tabTrader);
+            }
         }
 
         function saveProfile() {
             const name = document.getElementById('farmerNameInput').value.trim();
             const cat = document.getElementById('userCategorySelect').value;
             if(!name) { alert('పేరు రాయండి.'); return; }
+            
             currentUserRole = cat;
-            switchWalletMode(cat);
+            applyRoleHighlight(cat);
 
             let roleNameText = (cat === 'farmer') ? 'రైతు' : (cat === 'laborer' ? 'కూలీ' : 'వ్యాపారి');
             document.getElementById('drawer-login-text').innerText = `${name} (${roleNameText})`;
             document.getElementById('settingFarmerName').value = name;
+
+            // Show Top Welcome Banner
+            const banner = document.getElementById('userWelcomeBanner');
+            banner.style.display = 'flex';
+            document.getElementById('welcomeUserName').innerText = `నమస్కారం, ${name}! (${roleNameText})`;
+            document.getElementById('welcomeUserRoleBadge').innerText = `మీ ${roleNameText} డాష్‌బోర్డ్ ఆటోమేటిక్‌గా హైలైట్ చేయబడింది.`;
+
             closeLoginModal();
-            alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ (${roleNameText}) మరియు వాలెట్ విజయవంతంగా సెట్ అయ్యాయి.`);
+            alert(`స్వాగతం, ${name}! విధానం B ప్రకారం మీ ${roleNameText} డాష్‌బోర్డ్ ముందుగా తెరవబడింది.`);
         }
+
         function saveSettings() {
             const updatedName = document.getElementById('settingFarmerName').value.trim();
             const lang = document.getElementById('appLanguageSelect').value;
@@ -1817,7 +1888,6 @@
             currentUserRole = role;
             document.getElementById('walletModeSwitcher').value = role;
             
-            // Set initial balances and IDs based on role
             if(role === 'farmer') {
                 currentBalance = 14850.00;
                 document.getElementById('walletRoleBadge').innerText = 'రైతు ఖాతా (Farmer)';
@@ -1840,7 +1910,6 @@
             const txContainer = document.getElementById('walletTransactions');
 
             if(currentUserRole === 'farmer') {
-                // Farmer Actions
                 actionsContainer.innerHTML = `
                     <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayLabor()">
                         💸 కూలీల వేతనం చెల్లించండి
@@ -1864,7 +1933,6 @@
                 `;
             } 
             else if(currentUserRole === 'laborer') {
-                // Laborer Actions
                 actionsContainer.innerHTML = `
                     <button class="wallet-btn" style="background:#0288d1;" onclick="promptWithdrawLabor()">
                         🏦 బ్యాంక్ / UPI కి విత్‌డ్రా
@@ -1888,7 +1956,6 @@
                 `;
             } 
             else if(currentUserRole === 'trader') {
-                // Trader Actions
                 actionsContainer.innerHTML = `
                     <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayFarmer()">
                         🌾 రైతుకు పంట నగదు చెల్లించండి
@@ -1913,7 +1980,6 @@
             }
         }
 
-        /* Wallet Functional Prompts */
         function promptPayLabor() {
             const amt = prompt("కూలీకి చెల్లించవలసిన మొత్తం నమోదు చేయండి (₹):", "400");
             if (amt && !isNaN(amt) && Number(amt) > 0) {
@@ -1990,7 +2056,7 @@
             alert(`లావాదేవీ విజయవంతమైంది! ప్రస్తుత బ్యాలెన్స్: ₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`);
         }
 
-        /* 8. WHATSAPP & OTHER ADVANCED FEATURES */
+        /* 8. WHATSAPP & ADVANCED FEATURES */
         function shareToWhatsApp(msg) {
             const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
