@@ -583,6 +583,24 @@ header {
     white-space: nowrap;
 }
 
+.btn-sms-labor {
+    background: #0277bd;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+}
+
+.btn-sms-labor:hover {
+    background: #01579b;
+}
+
 .btn-upi-pay {
     background: #5c2d91;
     color: white;
