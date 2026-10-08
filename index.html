@@ -527,12 +527,43 @@
             padding: 1.5rem;
             margin-bottom: 1.2rem;
             box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+            position: relative;
+        }
+        .wallet-role-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #FFD54F;
+            color: #1B5E20;
+            font-weight: bold;
+            font-size: 0.78rem;
+            padding: 3px 10px;
+            border-radius: 14px;
         }
         .wallet-balance-num {
             font-size: 2.2rem;
             font-weight: bold;
             color: #FFD54F;
             margin: 6px 0;
+        }
+        .wallet-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .wallet-btn {
+            color: white;
+            border: none;
+            padding: 11px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .wallet-btn:hover {
+            transform: translateY(-2px);
         }
         .diary-entry-box {
             background: #fff;
@@ -543,17 +574,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .shared-group-pill {
-            background: #e1f5fe;
-            color: #0277bd;
-            border: 1px solid #b3e5fc;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.78rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 4px;
         }
         .audio-player-offline {
             background: #f5f5f5;
@@ -897,7 +917,7 @@
         </div>
     </header>
 
-    <!-- Side Drawer (Contains Wallet & All Settings) -->
+    <!-- Side Drawer -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer-sidebar" id="drawerSidebar">
         <div class="drawer-header">
@@ -911,19 +931,16 @@
                 </button>
             </li>
             <li>
-                <!-- NEW FEATURE: WALLET -->
                 <button class="drawer-menu-item" onclick="openWalletModalFromDrawer()">
                     <span class="icon">💰</span> <strong>AgriConnect Wallet (వాలెట్)</strong>
                 </button>
             </li>
             <li>
-                <!-- NEW FEATURE: VOICE FARM DIARY -->
                 <button class="drawer-menu-item" onclick="openDiaryModalFromDrawer()">
                     <span class="icon">📖</span> రైతు ఖాతా డైరీ (Farm Diary)
                 </button>
             </li>
             <li>
-                <!-- NEW FEATURE: SMART PRICE ALERTS -->
                 <button class="drawer-menu-item" onclick="openAlertsModalFromDrawer()">
                     <span class="icon">🔔</span> స్మార్ట్ ధర హెచ్చరికలు (Price Alerts)
                 </button>
@@ -1002,7 +1019,6 @@
                 <p style="font-size: 0.82rem; color: #555; margin-top: 8px; text-align: center;">
                     🌧️ రాబోయే 24 గంటల్లో తేలికపాటి జల్లులు కురిసే అవకాశం ఉంది.
                 </p>
-                <!-- NEW FEATURE: WHATSAPP SHARE WEATHER -->
                 <div style="text-align: center;">
                     <button class="btn-wa-share" onclick="shareToWhatsApp('🌦️ AgriConnect లైవ్ వాతావరణం (వరంగల్): ఉష్ణోగ్రత 31°C, తేమ 68%. రాబోయే 24 గంటల్లో తేలికపాటి జల్లుల సూచన.')">
                         📲 వాట్సాప్‌లో షేర్ చేయండి
@@ -1010,7 +1026,7 @@
                 </div>
             </div>
 
-            <!-- 3. Mandi Rates with WhatsApp Share & Price Alert -->
+            <!-- 3. Mandi Rates -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📈 మార్కెట్ యార్డ్ లైవ్ ధరలు (క్వింటాల్‌కి)</h4>
                 <table class="rates-table">
@@ -1044,7 +1060,6 @@
                         </tr>
                     </tbody>
                 </table>
-                <!-- NEW FEATURE: WHATSAPP SHARE MANDI RATES -->
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
                     <button class="btn-wa-share" onclick="shareToWhatsApp('📈 నేటి వరంగల్ మార్కెట్ లైవ్ ధరలు (క్వింటాల్‌కి):\nమిర్చి: ₹ 18,200\nపత్తి: ₹ 7,650\nవరి: ₹ 2,450\nమొక్కజొన్న: ₹ 2,200\nసమగ్ర వివరాలకు AgriConnect చూడండి!')">
                         📲 ధరలు షేర్ చేయండి
@@ -1089,10 +1104,9 @@
                 </div>
             </div>
 
-            <!-- 6. Machinery Ads with Group Sharing Feature -->
+            <!-- 6. Machinery Ads -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>🚜 యంత్రాల అద్దె & డ్రోన్ పిచికారీ ప్రకటనలు</h4>
-                <!-- NEW FEATURE: SHARED GROUP MACHINERY BOOKING -->
                 <div class="ad-banner-box" style="background:#e0f2f1; border-color:#00897b;">
                     <h5 style="color:#004d40;">🤝 రైతు గ్రూప్ షేరింగ్ (Shared Machinery Booking)</h5>
                     <p>3-4 మంది రైతులు కలిసి ఒకే హార్వెస్టర్ లేదా డ్రోన్ అద్దెకు తీసుకుంటే ఎకరానికి 30% ఖర్చు ఆదా!</p>
@@ -1106,11 +1120,10 @@
                 </div>
             </div>
 
-            <!-- 7. NEW FEATURE: OFFLINE AUDIO NOTES CARD -->
+            <!-- 7. Offline Audio Notes -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>🎧 ఆఫ్ లైన్ వాయిస్ నోట్స్ (Offline Audio Cache)</h4>
                 <p style="font-size: 0.85rem; color: #555;">ఇంటర్నెట్ లేకపోయినా పొలంలో ఉండి ఈ వాయిస్ సలహాలు వినవచ్చు:</p>
-                
                 <div class="audio-player-offline">
                     <span style="font-size: 0.85rem; font-weight: 600;">మిర్చిలో తామర పురుగు నివారణ</span>
                     <button style="background:#1B5E20; color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="playOfflineAudio('మిర్చి పంటలో తామర పురుగు మరియు నల్లి నివారణకు వేపనూనె లేదా ఫిప్రోనిల్ పిచికారీ చేయండి.')">▶ ప్లే చేయండి</button>
@@ -1151,7 +1164,7 @@
 
         <div class="feature-details-box">
             
-            <!-- 1. Farmers Features (Full 11 Cards) -->
+            <!-- 1. Farmers Features -->
             <div id="farmer-feature" class="feature-content active">
                 <h4>🌾 రైతులకు లభించే సమగ్ర స్మార్ట్ వ్యవసాయ సేవలు:</h4>
                 <div class="features-grid">
@@ -1247,7 +1260,7 @@
                 </div>
             </div>
 
-            <!-- 2. Labor Features (Full 4 Cards) -->
+            <!-- 2. Labor Features -->
             <div id="labor-feature" class="feature-content">
                 <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు:</h4>
                 <div class="features-grid">
@@ -1287,7 +1300,7 @@
                 </div>
             </div>
 
-            <!-- 3. Trader Features (Full 4 Cards) -->
+            <!-- 3. Trader Features -->
             <div id="trader-feature" class="feature-content">
                 <h4>🏪 వ్యాపారధారులకు లభించే సేవలు:</h4>
                 <div class="features-grid">
@@ -1330,7 +1343,7 @@
         </div>
     </section>
 
-    <!-- ================= VIEW 3: ABOUT US (FULL) ================= -->
+    <!-- ================= VIEW 3: ABOUT US ================= -->
     <section id="about-view" class="page-view">
         <div class="info-page-box">
             <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
@@ -1448,28 +1461,28 @@
             </div>
 
             <div id="modal-step-profile" style="display: none;">
-                <h3 class="modal-title">👤 రైతు ప్రొఫైల్ సెటప్</h3>
+                <h3 class="modal-title">👤 యూజర్ ప్రొఫైల్ సెటప్</h3>
                 <div class="photo-preview-container">
                     <img id="profilePreviewImg" src="https://via.placeholder.com/90?text=Photo" alt="Profile" class="photo-preview"><br>
                     <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి (Upload Photo)</label>
                     <input type="file" id="photoUploadInput" accept="image/*" style="display:none" onchange="previewPhoto(event)">
                 </div>
                 <div class="form-group">
-                    <label>రైతు పూర్తి పేరు (Farmer Name):</label>
+                    <label>మీ పూర్తి పేరు (Full Name):</label>
                     <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
                 </div>
                 <div class="form-group">
-                    <label>మీ విభాగం (Category):</label>
-                    <select id="userCategorySelect">
-                        <option>రైతు (Farmer)</option>
-                        <option>వ్యవసాయ కూలీ (Farm Laborer)</option>
-                        <option>వ్యాపారధారి (Trader/Buyer)</option>
+                    <label>మీ విభాగం ఎంచుకోండి (Category):</label>
+                    <select id="userCategorySelect" onchange="handleCategorySelection(this.value)">
+                        <option value="farmer">రైతు (Farmer)</option>
+                        <option value="laborer">వ్యవసాయ కూలీ (Farm Laborer)</option>
+                        <option value="trader">వ్యాపారధారి (Trader/Buyer)</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>🛰️ పొలం లొకేషన్ (శాటిలైట్ మానిటరింగ్ కోసం):</label>
+                    <label>🛰️ స్థానిక లొకేషన్ (శాటిలైట్ & మ్యాచింగ్ కోసం):</label>
                     <div class="gps-box">
-                        <button type="button" style="background:#2e7d32; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="captureLocation()">📍 నా పొలం లొకేషన్ గుర్తించండి</button>
+                        <button type="button" style="background:#2e7d32; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="captureLocation()">📍 నా లొకేషన్ గుర్తించండి</button>
                         <div class="gps-status" id="gpsStatusText">లొకేషన్ ఇంకా నమోదు కాలేదు</div>
                     </div>
                 </div>
@@ -1492,15 +1505,15 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>✏️ రైతు పేరు మార్పు (Edit Name):</label>
-                <input type="text" id="settingFarmerName" placeholder="రైతు పేరును సరిచేయండి">
+                <label>✏️ పేరు మార్పు (Edit Name):</label>
+                <input type="text" id="settingFarmerName" placeholder="పేరును సరిచేయండి">
             </div>
             <div class="form-group">
                 <label>📱 మొబైల్ నంబర్ మార్పు (Change Mobile):</label>
                 <input type="tel" id="settingMobileNumber" placeholder="కొత్త మొబైల్ నంబర్" maxlength="10">
             </div>
             <div class="form-group">
-                <label>🌾 ప్రధాన పంట & పొలం విస్తీర్ణం (Acres):</label>
+                <label>🌾 ప్రధాన పంట & విస్తీర్ణం (Acres):</label>
                 <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
             </div>
             <button class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
@@ -1523,42 +1536,44 @@
         </div>
     </div>
 
-    <!-- NEW MODAL 4: WALLET SYSTEM -->
+    <!-- NEW SMART UNIVERSAL WALLET (FOR FARMERS, LABORERS & TRADERS) -->
     <div class="modal-overlay" id="walletModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeWalletModal()">&times;</span>
             <h3 class="modal-title">💰 AgriConnect Wallet</h3>
+            
             <div class="wallet-card-box">
+                <span class="wallet-role-badge" id="walletRoleBadge">రైతు ఖాతా (Farmer)</span>
                 <div style="font-size: 0.9rem; opacity: 0.9;">అందుబాటులో ఉన్న బ్యాలెన్స్:</div>
                 <div class="wallet-balance-num" id="walletBalance">₹ 14,850.00</div>
-                <div style="font-size: 0.8rem; opacity: 0.85;">UPI ID: agriconnect@upi</div>
+                <div style="font-size: 0.8rem; opacity: 0.85;" id="walletUpiId">UPI: agriconnect.farmer@upi</div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button type="button" style="background:#2e7d32; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="promptPayWage()">
-                    💸 కూలీల వేతనం ఇవ్వండి
-                </button>
-                <button type="button" style="background:#1565c0; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="promptAddMoney()">
-                    ➕ నగదు జమ చేయండి
-                </button>
+            <!-- Role Selector directly inside Wallet for easy testing -->
+            <div style="display: flex; gap: 6px; margin-bottom: 12px; background: #e8f5e9; padding: 6px; border-radius: 8px;">
+                <span style="font-size: 0.8rem; font-weight: bold; color: #1B5E20; align-self: center;">వాలెట్ మోడ్:</span>
+                <select id="walletModeSwitcher" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #c8e6c9; font-size: 0.82rem;" onchange="switchWalletMode(this.value)">
+                    <option value="farmer">రైతు (Farmer View)</option>
+                    <option value="laborer">కూలీ (Laborer View)</option>
+                    <option value="trader">వ్యాపారి (Trader View)</option>
+                </select>
+            </div>
+
+            <!-- DYNAMIC WALLET ACTIONS CONTAINER -->
+            <div id="dynamicWalletActions" class="wallet-actions-grid">
+                <!-- Dynamically injected via JavaScript -->
             </div>
 
             <h5 style="margin-top: 1.2rem; color: #1B5E20; border-bottom: 1px solid #eee; padding-bottom: 4px;">తాజా లావాదేవీలు:</h5>
             <div id="walletTransactions" style="font-size: 0.85rem; max-height: 140px; overflow-y: auto; margin-top: 6px;">
-                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                    <span>వరి పంట అమ్మకం (బయ్యర్ నుండి)</span>
-                    <strong style="color:#2e7d32;">+ ₹ 16,000</strong>
-                </div>
-                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
-                    <span>కలుపు తీత కూలీలు (4 మంది)</span>
-                    <strong style="color:#c62828;">- ₹ 1,150</strong>
-                </div>
+                <!-- Dynamically injected via JavaScript -->
             </div>
+            
             <button class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
         </div>
     </div>
 
-    <!-- NEW MODAL 5: SMART MANDI PRICE ALERTS -->
+    <!-- Modal 5: Price Alerts -->
     <div class="modal-overlay" id="alertsModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeAlertsModal()">&times;</span>
@@ -1582,7 +1597,7 @@
         </div>
     </div>
 
-    <!-- NEW MODAL 6: VOICE FARM DIARY -->
+    <!-- Modal 6: Voice Farm Diary -->
     <div class="modal-overlay" id="diaryModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeDiaryModal()">&times;</span>
@@ -1611,7 +1626,7 @@
         </div>
     </div>
 
-    <!-- NEW MODAL 7: SHARED MACHINERY GROUP BOOKING -->
+    <!-- Modal 7: Shared Machinery Group Booking -->
     <div class="modal-overlay" id="sharedMachineryModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeSharedMachineryModal()">&times;</span>
@@ -1650,6 +1665,10 @@
 
     <!-- Interactive JavaScript Engine -->
     <script>
+        /* Global Current User Role State */
+        let currentUserRole = 'farmer'; // 'farmer', 'laborer', 'trader'
+        let currentBalance = 14850.00;
+
         /* 1. View Switching */
         function switchView(viewName) {
             const views = ['home', 'services', 'about', 'why'];
@@ -1691,6 +1710,7 @@
                 document.getElementById('modal-step-login').style.display = 'block';
                 document.getElementById('modal-step-profile').style.display = 'none';
                 otpSent = false;
+                switchWalletMode('farmer');
                 alert('మీరు విజయవంతంగా లాగౌట్ అయ్యారు.');
             }
         }
@@ -1703,7 +1723,10 @@
         function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
         function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
 
-        function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
+        function openWalletModal() { 
+            renderWalletInterface();
+            document.getElementById('walletModal').style.display = 'flex'; 
+        }
         function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
         function openAlertsModal() { document.getElementById('alertsModal').style.display = 'flex'; }
         function closeAlertsModal() { document.getElementById('alertsModal').style.display = 'none'; }
@@ -1721,7 +1744,7 @@
         setInterval(updateLiveClock, 1000);
         updateLiveClock();
 
-        /* 5. Role Switching */
+        /* 5. Role Switching in Services View */
         function showFeature(role, widgetElement) {
             document.querySelectorAll('.role-widget').forEach(w => w.classList.remove('active'));
             document.querySelectorAll('.feature-content').forEach(c => c.classList.remove('active'));
@@ -1760,13 +1783,24 @@
                 });
             }
         }
+
+        function handleCategorySelection(val) {
+            currentUserRole = val;
+            switchWalletMode(val);
+        }
+
         function saveProfile() {
             const name = document.getElementById('farmerNameInput').value.trim();
+            const cat = document.getElementById('userCategorySelect').value;
             if(!name) { alert('పేరు రాయండి.'); return; }
-            document.getElementById('drawer-login-text').innerText = name;
+            currentUserRole = cat;
+            switchWalletMode(cat);
+
+            let roleNameText = (cat === 'farmer') ? 'రైతు' : (cat === 'laborer' ? 'కూలీ' : 'వ్యాపారి');
+            document.getElementById('drawer-login-text').innerText = `${name} (${roleNameText})`;
             document.getElementById('settingFarmerName').value = name;
             closeLoginModal();
-            alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ మరియు పొలం లొకేషన్ సేవ్ అయ్యాయి.`);
+            alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ (${roleNameText}) మరియు వాలెట్ విజయవంతంగా సెట్ అయ్యాయి.`);
         }
         function saveSettings() {
             const updatedName = document.getElementById('settingFarmerName').value.trim();
@@ -1778,43 +1812,190 @@
             closeSettingsModal();
         }
 
-        /* 7. NEW ADVANCED FEATURES LOGIC */
-        // A. WhatsApp Share
+        /* 7. UNIVERSAL WALLET ENGINE (FARMER, LABORER, TRADER) */
+        function switchWalletMode(role) {
+            currentUserRole = role;
+            document.getElementById('walletModeSwitcher').value = role;
+            
+            // Set initial balances and IDs based on role
+            if(role === 'farmer') {
+                currentBalance = 14850.00;
+                document.getElementById('walletRoleBadge').innerText = 'రైతు ఖాతా (Farmer)';
+                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.farmer@upi';
+            } else if(role === 'laborer') {
+                currentBalance = 2450.00;
+                document.getElementById('walletRoleBadge').innerText = 'కూలీ ఖాతా (Laborer)';
+                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.labor@upi';
+            } else if(role === 'trader') {
+                currentBalance = 150000.00;
+                document.getElementById('walletRoleBadge').innerText = 'వ్యాపారి ఖాతా (Trader/Buyer)';
+                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.trader@upi';
+            }
+            renderWalletInterface();
+        }
+
+        function renderWalletInterface() {
+            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            const actionsContainer = document.getElementById('dynamicWalletActions');
+            const txContainer = document.getElementById('walletTransactions');
+
+            if(currentUserRole === 'farmer') {
+                // Farmer Actions
+                actionsContainer.innerHTML = `
+                    <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayLabor()">
+                        💸 కూలీల వేతనం చెల్లించండి
+                    </button>
+                    <button class="wallet-btn" style="background:#1565c0;" onclick="promptAddMoney()">
+                        ➕ ఖాతాలో జమ (Add Money)
+                    </button>
+                    <button class="wallet-btn" style="background:#f57c00; grid-column: span 2;" onclick="promptPayMachinery()">
+                        🚜 యంత్రాలు & డ్రోన్ అద్దె చెల్లింపు
+                    </button>
+                `;
+                txContainer.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>వరి పంట విక్రయం (వ్యాపారి నుండి జమ)</span>
+                        <strong style="color:#2e7d32;">+ ₹ 16,000</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>కలుపు తీత కూలీలు (4 మంది)</span>
+                        <strong style="color:#c62828;">- ₹ 1,150</strong>
+                    </div>
+                `;
+            } 
+            else if(currentUserRole === 'laborer') {
+                // Laborer Actions
+                actionsContainer.innerHTML = `
+                    <button class="wallet-btn" style="background:#0288d1;" onclick="promptWithdrawLabor()">
+                        🏦 బ్యాంక్ / UPI కి విత్‌డ్రా
+                    </button>
+                    <button class="wallet-btn" style="background:#388e3c;" onclick="promptRequestWage()">
+                        📩 రైతుకు వేతన బిల్లు పంపండి
+                    </button>
+                    <button class="wallet-btn" style="background:#7b1fa2; grid-column: span 2;" onclick="alert('మీ రోజువారీ కూలీ రికార్డు సరిగ్గా అప్‌డేట్ అయింది.')">
+                        📋 కూలీల హాజరు & పే-స్లిప్
+                    </button>
+                `;
+                txContainer.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>వరి కోత కూలీ (రామయ్య పొలం)</span>
+                        <strong style="color:#2e7d32;">+ ₹ 750</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>బ్యాంక్ ఖాతాకు ట్రాన్స్‌ఫర్ (PhonePe)</span>
+                        <strong style="color:#c62828;">- ₹ 2,000</strong>
+                    </div>
+                `;
+            } 
+            else if(currentUserRole === 'trader') {
+                // Trader Actions
+                actionsContainer.innerHTML = `
+                    <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayFarmer()">
+                        🌾 రైతుకు పంట నగదు చెల్లించండి
+                    </button>
+                    <button class="wallet-btn" style="background:#1565c0;" onclick="promptAddMoney()">
+                        ➕ వ్యాపార పెట్టుబడి లోడ్ (Add Funds)
+                    </button>
+                    <button class="wallet-btn" style="background:#e65100; grid-column: span 2;" onclick="promptEscrowAdvance()">
+                        🛡️ ఎస్క్రో అడ్వాన్స్ హోల్డ్ (Secure Advance)
+                    </button>
+                `;
+                txContainer.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>కరెంట్ ఖాతా నుండి జమ</span>
+                        <strong style="color:#2e7d32;">+ ₹ 1,00,000</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>మిర్చి లాట్ చెల్లింపు (రైతు కిషోర్)</span>
+                        <strong style="color:#c62828;">- ₹ 54,600</strong>
+                    </div>
+                `;
+            }
+        }
+
+        /* Wallet Functional Prompts */
+        function promptPayLabor() {
+            const amt = prompt("కూలీకి చెల్లించవలసిన మొత్తం నమోదు చేయండి (₹):", "400");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`కూలీ వేతనం బదిలీ`, -n);
+            }
+        }
+
+        function promptPayMachinery() {
+            const amt = prompt("యంత్రాలు లేదా డ్రోన్ అద్దె మొత్తం నమోదు చేయండి (₹):", "1200");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`యంత్రాల అద్దె చెల్లింపు`, -n);
+            }
+        }
+
+        function promptWithdrawLabor() {
+            const amt = prompt("బ్యాంకుకు బదిలీ చేయవలసిన మొత్తం (₹):", "1000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వాలెట్‌లో తగినంత బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`బ్యాంక్ ఖాతాకు విత్‌డ్రా`, -n);
+            }
+        }
+
+        function promptRequestWage() {
+            const amt = prompt("రైతుకు పంపవలసిన కూలీ మొత్తం (₹):", "400");
+            if (amt && !isNaN(amt)) {
+                alert(`వేతన చెల్లింపు అభ్యర్థన (₹ ${amt}) రైతుకు SMS మరియు వాలెట్ నోటిఫికేషన్ ద్వారా పంపబడింది!`);
+            }
+        }
+
+        function promptPayFarmer() {
+            const amt = prompt("రైతుకు పంట కొనుగోలు సొమ్ము బదిలీ చేయండి (₹):", "25000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వ్యాపార ఖాతాలో సరిపడా నిధులు లేవు!"); return; }
+                currentBalance -= n;
+                appendTx(`రైతుకు పంట చెల్లింపు`, -n);
+            }
+        }
+
+        function promptEscrowAdvance() {
+            const amt = prompt("రైతుకు పంట అడ్వాన్స్ హోల్డ్ చేయవలసిన మొత్తం (₹):", "10000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("సరిపడా బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`సురక్షిత అడ్వాన్స్ హోల్డ్ (Escrow)`, -n);
+            }
+        }
+
+        function promptAddMoney() {
+            const amt = prompt("ఖాతాకు జమ చేయవలసిన మొత్తం నమోదు చేయండి (₹):", "2000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                currentBalance += n;
+                appendTx(`బ్యాంక్ ఖాతా నుండి జమ`, n);
+            }
+        }
+
+        function appendTx(title, amt) {
+            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            const list = document.getElementById('walletTransactions');
+            const item = document.createElement('div');
+            item.style = "display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;";
+            item.innerHTML = `<span>${title}</span><strong style="color:${amt>0?'#2e7d32':'#c62828'};">${amt>0?'+':''} ₹ ${Math.abs(amt).toLocaleString('en-IN')}</strong>`;
+            list.prepend(item);
+            alert(`లావాదేవీ విజయవంతమైంది! ప్రస్తుత బ్యాలెన్స్: ₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`);
+        }
+
+        /* 8. WHATSAPP & OTHER ADVANCED FEATURES */
         function shareToWhatsApp(msg) {
             const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
 
-        // B. Wallet Operations
-        let currentBalance = 14850.00;
-        function promptPayWage() {
-            const amt = prompt("కూలీకి చెల్లించవలసిన మొత్తం నమోదు చేయండి (₹):", "350");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                if (n > currentBalance) { alert("వాలెట్‌లో తగినంత బ్యాలెన్స్ లేదు!"); return; }
-                currentBalance -= n;
-                updateWalletDisplay(`కూలీ వేతనం బదిలీ`, -n);
-            }
-        }
-        function promptAddMoney() {
-            const amt = prompt("వాలెట్‌కు ఎంత నగదు జమ చేయాలి? (₹):", "1000");
-            if (amt && !isNaN(amt) && Number(amt) > 0) {
-                const n = Number(amt);
-                currentBalance += n;
-                updateWalletDisplay(`బ్యాంక్ ఖాతా నుండి జమ`, n);
-            }
-        }
-        function updateWalletDisplay(title, amt) {
-            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toFixed(2)}`;
-            const list = document.getElementById('walletTransactions');
-            const item = document.createElement('div');
-            item.style = "display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;";
-            item.innerHTML = `<span>${title}</span><strong style="color:${amt>0?'#2e7d32':'#c62828'};">${amt>0?'+':''} ₹ ${Math.abs(amt)}</strong>`;
-            list.prepend(item);
-            alert(`లావాదేవీ విజయవంతమైంది! నూతన బ్యాలెన్స్: ₹ ${currentBalance.toFixed(2)}`);
-        }
-
-        // C. Smart Price Alert
         function savePriceAlert() {
             const crop = document.getElementById('alertCropSelect').value;
             const price = document.getElementById('alertTargetPrice').value;
@@ -1823,7 +2004,6 @@
             closeAlertsModal();
         }
 
-        // D. Farm Diary Logic
         function addDiaryEntry() {
             const desc = document.getElementById('diaryDesc').value.trim();
             const amt = document.getElementById('diaryAmount').value.trim();
@@ -1841,12 +2021,11 @@
             alert("ఖాతా డైరీలో నమోదు చేయబడింది!");
         }
 
-        // E. Offline Audio Player Simulation
         function playOfflineAudio(tipText) {
             speakText(tipText);
         }
 
-        /* 8. FLOATING SPEAKER (TEXT-TO-SPEECH) */
+        /* 9. FLOATING SPEAKER (TEXT-TO-SPEECH) */
         let isVoiceReaderActive = false;
         let activeSpeakingElement = null;
 
@@ -1901,7 +2080,7 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        /* 9. FLOATING MIC (SPEECH-TO-TEXT FULL COMMANDS) */
+        /* 10. FLOATING MIC (SPEECH-TO-TEXT COMMANDS) */
         let recognition;
         let isListening = false;
 
@@ -1954,7 +2133,7 @@
             if (cmd.includes('లాగౌట్') || cmd.includes('logout')) { handleDrawerLogout(); return; }
             if (cmd.includes('కాంటాక్ట్') || cmd.includes('సంప్రదించు')) { openContactModal(); return; }
             if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) { openLoginModal(); return; }
-            if (cmd.includes('వాలెట్') || cmd.includes('wallet') || cmd.includes('డబ్బులు')) { openWalletModal(); return; }
+            if (cmd.includes('వాలెట్') || cmd.includes('wallet') || cmd.includes('డబ్బులు') || cmd.includes('పైసలు')) { openWalletModal(); return; }
             if (cmd.includes('డైరీ') || cmd.includes('ఖాతా')) { openDiaryModal(); return; }
             if (cmd.includes('అలర్ట్') || cmd.includes('హెచ్చరిక')) { openAlertsModal(); return; }
             if (cmd.includes('చదువు') || cmd.includes('స్పీకర్')) { toggleVoiceReader(); return; }
