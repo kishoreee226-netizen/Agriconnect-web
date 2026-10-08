@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriConnect Technologies - The Voice of Smart Farming</title>
+    
+    <!-- PWA Setup Files -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1B5E20">
+    <link rel="apple-touch-icon" href="logo.png">
+
     <style>
         * {
             margin: 0;
@@ -17,7 +23,6 @@
             line-height: 1.6;
             overflow-x: hidden;
         }
-        /* Header */
         header {
             background-color: #1B5E20;
             color: white;
@@ -107,7 +112,6 @@
             transition: 0.2s;
         }
 
-        /* Hero Banner */
         .hero {
             background: linear-gradient(rgba(27, 94, 32, 0.9), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80') center/cover;
             color: white;
@@ -149,7 +153,6 @@
             font-size: 0.85rem;
         }
 
-        /* User Active Banner */
         .user-welcome-banner {
             max-width: 1100px;
             margin: 1rem auto -1rem auto;
@@ -163,7 +166,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        /* MAIN VIEWS */
         .page-view {
             display: none;
             animation: fadeIn 0.3s ease-in-out;
@@ -172,7 +174,6 @@
             display: block;
         }
 
-        /* SPEAKABLE ITEMS & HIGHLIGHT */
         .speakable {
             cursor: pointer;
             transition: all 0.2s ease;
@@ -184,7 +185,6 @@
             box-shadow: 0 0 15px rgba(255, 152, 0, 0.5) !important;
         }
 
-        /* DASHBOARD GRID */
         .dashboard-container {
             max-width: 1100px;
             margin: 2rem auto;
@@ -290,7 +290,6 @@
             border-radius: 6px;
         }
 
-        /* SECTION TITLES & LAYOUTS */
         .section-title {
             text-align: center;
             margin: 2.2rem 1rem 0.3rem 1rem;
@@ -304,7 +303,6 @@
             margin-bottom: 1.5rem;
         }
 
-        /* SERVICES WIDGETS */
         .role-widgets-container {
             max-width: 960px;
             margin: 0 auto 1.5rem auto;
@@ -434,7 +432,6 @@
             line-height: 1.5;
         }
 
-        /* ABOUT US & WHY CHOOSE US VIEWS */
         .info-page-box {
             max-width: 950px;
             margin: 2rem auto;
@@ -531,7 +528,6 @@
             line-height: 1.6;
         }
 
-        /* ADVANCED STYLES & WALLET */
         .btn-wa-share {
             background-color: #25D366;
             color: white;
@@ -617,7 +613,6 @@
             justify-content: space-between;
         }
 
-        /* HAMBURGER SIDE DRAWER */
         .drawer-overlay {
             position: fixed;
             top: 0;
@@ -718,7 +713,6 @@
             background: #fafafa;
         }
 
-        /* MODALS */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -832,7 +826,6 @@
             margin-top: 0.8rem;
         }
 
-        /* FLOATING ACTION DOCK: SPEAKER & MIC */
         .floating-dock {
             position: fixed;
             bottom: 25px;
@@ -900,7 +893,6 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* Footer */
         footer {
             background-color: #1a221a;
             color: #bbb;
@@ -1714,11 +1706,9 @@
 
     <!-- Interactive JavaScript Engine -->
     <script>
-        /* Global Current User Role State */
         let currentUserRole = 'farmer'; 
         let currentBalance = 14850.00;
 
-        /* 1. View Switching */
         function switchView(viewName) {
             const views = ['home', 'services', 'about', 'why'];
             views.forEach(v => {
@@ -1737,7 +1727,6 @@
             }
         }
 
-        /* 2. Drawer Controls */
         function toggleDrawer() {
             document.getElementById('drawerOverlay').classList.toggle('open');
             document.getElementById('drawerSidebar').classList.toggle('open');
@@ -1765,7 +1754,6 @@
             }
         }
 
-        /* 3. Modal Controllers */
         function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
         function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
@@ -1785,7 +1773,6 @@
         function openSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'flex'; }
         function closeSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'none'; }
 
-        /* 4. Live Clock */
         function updateLiveClock() {
             const now = new Date();
             document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
@@ -1794,7 +1781,6 @@
         setInterval(updateLiveClock, 1000);
         updateLiveClock();
 
-        /* 5. Role Switching in Services View */
         function showFeature(role, widgetElement) {
             document.querySelectorAll('.role-widget').forEach(w => w.classList.remove('active'));
             document.querySelectorAll('.feature-content').forEach(c => c.classList.remove('active'));
@@ -1803,7 +1789,6 @@
             if(target) target.classList.add('active');
         }
 
-        /* 6. Mobile & OTP Simulation */
         let otpSent = false;
         function handleOtpFlow() {
             const mobile = document.getElementById('mobileNumberInput').value.trim();
@@ -1839,7 +1824,6 @@
             applyRoleHighlight(val);
         }
 
-        /* METHOD B: SMART HIGHLIGHT & AUTO-FOCUS ENGINE */
         function applyRoleHighlight(role) {
             currentUserRole = role;
             switchWalletMode(role);
@@ -1888,7 +1872,6 @@
             closeSettingsModal();
         }
 
-        /* 7. UNIVERSAL WALLET ENGINE (FARMER, LABORER, TRADER) */
         function switchWalletMode(role) {
             currentUserRole = role;
             document.getElementById('walletModeSwitcher').value = role;
@@ -2061,7 +2044,6 @@
             alert(`లావాదేవీ విజయవంతమైంది! ప్రస్తుత బ్యాలెన్స్: ₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`);
         }
 
-        /* 8. WHATSAPP & ADVANCED FEATURES */
         function shareToWhatsApp(msg) {
             const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
@@ -2096,7 +2078,6 @@
             speakText(tipText);
         }
 
-        /* 9. FLOATING SPEAKER (TEXT-TO-SPEECH) */
         let isVoiceReaderActive = false;
         let activeSpeakingElement = null;
 
@@ -2151,7 +2132,6 @@
             window.speechSynthesis.speak(utterance);
         }
 
-        /* 10. FLOATING MIC (SPEECH-TO-TEXT COMMANDS) */
         let recognition;
         let isListening = false;
 
@@ -2197,7 +2177,6 @@
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
 
-            // Navigations
             if (cmd.includes('హోమ్') || cmd.includes('home')) { switchView('home'); return; }
             if (cmd.includes('గురించి') || cmd.includes('about')) { switchView('about'); return; }
             if (cmd.includes('ఎందుకు') || cmd.includes('why')) { switchView('why'); return; }
@@ -2209,7 +2188,6 @@
             if (cmd.includes('అలర్ట్') || cmd.includes('హెచ్చరిక')) { openAlertsModal(); return; }
             if (cmd.includes('చదువు') || cmd.includes('స్పీకర్')) { toggleVoiceReader(); return; }
 
-            // Services Switching
             switchView('services');
             if (cmd.includes('కూలీ') || cmd.includes('కూలీలు') || cmd.includes('పని')) {
                 showFeature('labor', document.getElementById('tab-labor'));
@@ -2220,7 +2198,6 @@
                 return;
             }
 
-            // Farmer Specific Feature Cards (including 12th Land Lease / Kaulu)
             showFeature('farmer', document.getElementById('tab-farmer'));
             let targetCardId = null;
             if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు') || cmd.includes('వ్యాధి')) targetCardId = 'card-doctor';
@@ -2239,6 +2216,15 @@
                 targetCard.classList.add('highlight');
                 setTimeout(() => { targetCard.classList.remove('highlight'); }, 3000);
             }
+        }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('AgriConnect PWA Ready!', reg))
+                    .catch(err => console.log('ServiceWorker Error:', err));
+            });
         }
     </script>
 
