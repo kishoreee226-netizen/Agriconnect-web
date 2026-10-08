@@ -29,6 +29,7 @@ let currentTargetMestryUpi = '';
 let currentTargetMestryName = '';
 let isVoiceReaderActive = false;
 let speechRecognitionInstance = null;
+let welcomeVoicePlayed = false;
 
 // ==================== 2. GPS GEOLOCATION ENGINE ====================
 function initDeviceGeolocation() {
@@ -89,7 +90,7 @@ function enablePushNotifications() {
 // ==================== 4. META WHATSAPP CLOUD GATEWAY ====================
 function triggerWhatsAppCloudAlert(mestryPhone, farmerName, workDetails, count, location) {
     const message = `🚨 *AgriConnect కొత్త వ్యవసాయ పని అలర్ట్!*\n\nరైతు పేరు: ${farmerName}\nకావలసిన కూలీలు: ${count} మంది\nపని: ${workDetails}\nగ్రామం/ప్రాంతం: ${location}\n\nవెంటనే రైతుకు కాల్ చేసి పని ఖరారు చేసుకోండి!`;
-    const targetUrl = `https://api.whatsapp.com/send?phone=91${mestryPhone}&text=${encodeURIComponent(message)}`;
+    const targetUrl = `[https://api.whatsapp.com/send?phone=91$](https://api.whatsapp.com/send?phone=91$){mestryPhone}&text=${encodeURIComponent(message)}`;
     window.open(targetUrl, '_blank');
 }
 
@@ -199,6 +200,7 @@ function closeAlertsModal() {
     if (el) el.style.display = 'none'; 
 }
 
+function openSharedMachineryModalFromDrawer() { toggleDrawer(); openSharedMachineryModal(); }
 function openSharedMachineryModal() { 
     const el = document.getElementById('sharedMachineryModal');
     if (el) el.style.display = 'flex'; 
@@ -206,6 +208,16 @@ function openSharedMachineryModal() {
 function closeSharedMachineryModal() { 
     const el = document.getElementById('sharedMachineryModal');
     if (el) el.style.display = 'none'; 
+}
+
+function openSettingsModalFromDrawer() { toggleDrawer(); openSettingsModal(); }
+function openSettingsModal() {
+    const el = document.getElementById('settingsModal');
+    if (el) el.style.display = 'flex';
+}
+function closeSettingsModal() {
+    const el = document.getElementById('settingsModal');
+    if (el) el.style.display = 'none';
 }
 
 function openContactModalFromDrawer() { toggleDrawer(); openContactModal(); }
@@ -253,6 +265,36 @@ function handleOtpFlow() {
     }
 }
 
+function previewPhoto(event) {
+    const reader = new FileReader();
+    reader.onload = function() {
+        const output = document.getElementById('profilePreviewImg');
+        if (output) output.src = reader.result;
+    };
+    if (event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+}
+
+function captureLocation() {
+    const statusText = document.getElementById('gpsStatusText');
+    if (navigator.geolocation) {
+        if (statusText) statusText.innerText = "లొకేషన్ శోధిస్తున్నాము...";
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                currentUserLat = pos.coords.latitude;
+                currentUserLng = pos.coords.longitude;
+                if (statusText) statusText.innerText = `📍 లొకేషన్ నమోదైంది (${currentUserLat.toFixed(4)}, ${currentUserLng.toFixed(4)})`;
+            },
+            (err) => {
+                if (statusText) statusText.innerText = "వరంగల్/హనుమకొండ లొకేషన్ ఎంపికైంది.";
+            }
+        );
+    }
+}
+
+function handleCategorySelection(val) {
+    currentUserRole = val;
+}
+
 function saveProfile() {
     const nameInput = document.getElementById('farmerNameInput');
     const roleSelect = document.getElementById('userCategorySelect');
@@ -279,24 +321,76 @@ function saveProfile() {
     alert(`స్వాగతం, ${name}! మీ ప్రొఫైల్ విజయవంతంగా సేవ్ చేయబడింది.`);
 }
 
+function saveSettings() {
+    alert('సెట్టింగ్స్ విజయవంతంగా సేవ్ చేయబడ్డాయి!');
+    closeSettingsModal();
+}
+
 // ==================== 8. WALLET, DIARY & ALERTS ====================
 function renderWalletDisplay() {
     const balanceEl = document.getElementById('walletBalance');
     if (balanceEl) {
         balanceEl.innerText = `₹ ${currentWalletBalance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
     }
+    switchWalletMode(currentUserRole);
+}
+
+function switchWalletMode(mode) {
+    const roleBadge = document.getElementById('walletRoleBadge');
+    const actionsBox = document.getElementById('dynamicWalletActions');
+    const upiBadge = document.getElementById('walletUpiId');
+    if (!actionsBox) return;
+
+    if (mode === 'farmer') {
+        if (roleBadge) roleBadge.innerText = 'రైతు ఖాతా (Farmer)';
+        if (upiBadge) upiBadge.innerText = 'UPI: agriconnect.farmer@upi';
+        actionsBox.innerHTML = `
+            <button style="background:#2e7d32; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('కూలీ వేతన చెల్లింపు విజయవంతమైంది!')">💸 కూలీల వేతనం చెల్లింపు</button>
+            <button style="background:#1565c0; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('వాలెట్‌లో నగదు జమ చేయబడింది!')">➕ నగదు జమ (Add Money)</button>
+        `;
+    } else if (mode === 'laborer') {
+        if (roleBadge) roleBadge.innerText = 'కూలీ ఖాతా (Laborer)';
+        if (upiBadge) upiBadge.innerText = 'UPI: kooli.mestry@upi';
+        actionsBox.innerHTML = `
+            <button style="background:#2e7d32; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('బ్యాంక్ ఖాతాకు బదిలీ విజయవంతమైంది!')">🏦 బ్యాంక్‌కు బదిలీ (Withdraw)</button>
+            <button style="background:#f57c00; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('తాజా కూలీ హాజరు చెక్ చేయబడింది!')">📋 కూలీ హాజరు లెక్కలు</button>
+        `;
+    } else {
+        if (roleBadge) roleBadge.innerText = 'వ్యాపారి ఖాతా (Trader)';
+        if (upiBadge) upiBadge.innerText = 'UPI: trader.mandi@upi';
+        actionsBox.innerHTML = `
+            <button style="background:#2e7d32; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('రైతుకు పంట కొనుగోలు నగదు చెల్లించబడింది!')">🌾 రైతుకు చెల్లింపు</button>
+            <button style="background:#1565c0; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('వ్యాపార లావాదేవీల రసీదు డౌన్‌లోడ్ అయింది!')">📄 రసీదు (GST Invoice)</button>
+        `;
+    }
 }
 
 function addDiaryEntry() {
     const desc = document.getElementById('diaryDesc').value.trim();
     const amt = parseFloat(document.getElementById('diaryAmount').value.trim());
+    const type = document.getElementById('diaryType').value;
+    const list = document.getElementById('diaryList');
 
     if (!desc || isNaN(amt) || amt <= 0) {
         alert('దయచేసి సరైన వివరణ మరియు మొత్తాన్ని నమోదు చేయండి.');
         return;
     }
 
-    alert(`ఖాతా డైరీలో ₹ ${amt} (- ${desc}) విజయవంతంగా నమోదైంది!`);
+    if (list) {
+        const item = document.createElement('div');
+        item.style.padding = '6px 0';
+        item.style.borderBottom = '1px solid #eee';
+        item.style.fontSize = '0.85rem';
+        item.style.display = 'flex';
+        item.style.justifyContent = 'space-between';
+        
+        const sign = type === 'income' ? '+ ₹' : '- ₹';
+        const color = type === 'income' ? '#2e7d32' : '#d32f2f';
+        item.innerHTML = `<span>${desc}</span><strong style="color:${color};">${sign} ${amt}</strong>`;
+        list.prepend(item);
+    }
+
+    alert(`ఖాతా డైరీలో ₹ ${amt} నమోదైంది!`);
     document.getElementById('diaryDesc').value = '';
     document.getElementById('diaryAmount').value = '';
     closeDiaryModal();
@@ -475,6 +569,7 @@ function processDirectUpiPay() {
         return;
     }
 
+    // Standard Direct UPI URI Scheme for all Indian UPI Apps
     const upiDeepLink = `upi://pay?pa=${encodeURIComponent(currentTargetMestryUpi)}&pn=${encodeURIComponent(currentTargetMestryName)}&am=${encodeURIComponent(amountVal)}&cu=INR&tn=${encodeURIComponent(noteVal)}`;
     closeUpiModal();
     window.location.href = upiDeepLink;
@@ -573,7 +668,11 @@ function broadcastJobRequest() {
     }
 
     const msg = `🚨 *AgriConnect వ్యవసాయ కూలీల అవసరం!*\n\nరైతు పేరు: ${farmer}\nకావలసిన కూలీలు: ${count} మంది\nపని: ${work}\nప్రాంతం: ${loc}\nఫోన్ నంబర్: ${phone || 'వెంటనే కాల్ చేయండి'}`;
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+    window.open(`[https://api.whatsapp.com/send?text=$](https://api.whatsapp.com/send?text=$){encodeURIComponent(msg)}`, '_blank');
+}
+
+function shareToWhatsApp(msg) {
+    window.open(`[https://api.whatsapp.com/send?text=$](https://api.whatsapp.com/send?text=$){encodeURIComponent(msg)}`, '_blank');
 }
 
 // ==================== 13. CLOCK & AUDIO CACHE ====================
@@ -591,7 +690,7 @@ function playOfflineAudio(tipText) {
     speakText(tipText);
 }
 
-// ==================== 14. VOICE READER & SPEECH AI ENGINE ====================
+// ==================== 14. VOICE READER, SPEECH AI & WELCOME VOICE ====================
 function showVoiceToast(msg, duration = 3000) {
     const toast = document.getElementById('voice-toast');
     if (toast) {
@@ -599,6 +698,20 @@ function showVoiceToast(msg, duration = 3000) {
         toast.style.display = 'block';
         setTimeout(() => { toast.style.display = 'none'; }, duration);
     }
+}
+
+// AUTOMATIC WELCOME VOICE ON OPEN
+function triggerAutomaticWelcomeVoice() {
+    if (welcomeVoicePlayed) return;
+    welcomeVoicePlayed = true;
+
+    const welcomeMsg = "Welcome to AgriConnect Technologies, AgriConnect కి స్వాగతం!";
+    showVoiceToast("🔊 " + welcomeMsg, 4000);
+    
+    // Slight delay so the audio engine is ready
+    setTimeout(() => {
+        speakText(welcomeMsg);
+    }, 600);
 }
 
 function toggleVoiceReader() {
@@ -707,11 +820,17 @@ function toggleVoiceAssistant() {
 }
 
 // ==================== 15. PWA INSTALL BANNER EVENT ====================
+function dismissInstallBanner() {
+    const banner = document.getElementById('pwaInstallBanner');
+    if (banner) banner.style.display = 'none';
+}
+
 function initPwaInstallPrompt() {
+    const banner = document.getElementById('pwaInstallBanner');
+
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredInstallPrompt = e;
-        const banner = document.getElementById('pwaInstallBanner');
         if (banner) banner.style.display = 'flex';
     });
 
@@ -722,13 +841,19 @@ function initPwaInstallPrompt() {
                 deferredInstallPrompt.prompt();
                 const choiceResult = await deferredInstallPrompt.userChoice;
                 if (choiceResult.outcome === 'accepted') {
-                    const banner = document.getElementById('pwaInstallBanner');
                     if (banner) banner.style.display = 'none';
                 }
                 deferredInstallPrompt = null;
+            } else {
+                alert('📲 యాప్ ఇన్‌స్టాల్ చేయడానికి:\nబ్రౌజర్ పైన కుడివైపున ఉన్న 3 చుక్కలు (⋮) నొక్కి, "Add to Home screen" లేదా "Install App" ఎంచుకోండి.');
             }
         });
     }
+
+    window.addEventListener('appinstalled', () => {
+        if (banner) banner.style.display = 'none';
+        console.log('AgriConnect App successfully installed.');
+    });
 }
 
 // ==================== 16. INITIAL BOOTSTRAPPER ====================
@@ -739,5 +864,12 @@ window.addEventListener('DOMContentLoaded', () => {
     initPwaInstallPrompt();
     listenForLiveLaborers();
     listenForLiveJobs();
-    console.log("AgriConnect Fully Initialized with Cloud Sync, GPS, Voice AI & Highlights.");
+
+    // Trigger Welcome Voice on initial page load / user interaction
+    triggerAutomaticWelcomeVoice();
+    window.addEventListener('click', () => {
+        if (!welcomeVoicePlayed) triggerAutomaticWelcomeVoice();
+    }, { once: true });
+
+    console.log("AgriConnect Fully Initialized with Cloud Sync, GPS, Voice AI, Auto-Welcome & Highlights.");
 });
