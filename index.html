@@ -499,6 +499,72 @@
             line-height: 1.6;
         }
 
+        /* 6 ADVANCED FEATURES STYLES */
+        .btn-wa-share {
+            background-color: #25D366;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 8px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .btn-wa-share:hover {
+            background-color: #128C7E;
+            transform: scale(1.04);
+        }
+        .wallet-card-box {
+            background: linear-gradient(135deg, #0d47a1, #1976d2);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+        }
+        .wallet-balance-num {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #FFD54F;
+            margin: 6px 0;
+        }
+        .diary-entry-box {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .shared-group-pill {
+            background: #e1f5fe;
+            color: #0277bd;
+            border: 1px solid #b3e5fc;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 4px;
+        }
+        .audio-player-offline {
+            background: #f5f5f5;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
         /* HAMBURGER SIDE DRAWER */
         .drawer-overlay {
             position: fixed;
@@ -740,7 +806,6 @@
         .dock-btn:hover {
             transform: scale(1.1);
         }
-        /* Speaker Button */
         .btn-speaker {
             background: #FF8F00;
             color: white;
@@ -750,7 +815,6 @@
             background: #E65100;
             animation: breathe-orange 1s infinite alternate;
         }
-        /* Mic Button */
         .btn-mic {
             background: #1B5E20;
             color: white;
@@ -818,7 +882,6 @@
             <h1>AgriConnect Technologies</h1>
         </div>
         <div class="nav-actions">
-            <!-- Main Navbar: Home, Services, About Us, Why Choose Us -->
             <div class="nav-links">
                 <button id="nav-btn-home" class="active-nav" onclick="switchView('home')">🏠 Home</button>
                 <button id="nav-btn-services" onclick="switchView('services')">🌾 Services</button>
@@ -834,7 +897,7 @@
         </div>
     </header>
 
-    <!-- Side Drawer -->
+    <!-- Side Drawer (Contains Wallet & All Settings) -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
     <div class="drawer-sidebar" id="drawerSidebar">
         <div class="drawer-header">
@@ -845,6 +908,24 @@
             <li>
                 <button class="drawer-menu-item" onclick="openLoginModalFromDrawer()">
                     <span class="icon">👤</span> <strong id="drawer-login-text">Login / ప్రొఫైల్</strong>
+                </button>
+            </li>
+            <li>
+                <!-- NEW FEATURE: WALLET -->
+                <button class="drawer-menu-item" onclick="openWalletModalFromDrawer()">
+                    <span class="icon">💰</span> <strong>AgriConnect Wallet (వాలెట్)</strong>
+                </button>
+            </li>
+            <li>
+                <!-- NEW FEATURE: VOICE FARM DIARY -->
+                <button class="drawer-menu-item" onclick="openDiaryModalFromDrawer()">
+                    <span class="icon">📖</span> రైతు ఖాతా డైరీ (Farm Diary)
+                </button>
+            </li>
+            <li>
+                <!-- NEW FEATURE: SMART PRICE ALERTS -->
+                <button class="drawer-menu-item" onclick="openAlertsModalFromDrawer()">
+                    <span class="icon">🔔</span> స్మార్ట్ ధర హెచ్చరికలు (Price Alerts)
                 </button>
             </li>
             <li>
@@ -921,9 +1002,15 @@
                 <p style="font-size: 0.82rem; color: #555; margin-top: 8px; text-align: center;">
                     🌧️ రాబోయే 24 గంటల్లో తేలికపాటి జల్లులు కురిసే అవకాశం ఉంది.
                 </p>
+                <!-- NEW FEATURE: WHATSAPP SHARE WEATHER -->
+                <div style="text-align: center;">
+                    <button class="btn-wa-share" onclick="shareToWhatsApp('🌦️ AgriConnect లైవ్ వాతావరణం (వరంగల్): ఉష్ణోగ్రత 31°C, తేమ 68%. రాబోయే 24 గంటల్లో తేలికపాటి జల్లుల సూచన.')">
+                        📲 వాట్సాప్‌లో షేర్ చేయండి
+                    </button>
+                </div>
             </div>
 
-            <!-- 3. Mandi Rates -->
+            <!-- 3. Mandi Rates with WhatsApp Share & Price Alert -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📈 మార్కెట్ యార్డ్ లైవ్ ధరలు (క్వింటాల్‌కి)</h4>
                 <table class="rates-table">
@@ -957,6 +1044,15 @@
                         </tr>
                     </tbody>
                 </table>
+                <!-- NEW FEATURE: WHATSAPP SHARE MANDI RATES -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <button class="btn-wa-share" onclick="shareToWhatsApp('📈 నేటి వరంగల్ మార్కెట్ లైవ్ ధరలు (క్వింటాల్‌కి):\nమిర్చి: ₹ 18,200\nపత్తి: ₹ 7,650\nవరి: ₹ 2,450\nమొక్కజొన్న: ₹ 2,200\nసమగ్ర వివరాలకు AgriConnect చూడండి!')">
+                        📲 ధరలు షేర్ చేయండి
+                    </button>
+                    <button style="background:#e8f5e9; color:#1B5E20; border:1px solid #c8e6c9; border-radius:20px; padding:6px 12px; font-size:0.82rem; font-weight:bold; cursor:pointer;" onclick="openAlertsModal()">
+                        🔔 రేట్ అలర్ట్ సెట్ చేయండి
+                    </button>
+                </div>
             </div>
 
             <!-- 4. Helpline -->
@@ -993,16 +1089,35 @@
                 </div>
             </div>
 
-            <!-- 6. Machinery Ads -->
+            <!-- 6. Machinery Ads with Group Sharing Feature -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>🚜 యంత్రాల అద్దె & డ్రోన్ పిచికారీ ప్రకటనలు</h4>
+                <!-- NEW FEATURE: SHARED GROUP MACHINERY BOOKING -->
+                <div class="ad-banner-box" style="background:#e0f2f1; border-color:#00897b;">
+                    <h5 style="color:#004d40;">🤝 రైతు గ్రూప్ షేరింగ్ (Shared Machinery Booking)</h5>
+                    <p>3-4 మంది రైతులు కలిసి ఒకే హార్వెస్టర్ లేదా డ్రోన్ అద్దెకు తీసుకుంటే ఎకరానికి 30% ఖర్చు ఆదా!</p>
+                    <button style="background:#00897b; color:white; border:none; padding:5px 10px; border-radius:6px; font-size:0.8rem; font-weight:bold; cursor:pointer; margin-top:5px;" onclick="openSharedMachineryModal()">
+                        గ్రూప్ బుకింగ్ ప్రారంభించండి
+                    </button>
+                </div>
                 <div class="ad-banner-box" style="background:#f3e5f5; border-color:#8e24aa;">
                     <h5 style="color:#6a1b9a;">🚁 డ్రోన్ స్ప్రేయింగ్ సేవలు (ఎకరానికి ₹ 399/-)</h5>
                     <p>త్వరగా మరియు సమర్థవంతంగా పురుగుమందుల పిచికారీ. బుకింగ్ కోసం సంప్రదించండి.</p>
                 </div>
-                <div class="ad-banner-box">
-                    <h5>🚜 ట్రాక్టర్లు & వరి కోత మిషన్లు అద్దెకు కలవు</h5>
-                    <p>గ్రామాల పరిధిలో సమయానికి నమ్మకమైన యంత్రాల అద్దె సేవలు. రైతులతో డైరెక్ట్ సంప్రదింపులు.</p>
+            </div>
+
+            <!-- 7. NEW FEATURE: OFFLINE AUDIO NOTES CARD -->
+            <div class="dash-card speakable" onclick="speakElement(this)">
+                <h4>🎧 ఆఫ్ లైన్ వాయిస్ నోట్స్ (Offline Audio Cache)</h4>
+                <p style="font-size: 0.85rem; color: #555;">ఇంటర్నెట్ లేకపోయినా పొలంలో ఉండి ఈ వాయిస్ సలహాలు వినవచ్చు:</p>
+                
+                <div class="audio-player-offline">
+                    <span style="font-size: 0.85rem; font-weight: 600;">మిర్చిలో తామర పురుగు నివారణ</span>
+                    <button style="background:#1B5E20; color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="playOfflineAudio('మిర్చి పంటలో తామర పురుగు మరియు నల్లి నివారణకు వేపనూనె లేదా ఫిప్రోనిల్ పిచికారీ చేయండి.')">▶ ప్లే చేయండి</button>
+                </div>
+                <div class="audio-player-offline">
+                    <span style="font-size: 0.85rem; font-weight: 600;">వరిలో ఎరువుల యాజమాన్యం</span>
+                    <button style="background:#1B5E20; color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="playOfflineAudio('వరి నాట్లు వేసిన 20 రోజులకు యూరియాతో పాటు జింక్ సల్ఫేట్ అందించండి.')">▶ ప్లే చేయండి</button>
                 </div>
             </div>
 
@@ -1215,7 +1330,7 @@
         </div>
     </section>
 
-    <!-- ================= VIEW 3: ABOUT US (FULL & COMPREHENSIVE) ================= -->
+    <!-- ================= VIEW 3: ABOUT US (FULL) ================= -->
     <section id="about-view" class="page-view">
         <div class="info-page-box">
             <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
@@ -1302,12 +1417,9 @@
 
     <!-- FLOATING ACTION DOCK: SPEAKER & MIC BUTTONS -->
     <div class="floating-dock">
-        <!-- Text-to-Speech Voice Reader Speaker Button -->
         <button class="dock-btn btn-speaker" id="speakerBtn" onclick="toggleVoiceReader()" title="వాయిస్ రీడర్ (చదివి వినిపించండి)">
             🔊
         </button>
-
-        <!-- Voice Recognition Mic Button -->
         <button class="dock-btn btn-mic" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">
             🎙️
         </button>
@@ -1319,41 +1431,33 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
-            
             <div id="modal-step-login">
                 <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
                 <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు OTP ద్వారా సులభంగా లాగిన్ అవ్వండి</p>
-                
                 <div class="form-group">
                     <label>మొబైల్ నంబర్ (Mobile Number):</label>
                     <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10">
                 </div>
-
                 <div class="otp-inputs" id="otpSection">
                     <div class="form-group">
                         <label>OTP నమోదు చేయండి:</label>
                         <input type="text" id="otpInput" placeholder="4 అంకెల OTP (ఉదా: 1234)" maxlength="4">
                     </div>
                 </div>
-
                 <button class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
             </div>
 
             <div id="modal-step-profile" style="display: none;">
                 <h3 class="modal-title">👤 రైతు ప్రొఫైల్ సెటప్</h3>
-                <p style="font-size: 0.85rem; color: #666;">మీ వివరాలు మరియు పొలం లొకేషన్ నమోదు చేసుకోండి</p>
-
                 <div class="photo-preview-container">
                     <img id="profilePreviewImg" src="https://via.placeholder.com/90?text=Photo" alt="Profile" class="photo-preview"><br>
                     <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి (Upload Photo)</label>
                     <input type="file" id="photoUploadInput" accept="image/*" style="display:none" onchange="previewPhoto(event)">
                 </div>
-
                 <div class="form-group">
                     <label>రైతు పూర్తి పేరు (Farmer Name):</label>
                     <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
                 </div>
-
                 <div class="form-group">
                     <label>మీ విభాగం (Category):</label>
                     <select id="userCategorySelect">
@@ -1362,7 +1466,6 @@
                         <option>వ్యాపారధారి (Trader/Buyer)</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label>🛰️ పొలం లొకేషన్ (శాటిలైట్ మానిటరింగ్ కోసం):</label>
                     <div class="gps-box">
@@ -1370,20 +1473,16 @@
                         <div class="gps-status" id="gpsStatusText">లొకేషన్ ఇంకా నమోదు కాలేదు</div>
                     </div>
                 </div>
-
                 <button class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేయండి</button>
             </div>
-
         </div>
     </div>
 
-    <!-- Modal 2: Full Settings Panel -->
+    <!-- Modal 2: Settings -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeSettingsModal()">&times;</span>
             <h3 class="modal-title">⚙️ యాప్ సెట్టింగ్స్ (Settings)</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">మీ వ్యక్తిగత ఖాతా ప్రాధాన్యతలు సరిచూసుకోండి</p>
-
             <div class="form-group">
                 <label>🌐 భాష ఎంపిక (Select Language):</label>
                 <select id="appLanguageSelect">
@@ -1392,33 +1491,27 @@
                     <option value="hi">हिंदी (Hindi)</option>
                 </select>
             </div>
-
             <div class="form-group">
                 <label>✏️ రైతు పేరు మార్పు (Edit Name):</label>
                 <input type="text" id="settingFarmerName" placeholder="రైతు పేరును సరిచేయండి">
             </div>
-
             <div class="form-group">
                 <label>📱 మొబైల్ నంబర్ మార్పు (Change Mobile):</label>
                 <input type="tel" id="settingMobileNumber" placeholder="కొత్త మొబైల్ నంబర్" maxlength="10">
             </div>
-
             <div class="form-group">
                 <label>🌾 ప్రధాన పంట & పొలం విస్తీర్ణం (Acres):</label>
                 <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
             </div>
-
             <button class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
         </div>
     </div>
 
-    <!-- Modal 3: Contact Us Panel -->
+    <!-- Modal 3: Contact Us -->
     <div class="modal-overlay" id="contactModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeContactModal()">&times;</span>
             <h3 class="modal-title">📞 మమ్మల్ని సంప్రదించండి (Contact Us)</h3>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 1rem;">ఏదైనా సమస్య లేదా సహకారం కోసం మా కార్యాలయాన్ని సంప్రదించండి:</p>
-
             <div style="background:#f9fbf9; border:1px solid #c8e6c9; border-radius:8px; padding:1rem; font-size:0.9rem;">
                 <p>🏢 <strong>కంపెనీ:</strong> AgriConnect Technologies</p>
                 <p>📜 <strong>UDYAM Reg:</strong> UDYAM-TS-31-0063048</p>
@@ -1427,6 +1520,123 @@
                 <p>📞 <strong>హెల్ప్‌లైన్:</strong> +91 98765 43210</p>
             </div>
             <button class="btn-action-primary" onclick="closeContactModal()">సరే (Close)</button>
+        </div>
+    </div>
+
+    <!-- NEW MODAL 4: WALLET SYSTEM -->
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeWalletModal()">&times;</span>
+            <h3 class="modal-title">💰 AgriConnect Wallet</h3>
+            <div class="wallet-card-box">
+                <div style="font-size: 0.9rem; opacity: 0.9;">అందుబాటులో ఉన్న బ్యాలెన్స్:</div>
+                <div class="wallet-balance-num" id="walletBalance">₹ 14,850.00</div>
+                <div style="font-size: 0.8rem; opacity: 0.85;">UPI ID: agriconnect@upi</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button type="button" style="background:#2e7d32; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="promptPayWage()">
+                    💸 కూలీల వేతనం ఇవ్వండి
+                </button>
+                <button type="button" style="background:#1565c0; color:white; border:none; padding:10px; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="promptAddMoney()">
+                    ➕ నగదు జమ చేయండి
+                </button>
+            </div>
+
+            <h5 style="margin-top: 1.2rem; color: #1B5E20; border-bottom: 1px solid #eee; padding-bottom: 4px;">తాజా లావాదేవీలు:</h5>
+            <div id="walletTransactions" style="font-size: 0.85rem; max-height: 140px; overflow-y: auto; margin-top: 6px;">
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                    <span>వరి పంట అమ్మకం (బయ్యర్ నుండి)</span>
+                    <strong style="color:#2e7d32;">+ ₹ 16,000</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                    <span>కలుపు తీత కూలీలు (4 మంది)</span>
+                    <strong style="color:#c62828;">- ₹ 1,150</strong>
+                </div>
+            </div>
+            <button class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
+        </div>
+    </div>
+
+    <!-- NEW MODAL 5: SMART MANDI PRICE ALERTS -->
+    <div class="modal-overlay" id="alertsModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeAlertsModal()">&times;</span>
+            <h3 class="modal-title">🔔 స్మార్ట్ ధర హెచ్చరికలు (Price Alerts)</h3>
+            <p style="font-size: 0.85rem; color: #666;">మీరు కోరుకున్న ధర మార్కెట్లో రాగానే మీకు SMS ద్వారా అలర్ట్ వస్తుంది:</p>
+
+            <div class="form-group">
+                <label>పంట ఎంపిక:</label>
+                <select id="alertCropSelect">
+                    <option>మిర్చి (తేజ రకం)</option>
+                    <option>పత్తి (Cotton)</option>
+                    <option>వరి (BPT / సన్నాలు)</option>
+                    <option>మొక్కజొన్న (Maize)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>మీరు ఆశిస్తున్న టార్గెట్ ధర (క్వింటాల్‌కి ₹):</label>
+                <input type="number" id="alertTargetPrice" placeholder="ఉదా: 19000">
+            </div>
+            <button class="btn-action-primary" onclick="savePriceAlert()">అలర్ట్ యాక్టివేట్ చేయండి</button>
+        </div>
+    </div>
+
+    <!-- NEW MODAL 6: VOICE FARM DIARY -->
+    <div class="modal-overlay" id="diaryModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeDiaryModal()">&times;</span>
+            <h3 class="modal-title">📖 రైతు ఖాతా డైరీ (Farm Ledger)</h3>
+            <p style="font-size: 0.85rem; color: #666;">పొలం ఖర్చులు మరియు అమ్మిన లాభాలు సులభంగా రాసుకోండి:</p>
+
+            <div class="form-group">
+                <label>వివరణ (ఉదా: విత్తనాలు, కూలీల ఖర్చు, యూరియా):</label>
+                <input type="text" id="diaryDesc" placeholder="ఖర్చు లేదా రాబడి వివరణ">
+            </div>
+            <div class="form-group">
+                <label>మొత్తం (₹):</label>
+                <input type="number" id="diaryAmount" placeholder="మొత్తం వేయండి">
+            </div>
+            <div class="form-group">
+                <label>రకం:</label>
+                <select id="diaryType">
+                    <option value="expense">ఖర్చు (Expense -)</option>
+                    <option value="income">రాబడి (Income +)</option>
+                </select>
+            </div>
+            <button class="btn-action-primary" onclick="addDiaryEntry()">డైరీలో నమోదు చేయండి</button>
+
+            <h5 style="margin-top: 1rem; color: #1B5E20;">నమోదైన లెక్కలు:</h5>
+            <div id="diaryList" style="max-height: 120px; overflow-y: auto; margin-top: 6px;"></div>
+        </div>
+    </div>
+
+    <!-- NEW MODAL 7: SHARED MACHINERY GROUP BOOKING -->
+    <div class="modal-overlay" id="sharedMachineryModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeSharedMachineryModal()">&times;</span>
+            <h3 class="modal-title">🤝 రైతు గ్రూప్ యంత్రాల అద్దె</h3>
+            <p style="font-size: 0.85rem; color: #666;">సమీప పొలాల రైతులతో కలిసి గ్రూప్ బుకింగ్ చేసుకోండి:</p>
+
+            <div class="form-group">
+                <label>యంత్రం ఎంపిక:</label>
+                <select>
+                    <option>వరి కోత మిషన్ (హార్వెస్టర్) - ₹ 2,200/గంట</option>
+                    <option>స్ప్రేయింగ్ డ్రోన్ - ₹ 399/ఎకరం</option>
+                    <option>భారీ ట్రాక్టర్ రోటవేటర్ - ₹ 1,100/గంట</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>కలిసి బుక్ చేసుకునే రైతుల సంఖ్య (రైతులు):</label>
+                <input type="number" min="2" max="6" value="3">
+            </div>
+            <div class="form-group">
+                <label>మొత్తం విస్తీర్ణం (ఎకరాలు):</label>
+                <input type="text" placeholder="ఉదా: 8 ఎకరాలు">
+            </div>
+            <button class="btn-action-primary" onclick="alert('మీ గ్రూప్ బుకింగ్ రిక్వెస్ట్ సమీప యంత్ర ఆపరేటర్లకు పంపబడింది! 30% రాయితీ వర్తిస్తుంది.'); closeSharedMachineryModal();">
+                గ్రూప్ బుకింగ్ ఖరారు చేయండి
+            </button>
         </div>
     </div>
 
@@ -1467,6 +1677,10 @@
         function openLoginModalFromDrawer() { toggleDrawer(); openLoginModal(); }
         function openSettingsModalFromDrawer() { toggleDrawer(); openSettingsModal(); }
         function openContactModalFromDrawer() { toggleDrawer(); openContactModal(); }
+        function openWalletModalFromDrawer() { toggleDrawer(); openWalletModal(); }
+        function openDiaryModalFromDrawer() { toggleDrawer(); openDiaryModal(); }
+        function openAlertsModalFromDrawer() { toggleDrawer(); openAlertsModal(); }
+
         function handleDrawerLogout() {
             toggleDrawer();
             if (confirm('మీరు ఖాతా నుండి లాగౌట్ అవ్వాలనుకుంటున్నారా?')) {
@@ -1488,6 +1702,15 @@
         function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
         function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
         function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
+
+        function openWalletModal() { document.getElementById('walletModal').style.display = 'flex'; }
+        function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
+        function openAlertsModal() { document.getElementById('alertsModal').style.display = 'flex'; }
+        function closeAlertsModal() { document.getElementById('alertsModal').style.display = 'none'; }
+        function openDiaryModal() { document.getElementById('diaryModal').style.display = 'flex'; }
+        function closeDiaryModal() { document.getElementById('diaryModal').style.display = 'none'; }
+        function openSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'flex'; }
+        function closeSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'none'; }
 
         /* 4. Live Clock */
         function updateLiveClock() {
@@ -1555,7 +1778,75 @@
             closeSettingsModal();
         }
 
-        /* ================= 7. FLOATING SPEAKER VOICE READER (TEXT-TO-SPEECH) ================= */
+        /* 7. NEW ADVANCED FEATURES LOGIC */
+        // A. WhatsApp Share
+        function shareToWhatsApp(msg) {
+            const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+
+        // B. Wallet Operations
+        let currentBalance = 14850.00;
+        function promptPayWage() {
+            const amt = prompt("కూలీకి చెల్లించవలసిన మొత్తం నమోదు చేయండి (₹):", "350");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వాలెట్‌లో తగినంత బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                updateWalletDisplay(`కూలీ వేతనం బదిలీ`, -n);
+            }
+        }
+        function promptAddMoney() {
+            const amt = prompt("వాలెట్‌కు ఎంత నగదు జమ చేయాలి? (₹):", "1000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                currentBalance += n;
+                updateWalletDisplay(`బ్యాంక్ ఖాతా నుండి జమ`, n);
+            }
+        }
+        function updateWalletDisplay(title, amt) {
+            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toFixed(2)}`;
+            const list = document.getElementById('walletTransactions');
+            const item = document.createElement('div');
+            item.style = "display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;";
+            item.innerHTML = `<span>${title}</span><strong style="color:${amt>0?'#2e7d32':'#c62828'};">${amt>0?'+':''} ₹ ${Math.abs(amt)}</strong>`;
+            list.prepend(item);
+            alert(`లావాదేవీ విజయవంతమైంది! నూతన బ్యాలెన్స్: ₹ ${currentBalance.toFixed(2)}`);
+        }
+
+        // C. Smart Price Alert
+        function savePriceAlert() {
+            const crop = document.getElementById('alertCropSelect').value;
+            const price = document.getElementById('alertTargetPrice').value;
+            if (!price) { alert("టార్గెట్ ధర నమోదు చేయండి."); return; }
+            alert(`✅ అలర్ట్ సెట్ అయింది! ${crop} ధర ₹ ${price} చేరగానే మీ మొబైల్‌కు మెసేజ్ వస్తుంది.`);
+            closeAlertsModal();
+        }
+
+        // D. Farm Diary Logic
+        function addDiaryEntry() {
+            const desc = document.getElementById('diaryDesc').value.trim();
+            const amt = document.getElementById('diaryAmount').value.trim();
+            const type = document.getElementById('diaryType').value;
+            if (!desc || !amt) { alert("వివరణ మరియు మొత్తం నమోదు చేయండి."); return; }
+
+            const list = document.getElementById('diaryList');
+            const entry = document.createElement('div');
+            entry.className = "diary-entry-box";
+            entry.innerHTML = `<span>${desc}</span><strong style="color:${type==='income'?'#2e7d32':'#c62828'}">${type==='income'?'+':'-'} ₹ ${amt}</strong>`;
+            list.prepend(entry);
+
+            document.getElementById('diaryDesc').value = '';
+            document.getElementById('diaryAmount').value = '';
+            alert("ఖాతా డైరీలో నమోదు చేయబడింది!");
+        }
+
+        // E. Offline Audio Player Simulation
+        function playOfflineAudio(tipText) {
+            speakText(tipText);
+        }
+
+        /* 8. FLOATING SPEAKER (TEXT-TO-SPEECH) */
         let isVoiceReaderActive = false;
         let activeSpeakingElement = null;
 
@@ -1587,16 +1878,11 @@
 
         function speakElement(el) {
             if (!isVoiceReaderActive) return;
-
             window.speechSynthesis.cancel();
-            if (activeSpeakingElement) {
-                activeSpeakingElement.classList.remove('speaking-highlight');
-            }
-
+            if (activeSpeakingElement) activeSpeakingElement.classList.remove('speaking-highlight');
             activeSpeakingElement = el;
             el.classList.add('speaking-highlight');
 
-            // Extract clean readable text
             let textToRead = el.innerText.replace(/[\n\r]+/g, '. ').replace(/\s+/g, ' ');
             speakText(textToRead, () => {
                 el.classList.remove('speaking-highlight');
@@ -1606,23 +1892,16 @@
         function speakText(text, onEndCallback) {
             if (!('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
-
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'te-IN'; // Telugu speech
-            utterance.rate = 0.95; // Natural clear speed
+            utterance.lang = 'te-IN';
+            utterance.rate = 0.95;
             utterance.pitch = 1.0;
-
-            utterance.onend = function() {
-                if (onEndCallback) onEndCallback();
-            };
-            utterance.onerror = function() {
-                if (onEndCallback) onEndCallback();
-            };
-
+            utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+            utterance.onerror = () => { if (onEndCallback) onEndCallback(); };
             window.speechSynthesis.speak(utterance);
         }
 
-        /* ================= 8. FLOATING MIC VOICE ASSISTANT (SPEECH-TO-TEXT FULL COMMANDS) ================= */
+        /* 9. FLOATING MIC (SPEECH-TO-TEXT FULL COMMANDS) */
         let recognition;
         let isListening = false;
 
@@ -1675,6 +1954,9 @@
             if (cmd.includes('లాగౌట్') || cmd.includes('logout')) { handleDrawerLogout(); return; }
             if (cmd.includes('కాంటాక్ట్') || cmd.includes('సంప్రదించు')) { openContactModal(); return; }
             if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) { openLoginModal(); return; }
+            if (cmd.includes('వాలెట్') || cmd.includes('wallet') || cmd.includes('డబ్బులు')) { openWalletModal(); return; }
+            if (cmd.includes('డైరీ') || cmd.includes('ఖాతా')) { openDiaryModal(); return; }
+            if (cmd.includes('అలర్ట్') || cmd.includes('హెచ్చరిక')) { openAlertsModal(); return; }
             if (cmd.includes('చదువు') || cmd.includes('స్పీకర్')) { toggleVoiceReader(); return; }
 
             // Services Switching
@@ -1688,7 +1970,7 @@
                 return;
             }
 
-            // Specific Farmer Feature Cards
+            // Farmer Specific Feature Cards
             showFeature('farmer', document.getElementById('tab-farmer'));
             let targetCardId = null;
             if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు') || cmd.includes('వ్యాధి')) targetCardId = 'card-doctor';
