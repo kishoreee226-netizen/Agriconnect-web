@@ -129,7 +129,6 @@
             transition: 0.2s;
         }
 
-        /* Direct Install Banner */
         .install-banner {
             display: none;
             background: #FFD54F;
@@ -505,7 +504,7 @@
             line-height: 1.5;
         }
 
-        /* Accordion Collapsible Panels */
+        /* Collapsible Accordion Panels */
         .accordion-header {
             display: flex;
             align-items: center;
@@ -669,24 +668,6 @@
             font-weight: bold;
             color: #FFD54F;
             margin: 6px 0;
-        }
-
-        .wallet-actions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .wallet-btn {
-            color: white;
-            border: none;
-            padding: 11px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.88rem;
-            cursor: pointer;
-            transition: 0.2s;
         }
 
         .drawer-overlay {
@@ -873,10 +854,6 @@
             background: #FF8F00;
             color: white;
             border: 3px solid #FFF8E1;
-        }
-
-        .btn-speaker.reading-active {
-            background: #E65100;
         }
 
         .btn-mic {
@@ -1180,7 +1157,7 @@
                         </div>
                     </div>
 
-                    <!-- 8. HYPERLOCAL LABOR HUB (ACCORDION TOGGLE - CLICK TO OPEN) -->
+                    <!-- 8. HYPERLOCAL LABOR HUB (CLICK TO OPEN ACCORDION) -->
                     <div id="card-labor" class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32;">
                         <div class="accordion-header" onclick="toggleLaborBookingAccordion()">
                             <div style="display:flex; align-items:center; gap:1rem;">
@@ -1216,7 +1193,7 @@
                                     </div>
                                     <input type="text" id="postFarmLocation" placeholder="పొలం ఉన్న గ్రామం / ప్రాంతం" style="width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem; margin-top: 6px;">
                                     
-                                    <!-- TWO SUBMIT BUTTONS -->
+                                    <!-- TWO BUTTONS -->
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
                                         <button type="button" onclick="broadcastJobRequest()" style="background: #25D366; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">
                                             📲 WhatsApp ద్వారా
@@ -1270,18 +1247,27 @@
                 <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు & నమోదు కేంద్రం:</h4>
                 <div class="features-grid">
                     
-                    <!-- 1. DAILY FARM JOBS (REALTIME JOBS POSTED BY FARMERS) -->
+                    <!-- 1. DAILY FARM JOBS (ACCORDION TOGGLE - CLICK TO OPEN LIST) -->
                     <div class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32;">
-                        <div style="display:flex; align-items:center; gap:1rem;">
-                            <div class="feature-img-icon">📋</div>
-                            <div class="feature-info">
-                                <h5>రోజువారీ పనుల సమాచారం (రైతులు పోస్ట్ చేసిన పనులు)</h5>
-                                <p>సమీప గ్రామాల్లో రైతులకు అవసరమైన పనులు మరియు కూలీల వివరాలు లైవ్‌గా చూడండి:</p>
+                        <div class="accordion-header" onclick="toggleDailyJobsAccordion()">
+                            <div style="display:flex; align-items:center; gap:1rem;">
+                                <div class="feature-img-icon">📋</div>
+                                <div class="feature-info">
+                                    <h5>రోజువారీ పనుల సమాచారం (రైతులు పోస్ట్ చేసిన పనులు)</h5>
+                                    <p style="margin-bottom:0;">రైతులు పోస్ట్ చేసిన పనుల లిస్ట్ చూడటానికి ఇక్కడ క్లిక్ చేయండి ▼</p>
+                                </div>
                             </div>
+                            <span class="accordion-arrow" id="arrowDailyJobs">▼</span>
                         </div>
 
-                        <div id="activeDailyJobsContainer" style="margin-top: 10px;">
-                            <div style="text-align:center; padding:10px; color:#666; font-size:0.85rem;">రైతులు పోస్ట్ చేసిన పనులు లోడ్ అవుతున్నాయి...</div>
+                        <!-- HIDDEN PANEL (OPENS SMOOTHLY ON CLICK) -->
+                        <div class="accordion-body" id="bodyDailyJobs">
+                            <div style="background: #f9fbf9; padding: 10px; border-radius: 8px; border: 1px solid #c8e6c9;">
+                                <strong style="color: #1B5E20; font-size: 0.9rem;">🌾 ప్రస్తుత వ్యవసాయ పనులు:</strong>
+                                <div id="activeDailyJobsContainer" style="margin-top: 6px; max-height: 280px; overflow-y: auto;">
+                                    <div style="text-align:center; padding:10px; color:#666; font-size:0.85rem;">రైతులు పోస్ట్ చేసిన పనులు లోడ్ అవుతున్నాయి...</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1513,6 +1499,19 @@
             }
         }
 
+        // 3. Labor Daily Jobs Accordion (NEW)
+        function toggleDailyJobsAccordion() {
+            const body = document.getElementById('bodyDailyJobs');
+            const arrow = document.getElementById('arrowDailyJobs');
+            if (body.classList.contains('open')) {
+                body.classList.remove('open');
+                arrow.classList.remove('rotated');
+            } else {
+                body.classList.add('open');
+                arrow.classList.add('rotated');
+            }
+        }
+
         // ==================== REALTIME LABOR SYNC (FIREBASE) ====================
         
         // 1. Mestry registers into "laborers" collection
@@ -1557,7 +1556,6 @@
                 const laborCard = document.getElementById('card-labor');
                 if (laborCard) {
                     laborCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    // Open accordion automatically
                     const body = document.getElementById('bodyLaborBooking');
                     if (!body.classList.contains('open')) toggleLaborBookingAccordion();
                 }
@@ -1653,7 +1651,7 @@
             });
         }
 
-        // 4. Realtime Listener: Listen for Farm Jobs and show in Labor Tab
+        // 4. Realtime Listener: Listen for Farm Jobs and show in Labor Tab (Collapsed)
         function listenForLiveJobs() {
             const container = document.getElementById('activeDailyJobsContainer');
             if (!container) return;
