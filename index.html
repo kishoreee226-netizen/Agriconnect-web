@@ -373,7 +373,7 @@
                         </div>
                     </div>
 
-                    <!-- 8. HYPERLOCAL LABOR HUB (ACCORDION TOGGLE + GPS 5-10 KM + UPI) -->
+                    <!-- 8. HYPERLOCAL LABOR HUB (GPS 5-10 KM + UPI + 3 DISPATCH BUTTONS) -->
                     <div id="card-labor" class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32;">
                         <div class="accordion-header" onclick="toggleLaborBookingAccordion()">
                             <div style="display:flex; align-items:center; gap:1rem;">
@@ -419,12 +419,16 @@
                                     </div>
                                     <input type="text" id="postFarmLocation" placeholder="పొలం ఉన్న గ్రామం / ప్రాంతం" style="width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem; margin-top: 6px;">
                                     
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
-                                        <button type="button" onclick="broadcastJobRequest()" style="background: #25D366; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">
-                                            📲 WhatsApp ద్వారా
+                                    <!-- THREE DISPATCH BUTTONS (WHATSAPP, SMS, CLOUD) -->
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px;">
+                                        <button type="button" onclick="broadcastJobRequest()" style="background: #25D366; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer;">
+                                            📲 WhatsApp
                                         </button>
-                                        <button type="button" id="btnSubmitJobCloud" onclick="submitJobRequestToCloud()" style="background: #1B5E20; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer;">
-                                            ☁️ నేరుగా సబ్మిట్ చేయండి
+                                        <button type="button" onclick="sendJobSmsDirect()" style="background: #0277bd; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer;">
+                                            ✉️ SMS అలర్ట్
+                                        </button>
+                                        <button type="button" id="btnSubmitJobCloud" onclick="submitJobRequestToCloud()" style="background: #1B5E20; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer;">
+                                            ☁️ సబ్మిట్
                                         </button>
                                     </div>
                                 </div>
@@ -456,6 +460,7 @@
                         </div>
                     </div>
 
+                    <!-- 12TH FEATURE: LAND LEASE / KAULU -->
                     <div id="card-kaulu" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🏞️</div>
                         <div class="feature-info">
