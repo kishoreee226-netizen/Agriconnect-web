@@ -17,12 +17,14 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
+
         body {
             background-color: #f4f7f4;
             color: #2c3e50;
             line-height: 1.6;
             overflow-x: hidden;
         }
+
         header {
             background-color: #1B5E20;
             color: white;
@@ -35,12 +37,14 @@
             z-index: 1000;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
+
         .header-brand {
             display: flex;
             align-items: center;
             gap: 10px;
             cursor: pointer;
         }
+
         .header-logo {
             width: 42px;
             height: 42px;
@@ -49,21 +53,25 @@
             padding: 2px;
             object-fit: cover;
         }
+
         .header-brand h1 {
             font-size: 1.15rem;
             font-weight: 700;
             letter-spacing: 0.5px;
         }
+
         .nav-actions {
             display: flex;
             align-items: center;
             gap: 12px;
         }
+
         .nav-links {
             display: flex;
             align-items: center;
             gap: 6px;
         }
+
         .nav-links button {
             background: transparent;
             border: none;
@@ -78,10 +86,12 @@
             align-items: center;
             gap: 4px;
         }
+
         .nav-links button:hover, .nav-links button.active-nav {
             color: #1B5E20;
             background-color: #FFD54F;
         }
+
         .btn-hamburger {
             background: rgba(255, 255, 255, 0.15);
             color: white;
@@ -97,12 +107,15 @@
             cursor: pointer;
             transition: 0.2s;
         }
+
         .btn-hamburger:hover {
             background: #FFD54F;
         }
+
         .btn-hamburger:hover span {
             background: #1B5E20;
         }
+
         .btn-hamburger span {
             display: block;
             width: 22px;
@@ -112,7 +125,7 @@
             transition: 0.2s;
         }
 
-        /* Direct Install Banner */
+        /* Direct Install Banner Style */
         .install-banner {
             display: none;
             background: #FFD54F;
@@ -127,6 +140,7 @@
             gap: 10px;
             border-left: 5px solid #1B5E20;
         }
+
         .install-btn {
             background: #1B5E20;
             color: white;
@@ -136,6 +150,11 @@
             font-weight: bold;
             cursor: pointer;
             white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .install-btn:hover {
+            background: #2e7d32;
         }
 
         .hero {
@@ -144,9 +163,11 @@
             text-align: center;
             padding: 2.8rem 1.2rem;
         }
+
         .hero-logo-container {
             margin-bottom: 0.8rem;
         }
+
         .hero-logo {
             width: 90px;
             height: 90px;
@@ -156,11 +177,13 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.25);
             object-fit: contain;
         }
+
         .hero h2 {
             font-size: 2.2rem;
             margin-bottom: 0.2rem;
             font-weight: 700;
         }
+
         .hero .tagline {
             color: #FFD54F;
             font-size: 0.95rem;
@@ -169,6 +192,7 @@
             text-transform: uppercase;
             margin-bottom: 0.8rem;
         }
+
         .voice-pill {
             display: inline-block;
             background: rgba(255, 255, 255, 0.15);
@@ -196,6 +220,7 @@
             display: none;
             animation: fadeIn 0.3s ease-in-out;
         }
+
         .page-view.active-view {
             display: block;
         }
@@ -204,6 +229,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
+
         .speaking-highlight {
             border: 3px solid #FF9800 !important;
             background-color: #fffde7 !important;
@@ -219,6 +245,7 @@
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 1.5rem;
         }
+
         .dash-card {
             background: white;
             border-radius: 12px;
@@ -226,6 +253,7 @@
             box-shadow: 0 3px 10px rgba(0,0,0,0.06);
             border-top: 4px solid #1B5E20;
         }
+
         .dash-card h4 {
             color: #1B5E20;
             font-size: 1.15rem;
@@ -236,6 +264,7 @@
             border-bottom: 1px solid #edf2ed;
             padding-bottom: 0.5rem;
         }
+
         .clock-display {
             font-size: 1.8rem;
             font-weight: bold;
@@ -244,31 +273,37 @@
             margin: 0.5rem 0;
             letter-spacing: 1px;
         }
+
         .date-display {
             text-align: center;
             color: #555;
             font-size: 0.95rem;
             font-weight: 500;
         }
+
         .rates-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.88rem;
             margin-top: 0.5rem;
         }
+
         .rates-table th, .rates-table td {
             padding: 8px 6px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
+
         .rates-table th {
             background-color: #f1f8e9;
             color: #1B5E20;
         }
+
         .rate-high {
             color: #2e7d32;
             font-weight: bold;
         }
+
         .weather-info {
             display: flex;
             justify-content: space-around;
@@ -278,11 +313,13 @@
             border-radius: 10px;
             margin-top: 0.5rem;
         }
+
         .weather-temp {
             font-size: 2rem;
             font-weight: bold;
             color: #1B5E20;
         }
+
         .ad-banner-box {
             background: #fff8e1;
             border: 1px dashed #ffa000;
@@ -290,15 +327,18 @@
             border-radius: 10px;
             margin-bottom: 0.8rem;
         }
+
         .ad-banner-box h5 {
             color: #b78103;
             font-size: 0.98rem;
             margin-bottom: 0.2rem;
         }
+
         .ad-banner-box p {
             font-size: 0.85rem;
             color: #5d4037;
         }
+
         .helpline-item {
             display: flex;
             justify-content: space-between;
@@ -307,6 +347,7 @@
             border-bottom: 1px solid #f0f0f0;
             font-size: 0.88rem;
         }
+
         .helpline-number {
             font-weight: bold;
             color: #1B5E20;
@@ -322,6 +363,7 @@
             color: #1B5E20;
             font-size: 1.6rem;
         }
+
         .section-subtitle {
             text-align: center;
             color: #666;
@@ -337,6 +379,7 @@
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.2rem;
         }
+
         .role-widget {
             background: white;
             border-radius: 12px;
@@ -348,16 +391,19 @@
             transition: all 0.3s ease;
             position: relative;
         }
+
         .role-widget:hover {
             transform: translateY(-4px);
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
         }
+
         .role-widget.active {
             border-color: #1B5E20;
             background-color: #e8f5e9;
             transform: scale(1.02);
             box-shadow: 0 4px 15px rgba(27, 94, 32, 0.15);
         }
+
         .role-active-indicator {
             position: absolute;
             top: 10px;
@@ -370,28 +416,34 @@
             border-radius: 10px;
             display: none;
         }
+
         .role-widget.active .role-active-indicator {
             display: inline-block;
         }
+
         .role-icon {
             font-size: 2.3rem;
             margin-bottom: 0.4rem;
         }
+
         .role-widget h3 {
             color: #1B5E20;
             font-size: 1.2rem;
             margin-bottom: 0.2rem;
         }
+
         .role-widget span {
             font-size: 0.85rem;
             color: #555;
             font-weight: 500;
         }
+
         .feature-details-box {
             max-width: 1050px;
             margin: 0 auto 2.5rem auto;
             padding: 0 1rem;
         }
+
         .feature-content {
             display: none;
             background: white;
@@ -401,9 +453,11 @@
             border-top: 5px solid #1B5E20;
             animation: fadeIn 0.4s ease;
         }
+
         .feature-content.active {
             display: block;
         }
+
         .feature-content h4 {
             color: #1B5E20;
             font-size: 1.35rem;
@@ -411,11 +465,13 @@
             border-bottom: 2px solid #e8f5e9;
             padding-bottom: 0.5rem;
         }
+
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.2rem;
         }
+
         .feature-card {
             background: #fdfdfd;
             border: 1px solid #e2ece2;
@@ -426,16 +482,19 @@
             gap: 1rem;
             transition: all 0.2s ease;
         }
+
         .feature-card:hover {
             border-color: #1B5E20;
             background: #f4faf4;
             transform: translateY(-2px);
         }
+
         .feature-card.highlight {
             border: 2px solid #2e7d32;
             background-color: #e8f5e9;
             animation: pulse 1s ease;
         }
+
         .feature-img-icon {
             font-size: 2.1rem;
             background: #e8f5e9;
@@ -447,18 +506,20 @@
             min-width: 52px;
             height: 52px;
         }
+
         .feature-info h5 {
             color: #1B5E20;
             font-size: 1.02rem;
             margin-bottom: 0.3rem;
         }
+
         .feature-info p {
             font-size: 0.88rem;
             color: #4a5568;
             line-height: 1.5;
         }
 
-        /* Labor Hub Interactive Section */
+        /* Labor Interactive Hub */
         .labor-interactive-box {
             background: #f9fdf9;
             border: 1px solid #c8e6c9;
@@ -467,6 +528,7 @@
             margin-top: 10px;
             width: 100%;
         }
+
         .labor-card-item {
             background: white;
             border: 1px solid #e0e0e0;
@@ -478,6 +540,7 @@
             align-items: center;
             box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
+
         .btn-call-labor {
             background: #2e7d32;
             color: white;
@@ -497,6 +560,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             border-top: 5px solid #1B5E20;
         }
+
         .info-page-box h3 {
             color: #1B5E20;
             font-size: 1.45rem;
@@ -504,6 +568,7 @@
             border-bottom: 2px solid #e8f5e9;
             padding-bottom: 0.5rem;
         }
+
         .info-page-box p {
             font-size: 0.98rem;
             margin-bottom: 1rem;
@@ -518,6 +583,7 @@
             border-radius: 6px;
             margin: 1.2rem 0;
         }
+
         .innovation-banner h4 {
             color: #1B5E20;
             font-size: 1.2rem;
@@ -530,6 +596,7 @@
             gap: 1.2rem;
             margin-top: 1.5rem;
         }
+
         .highlight-item {
             background: #f9fbf9;
             border: 1px solid #dcedc8;
@@ -537,10 +604,12 @@
             padding: 1.3rem;
             transition: 0.2s;
         }
+
         .highlight-item:hover {
             border-color: #2e7d32;
             box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
         }
+
         .highlight-item h5 {
             color: #1B5E20;
             font-size: 1.05rem;
@@ -560,6 +629,7 @@
             position: relative;
             border: 2px solid #FFD54F;
         }
+
         .badge-world-first {
             background-color: #FFD54F;
             color: #1B5E20;
@@ -572,11 +642,13 @@
             display: inline-block;
             margin-bottom: 0.8rem;
         }
+
         .world-first-card h4 {
             font-size: 1.45rem;
             margin-bottom: 0.6rem;
             color: #fff;
         }
+
         .world-first-card p {
             color: #f1f8e9;
             font-size: 0.96rem;
@@ -600,6 +672,7 @@
             text-decoration: none;
             transition: 0.2s;
         }
+
         .wallet-card-box {
             background: linear-gradient(135deg, #0d47a1, #1976d2);
             color: white;
@@ -609,6 +682,7 @@
             box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
             position: relative;
         }
+
         .wallet-role-badge {
             position: absolute;
             top: 15px;
@@ -620,18 +694,21 @@
             padding: 3px 10px;
             border-radius: 14px;
         }
+
         .wallet-balance-num {
             font-size: 2.2rem;
             font-weight: bold;
             color: #FFD54F;
             margin: 6px 0;
         }
+
         .wallet-actions-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 10px;
         }
+
         .wallet-btn {
             color: white;
             border: none;
@@ -642,6 +719,7 @@
             cursor: pointer;
             transition: 0.2s;
         }
+
         .diary-entry-box {
             background: #fff;
             border: 1px solid #e0e0e0;
@@ -652,6 +730,7 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .audio-player-offline {
             background: #f5f5f5;
             padding: 8px;
@@ -673,9 +752,11 @@
             z-index: 10001;
             transition: 0.3s;
         }
+
         .drawer-overlay.open {
             display: block;
         }
+
         .drawer-sidebar {
             position: fixed;
             top: 0;
@@ -689,9 +770,11 @@
             display: flex;
             flex-direction: column;
         }
+
         .drawer-sidebar.open {
             right: 0;
         }
+
         .drawer-header {
             background: #1B5E20;
             color: white;
@@ -700,10 +783,12 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .drawer-header h3 {
             font-size: 1.1rem;
             font-weight: 600;
         }
+
         .drawer-close {
             font-size: 1.6rem;
             cursor: pointer;
@@ -711,12 +796,14 @@
             background: none;
             border: none;
         }
+
         .drawer-menu-list {
             list-style: none;
             padding: 1rem 0;
             flex: 1;
             overflow-y: auto;
         }
+
         .drawer-menu-item {
             display: flex;
             align-items: center;
@@ -736,14 +823,17 @@
             width: 100%;
             text-align: left;
         }
+
         .drawer-menu-item:hover {
             background-color: #e8f5e9;
             color: #1B5E20;
         }
+
         .drawer-menu-item.logout-item {
             color: #d32f2f;
             font-weight: 600;
         }
+
         .drawer-footer {
             padding: 1rem 1.4rem;
             border-top: 1px solid #eee;
@@ -753,7 +843,7 @@
             background: #fafafa;
         }
 
-        /* MODAL POPUPS */
+        /* DIRECT MODAL POPUPS */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -767,6 +857,7 @@
             z-index: 20000;
             padding: 1rem;
         }
+
         .modal-box {
             background: white;
             width: 100%;
@@ -778,6 +869,7 @@
             max-height: 90vh;
             overflow-y: auto;
         }
+
         .modal-close {
             position: absolute;
             top: 15px;
@@ -786,6 +878,7 @@
             cursor: pointer;
             color: #888;
         }
+
         .modal-title {
             color: #1B5E20;
             font-size: 1.3rem;
@@ -794,9 +887,11 @@
             align-items: center;
             gap: 8px;
         }
+
         .form-group {
             margin-top: 1rem;
         }
+
         .form-group label {
             display: block;
             font-size: 0.88rem;
@@ -804,6 +899,7 @@
             color: #333;
             margin-bottom: 0.3rem;
         }
+
         .form-group input, .form-group select {
             width: 100%;
             padding: 0.7rem;
@@ -811,10 +907,12 @@
             border-radius: 8px;
             font-size: 0.95rem;
         }
+
         .photo-preview-container {
             text-align: center;
             margin: 0.8rem 0;
         }
+
         .photo-preview {
             width: 90px;
             height: 90px;
@@ -824,6 +922,7 @@
             background: #f0f0f0;
             display: inline-block;
         }
+
         .btn-photo-upload {
             display: inline-block;
             margin-top: 6px;
@@ -832,6 +931,7 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         .gps-box {
             background: #f1f8e9;
             border: 1px dashed #2e7d32;
@@ -840,12 +940,14 @@
             text-align: center;
             margin-top: 0.5rem;
         }
+
         .gps-status {
             font-size: 0.82rem;
             color: #2e7d32;
             margin-top: 4px;
             font-weight: 600;
         }
+
         .btn-action-primary {
             background: #1B5E20;
             color: white;
@@ -859,9 +961,11 @@
             margin-top: 1.2rem;
             transition: 0.2s;
         }
+
         .btn-action-primary:hover {
             background: #2e7d32;
         }
+
         .otp-inputs {
             display: none;
             margin-top: 0.8rem;
@@ -876,6 +980,7 @@
             gap: 14px;
             z-index: 9999;
         }
+
         .dock-btn {
             border-radius: 50%;
             width: 60px;
@@ -889,19 +994,23 @@
             transition: all 0.3s ease;
             border: none;
         }
+
         .btn-speaker {
             background: #FF8F00;
             color: white;
             border: 3px solid #FFF8E1;
         }
+
         .btn-speaker.reading-active {
             background: #E65100;
         }
+
         .btn-mic {
             background: #1B5E20;
             color: white;
             border: 3px solid #FFD54F;
         }
+
         .btn-mic.listening {
             background: #d32f2f;
             border-color: #fff;
@@ -929,6 +1038,7 @@
             margin-top: 3rem;
             font-size: 0.9rem;
         }
+
         footer a {
             color: #FFD54F;
             text-decoration: none;
@@ -938,6 +1048,7 @@
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.03); }
@@ -1378,6 +1489,7 @@
                         </div>
                     </div>
 
+                    <!-- 12TH FEATURE: LAND LEASE / KAULU -->
                     <div id="card-kaulu" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🏞️</div>
                         <div class="feature-info">
@@ -1472,11 +1584,43 @@
     <section id="about-view" class="page-view">
         <div class="info-page-box">
             <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
-            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం.</p>
+            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం. గ్రామీణ రైతులు, వ్యవసాయ కూలీలు మరియు వ్యాపారులను అత్యాధునిక సాంకేతికతతో ఒకే తాటిపైకి తీసుకురావడమే మా ప్రధాన ధ్యేయం.</p>
 
             <div class="innovation-banner speakable" onclick="speakElement(this)">
                 <h4>🚀 మా ప్రధాన ఆవిష్కరణ (Our Core Innovation):</h4>
                 <p>చదవడం, రాయడం రాని నిరుపేద గ్రామీణ రైతులు మరియు వ్యవసాయ కూలీల కోసం <strong>100% తెలుగు వాయిస్ గైడెన్స్ (Voice Guidance)</strong> తో నడిచే ప్రపంచంలోనే మొట్టమొదటి హైపర్‌లోకల్ వేదిక AgriConnect.</p>
+            </div>
+
+            <div class="about-highlights">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>📍 5-10 కి.మీ హైపర్‌లోకల్ లేబర్ మ్యాచింగ్</h5>
+                    <p>రైతు తన పొలం ఉన్న ప్రాంతం నుండి కేవలం <strong>5 నుండి 10 కిలోమీటర్ల పరిధిలోని</strong> వ్యవసాయ కూలీలను, గ్రూపులను క్షణాల్లో కనుగొనవచ్చు. కూలీల కొరత సమస్యకు ఇది శాశ్వత పరిష్కారం.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🤝 రైతు - కూలీ ప్రత్యక్ష సంభాషణ</h5>
+                    <p>మధ్యలో ఎటువంటి దళారులు, ఏజెంట్లు ఉండరు. రైతులు నేరుగా కూలీల ఫోన్ నంబర్‌కు కాల్ చేసి రోజువారీ పనులు మరియు కూలీ రేట్లను నేరుగా నిర్ణయించుకోవచ్చు.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🌾 కొనుగోలుదారులకు నేరుగా పంట విక్రయం</h5>
+                    <p>మధ్యవర్తుల మోసాలకు తావులేకుండా రైతులు తాము పండించిన పంటను నేరుగా ట్రేడర్స్ మరియు బయ్యర్లకు అత్యుత్తమ మార్కెట్ ధర వద్ద విక్రయించవచ్చు.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🌱 సేంద్రీయ వ్యవసాయానికి ప్రోత్సాహం (Organic Farming)</h5>
+                    <p>భూసారాన్ని రక్షించే సహజ సిద్ధమైన సేంద్రీయ ఎరువులు, బయో-ఫెర్టిలైజర్స్ వాడకాన్ని ప్రోత్సహిస్తూ ఆర్గానిక్ పంటలకు ప్రత్యేక మార్కెట్ గుర్తింపు కల్పించడం మా ప్రాధాన్యత.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🎙️ స్థానిక భాషలో పంటలు & తెగుళ్ల నివారణ</h5>
+                    <p>వరి, మిర్చి, పత్తితో సహా అన్ని రకాల పంటల వివరాలు, ఆశించే చీడపీడలు మరియు వాటి నివారణ మార్గాలను <strong>స్థానిక తెలుగు భాషలో వాయిస్ ద్వారా స్పష్టంగా విని తెలుసుకునే సదుపాయం</strong> కల్పించబడింది.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🎯 రైతే రాజు - సాంకేతికతే బలం</h5>
+                    <p>ఆర్టిఫిషియల్ ఇంటెలిజెన్స్, శాటిలైట్ మానిటరింగ్ మరియు వాయిస్ సాంకేతికతను జోడించి ప్రతి రైతును ఆర్థికంగా బలోపేతం చేయడమే AgriConnect లక్ష్యం.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1489,7 +1633,29 @@
                 <span class="badge-world-first">🌍 World's 1st Innovation</span>
                 <h4>హైపర్‌లోకల్ లేబర్ మ్యాచింగ్ విత్ వాయిస్ గైడెన్స్</h4>
                 <p><strong>This is the first time introduced in the world with Voice Guidance!</strong><br>
-                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్</strong> తో Hyperlocal Labor Matching (5-10 KM Range) సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
+                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్ (తెలుగు మాటల సహాయం)</strong> తో సమీప గ్రామాల వారీగా ఖచ్చితమైన వ్యవసాయ కూలీలను అనుసంధానించే <strong>Hyperlocal Labor Matching (5-10 KM Range)</strong> సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
+            </div>
+
+            <div class="about-highlights">
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🚫 దళారులు లేని పారదర్శకత (Zero Middlemen)</h5>
+                    <p>కూలీల బుకింగ్ అయినా, యంత్రాల అద్దె అయినా లేదా పంట అమ్మకం అయినా – నేరుగా రైతులే అవతలి వ్యక్తులతో ఫోన్ చేసి నేరుగా డీల్ కుదుర్చుకోవచ్చు.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🎙️ పూర్తి వాయిస్ నావిగేషన్ (Voice First AI)</h5>
+                    <p>యాప్ ఎలా వాడాలో తెలియకపోయినా, మైక్ బటన్ నొక్కి తెలుగులో మాట్లాడితే చాలు – అడిగిన ఫీచర్ స్క్రీన్ పై వెంటనే ప్రత్యక్షమవుతుంది.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>🛰️ పొలం శాటిలైట్ మానిటరింగ్</h5>
+                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని, తేమ శాతాన్ని ఎప్పటికప్పుడు విశ్లేషించవచ్చు.</p>
+                </div>
+
+                <div class="highlight-item speakable" onclick="speakElement(this)">
+                    <h5>📈 లైవ్ మార్కెట్ యార్డ్ రేట్లు</h5>
+                    <p>వరంగల్ ఏనుమాముల మార్కెట్ రోజువారీ క్వింటాల్ లైవ్ రేట్లను పారదర్శకంగా తెలుసుకుని పంటకు సరైన ధర పొందవచ్చు.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -1752,7 +1918,7 @@
             document.getElementById('drawerSidebar').classList.toggle('open');
         }
 
-        // Drawer Modal Triggers
+        // Drawer Triggers
         function openLoginModalFromDrawer() { toggleDrawer(); openLoginModal(); }
         function openSettingsModalFromDrawer() { toggleDrawer(); openSettingsModal(); }
         function openContactModalFromDrawer() { toggleDrawer(); openContactModal(); }
@@ -1762,33 +1928,33 @@
         function openLaborRegisterModalFromDrawer() { toggleDrawer(); openLaborRegisterModal(); }
         function openLaborPostModalFromDrawer() { toggleDrawer(); openLaborPostModal(); }
 
-        // Modal Open / Close Functions
-        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
-        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+        // Modal Handlers (Robust Elements Selection)
+        function openLoginModal() { const el = document.getElementById('loginModal'); if(el) el.style.display = 'flex'; }
+        function closeLoginModal() { const el = document.getElementById('loginModal'); if(el) el.style.display = 'none'; }
         
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
-        function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+        function openSettingsModal() { const el = document.getElementById('settingsModal'); if(el) el.style.display = 'flex'; }
+        function closeSettingsModal() { const el = document.getElementById('settingsModal'); if(el) el.style.display = 'none'; }
         
-        function openContactModal() { document.getElementById('contactModal').style.display = 'flex'; }
-        function closeContactModal() { document.getElementById('contactModal').style.display = 'none'; }
+        function openContactModal() { const el = document.getElementById('contactModal'); if(el) el.style.display = 'flex'; }
+        function closeContactModal() { const el = document.getElementById('contactModal'); if(el) el.style.display = 'none'; }
 
-        function openWalletModal() { renderWalletInterface(); document.getElementById('walletModal').style.display = 'flex'; }
-        function closeWalletModal() { document.getElementById('walletModal').style.display = 'none'; }
+        function openWalletModal() { renderWalletInterface(); const el = document.getElementById('walletModal'); if(el) el.style.display = 'flex'; }
+        function closeWalletModal() { const el = document.getElementById('walletModal'); if(el) el.style.display = 'none'; }
 
-        function openAlertsModal() { document.getElementById('alertsModal').style.display = 'flex'; }
-        function closeAlertsModal() { document.getElementById('alertsModal').style.display = 'none'; }
+        function openAlertsModal() { const el = document.getElementById('alertsModal'); if(el) el.style.display = 'flex'; }
+        function closeAlertsModal() { const el = document.getElementById('alertsModal'); if(el) el.style.display = 'none'; }
 
-        function openDiaryModal() { document.getElementById('diaryModal').style.display = 'flex'; }
-        function closeDiaryModal() { document.getElementById('diaryModal').style.display = 'none'; }
+        function openDiaryModal() { const el = document.getElementById('diaryModal'); if(el) el.style.display = 'flex'; }
+        function closeDiaryModal() { const el = document.getElementById('diaryModal'); if(el) el.style.display = 'none'; }
 
-        function openSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'flex'; }
-        function closeSharedMachineryModal() { document.getElementById('sharedMachineryModal').style.display = 'none'; }
+        function openSharedMachineryModal() { const el = document.getElementById('sharedMachineryModal'); if(el) el.style.display = 'flex'; }
+        function closeSharedMachineryModal() { const el = document.getElementById('sharedMachineryModal'); if(el) el.style.display = 'none'; }
 
-        function openLaborRegisterModal() { document.getElementById('laborRegisterModal').style.display = 'flex'; }
-        function closeLaborRegisterModal() { document.getElementById('laborRegisterModal').style.display = 'none'; }
+        function openLaborRegisterModal() { const el = document.getElementById('laborRegisterModal'); if(el) el.style.display = 'flex'; }
+        function closeLaborRegisterModal() { const el = document.getElementById('laborRegisterModal'); if(el) el.style.display = 'none'; }
 
-        function openLaborPostModal() { document.getElementById('laborPostModal').style.display = 'flex'; }
-        function closeLaborPostModal() { document.getElementById('laborPostModal').style.display = 'none'; }
+        function openLaborPostModal() { const el = document.getElementById('laborPostModal'); if(el) el.style.display = 'flex'; }
+        function closeLaborPostModal() { const el = document.getElementById('laborPostModal'); if(el) el.style.display = 'none'; }
 
         function handleDrawerLogout() {
             toggleDrawer();
@@ -1798,8 +1964,10 @@
         // Live Clock
         function updateLiveClock() {
             const now = new Date();
-            document.getElementById('liveClock').innerText = now.toLocaleTimeString('en-US', { hour12: true });
-            document.getElementById('liveDate').innerText = now.toLocaleDateString('te-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const clockEl = document.getElementById('liveClock');
+            const dateEl = document.getElementById('liveDate');
+            if(clockEl) clockEl.innerText = now.toLocaleTimeString('en-US', { hour12: true });
+            if(dateEl) dateEl.innerText = now.toLocaleDateString('te-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
         setInterval(updateLiveClock, 1000);
         updateLiveClock();
@@ -1807,7 +1975,7 @@
         function showFeature(role, widgetElement) {
             document.querySelectorAll('.role-widget').forEach(w => w.classList.remove('active'));
             document.querySelectorAll('.feature-content').forEach(c => c.classList.remove('active'));
-            widgetElement.classList.add('active');
+            if(widgetElement) widgetElement.classList.add('active');
             const target = document.getElementById(role + '-feature');
             if(target) target.classList.add('active');
         }
@@ -1826,16 +1994,18 @@
             }
 
             const container = document.getElementById('activeLaborListContainer');
-            const newCard = document.createElement('div');
-            newCard.className = 'labor-card-item';
-            newCard.innerHTML = `
-                <div>
-                    <div style="font-weight: bold; font-size:0.92rem;">${name} (${village || 'స్థానిక'})</div>
-                    <div style="font-size: 0.8rem; color: #555;">👥 ${count} మంది కూలీలు | ${skills || 'అన్ని రకాల పనులు'}</div>
-                </div>
-                <a href="tel:${phone}" class="btn-call-labor">📞 కాల్</a>
-            `;
-            container.prepend(newCard);
+            if(container) {
+                const newCard = document.createElement('div');
+                newCard.className = 'labor-card-item';
+                newCard.innerHTML = `
+                    <div>
+                        <div style="font-weight: bold; font-size:0.92rem;">${name} (${village || 'స్థానిక'})</div>
+                        <div style="font-size: 0.8rem; color: #555;">👥 ${count} మంది కూలీలు | ${skills || 'అన్ని రకాల పనులు'}</div>
+                    </div>
+                    <a href="tel:${phone}" class="btn-call-labor">📞 కాల్</a>
+                `;
+                container.prepend(newCard);
+            }
 
             alert(`✅ అభినందనలు ${name}! మీ కూలీ బృందం (${count} మంది) నమోదైంది. రైతులు మిమ్మల్ని నేరుగా సంప్రదిస్తారు.`);
             closeLaborRegisterModal();
@@ -1897,11 +2067,15 @@
         }
 
         function renderWalletInterface() {
-            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN')}`;
-            document.getElementById('dynamicWalletActions').innerHTML = `
-                <button type="button" class="wallet-btn" style="background:#2e7d32;" onclick="alert('కూలీ వేతనం చెల్లించబడింది')">💸 కూలీల వేతనం చెల్లింపు</button>
-                <button type="button" class="wallet-btn" style="background:#1565c0;" onclick="alert('ఖాతాలో జమ చేయబడింది')">➕ ఖాతాలో జమ</button>
-            `;
+            const balEl = document.getElementById('walletBalance');
+            if(balEl) balEl.innerText = `₹ ${currentBalance.toLocaleString('en-IN')}`;
+            const actsEl = document.getElementById('dynamicWalletActions');
+            if(actsEl) {
+                actsEl.innerHTML = `
+                    <button type="button" class="wallet-btn" style="background:#2e7d32;" onclick="alert('కూలీ వేతనం చెల్లించబడింది')">💸 కూలీల వేతనం చెల్లింపు</button>
+                    <button type="button" class="wallet-btn" style="background:#1565c0;" onclick="alert('ఖాతాలో జమ చేయబడింది')">➕ ఖాతాలో జమ</button>
+                `;
+            }
         }
 
         function savePriceAlert() {
@@ -1926,10 +2100,10 @@
                 if (isVoiceReaderActive) {
                     window.speechSynthesis.cancel();
                     isVoiceReaderActive = false;
-                    speakerBtn.classList.remove('reading-active');
+                    if(speakerBtn) speakerBtn.classList.remove('reading-active');
                 } else {
                     isVoiceReaderActive = true;
-                    speakerBtn.classList.add('reading-active');
+                    if(speakerBtn) speakerBtn.classList.add('reading-active');
                     speakText("వాయిస్ రీడర్ ఆన్ అయింది. ఏదైనా బాక్స్ పై నొక్కండి.");
                 }
             }
