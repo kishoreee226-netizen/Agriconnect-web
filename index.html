@@ -10,6 +10,10 @@
     <meta name="theme-color" content="#1B5E20">
     <link rel="apple-touch-icon" href="logo.png">
 
+    <!-- Google Firebase SDKs (Compat version for pure HTML/JS) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -951,10 +955,19 @@
             border: 3px solid #FFF8E1;
         }
 
+        .btn-speaker.reading-active {
+            background: #E65100;
+        }
+
         .btn-mic {
             background: #1B5E20;
             color: white;
             border: 3px solid #FFD54F;
+        }
+
+        .btn-mic.listening {
+            background: #d32f2f;
+            border-color: #fff;
         }
 
         .voice-status-toast {
@@ -1358,29 +1371,16 @@
                             <div class="feature-img-icon">👥</div>
                             <div class="feature-info">
                                 <h5>8. వ్యవసాయ కూలీల బుకింగ్ (5-10 KM Range)</h5>
-                                <p>సమీప గ్రామాల్లో అందుబాటులో ఉన్న మేస్త్రీల ఫోన్ నంబర్లు చూడండి లేదా మీ పని వివరాలు WhatsApp లో పంపండి.</p>
+                                <p>సమీప గ్రామాల్లో అందుబాటులో ఉన్న మేస్త్రీల వివరాలు (Google Cloud లైవ్ సింక్):</p>
                             </div>
                         </div>
 
                         <div class="labor-interactive-box">
                             <strong style="color: #1B5E20; font-size: 0.95rem;">📍 అందుబాటులో ఉన్న మేస్త్రీల బృందాలు:</strong>
                             
+                            <!-- Container automatically populated via Firebase Realtime Firestore -->
                             <div id="activeLaborListContainer" style="margin-top: 6px;">
-                                <div class="labor-card-item">
-                                    <div>
-                                        <div style="font-weight: bold; font-size:0.92rem;">రామయ్య మేస్త్రీ (వరంగల్ పరిసరాలు)</div>
-                                        <div style="font-size: 0.8rem; color: #555;">👥 15 మంది కూలీలు | వరి నాట్లు, కలుపు తీత</div>
-                                    </div>
-                                    <a href="tel:9876543210" class="btn-call-labor">📞 కాల్ చేయండి</a>
-                                </div>
-
-                                <div class="labor-card-item">
-                                    <div>
-                                        <div style="font-weight: bold; font-size:0.92rem;">లక్ష్మి గ్రూప్ లీడర్ (హనుమకొండ)</div>
-                                        <div style="font-size: 0.8rem; color: #555;">👥 12 మంది కూలీలు | మిర్చి కోత, పత్తి ఏరడం</div>
-                                    </div>
-                                    <a href="tel:9123456780" class="btn-call-labor">📞 కాల్ చేయండి</a>
-                                </div>
+                                <div style="text-align:center; padding:10px; color:#666; font-size:0.85rem;">క్లౌడ్ డేటాబేస్ నుండి లోడ్ అవుతోంది...</div>
                             </div>
 
                             <!-- IN-PAGE FARMER JOB BROADCAST -->
@@ -1438,17 +1438,17 @@
                 </div>
             </div>
 
-            <!-- 2. Labor Features (WITH DIRECT REGISTRATION FORM) -->
+            <!-- 2. Labor Features (WITH DIRECT REGISTRATION FORM TO FIREBASE) -->
             <div id="labor-feature" class="feature-content">
                 <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు & నమోదు కేంద్రం:</h4>
                 <div class="features-grid">
                     
-                    <!-- DIRECT IN-PAGE LABOR / MESTRY REGISTRATION -->
+                    <!-- DIRECT IN-PAGE LABOR / MESTRY REGISTRATION TO GOOGLE CLOUD -->
                     <div class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32; background: #fff;">
                         <div style="display: flex; align-items: center; gap: 1rem;">
                             <div class="feature-img-icon">👥</div>
                             <div class="feature-info">
-                                <h5>మేస్త్రీ / గ్రూప్ నమోదు (Labor Self-Registration)</h5>
+                                <h5>మేస్త్రీ / గ్రూప్ నమోదు (Google Cloud Realtime Sync)</h5>
                                 <p>రైతుల నుండి పనులు పొందడానికి మేస్త్రీలు తమ గ్రూప్ వివరాలను ఇక్కడ నమోదు చేసుకోండి:</p>
                             </div>
                         </div>
@@ -1475,8 +1475,8 @@
                                 <input type="text" id="directMestrySkills" placeholder="ఉదా: వరి నాట్లు, మిర్చి కోత, పత్తి ఏరడం" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
                             </div>
                             
-                            <button type="button" onclick="submitDirectLaborRegistration()" style="width: 100%; background: #1B5E20; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 12px;">
-                                ✅ నా కూలీ గ్రూప్‌ను నమోదు చేయండి
+                            <button type="button" id="btnSubmitMestry" onclick="submitDirectLaborRegistration()" style="width: 100%; background: #1B5E20; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 12px;">
+                                ☁️ క్లౌడ్‌లో నమోదు చేయండి (Live Sync)
                             </button>
                         </div>
                     </div>
@@ -1740,6 +1740,21 @@
 
     <!-- Interactive JavaScript Engine -->
     <script>
+        // ==================== FIREBASE CONFIGURATION ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAvev9rVOBx5xElA993EtSD7FG9JxAMbyI",
+            authDomain: "agriconnect-5fc39.firebaseapp.com",
+            projectId: "agriconnect-5fc39",
+            storageBucket: "agriconnect-5fc39.firebasestorage.app",
+            messagingSenderId: "491716802186",
+            appId: "1:491716802186:web:087ee5f6c30ec75ce75f73",
+            measurementId: "G-8134KCW1ZT"
+        };
+
+        // Initialize Firebase & Cloud Firestore
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
         let currentUserRole = 'farmer'; 
         let currentBalance = 14850.00;
 
@@ -1818,7 +1833,9 @@
             if(target) target.classList.add('active');
         }
 
-        // DIRECT MESTRY SELF-REGISTRATION (IN-PAGE)
+        // ==================== REALTIME LABOR MODULE WITH GOOGLE FIREBASE ====================
+        
+        // 1. Submit Labor Registration directly into Firestore
         function submitDirectLaborRegistration() {
             const name = document.getElementById('directMestryName').value.trim();
             const phone = document.getElementById('directMestryPhone').value.trim();
@@ -1831,32 +1848,93 @@
                 return;
             }
 
-            // Immediately adds to Farmer's Available Labor Card
-            const container = document.getElementById('activeLaborListContainer');
-            if (container) {
-                const item = document.createElement('div');
-                item.className = 'labor-card-item';
-                item.innerHTML = `
-                    <div>
-                        <div style="font-weight: bold; font-size:0.92rem;">${name} (${village || 'స్థానిక'})</div>
-                        <div style="font-size: 0.8rem; color: #555;">👥 ${count} మంది కూలీలు | ${skills || 'అన్ని రకాల పనులు'}</div>
-                    </div>
-                    <a href="tel:${phone}" class="btn-call-labor">📞 కాల్ చేయండి</a>
-                `;
-                container.prepend(item);
-            }
+            const btn = document.getElementById('btnSubmitMestry');
+            btn.disabled = true;
+            btn.innerText = "క్లౌడ్‌కు పంపుతున్నాము...";
 
-            alert(`✅ అభినందనలు ${name}! మీ కూలీ బృందం (${count} మంది) విజయవంతంగా నమోదైంది. రైతుల డాష్‌బోర్డ్‌లో మీ నంబర్ లైవ్‌లోకి వచ్చింది!`);
+            // Save in Firebase Collection "laborers"
+            db.collection("laborers").add({
+                name: name,
+                phone: phone,
+                count: count,
+                village: village || 'స్థానిక',
+                skills: skills || 'అన్ని రకాల పనులు',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert(`✅ అభినందనలు ${name}! మీ కూలీ బృందం క్లౌడ్‌లో నమోదైంది. రైతులందరి డాష్‌బోర్డ్‌లో మీ నంబర్ లైవ్‌గా కనిపిస్తుంది!`);
+                
+                // Clear Form
+                document.getElementById('directMestryName').value = '';
+                document.getElementById('directMestryPhone').value = '';
+                document.getElementById('directMestryCount').value = '';
+                document.getElementById('directMestryVillage').value = '';
+                document.getElementById('directMestrySkills').value = '';
 
-            // Clear inputs
-            document.getElementById('directMestryName').value = '';
-            document.getElementById('directMestryPhone').value = '';
-            document.getElementById('directMestryCount').value = '';
-            document.getElementById('directMestryVillage').value = '';
-            document.getElementById('directMestrySkills').value = '';
+                // Take user to Farmer Dashboard to show their live card
+                switchView('services');
+                showFeature('farmer', document.getElementById('tab-farmer'));
+                const laborCard = document.getElementById('card-labor');
+                if (laborCard) {
+                    laborCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    laborCard.classList.add('highlight');
+                    setTimeout(() => laborCard.classList.remove('highlight'), 3000);
+                }
+            })
+            .catch((err) => {
+                console.error("Firestore Error:", err);
+                alert("నమోదు కాలేదు. దయచేసి Firestore Database ఎనేబుల్ అయిందో లేదో సరిచూసుకోండి: " + err.message);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerText = "☁️ క్లౌడ్‌లో నమోదు చేయండి (Live Sync)";
+            });
         }
 
-        // DIRECT FARMER JOB BROADCAST (WHATSAPP)
+        // 2. Realtime Listener: Listen to all registered laborers across all phones
+        function listenForLiveLaborers() {
+            const container = document.getElementById('activeLaborListContainer');
+            if (!container) return;
+
+            db.collection("laborers")
+              .orderBy("createdAt", "desc")
+              .onSnapshot((snapshot) => {
+                  if (snapshot.empty) {
+                      container.innerHTML = `
+                          <div class="labor-card-item">
+                              <div>
+                                  <div style="font-weight: bold; font-size:0.92rem;">రామయ్య మేస్త్రీ (వరంగల్ పరిసరాలు)</div>
+                                  <div style="font-size: 0.8rem; color: #555;">👥 15 మంది కూలీలు | వరి నాట్లు, కలుపు తీత</div>
+                              </div>
+                              <a href="tel:9876543210" class="btn-call-labor">📞 కాల్ చేయండి</a>
+                          </div>
+                      `;
+                      return;
+                  }
+
+                  container.innerHTML = "";
+                  snapshot.forEach((doc) => {
+                      const mestry = doc.data();
+                      const item = document.createElement('div');
+                      item.className = 'labor-card-item';
+                      item.innerHTML = `
+                          <div>
+                              <div style="font-weight: bold; font-size:0.92rem;">${mestry.name} (${mestry.village})</div>
+                              <div style="font-size: 0.8rem; color: #555;">👥 ${mestry.count} మంది కూలీలు | ${mestry.skills}</div>
+                          </div>
+                          <a href="tel:${mestry.phone}" class="btn-call-labor">📞 కాల్ చేయండి</a>
+                      `;
+                      container.appendChild(item);
+                  });
+              }, (error) => {
+                  console.error("Firebase Snapshot Error:", error);
+                  container.innerHTML = `<div style="color:red; font-size:0.8rem; padding:8px;">లైవ్ డేటా లోడ్ కాలేదు: Firestore Rules లో test mode ఎనేబుల్ చేయండి.</div>`;
+              });
+        }
+
+        window.addEventListener('DOMContentLoaded', listenForLiveLaborers);
+
+        // Farmer Job Broadcast via WhatsApp
         function broadcastJobRequest() {
             const farmer = document.getElementById('postFarmerName').value.trim() || 'రైతు';
             const phone = document.getElementById('postFarmerPhone').value.trim() || '';
