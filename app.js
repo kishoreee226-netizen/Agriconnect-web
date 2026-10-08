@@ -475,7 +475,6 @@ function processDirectUpiPay() {
         return;
     }
 
-    // Standard Direct UPI URI Scheme for all Indian UPI Apps
     const upiDeepLink = `upi://pay?pa=${encodeURIComponent(currentTargetMestryUpi)}&pn=${encodeURIComponent(currentTargetMestryName)}&am=${encodeURIComponent(amountVal)}&cu=INR&tn=${encodeURIComponent(noteVal)}`;
     closeUpiModal();
     window.location.href = upiDeepLink;
@@ -511,7 +510,6 @@ function submitJobRequestToCloud() {
     .then(() => {
         alert(`✅ మీ కూలీల అవసర ప్రకటన విజయవంతంగా పోస్ట్ అయింది! వ్యవసాయ కూలీల విభాగంలో లైవ్‌గా కనిపిస్తుంది.`);
         
-        // Auto trigger nearest mestry WhatsApp Cloud Alert
         if (rawLaborersList.length > 0 && rawLaborersList[0].phone) {
             triggerWhatsAppCloudAlert(rawLaborersList[0].phone, farmer, work, count, loc);
         }
@@ -593,32 +591,60 @@ function playOfflineAudio(tipText) {
     speakText(tipText);
 }
 
-// ==================== 14. VOICE READER & SPEECH AI ====================
+// ==================== 14. VOICE READER & SPEECH AI ENGINE ====================
+function showVoiceToast(msg, duration = 3000) {
+    const toast = document.getElementById('voice-toast');
+    if (toast) {
+        toast.innerText = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, duration);
+    }
+}
+
 function toggleVoiceReader() {
     if ('speechSynthesis' in window) {
         isVoiceReaderActive = !isVoiceReaderActive;
         const speakerBtn = document.getElementById('speakerBtn');
+
         if (isVoiceReaderActive) {
-            if (speakerBtn) speakerBtn.style.background = '#E65100';
+            if (speakerBtn) speakerBtn.classList.add('reading-active');
+            showVoiceToast("🔊 వాయిస్ రీడర్ ఆన్ అయింది");
             speakText("వాయిస్ రీడర్ ఆన్ అయింది. సమాచారం వినడానికి స్క్రీన్ పై ఏ బాక్స్ పైనైనా టచ్ చేయండి.");
         } else {
-            if (speakerBtn) speakerBtn.style.background = '#FF8F00';
+            if (speakerBtn) speakerBtn.classList.remove('reading-active');
             window.speechSynthesis.cancel();
+            clearSpeakingHighlights();
+            showVoiceToast("🔇 వాయిస్ రీడర్ ఆఫ్ అయింది");
         }
     }
 }
 
-function speakElement(el) {
-    if (!isVoiceReaderActive || !el) return;
-    speakText(el.innerText);
+function clearSpeakingHighlights() {
+    document.querySelectorAll('.speaking-highlight').forEach(el => {
+        el.classList.remove('speaking-highlight');
+    });
 }
 
-function speakText(text) {
+function speakElement(el) {
+    if (!isVoiceReaderActive || !el) return;
+    clearSpeakingHighlights();
+    el.classList.add('speaking-highlight');
+    speakText(el.innerText, () => {
+        el.classList.remove('speaking-highlight');
+    });
+}
+
+function speakText(text, onEndCallback = null) {
     if (!('speechSynthesis' in window) || !text) return;
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'te-IN';
     utterance.rate = 0.95;
+
+    utterance.onend = function() {
+        if (onEndCallback) onEndCallback();
+    };
+
     window.speechSynthesis.speak(utterance);
 }
 
@@ -660,11 +686,19 @@ function initVoiceAssistantEngine() {
 }
 
 function toggleVoiceAssistant() {
+    const micBtn = document.getElementById('voiceBtn');
     if (speechRecognitionInstance) {
         try {
+            if (micBtn) micBtn.classList.add('listening-active');
             speechRecognitionInstance.start();
+            showVoiceToast("🎙️ వింటున్నాము, మాట్లాడండి...");
             speakText("వింటున్నాను, మాట్లాడండి.");
+            
+            speechRecognitionInstance.onend = function() {
+                if (micBtn) micBtn.classList.remove('listening-active');
+            };
         } catch (e) {
+            if (micBtn) micBtn.classList.remove('listening-active');
             speechRecognitionInstance.stop();
         }
     } else {
@@ -705,5 +739,5 @@ window.addEventListener('DOMContentLoaded', () => {
     initPwaInstallPrompt();
     listenForLiveLaborers();
     listenForLiveJobs();
-    console.log("AgriConnect Fully Initialized with Cloud Sync, GPS & Voice AI.");
+    console.log("AgriConnect Fully Initialized with Cloud Sync, GPS, Voice AI & Highlights.");
 });
