@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="te">
 <head>
@@ -2351,4 +2351,429 @@
             const tabTrader = document.getElementById('tab-trader');
 
             if(role === 'farmer') {
-   
+                showFeature('farmer', tabFarmer);
+            } else if(role === 'laborer') {
+                showFeature('labor', tabLabor);
+            } else if(role === 'trader') {
+                showFeature('trader', tabTrader);
+            }
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('farmerNameInput').value.trim();
+            const cat = document.getElementById('userCategorySelect').value;
+            if(!name) { alert('పేరు రాయండి.'); return; }
+            
+            currentUserRole = cat;
+            applyRoleHighlight(cat);
+
+            let roleNameText = (cat === 'farmer') ? 'రైతు' : (cat === 'laborer' ? 'కూలీ' : 'వ్యాపారి');
+            document.getElementById('drawer-login-text').innerText = `${name} (${roleNameText})`;
+            document.getElementById('settingFarmerName').value = name;
+            document.getElementById('postFarmerName').value = name;
+
+            const banner = document.getElementById('userWelcomeBanner');
+            banner.style.display = 'flex';
+            document.getElementById('welcomeUserName').innerText = `నమస్కారం, ${name}! (${roleNameText})`;
+            document.getElementById('welcomeUserRoleBadge').innerText = `మీ ${roleNameText} డాష్‌బోర్డ్ యాక్టివ్‌గా ఉంది.`;
+
+            closeLoginModal();
+            alert(`స్వాగతం, ${name}! మీ ${roleNameText} ప్రొఫైల్ సేవ్ చేయబడింది.`);
+        }
+
+        function saveSettings() {
+            const updatedName = document.getElementById('settingFarmerName').value.trim();
+            const lang = document.getElementById('appLanguageSelect').value;
+            if (updatedName) {
+                document.getElementById('drawer-login-text').innerText = updatedName;
+            }
+            alert(`సెట్టింగ్స్ సేవ్ చేయబడ్డాయి! (భాష: ${lang.toUpperCase()})`);
+            closeSettingsModal();
+        }
+
+        // Universal 3-in-1 Wallet Engine
+        function switchWalletMode(role) {
+            currentUserRole = role;
+            document.getElementById('walletModeSwitcher').value = role;
+            
+            if(role === 'farmer') {
+                currentBalance = 14850.00;
+                document.getElementById('walletRoleBadge').innerText = 'రైతు ఖాతా (Farmer)';
+                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.farmer@upi';
+            } else if(role === 'laborer') {
+                currentBalance = 2450.00;
+                document.getElementById('walletRoleBadge').innerText = 'కూలీ ఖాతా (Laborer)';
+                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.labor@upi';
+            } else if(role === 'trader') {
+                currentBalance = 150000.00;
+                document.getElementById('walletRoleBadge').innerText = 'వ్యాపారి ఖాతా (Trader/Buyer)';
+                document.getElementById('walletUpiId').innerText = 'UPI: agriconnect.trader@upi';
+            }
+            renderWalletInterface();
+        }
+
+        function renderWalletInterface() {
+            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            const actionsContainer = document.getElementById('dynamicWalletActions');
+            const txContainer = document.getElementById('walletTransactions');
+
+            if(currentUserRole === 'farmer') {
+                actionsContainer.innerHTML = `
+                    <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayLabor()">
+                        💸 కూలీల వేతనం చెల్లించండి
+                    </button>
+                    <button class="wallet-btn" style="background:#1565c0;" onclick="promptAddMoney()">
+                        ➕ ఖాతాలో జమ (Add Money)
+                    </button>
+                    <button class="wallet-btn" style="background:#f57c00; grid-column: span 2;" onclick="promptPayMachinery()">
+                        🚜 యంత్రాలు & డ్రోన్ అద్దె చెల్లింపు
+                    </button>
+                `;
+                txContainer.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>వరి పంట విక్రయం (వ్యాపారి నుండి జమ)</span>
+                        <strong style="color:#2e7d32;">+ ₹ 16,000</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>కలుపు తీత కూలీలు (4 మంది)</span>
+                        <strong style="color:#c62828;">- ₹ 1,150</strong>
+                    </div>
+                `;
+            } else if(currentUserRole === 'laborer') {
+                actionsContainer.innerHTML = `
+                    <button class="wallet-btn" style="background:#0288d1;" onclick="promptWithdrawLabor()">
+                        🏦 బ్యాంక్ / UPI కి విత్‌డ్రా
+                    </button>
+                    <button class="wallet-btn" style="background:#388e3c;" onclick="promptRequestWage()">
+                        📩 రైతుకు వేతన బిల్లు పంపండి
+                    </button>
+                    <button class="wallet-btn" style="background:#7b1fa2; grid-column: span 2;" onclick="alert('మీ రోజువారీ కూలీ రికార్డు సరిగ్గా అప్‌డేట్ అయింది.')">
+                        📋 కూలీల హాజరు & పే-స్లిప్
+                    </button>
+                `;
+                txContainer.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>వరి కోత కూలీ (రామయ్య పొలం)</span>
+                        <strong style="color:#2e7d32;">+ ₹ 750</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>బ్యాంక్ ఖాతాకు ట్రాన్స్‌ఫర్ (PhonePe)</span>
+                        <strong style="color:#c62828;">- ₹ 2,000</strong>
+                    </div>
+                `;
+            } else if(currentUserRole === 'trader') {
+                actionsContainer.innerHTML = `
+                    <button class="wallet-btn" style="background:#2e7d32;" onclick="promptPayFarmer()">
+                        🌾 రైతుకు పంట నగదు చెల్లించండి
+                    </button>
+                    <button class="wallet-btn" style="background:#1565c0;" onclick="promptAddMoney()">
+                        ➕ వ్యాపార పెట్టుబడి లోడ్ (Add Funds)
+                    </button>
+                    <button class="wallet-btn" style="background:#e65100; grid-column: span 2;" onclick="promptEscrowAdvance()">
+                        🛡️ ఎస్క్రో అడ్వాన్స్ హోల్డ్ (Secure Advance)
+                    </button>
+                `;
+                txContainer.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>కరెంట్ ఖాతా నుండి జమ</span>
+                        <strong style="color:#2e7d32;">+ ₹ 1,00,000</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;">
+                        <span>మిర్చి లాట్ చెల్లింపు (రైతు కిషోర్)</span>
+                        <strong style="color:#c62828;">- ₹ 54,600</strong>
+                    </div>
+                `;
+            }
+        }
+
+        function promptPayLabor() {
+            const amt = prompt("కూలీకి చెల్లించవలసిన మొత్తం నమోదు చేయండి (₹):", "400");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`కూలీ వేతనం బదిలీ`, -n);
+            }
+        }
+
+        function promptPayMachinery() {
+            const amt = prompt("యంత్రాలు లేదా డ్రోన్ అద్దె మొత్తం నమోదు చేయండి (₹):", "1200");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`యంత్రాల అద్దె చెల్లింపు`, -n);
+            }
+        }
+
+        function promptWithdrawLabor() {
+            const amt = prompt("బ్యాంకుకు బదిలీ చేయవలసిన మొత్తం (₹):", "1000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వాలెట్‌లో తగినంత బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`బ్యాంక్ ఖాతాకు విత్‌డ్రా`, -n);
+            }
+        }
+
+        function promptRequestWage() {
+            const amt = prompt("రైతుకు పంపవలసిన కూలీ మొత్తం (₹):", "400");
+            if (amt && !isNaN(amt)) {
+                alert(`వేతన చెల్లింపు అభ్యర్థన (₹ ${amt}) రైతుకు SMS మరియు వాలెట్ నోటిఫికేషన్ ద్వారా పంపబడింది!`);
+            }
+        }
+
+        function promptPayFarmer() {
+            const amt = prompt("రైతుకు పంట కొనుగోలు సొమ్ము బదిలీ చేయండి (₹):", "25000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("వ్యాపార ఖాతాలో సరిపడా నిధులు లేవు!"); return; }
+                currentBalance -= n;
+                appendTx(`రైతుకు పంట చెల్లింపు`, -n);
+            }
+        }
+
+        function promptEscrowAdvance() {
+            const amt = prompt("రైతుకు పంట అడ్వాన్స్ హోల్డ్ చేయవలసిన మొత్తం (₹):", "10000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                if (n > currentBalance) { alert("సరిపడా బ్యాలెన్స్ లేదు!"); return; }
+                currentBalance -= n;
+                appendTx(`సురక్షిత అడ్వాన్స్ హోల్డ్ (Escrow)`, -n);
+            }
+        }
+
+        function promptAddMoney() {
+            const amt = prompt("ఖాతాకు జమ చేయవలసిన మొత్తం నమోదు చేయండి (₹):", "2000");
+            if (amt && !isNaN(amt) && Number(amt) > 0) {
+                const n = Number(amt);
+                currentBalance += n;
+                appendTx(`బ్యాంక్ ఖాతా నుండి జమ`, n);
+            }
+        }
+
+        function appendTx(title, amt) {
+            document.getElementById('walletBalance').innerText = `₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+            const list = document.getElementById('walletTransactions');
+            const item = document.createElement('div');
+            item.style = "display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f5f5f5;";
+            item.innerHTML = `<span>${title}</span><strong style="color:${amt>0?'#2e7d32':'#c62828'};">${amt>0?'+':''} ₹ ${Math.abs(amt).toLocaleString('en-IN')}</strong>`;
+            list.prepend(item);
+            alert(`లావాదేవీ విజయవంతమైంది! ప్రస్తుత బ్యాలెన్స్: ₹ ${currentBalance.toLocaleString('en-IN', {minimumFractionDigits: 2})}`);
+        }
+
+        // Price Alert Handler
+        function savePriceAlert() {
+            const crop = document.getElementById('alertCropSelect').value;
+            const price = document.getElementById('alertTargetPrice').value;
+            if (!price) { alert("టార్గెట్ ధర నమోదు చేయండి."); return; }
+            alert(`✅ అలర్ట్ సెట్ అయింది! ${crop} ధర ₹ ${price} చేరగానే మీ మొబైల్‌కు మెసేజ్ వస్తుంది.`);
+            closeAlertsModal();
+        }
+
+        // Farm Diary Ledger Tracker
+        function addDiaryEntry() {
+            const desc = document.getElementById('diaryDesc').value.trim();
+            const amt = document.getElementById('diaryAmount').value.trim();
+            const type = document.getElementById('diaryType').value;
+            if (!desc || !amt) { alert("వివరణ మరియు మొత్తం నమోదు చేయండి."); return; }
+
+            const list = document.getElementById('diaryList');
+            const entry = document.createElement('div');
+            entry.className = "diary-entry-box";
+            entry.innerHTML = `<span>${desc}</span><strong style="color:${type==='income'?'#2e7d32':'#c62828'}">${type==='income'?'+':'-'} ₹ ${amt}</strong>`;
+            list.prepend(entry);
+
+            document.getElementById('diaryDesc').value = '';
+            document.getElementById('diaryAmount').value = '';
+            alert("ఖాతా డైరీలో నమోదు చేయబడింది!");
+        }
+
+        function playOfflineAudio(tipText) {
+            speakText(tipText);
+        }
+
+        // Text-to-Speech Voice Reader Engine
+        let isVoiceReaderActive = false;
+        let activeSpeakingElement = null;
+
+        function toggleVoiceReader() {
+            const speakerBtn = document.getElementById('speakerBtn');
+            const toast = document.getElementById('voice-toast');
+
+            if ('speechSynthesis' in window) {
+                if (isVoiceReaderActive) {
+                    window.speechSynthesis.cancel();
+                    isVoiceReaderActive = false;
+                    speakerBtn.classList.remove('reading-active');
+                    if(activeSpeakingElement) activeSpeakingElement.classList.remove('speaking-highlight');
+                    toast.innerText = "🔇 వాయిస్ రీడర్ ఆపబడింది";
+                    toast.style.display = 'block';
+                    setTimeout(() => toast.style.display = 'none', 2000);
+                } else {
+                    isVoiceReaderActive = true;
+                    speakerBtn.classList.add('reading-active');
+                    toast.innerText = "🔊 వాయిస్ రీడర్ ఆన్ అయింది! ఏదైనా బాక్స్ పై నొక్కండి.";
+                    toast.style.display = 'block';
+                    setTimeout(() => toast.style.display = 'none', 3000);
+                    speakText("వాయిస్ రీడర్ ఆన్ అయింది. మీరు ఏ బాక్స్ పై నొక్కితే ఆ వివరాలను చదివి వినిపిస్తాము.");
+                }
+            } else {
+                alert('మీ బ్రౌజర్‌లో స్పీచ్ సదుపాయం లేదు.');
+            }
+        }
+
+        function speakElement(el) {
+            if (!isVoiceReaderActive) return;
+            window.speechSynthesis.cancel();
+            if (activeSpeakingElement) activeSpeakingElement.classList.remove('speaking-highlight');
+            activeSpeakingElement = el;
+            el.classList.add('speaking-highlight');
+
+            let textToRead = el.innerText.replace(/[\n\r]+/g, '. ').replace(/\s+/g, ' ');
+            speakText(textToRead, () => {
+                el.classList.remove('speaking-highlight');
+            });
+        }
+
+        function speakText(text, onEndCallback) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'te-IN';
+            utterance.rate = 0.95;
+            utterance.pitch = 1.0;
+            utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+            utterance.onerror = () => { if (onEndCallback) onEndCallback(); };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Telugu Speech Recognition Assistant Engine
+        let recognition;
+        let isListening = false;
+
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'te-IN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            recognition.onstart = function() {
+                isListening = true;
+                document.getElementById('voiceBtn').classList.add('listening');
+                const toast = document.getElementById('voice-toast');
+                toast.innerText = "🎙️ వింటున్నాము... తెలుగులో మాట్లాడండి";
+                toast.style.display = 'block';
+            };
+
+            recognition.onresult = function(event) {
+                const cmd = event.results[0][0].transcript.toLowerCase();
+                handleVoiceCommand(cmd);
+            };
+
+            recognition.onerror = () => stopListening();
+            recognition.onend = () => stopListening();
+        }
+
+        function toggleVoiceAssistant() {
+            if (!recognition) { alert('దయచేసి Chrome బ్రౌజర్ ఉపయోగించండి.'); return; }
+            if (isListening) recognition.stop();
+            else recognition.start();
+        }
+
+        function stopListening() {
+            isListening = false;
+            document.getElementById('voiceBtn').classList.remove('listening');
+            document.getElementById('voice-toast').style.display = 'none';
+        }
+
+        function handleVoiceCommand(cmd) {
+            const toast = document.getElementById('voice-toast');
+            toast.innerText = `మీరు చెప్పినది: "${cmd}"`;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+
+            if (cmd.includes('హోమ్') || cmd.includes('home')) { switchView('home'); return; }
+            if (cmd.includes('గురించి') || cmd.includes('about')) { switchView('about'); return; }
+            if (cmd.includes('ఎందుకు') || cmd.includes('why')) { switchView('why'); return; }
+            if (cmd.includes('లాగౌట్') || cmd.includes('logout')) { handleDrawerLogout(); return; }
+            if (cmd.includes('కాంటాక్ట్') || cmd.includes('సంప్రదించు')) { openContactModal(); return; }
+            if (cmd.includes('లాగిన్') || cmd.includes('login') || cmd.includes('ప్రొఫైల్')) { openLoginModal(); return; }
+            if (cmd.includes('వాలెట్') || cmd.includes('wallet') || cmd.includes('డబ్బులు') || cmd.includes('పైసలు')) { openWalletModal(); return; }
+            if (cmd.includes('డైరీ') || cmd.includes('ఖాతా')) { openDiaryModal(); return; }
+            if (cmd.includes('అలర్ట్') || cmd.includes('హెచ్చరిక')) { openAlertsModal(); return; }
+            if (cmd.includes('చదువు') || cmd.includes('స్పీకర్')) { toggleVoiceReader(); return; }
+
+            switchView('services');
+            if (cmd.includes('కూలీ') || cmd.includes('కూలీలు') || cmd.includes('పని')) {
+                showFeature('labor', document.getElementById('tab-labor'));
+                const dailyJobsCard = document.getElementById('bodyDailyJobs');
+                if (dailyJobsCard && !dailyJobsCard.classList.contains('open')) toggleDailyJobsAccordion();
+                return;
+            }
+            if (cmd.includes('వ్యాపారి') || cmd.includes('వ్యాపారులు') || cmd.includes('కొనుగోలు')) {
+                showFeature('trader', document.getElementById('tab-trader'));
+                return;
+            }
+
+            showFeature('farmer', document.getElementById('tab-farmer'));
+            let targetCardId = null;
+            if (cmd.includes('డాక్టర్') || cmd.includes('తెగులు') || cmd.includes('వ్యాధి')) targetCardId = 'card-doctor';
+            else if (cmd.includes('వాతావరణం') || cmd.includes('వర్షం')) targetCardId = 'card-weather';
+            else if (cmd.includes('శాటిలైట్') || cmd.includes('ఉపగ్రహం')) targetCardId = 'card-satellite';
+            else if (cmd.includes('సబ్సిడీ') || cmd.includes('పథకాలు') || cmd.includes('భరోసా')) targetCardId = 'card-subsidy';
+            else if (cmd.includes('కరెంట్') || cmd.includes('విద్యుత్')) targetCardId = 'card-power';
+            else if (cmd.includes('మార్కెట్') || cmd.includes('ధర') || cmd.includes('రేటు')) targetCardId = 'card-market';
+            else if (cmd.includes('యంత్రాలు') || cmd.includes('ట్రాక్టర్')) targetCardId = 'card-machinery';
+            else if (cmd.includes('అమ్మకం') || cmd.includes('పంట')) targetCardId = 'card-sales';
+            else if (cmd.includes('కౌలు') || cmd.includes('మునాభా') || cmd.includes('భూమి') || cmd.includes('లీజు')) targetCardId = 'card-kaulu';
+            else if (cmd.includes('కూలీల బుకింగ్') || cmd.includes('మేస్త్రీ')) {
+                targetCardId = 'card-labor';
+                const body = document.getElementById('bodyLaborBooking');
+                if (body && !body.classList.contains('open')) toggleLaborBookingAccordion();
+            }
+
+            if (targetCardId) {
+                const targetCard = document.getElementById(targetCardId);
+                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // PWA In-Page Banner Logic
+        let deferredPrompt;
+        const installBanner = document.getElementById('pwaInstallBanner');
+        const installBtn = document.getElementById('pwaInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBanner) installBanner.style.display = 'flex';
+        });
+
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        if (installBanner) installBanner.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                }
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            if (installBanner) installBanner.style.display = 'none';
+            deferredPrompt = null;
+        });
+
+        // Initialize Realtime Listeners on Page Load
+        window.addEventListener('DOMContentLoaded', () => {
+            listenForLiveLaborers();
+            listenForLiveJobs();
+        });
+    </script>
+</body>
+</html>
