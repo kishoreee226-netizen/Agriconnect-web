@@ -618,6 +618,7 @@ header {
     text-align: left;
 }
 
+/* Floating Dock & Live Speaker Animations */
 .floating-dock {
     position: fixed;
     bottom: 25px;
@@ -637,12 +638,74 @@ header {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     border: none;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.btn-speaker { background: #FF8F00; color: white; border: 3px solid #FFF8E1; }
-.btn-mic { background: #1B5E20; color: white; border: 3px solid #FFD54F; }
+.dock-btn:active {
+    transform: scale(0.92);
+}
+
+.btn-speaker {
+    background: #FF8F00;
+    color: white;
+    border: 3px solid #FFF8E1;
+}
+
+.btn-speaker.reading-active {
+    background: #E65100 !important;
+    border-color: #FFD54F !important;
+    animation: speakerPulse 1.5s infinite;
+}
+
+.btn-mic {
+    background: #1B5E20;
+    color: white;
+    border: 3px solid #FFD54F;
+}
+
+.btn-mic.listening-active {
+    background: #d32f2f !important;
+    border-color: #ffffff !important;
+    animation: micPulse 1.2s infinite;
+}
+
+.speaking-highlight {
+    border: 3px solid #FF8F00 !important;
+    background-color: #fffde7 !important;
+    transform: scale(1.02);
+    box-shadow: 0 0 18px rgba(255, 143, 0, 0.55) !important;
+    transition: all 0.25s ease;
+}
+
+.voice-status-toast {
+    position: fixed;
+    bottom: 165px;
+    right: 25px;
+    background: #212121;
+    color: #FFD54F;
+    padding: 0.6rem 1.2rem;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: none;
+    z-index: 10000;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 213, 79, 0.3);
+}
+
+@keyframes speakerPulse {
+    0% { box-shadow: 0 0 0 0 rgba(230, 81, 0, 0.7); }
+    70% { box-shadow: 0 0 0 16px rgba(230, 81, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(230, 81, 0, 0); }
+}
+
+@keyframes micPulse {
+    0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+    70% { box-shadow: 0 0 0 16px rgba(211, 47, 47, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+}
 
 footer {
     background-color: #1a221a;
