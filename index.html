@@ -16,6 +16,7 @@
     <!-- Google Firebase SDKs (Compat version for pure HTML/JS) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
 </head>
 <body>
@@ -694,21 +695,29 @@
 
     <!-- ================= MODALS SECTION ================= -->
     
-    <!-- MODAL 1: LOGIN & PROFILE SETUP -->
+    <!-- MODAL 1: LOGIN & PROFILE SETUP (REAL SMS OTP & RECAPTCHA INTEGRATED) -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeLoginModal()">&times;</span>
             <div id="modal-step-login">
                 <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
-                <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు OTP ద్వారా సులభంగా లాగిన్ అవ్వండి</p>
+                <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు అసలైన SMS OTP ద్వారా లాగిన్ అవ్వండి</p>
+                
                 <div class="form-group">
                     <label>మొబైల్ నంబర్ (Mobile Number):</label>
-                    <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10">
+                    <div style="display:flex; gap:6px;">
+                        <span style="background:#eee; padding:10px 12px; border-radius:6px; font-weight:bold; border:1px solid #ccc; font-size:0.95rem;">+91</span>
+                        <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10" style="flex:1;">
+                    </div>
                 </div>
+
+                <!-- Invisible reCAPTCHA Container for Google Security Verification -->
+                <div id="recaptcha-container"></div>
+
                 <div class="otp-inputs" id="otpSection" style="display:none; margin-top:0.8rem;">
                     <div class="form-group">
-                        <label>OTP నమోదు చేయండి:</label>
-                        <input type="text" id="otpInput" placeholder="4 అంకెల OTP (ఉదా: 1234)" maxlength="4">
+                        <label>మొబైల్‌కు వచ్చిన 6 అంకెల OTP నమోదు చేయండి:</label>
+                        <input type="text" id="otpInput" placeholder="6 అంకెల SMS OTP" maxlength="6">
                     </div>
                 </div>
                 <button type="button" class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
