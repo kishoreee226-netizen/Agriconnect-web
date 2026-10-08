@@ -49,7 +49,7 @@
             <button onclick="toggleDrawer()" style="background:none; border:none; color:white; font-size:1.6rem; cursor:pointer;">&times;</button>
         </div>
         <ul class="drawer-menu-list">
-            <li><button class="drawer-menu-item" onclick="openLoginModalFromDrawer()">👤 <strong>Login / ప్రొఫైల్</strong></button></li>
+            <li><button class="drawer-menu-item" onclick="openLoginModalFromDrawer()">👤 <strong id="drawer-login-text">Login / ప్రొఫైల్</strong></button></li>
             <li><button class="drawer-menu-item" onclick="openWalletModalFromDrawer()">💰 <strong>AgriConnect Wallet (వాలెట్)</strong></button></li>
             <li><button class="drawer-menu-item" onclick="enablePushNotifications()">🔔 <strong>పుష్ నోటిఫికేషన్లు ఆన్ చేయండి</strong></button></li>
             <li><button class="drawer-menu-item" onclick="openDiaryModalFromDrawer()">📖 రైతు ఖాతా డైరీ (Farm Diary)</button></li>
@@ -57,6 +57,15 @@
             <li><button class="drawer-menu-item" onclick="openContactModalFromDrawer()">📞 Contact Us (సంప్రదించండి)</button></li>
             <li><button class="drawer-menu-item" style="color:#d32f2f;" onclick="handleDrawerLogout()">🚪 లాగౌట్ (Logout)</button></li>
         </ul>
+    </div>
+
+    <!-- Direct Install Banner -->
+    <div id="pwaInstallBanner" class="install-banner">
+        <div>
+            <strong>📲 AgriConnect మొబైల్ యాప్ అందుబాటులో ఉంది!</strong>
+            <div style="font-size: 0.85rem; color: #333;">సులభంగా ఓపెన్ చేసుకోవడానికి ఇప్పుడే ఇన్‌స్టాల్ చేసుకోండి.</div>
+        </div>
+        <button id="pwaInstallBtn" class="install-btn">ఇన్‌స్టాల్ చేయండి (Install)</button>
     </div>
 
     <!-- Hero Banner -->
@@ -108,8 +117,28 @@
                         <tr><td>మిర్చి (తేజ రకం)</td><td>₹ 14,500</td><td class="rate-high">₹ 18,200</td></tr>
                         <tr><td>పత్తి (Cotton)</td><td>₹ 6,800</td><td class="rate-high">₹ 7,650</td></tr>
                         <tr><td>వరి (BPT / సన్నాలు)</td><td>₹ 2,320</td><td class="rate-high">₹ 2,450</td></tr>
+                        <tr><td>మొక్కజొన్న (Maize)</td><td>₹ 2,050</td><td class="rate-high">₹ 2,200</td></tr>
                     </tbody>
                 </table>
+            </div>
+
+            <div class="dash-card speakable" onclick="speakElement(this)">
+                <h4>🚜 యంత్రాల అద్దె & డ్రోన్ పిచికారీ</h4>
+                <div style="background:#e0f2f1; border:1px dashed #00897b; padding:12px; border-radius:8px;">
+                    <h5 style="color:#004d40;">🤝 రైతు గ్రూప్ షేరింగ్ బుకింగ్</h5>
+                    <p style="font-size:0.85rem; color:#333;">కలిసి హార్వెస్టర్ లేదా డ్రోన్ అద్దెకు తీసుకుంటే ఎకరానికి 30% ఖర్చు ఆదా!</p>
+                    <button style="background:#00897b; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; font-size:0.82rem; cursor:pointer; margin-top:6px;" onclick="openSharedMachineryModal()">
+                        గ్రూప్ బుకింగ్ ప్రారంభించండి
+                    </button>
+                </div>
+            </div>
+
+            <div class="dash-card speakable" onclick="speakElement(this)">
+                <h4>🎧 ఆఫ్ లైన్ వాయిస్ నోట్స్</h4>
+                <div style="background:#f5f5f5; padding:8px 12px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+                    <span style="font-size:0.85rem; font-weight:600;">మిర్చిలో తామర పురుగు నివారణ</span>
+                    <button style="background:#1B5E20; color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="playOfflineAudio('మిర్చి పంటలో తామర పురుగు మరియు నల్లి నివారణకు వేపనూనె లేదా ఫిప్రోనిల్ పిచికారీ చేయండి.')">▶ ప్లే</button>
+                </div>
             </div>
         </div>
     </main>
@@ -122,21 +151,21 @@
         <div class="role-widgets-container">
             <div id="tab-farmer" class="role-widget active speakable" onclick="showFeature('farmer', this); speakElement(this)">
                 <span class="role-active-indicator" id="ind-farmer">యాక్టివ్</span>
-                <div class="role-icon">🌾</div>
+                <div class="role-icon" style="font-size:2.3rem;">🌾</div>
                 <h3>రైతులు</h3>
                 <span>(Smart Farmers Hub)</span>
             </div>
 
             <div id="tab-labor" class="role-widget speakable" onclick="showFeature('labor', this); speakElement(this)">
                 <span class="role-active-indicator" id="ind-labor">యాక్టివ్</span>
-                <div class="role-icon">👨‍🌾</div>
+                <div class="role-icon" style="font-size:2.3rem;">👨‍🌾</div>
                 <h3>వ్యవసాయ కూలీలు</h3>
                 <span>(Farm Laborers)</span>
             </div>
 
             <div id="tab-trader" class="role-widget speakable" onclick="showFeature('trader', this); speakElement(this)">
                 <span class="role-active-indicator" id="ind-trader">యాక్టివ్</span>
-                <div class="role-icon">🏪</div>
+                <div class="role-icon" style="font-size:2.3rem;">🏪</div>
                 <h3>వ్యాపారధారులు</h3>
                 <span>(Traders & Buyers)</span>
             </div>
@@ -218,11 +247,8 @@
                             <span class="accordion-arrow" id="arrowLaborBooking">▼</span>
                         </div>
 
-                        <!-- HIDDEN PANEL (OPENS ONLY ON CLICK) -->
                         <div class="accordion-body" id="bodyLaborBooking">
                             <div class="labor-interactive-box">
-                                
-                                <!-- GPS RANGE FILTER -->
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;">
                                     <strong style="color: #1B5E20; font-size: 0.88rem;">📍 సమీప దూరం ఫిల్టర్:</strong>
                                     <select id="gpsRadiusFilter" onchange="filterLaborersByDistance()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #2e7d32; font-size: 0.82rem; font-weight: bold;">
@@ -238,7 +264,6 @@
                                     <div style="text-align:center; padding:10px; color:#666; font-size:0.85rem;">క్లౌడ్ డేటాబేస్ నుండి లోడ్ అవుతోంది...</div>
                                 </div>
 
-                                <!-- IN-PAGE FARMER JOB BROADCAST -->
                                 <div style="margin-top: 15px; background: #e8f5e9; padding: 12px; border-radius: 8px; border: 1px dashed #2e7d32;">
                                     <strong style="color: #1B5E20; font-size: 0.92rem;">📢 నాకు కూలీలు కావాలి (రైతు రిక్వెస్ట్):</strong>
                                     
@@ -305,7 +330,6 @@
                 <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు & నమోదు కేంద్రం:</h4>
                 <div class="features-grid">
                     
-                    <!-- 1. DAILY FARM JOBS (ACCORDION) -->
                     <div class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32;">
                         <div class="accordion-header" onclick="toggleDailyJobsAccordion()">
                             <div style="display:flex; align-items:center; gap:1rem;">
@@ -328,7 +352,6 @@
                         </div>
                     </div>
 
-                    <!-- 2. MESTRY REGISTRATION (ACCORDION + GPS + UPI) -->
                     <div class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #1B5E20; background: #fff;">
                         <div class="accordion-header" onclick="toggleMestryRegisterAccordion()">
                             <div style="display: flex; align-items: center; gap: 1rem;">
@@ -418,19 +441,160 @@
         </div>
     </section>
 
+    <!-- ================= VIEW 3: ABOUT US ================= -->
+    <section id="about-view" class="page-view">
+        <div style="max-width:900px; margin:2rem auto; background:white; padding:2rem; border-radius:12px; border-top:5px solid #1B5E20;">
+            <h3 style="color:#1B5E20;">ℹ️ మా గురించి (About AgriConnect)</h3>
+            <p style="margin-top:10px;"><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం.</p>
+        </div>
+    </section>
+
+    <!-- ================= VIEW 4: WHY CHOOSE US ================= -->
+    <section id="why-view" class="page-view">
+        <div style="max-width:900px; margin:2rem auto; background:white; padding:2rem; border-radius:12px; border-top:5px solid #1B5E20;">
+            <h3 style="color:#1B5E20;">⭐ మమ్మల్ని ఎందుకు ఎంచుకోవాలి?</h3>
+            <p style="margin-top:10px;">ప్రపంచంలోనే మొట్టమొదటిసారిగా 100% వాయిస్ గైడెన్స్ మరియు హైపర్‌లోకల్ 5-10 కి.మీ లొకేషన్ మ్యాచింగ్ సాంకేతికతతో కూలీలు, రైతులను కలుపుతున్న ఏకైక వేదిక.</p>
+        </div>
+    </section>
+
     <!-- FLOATING ACTION DOCK -->
     <div class="floating-dock">
         <button class="dock-btn btn-speaker" id="speakerBtn" onclick="toggleVoiceReader()" title="వాయిస్ రీడర్">🔊</button>
         <button class="dock-btn btn-mic" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">🎙️</button>
     </div>
 
-    <!-- MODAL: DIRECT UPI PAYMENT (FARMER TO MESTRY) -->
+    <!-- ================= MODALS SECTION ================= -->
+    
+    <!-- MODAL 1: LOGIN & OTP PROFILE -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeLoginModal()">&times;</span>
+            <div id="modal-step-login">
+                <h3 style="color:#1B5E20;">🌾 AgriConnect లాగిన్</h3>
+                <p style="font-size:0.85rem; color:#666;">మొబైల్ నంబర్ మరియు OTP ద్వారా లాగిన్ అవ్వండి</p>
+                <div class="form-group">
+                    <label>మొబైల్ నంబర్:</label>
+                    <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10">
+                </div>
+                <div id="otpSection" style="display:none; margin-top:0.8rem;">
+                    <div class="form-group">
+                        <label>OTP నమోదు చేయండి:</label>
+                        <input type="text" id="otpInput" placeholder="4 అంకెల OTP (ఉదా: 1234)" maxlength="4">
+                    </div>
+                </div>
+                <button type="button" class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
+            </div>
+
+            <div id="modal-step-profile" style="display:none;">
+                <h3 style="color:#1B5E20;">👤 యూజర్ ప్రొఫైల్ సెటప్</h3>
+                <div class="form-group">
+                    <label>మీ పూర్తి పేరు:</label>
+                    <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
+                </div>
+                <div class="form-group">
+                    <label>విభాగం ఎంచుకోండి:</label>
+                    <select id="userCategorySelect">
+                        <option value="farmer">రైతు (Farmer)</option>
+                        <option value="laborer">వ్యవసాయ కూలీ (Farm Laborer)</option>
+                        <option value="trader">వ్యాపారధారి (Trader)</option>
+                    </select>
+                </div>
+                <button type="button" class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేయండి</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: 3-IN-1 UNIVERSAL WALLET -->
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeWalletModal()">&times;</span>
+            <h3 style="color:#1B5E20; margin-bottom:10px;">💰 AgriConnect Wallet</h3>
+            <div style="background:linear-gradient(135deg, #0d47a1, #1976d2); color:white; border-radius:12px; padding:1.5rem; position:relative;">
+                <span style="position:absolute; top:12px; right:12px; background:#FFD54F; color:#1B5E20; padding:2px 8px; border-radius:12px; font-weight:bold; font-size:0.75rem;">ఖాతా</span>
+                <div style="font-size:0.85rem; opacity:0.9;">ప్రస్తుత బ్యాలెన్స్:</div>
+                <div style="font-size:2.2rem; font-weight:bold; color:#FFD54F;" id="walletBalance">₹ 14,850.00</div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px;">
+                <button style="background:#2e7d32; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('కూలీ వేతనం చెల్లింపు విజయవంతమైంది!')">💸 వేతనం చెల్లింపు</button>
+                <button style="background:#1565c0; color:white; padding:10px; border-radius:6px; border:none; font-weight:bold; font-size:0.85rem; cursor:pointer;" onclick="alert('ఖాతాలో నగదు జమ చేయబడింది!')">➕ నగదు జమ</button>
+            </div>
+            <button type="button" class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
+        </div>
+    </div>
+
+    <!-- MODAL 3: FARM LEDGER DIARY -->
+    <div class="modal-overlay" id="diaryModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeDiaryModal()">&times;</span>
+            <h3 style="color:#1B5E20;">📖 రైతు ఖాతా డైరీ (ఖర్చు & రాబడి)</h3>
+            <div class="form-group">
+                <label>వివరణ (ఉదా: విత్తనాలు లేదా కూలీల ఖర్చు):</label>
+                <input type="text" id="diaryDesc" placeholder="వివరణ రాయండి">
+            </div>
+            <div class="form-group">
+                <label>మొత్తం (₹):</label>
+                <input type="number" id="diaryAmount" placeholder="ఉదా: 2500">
+            </div>
+            <button type="button" class="btn-action-primary" onclick="addDiaryEntry()">డైరీలో నమోదు చేయండి</button>
+        </div>
+    </div>
+
+    <!-- MODAL 4: PRICE ALERTS -->
+    <div class="modal-overlay" id="alertsModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeAlertsModal()">&times;</span>
+            <h3 style="color:#1B5E20;">🔔 ధర హెచ్చరికలు సెట్ చేయండి</h3>
+            <div class="form-group">
+                <label>పంట ఎంచుకోండి:</label>
+                <select id="alertCropSelect">
+                    <option>మిర్చి (తేజ రకం)</option>
+                    <option>పత్తి (Cotton)</option>
+                    <option>వరి (BPT)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>టార్గెట్ ధర (క్వింటాల్‌కి ₹):</label>
+                <input type="number" id="alertTargetPrice" placeholder="ఉదా: 19500">
+            </div>
+            <button type="button" class="btn-action-primary" onclick="savePriceAlert()">అలర్ట్ సెట్ చేయండి</button>
+        </div>
+    </div>
+
+    <!-- MODAL 5: SHARED MACHINERY -->
+    <div class="modal-overlay" id="sharedMachineryModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeSharedMachineryModal()">&times;</span>
+            <h3 style="color:#1B5E20;">🤝 రైతు గ్రూప్ యంత్రాల బుకింగ్</h3>
+            <div class="form-group">
+                <label>యంత్రం ఎంచుకోండి:</label>
+                <select>
+                    <option>వరి కోత మిషన్ - ₹ 2,200/గంట</option>
+                    <option>డ్రోన్ స్ప్రేయింగ్ - ₹ 399/ఎకరం</option>
+                </select>
+            </div>
+            <button type="button" class="btn-action-primary" onclick="alert('గ్రూప్ బుకింగ్ పూర్తయింది!'); closeSharedMachineryModal();">బుకింగ్ ఖరారు చేయండి</button>
+        </div>
+    </div>
+
+    <!-- MODAL 6: CONTACT US -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeContactModal()">&times;</span>
+            <h3 style="color:#1B5E20;">📞 సంప్రదించండి</h3>
+            <div style="background:#f9fbf9; border:1px solid #c8e6c9; padding:12px; border-radius:8px; margin-top:10px; font-size:0.9rem;">
+                <p>🏢 <strong>కంపెనీ:</strong> AgriConnect Technologies</p>
+                <p>📍 <strong>చిరునామా:</strong> హనుమకొండ / వరంగల్, తెలంగాణ</p>
+                <p>✉️ <strong>ఈమెయిల్:</strong> agriconnect.office@gmail.com</p>
+            </div>
+            <button type="button" class="btn-action-primary" onclick="closeContactModal()">సరే</button>
+        </div>
+    </div>
+
+    <!-- MODAL 7: DIRECT UPI PAYMENT -->
     <div class="modal-overlay" id="upiPaymentModal">
         <div class="modal-box">
             <span class="modal-close" onclick="closeUpiModal()">&times;</span>
-            <h3 style="color:#1B5E20; display:flex; align-items:center; gap:8px;">
-                💸 నేరుగా UPI ద్వారా వేతనం చెల్లింపు
-            </h3>
+            <h3 style="color:#1B5E20;">💸 నేరుగా UPI ద్వారా వేతనం చెల్లింపు</h3>
             <div style="background:#f3e5f5; border:1px solid #ce93d8; border-radius:8px; padding:12px; margin-top:12px;">
                 <div style="font-size:0.9rem;">మేస్త్రీ పేరు: <strong id="upiPayMestryName">-</strong></div>
                 <div style="font-size:0.85rem; color:#4a148c;">UPI ID: <span id="upiPayMestryVpa">-</span></div>
