@@ -112,7 +112,7 @@ header {
     transition: 0.2s;
 }
 
-/* Direct In-Page Install Banner (Auto-visible on open) */
+/* Install Banner */
 .install-banner {
     display: flex;
     background: #FFD54F;
@@ -166,6 +166,10 @@ header {
     color: white;
     text-align: center;
     padding: 2.5rem 1.2rem;
+}
+
+.hero-logo-container {
+    margin-bottom: 0.8rem;
 }
 
 .hero-logo {
