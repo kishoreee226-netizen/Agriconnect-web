@@ -1,6 +1,6 @@
 // ==========================================================================
 // AgriConnect Technologies - Complete Application Engine (app.js)
-// Realtime Cloud Sync | GPS Hyperlocal | Direct UPI | SMS | Voice AI Engine
+// Realtime Cloud Sync | GPS Hyperlocal | Direct UPI | Real SMS OTP | Voice AI
 // UDYAM-TS-31-0063048 | Warangal & Hanamkonda
 // ==========================================================================
 
@@ -30,6 +30,10 @@ let currentTargetMestryName = '';
 let isVoiceReaderActive = false;
 let speechRecognitionInstance = null;
 let welcomeVoicePlayed = false;
+
+// Firebase Auth Globals
+let confirmationResultGlobal = null;
+let recaptchaVerifier = null;
 
 // ==================== 2. GPS GEOLOCATION ENGINE ====================
 function initDeviceGeolocation() {
@@ -258,34 +262,91 @@ function handleDrawerLogout() {
     toggleDrawer(); 
     document.getElementById('drawer-login-text').innerText = 'Login / ప్రొఫైల్';
     document.getElementById('userWelcomeBanner').style.display = 'none';
+    confirmationResultGlobal = null;
     alert('మీరు లాగౌట్ అయ్యారు.'); 
 }
 
-// ==================== 7. PROFILE & OTP LOGIC ====================
-let isOtpDispatched = false;
+// ==================== 7. REAL FIREBASE PHONE AUTH (10,000 FREE SMS/MONTH) ====================
+function initRecaptcha() {
+    if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'invisible',
+            'callback': (response) => {
+                console.log("reCAPTCHA Verified successfully.");
+            },
+            'expired-callback': () => {
+                console.warn("reCAPTCHA Expired, resetting...");
+            }
+        });
+    }
+}
+
 function handleOtpFlow() {
     const phoneInput = document.getElementById('mobileNumberInput');
     const otpSection = document.getElementById('otpSection');
     const otpBtn = document.getElementById('btnOtpAction');
     const mobile = phoneInput ? phoneInput.value.trim() : '';
 
-    if (!isOtpDispatched) {
+    // STEP 1: నిజమైన మొబైల్ SMS OTP పంపడం
+    if (!confirmationResultGlobal) {
         if (mobile.length !== 10 || isNaN(mobile)) {
             alert('దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.');
             return;
         }
-        otpSection.style.display = 'block';
-        otpBtn.innerText = 'లాగిన్ అవ్వండి';
-        isOtpDispatched = true;
-        alert('మీ ధ్రువీకరణ OTP: 1234');
+
+        initRecaptcha();
+        const fullPhoneNumber = "+91" + mobile;
+
+        otpBtn.disabled = true;
+        otpBtn.innerText = "SMS OTP పంపుతున్నాము...";
+
+        firebase.auth().signInWithPhoneNumber(fullPhoneNumber, window.recaptchaVerifier)
+            .then((confirmationResult) => {
+                confirmationResultGlobal = confirmationResult;
+                otpSection.style.display = 'block';
+                phoneInput.disabled = true;
+                otpBtn.disabled = false;
+                otpBtn.innerText = 'లాగిన్ అవ్వండి (Verify OTP)';
+                alert(`📲 మీ మొబైల్ నంబర్ ${mobile} కు 6 అంకెల అసలైన SMS OTP పంపబడింది!`);
+            })
+            .catch((error) => {
+                console.error("SMS Sending Error:", error);
+                alert("SMS పంపడం విఫలమైంది: " + error.message);
+                otpBtn.disabled = false;
+                otpBtn.innerText = "OTP మళ్లీ పంపండి";
+                if (window.recaptchaVerifier) {
+                    window.recaptchaVerifier.render().then(widgetId => {
+                        grecaptcha.reset(widgetId);
+                    });
+                }
+            });
+
+    // STEP 2: వచ్చిన 6 అంకెల OTP ని ధ్రువీకరించడం (Verify)
     } else {
         const otpVal = document.getElementById('otpInput').value.trim();
-        if (otpVal === '1234') {
-            document.getElementById('modal-step-login').style.display = 'none';
-            document.getElementById('modal-step-profile').style.display = 'block';
-        } else {
-            alert('OTP తప్పుగా నమోదు చేశారు. దయచేసి 1234 నమోదు చేయండి.');
+        if (otpVal.length !== 6 || isNaN(otpVal)) {
+            alert('దయచేసి మీ మొబైల్‌కు వచ్చిన 6 అంకెల OTP ని నమోదు చేయండి.');
+            return;
         }
+
+        otpBtn.disabled = true;
+        otpBtn.innerText = "ధ్రువీకరిస్తున్నాము...";
+
+        confirmationResultGlobal.confirm(otpVal)
+            .then((result) => {
+                const user = result.user;
+                console.log("యూజర్ లాగిన్ విజయవంతమైంది. UID:", user.uid);
+                
+                // లాగిన్ స్టెప్ దాటి ప్రొఫైల్ స్టెప్‌కి తీసుకెళ్లడం
+                document.getElementById('modal-step-login').style.display = 'none';
+                document.getElementById('modal-step-profile').style.display = 'block';
+            })
+            .catch((error) => {
+                console.error("OTP Verification Error:", error);
+                alert("నమోదు చేసిన OTP తప్పు లేదా గడువు ముగిసింది. దయచేసి మళ్లీ చూడండి.");
+                otpBtn.disabled = false;
+                otpBtn.innerText = 'లాగిన్ అవ్వండి (Verify OTP)';
+            });
     }
 }
 
