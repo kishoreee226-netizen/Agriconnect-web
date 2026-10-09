@@ -121,11 +121,17 @@
   "launch_handler": {
     "client_mode": "navigate-existing"
   },
-    "prefer_related_applications": false,
-  "related_applications": [],
+      "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://kishoreee226-netizen.github.io/Agriconnect-web/manifest.json"
+    }
+  ],
   "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
   "scope_extensions": [
-    { "origin": "https://glasspane.pages.dev" }
+    { "origin": "https://kishoreee226-netizen.github.io" }
   ]
 }
+
 
