@@ -977,6 +977,25 @@ if ('periodicSync' in reg) {
     console.log('Periodic sync permission or browser support check:', err);
   });
 }
+// Web Bluetooth - Soil Sensor Testing Integration
+async function connectSoilSensor() {
+  if (!navigator.bluetooth) {
+    alert("మీ బ్రౌజర్‌లో Web Bluetooth ఫీచర్‌కు మద్దతు లేదు. దయచేసి Chrome బ్రౌజర్ ఉపయోగించండి.");
+    return;
+  }
+
+  try {
+    const device = await navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: ['battery_service']
+    });
+
+    console.log("Soil Sensor Device Found:", device.name);
+    alert("భూసార సెన్సార్ (" + (device.name || "Unknown Device") + ") విజయవంతంగా అనుసంధానమైంది!");
+  } catch (error) {
+    console.log("Soil Sensor Connection error:", error);
+  }
+}
 </script>
 </body>
 </html>
