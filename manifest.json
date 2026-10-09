@@ -1,22 +1,24 @@
 {
   "name": "AgriConnect Technologies",
   "short_name": "AgriConnect",
-  "description": "The Voice of Smart Farming - Hyperlocal Agriculture Platform",
   "start_url": "/Agriconnect-web/",
   "scope": "/Agriconnect-web/",
   "display": "standalone",
   "background_color": "#1b5e20",
   "theme_color": "#1b5e20",
+  "description": "Smart Farming Platform for Farmers",
   "icons": [
     {
-      "src": "logo.png",
+      "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "logo.png",
+      "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
