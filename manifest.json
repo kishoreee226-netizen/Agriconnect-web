@@ -79,6 +79,20 @@
       "url": "url"
     }
   },
+  "file_handlers": [
+    {
+      "action": "/Agriconnect-web/",
+      "accept": {
+        "text/plain": [".txt"]
+      }
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+agri",
+      "url": "/Agriconnect-web/?details=%s"
+    }
+  ],
   "launch_handler": {
     "client_mode": "navigate-existing"
   },
