@@ -93,6 +93,31 @@
       "url": "/Agriconnect-web/?details=%s"
     }
   ],
+  "widgets": [
+    {
+      "name": "Agri Live Rates & Weather",
+      "short_name": "AgriWidget",
+      "description": "Live Mandi crop prices and weather updates",
+      "tag": "agri-live-widget",
+      "template": "agri-widget",
+      "ms_ac_template": "widgets/agri-card.json",
+      "data": "/Agriconnect-web/",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/icon-512.png",
+          "sizes": "512x512",
+          "label": "Widget Preview"
+        }
+      ],
+      "icons": [
+        {
+          "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "launch_handler": {
     "client_mode": "navigate-existing"
   },
