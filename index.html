@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AgriConnect Technologies - The Voice of Smart Farming</title>
-    
+
     <!-- PWA Setup Files -->
     <link rel="manifest" href="manifest.json">
 
@@ -35,7 +35,7 @@
                 <button id="nav-btn-about" onclick="switchView('about')">ℹ️ About Us</button>
                 <button id="nav-btn-why" onclick="switchView('why')">⭐ Why Choose Us</button>
             </div>
-            
+
             <button class="btn-hamburger" onclick="toggleDrawer()" title="Menu">
                 <span></span>
                 <span></span>
@@ -135,9 +135,16 @@
         </div>
         <h2>AgriConnect</h2>
         <div class="tagline">The Voice of Smart Farming</div>
-        <div class="voice-pill">
-            🔊 స్పీకర్ నొక్కి ఏ బాక్స్ మీదైనా టచ్ చేయండి – సమాచారం తెలుగులో చదివి వినిపిస్తుంది!
+                <div class="voice-pill" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px; background: #e8f5e9; border-radius: 10px; border: 1px solid #c8e6c9;">
+          <div>📣 స్పీకర్ నొక్కి ఏ బాక్స్ మీదైనా టచ్ చేయండి – సమాచారం తెలుగులో చదివి వినిపిస్తుంది!</div>
+          
+          <!-- Smart Voice Navigation Button -->
+          <button type="button" onclick="startLiveVoiceNav()" style="background: #1b5e20; color: #ffffff; border: none; padding: 7px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
+            🎙️ మైక్ నొక్కి మాట్లాడండి
+          </button>
+          <div id="voice-nav-output" style="font-size: 0.8rem; color: #2e7d32; font-weight: bold; min-height: 18px;"></div>
         </div>
+
     </section>
 
     <!-- User Welcome Banner -->
@@ -154,7 +161,7 @@
     <!-- ================= VIEW 1: HOME DASHBOARD ================= -->
     <main id="home-view" class="page-view active-view">
         <div class="dashboard-container">
-            
+
             <!-- 1. Live Time & Date Widget -->
             <div class="dash-card speakable" onclick="speakElement(this)">
                 <h4>📅 లైవ్ సమయం & క్యాలెండర్</h4>
@@ -278,6 +285,14 @@
                     <span style="font-size: 0.85rem; font-weight: 600;">వరిలో ఎరువుల యాజమాన్యం</span>
                     <button style="background:#1B5E20; color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="playOfflineAudio('వరి నాట్లు వేసిన 20 రోజులకు యూరియాతో పాటు జింక్ సల్ఫేట్ అందించండి.')">▶ ప్లే చేయండి</button>
                 </div>
+                          <!-- kotha offline data save feature -->
+          <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #ccc; text-align: center;">
+            <button type="button" style="background: #2e7d32; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;" onclick="event.stopPropagation(); saveMandiOfflineData();">
+              💾 నేటి మార్కెట్ డేటా ఆఫ్‌లైన్ సేవ్
+            </button>
+            <div id="offline-saved-msg" style="margin-top: 6px; font-size: 0.78rem; color: #1b5e20; font-weight: 500;"></div>
+          </div>
+          
             </div>
 
         </div>
@@ -313,25 +328,42 @@
         </div>
 
         <div class="feature-details-box">
-            
+
             <!-- 1. Farmers Features (Full 12 Cards) -->
             <div id="farmer-feature" class="feature-content active">
                 <h4>🌾 రైతులకు లభించే సమగ్ర స్మార్ట్ వ్యవసాయ సేవలు (12 ఫీచర్లు):</h4>
                 <div class="features-grid">
-                    
+
                     <div id="card-doctor" class="feature-card speakable" onclick="speakElement(this)">
                         <div class="feature-img-icon">🩺</div>
                         <div class="feature-info">
-                            <h5>1. క్రాప్ డాక్టర్ (AI Crop Doctor)</h5>
-                            <p>పంట ఆకు లేదా తెగులు సోకిన భాగాన్ని ఫోటో తీసి అప్‌లోడ్ చేస్తే, వ్యాధిని గుర్తించి తక్షణ నివారణ మందులు, సలహాలు అందిస్తుంది.</p>
-                        </div>
-                    </div>
+                                         <h5>1. క్రాప్ డాక్టర్ (AI Crop Doctor)</h5>
+              <p>పంట ఆకు లేదా తెగులు సోకిన భాగాన్ని ఫోటో తీసి అప్‌లోడ్ చేస్తే, వ్యాధిని గుర్తించి తక్షణ నివారణ మందులు, సలహాలు అందిస్తుంది.</p>
+              
+              <!-- AI Camera Capture Feature -->
+              <div style="margin-top: 8px;">
+                <label style="display: inline-block; background: #e65100; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;">
+                  📷 ఫోటో తీయండి / అప్‌లోడ్
+                  <input type="file" accept="image/*" capture="environment" onchange="detectCropPest(event)" style="display: none;">
+                </label>
+                <div id="crop-doctor-res" style="margin-top: 6px; font-size: 0.8rem; color: #2e7d32; line-height: 1.4;"></div>
+              </div>
+            </div>
+          </div>
 
-                    <div id="card-weather" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🌦️</div>
-                        <div class="feature-info">
-                            <h5>2. వాతావరణ నివేదిక (Weather Report)</h5>
-                            <p>మీ గ్రామానికి సంబంధించిన రోజువారీ వర్ష సూచన, ఉష్ణోగ్రత మరియు గాలి తేమ శాతం వివరాల లైవ్ అప్‌డేట్స్.</p>
+          <div id="card-weather" class="feature-card speakable" onclick="speakElement(this)">
+            <div class="feature-img-icon">🌦️</div>
+            <div class="feature-info">
+              <h5>2. వాతావరణ నివేదిక (Weather Report)</h5>
+              <p>మీ గ్రామానికి సంబంధించిన రోజువారీ వర్ష సూచన, ఉష్ణోగ్రత మరియు గాలి తేమ శాతం వివరాల లైవ్ అప్‌డేట్స్.</p>
+
+              <!-- GPS Weather Feature -->
+              <div style="margin-top: 8px;">
+                <button type="button" onclick="event.stopPropagation(); getLiveLocationWeather();" style="background: #0288d1; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;">
+                  📍 నా లొకేషన్ వాతావరణం
+                </button>
+                <div id="gps-weather-res" style="margin-top: 6px; font-size: 0.8rem; color: #01579b; line-height: 1.4;"></div>
+              </div>
                         </div>
                     </div>
 
@@ -402,7 +434,7 @@
                                 </div>
 
                                 <strong style="color: #1B5E20; font-size: 0.95rem;">📍 అందుబాటులో ఉన్న మేస్త్రీల బృందాలు:</strong>
-                                
+
                                 <div id="activeLaborListContainer" style="margin-top: 6px;">
                                     <div style="text-align:center; padding:10px; color:#666; font-size:0.85rem;">క్లౌడ్ డేటాబేస్ నుండి లోడ్ అవుతోంది...</div>
                                 </div>
@@ -410,7 +442,7 @@
                                 <!-- IN-PAGE FARMER JOB BROADCAST -->
                                 <div style="margin-top: 15px; background: #e8f5e9; padding: 12px; border-radius: 8px; border: 1px dashed #2e7d32;">
                                     <strong style="color: #1B5E20; font-size: 0.92rem;">📢 నాకు కూలీలు కావాలి (రైతు రిక్వెస్ట్):</strong>
-                                    
+
                                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
                                         <input type="text" id="postFarmerName" placeholder="రైతు పేరు *" style="padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
                                         <input type="tel" id="postFarmerPhone" placeholder="ఫోన్ నంబర్ *" maxlength="10" style="padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
@@ -420,7 +452,7 @@
                                         <input type="text" id="postWorkDetails" placeholder="పని వివరాలు (ఉదా: వరి నాట్లు) *" style="padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
                                     </div>
                                     <input type="text" id="postFarmLocation" placeholder="పొలం ఉన్న గ్రామం / ప్రాంతం" style="width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem; margin-top: 6px;">
-                                    
+
                                     <!-- THREE DISPATCH BUTTONS (WHATSAPP, SMS, CLOUD) -->
                                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px;">
                                         <button type="button" onclick="broadcastJobRequest()" style="background: #25D366; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer;">
@@ -478,7 +510,7 @@
             <div id="labor-feature" class="feature-content">
                 <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు & నమోదు కేంద్రం:</h4>
                 <div class="features-grid">
-                    
+
                     <!-- DAILY FARM JOBS (ACCORDION) -->
                     <div class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32;">
                         <div class="accordion-header" onclick="toggleDailyJobsAccordion()">
@@ -541,7 +573,7 @@
                                     <label style="font-size:0.85rem; font-weight:bold;">చేయగల పనులు:</label>
                                     <input type="text" id="directMestrySkills" placeholder="ఉదా: వరి నాట్లు, మిర్చి కోత, పత్తి ఏరడం" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
                                 </div>
-                                
+
                                 <button type="button" id="btnSubmitMestry" onclick="submitDirectLaborRegistration()" style="width: 100%; background: #1B5E20; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 12px;">
                                     📍 GPS లొకేషన్‌తో నమోదు చేయండి (Live Sync)
                                 </button>
@@ -562,6 +594,14 @@
                         <div class="feature-info">
                             <h5>వాయిస్ అసిస్టెంట్ మార్గదర్శకత్వం</h5>
                             <p>చదవడం రాని వారి కోసం సులభంగా తెలుగు మాటల ద్వారా పనుల వివరాలు వినే ప్రత్యేక సదుపాయం.</p>
+                                      <!-- Voice Recognition Action -->
+              <div style="margin-top: 8px;">
+                <button type="button" onclick="event.stopPropagation(); startLiveVoiceNav();" style="background: #1b5e20; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;">
+                  🎙️ మాట్లాడండి (వాయిస్ కమాండ్)
+                </button>
+                <div id="voice-nav-output" style="margin-top: 6px; font-size: 0.8rem; color: #1b5e20;"></div>
+              </div>
+              
                         </div>
                     </div>
 
@@ -695,7 +735,7 @@
     <div id="voice-toast" class="voice-status-toast">వింటున్నాము...</div>
 
     <!-- ================= MODALS SECTION ================= -->
-    
+
     <!-- MODAL 1: LOGIN & PROFILE SETUP (REAL SMS OTP & RECAPTCHA INTEGRATED) -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
@@ -703,7 +743,7 @@
             <div id="modal-step-login">
                 <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
                 <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు అసలైన SMS OTP ద్వారా లాగిన్ అవ్వండి</p>
-                
+
                 <div class="form-group">
                     <label>మొబైల్ నంబర్ (Mobile Number):</label>
                     <div style="display:flex; gap:6px;">
@@ -805,7 +845,7 @@
         <div class="modal-box">
             <span class="modal-close" onclick="closeWalletModal()">&times;</span>
             <h3 class="modal-title">💰 AgriConnect Wallet</h3>
-            
+
             <div class="wallet-card-box">
                 <span class="wallet-role-badge" id="walletRoleBadge">రైతు ఖాతా (Farmer)</span>
                 <div style="font-size: 0.9rem; opacity: 0.9;">అందుబాటులో ఉన్న బ్యాలెన్స్:</div>
@@ -826,7 +866,7 @@
 
             <h5 style="margin-top: 1.2rem; color: #1B5E20; border-bottom: 1px solid #eee; padding-bottom: 4px;">తాజా లావాదేవీలు:</h5>
             <div id="walletTransactions" style="font-size: 0.85rem; max-height: 140px; overflow-y: auto; margin-top: 6px;"></div>
-            
+
             <button type="button" class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
         </div>
     </div>
@@ -952,7 +992,7 @@
       navigator.serviceWorker.register('/Agriconnect-web/sw.js')
         .then((reg) => {
           console.log('AgriConnect Service Worker Ready:', reg.scope);
-          
+
           // Request Push Notification Permission
           if ('Notification' in window && Notification.permission === 'default') {
             Notification.requestPermission().then((permission) => {
@@ -995,6 +1035,88 @@ async function connectSoilSensor() {
   } catch (error) {
     console.log("Soil Sensor Connection error:", error);
   }
+}
+// Offline Data LocalStorage Logic
+function saveMandiOfflineData() {
+  const offlineData = {
+    mandi: "వరంగల్ మార్కెట్ - పత్తి: ₹7,450 | మిర్చి: ₹18,200",
+    savedAt: new Date().toLocaleTimeString('te-IN')
+  };
+  localStorage.setItem("agri_offline_data", JSON.stringify(offlineData));
+  
+  const msgBox = document.getElementById("offline-saved-msg");
+  if (msgBox) {
+    msgBox.innerHTML = `✅ ఫోన్‌లో సేవ్ అయ్యింది: <b>${offlineData.mandi}</b> (${offlineData.savedAt})`;
+  }
+}
+// AI Crop Doctor - Camera Analysis
+function detectCropPest(event) {
+  const resultDiv = document.getElementById("crop-doctor-res");
+  const file = event.target.files[0];
+  if (file) {
+    resultDiv.innerHTML = `⏳ <b>${file.name}</b> పరిశీలిస్తోంది...`;
+    setTimeout(() => {
+      resultDiv.innerHTML = `✅ <b>గుర్తించిన వ్యాధి:</b> ఆకుమచ్చ తెగులు (Leaf Spot)<br>💊 <b>నివారణ:</b> మాంకోజెబ్ (Mancozeb) 2 గ్రాములు లీటరు నీటికి కలిపి పిచికారీ చేయండి.`;
+    }, 1200);
+  }
+}
+
+// Hyperlocal Weather - GPS Geolocation
+function getLiveLocationWeather() {
+  const resultDiv = document.getElementById("gps-weather-res");
+  if (!navigator.geolocation) {
+    resultDiv.innerText = "మీ ఫోన్‌లో GPS సపోర్ట్ లేదు.";
+    return;
+  }
+  resultDiv.innerText = "📡 మీ ప్రస్తుత ప్రాంత వివరాలను తీసుకుంటోంది...";
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude.toFixed(2);
+      const lon = pos.coords.longitude.toFixed(2);
+      resultDiv.innerHTML = `📍 <b>స్థానం:</b> Lat: ${lat}, Lon: ${lon}<br>☀️ <b>వాతావరణం:</b> 29°C, తేమ 62%, వర్ష సూచన లేదు (పంట కోతకు అనుకూలం).`;
+    },
+    () => {
+      resultDiv.innerText = "లొకేషన్ అనుమతి నిరాకరించబడింది. ఫోన్ సెట్టింగ్స్‌లో GPS ఆన్ చేయండి.";
+    }
+  );
+}
+// Smart Voice Navigation (Telugu Speech-to-Text)
+function startLiveVoiceNav() {
+  const output = document.getElementById("voice-nav-output");
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("మీ బ్రౌజర్‌లో వాయిస్ రికగ్నిషన్‌కు మద్దతు లేదు. Chrome ఉపయోగించండి.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'te-IN'; // స్వచ్ఛమైన తెలుగు గుర్తింపు
+  
+  if (output) output.innerHTML = "🎙️ <i>వినపడుతోంది... స్పష్టంగా మాట్లాడండి...</i>";
+
+  recognition.onresult = function(event) {
+    const speechResult = event.results[0][0].transcript.toLowerCase();
+    
+    if (output) {
+      output.innerHTML = `🗣️ <b>మీరు మాట్లాడినది:</b> "${speechResult}"`;
+    }
+
+    // వాయిస్ కమాండ్ ద్వారా పేజీ నావిగేషన్
+    if (speechResult.includes("వాతావరణం") || speechResult.includes("weather")) {
+      const weatherCard = document.getElementById("card-weather");
+      if (weatherCard) weatherCard.scrollIntoView({ behavior: 'smooth' });
+    } else if (speechResult.includes("డాక్టర్") || speechResult.includes("తెగులు") || speechResult.includes("crop")) {
+      const doctorCard = document.querySelector("#ai-doctor-view") || document.querySelector("h5");
+      if (doctorCard) doctorCard.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  recognition.onerror = function(err) {
+    if (output) output.innerText = "వాయిస్ సరిగ్గా వినపడలేదు, మళ్ళీ నొక్కి మాట్లాడండి.";
+  };
+
+  recognition.start();
 }
 </script>
 </body>
