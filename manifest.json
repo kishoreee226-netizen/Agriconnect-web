@@ -51,16 +51,13 @@
     {
       "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/logo.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "AgriConnect Dashboard"
-    }
-       "form_factor": "wide",
-      "label": "AgriConnect Dashboard"
-    }
-  ],
-  "launch_handler": {
-    "client_mode": "navigate-existing"
-  },
-  "prefer_related_applications": false
-}
+              "type": "image/png",
+        "form_factor": "wide",
+        "label": "AgriConnect Dashboard"
+      }
+    ],
+    "launch_handler": {
+      "client_mode": "navigate-existing"
+    },
+    "prefer_related_applications": false
+  }
