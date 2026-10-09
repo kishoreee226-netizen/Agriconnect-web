@@ -110,3 +110,18 @@ self.addEventListener('sync', (event) => {
     console.log('AgriConnect: Syncing background data...');
   }
 });
+// Periodic Background Sync for Agriculture News & Updates
+self.addEventListener('periodicsync', (event) => {
+  if (event.tag === 'agri-news-sync') {
+    event.waitUntil(
+      fetch('/Agriconnect-web/index.html')
+        .then((response) => {
+          return caches.open('agriconnect-v1').then((cache) => {
+            return cache.put('/Agriconnect-web/index.html', response);
+          });
+        })
+        .catch((err) => console.log('Periodic sync failed:', err))
+    );
+  }
+});
+
