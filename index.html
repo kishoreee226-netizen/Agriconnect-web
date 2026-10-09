@@ -945,5 +945,28 @@
 
     <!-- Logic Engine File -->
     <script src="app.js"></script>
+<script>
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/Agriconnect-web/sw.js')
+        .then((reg) => {
+          console.log('AgriConnect Service Worker Ready:', reg.scope);
+          
+          // Request Push Notification Permission
+          if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().then((permission) => {
+              if (permission === 'granted') {
+                console.log('Notification permission granted!');
+              }
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Service Worker registration failed:', err);
+        });
+    });
+  }
+</script>
 </body>
 </html>
