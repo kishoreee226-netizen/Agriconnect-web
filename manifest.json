@@ -2,10 +2,11 @@
   "name": "AgriConnect Technologies",
   "short_name": "AgriConnect",
   "description": "The Voice of Smart Farming - Hyperlocal Agriculture Platform",
-  "start_url": "./index.html",
+  "start_url": "/Agriconnect-web/",
+  "scope": "/Agriconnect-web/",
   "display": "standalone",
-  "background_color": "#f4f7f4",
-  "theme_color": "#1B5E20",
+  "background_color": "#1b5e20",
+  "theme_color": "#1b5e20",
   "icons": [
     {
       "src": "logo.png",
