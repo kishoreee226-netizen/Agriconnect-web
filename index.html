@@ -967,6 +967,16 @@
         });
     });
   }
+// Register Periodic Sync
+if ('periodicSync' in reg) {
+  reg.periodicSync.register('agri-news-sync', {
+    minInterval: 12 * 60 * 60 * 1000 // ప్రతి 12 గంటలకు ఒకసారి అప్‌డేట్ అవుతుంది
+  }).then(() => {
+    console.log('AgriConnect Periodic Sync Registered Successfully!');
+  }).catch((err) => {
+    console.log('Periodic sync permission or browser support check:', err);
+  });
+}
 </script>
 </body>
 </html>
