@@ -340,14 +340,71 @@
                                          <h5>1. క్రాప్ డాక్టర్ (AI Crop Doctor)</h5>
               <p>పంట ఆకు లేదా తెగులు సోకిన భాగాన్ని ఫోటో తీసి అప్‌లోడ్ చేస్తే, వ్యాధిని గుర్తించి తక్షణ నివారణ మందులు, సలహాలు అందిస్తుంది.</p>
               
-              <!-- AI Camera Capture Feature -->
-              <div style="margin-top: 8px;">
-                <label style="display: inline-block; background: #e65100; color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;">
-                  📷 ఫోటో తీయండి / అప్‌లోడ్
-                  <input type="file" accept="image/*" capture="environment" onchange="detectCropPest(event)" style="display: none;">
-                </label>
-                <div id="crop-doctor-res" style="margin-top: 6px; font-size: 0.8rem; color: #2e7d32; line-height: 1.4;"></div>
-              </div>
+             <!-- ================= AI CROP DOCTOR TAB CONTENT ================= -->
+<div id="ai-doctor-view" style="padding: 15px; max-width: 500px; margin: auto;">
+
+  <div style="background: #ffffff; border-radius: 14px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 4px solid #2e7d32;">
+    <h3 style="margin: 0 0 12px 0; color: #1b5e20; text-align: center;">🌿 AI పంట డాక్టర్ & నేల పరీక్ష</h3>
+    <p style="font-size: 13px; color: #666; text-align: center; margin-bottom: 16px;">
+      క్రింది ఆప్షన్లలో ఒకదాన్ని ఎంచుకోండి:
+    </p>
+
+    <!-- 3 MAIN ACTION BUTTONS -->
+    <div style="display: grid; gap: 10px; margin-bottom: 15px;">
+      
+      <!-- 1. Camera Button -->
+      <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #2e7d32; color: #ffffff; border-radius: 10px; font-weight: bold; cursor: pointer; text-align: center;">
+        📸 కెమెరా (ఆకు తెగులు ఫోటో)
+        <input type="file" id="crop-camera-input" accept="image/*" capture="environment" onchange="handleCropCamera(event)" style="display: none;">
+      </label>
+
+      <!-- 2. Bhoosara Pariksha Button -->
+      <button onclick="openSoilTest()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #795548; color: #ffffff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+        🧪 భూసార పరీక్ష (NPK & pH)
+      </button>
+
+      <!-- 3. Live Soil Sensors Button -->
+      <button onclick="openSoilSensors()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #0288d1; color: #ffffff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+        📡 సెన్సార్ లైవ్ డేటా (Moisture & Temp)
+      </button>
+
+    </div>
+
+    <!-- ================= DYNAMIC RESULT PANELS (Buttons nokkithene open avthayi) ================= -->
+
+    <!-- Result 1: Camera Pest Detection -->
+    <div id="camera-result-panel" style="display: none; background: #f1f8e9; border: 1px solid #c5e1a5; padding: 12px; border-radius: 8px; margin-top: 10px;">
+      <h4 style="margin: 0 0 6px 0; color: #2e7d32;">🔬 AI స్కానింగ్ ఫలితం:</h4>
+      <div id="crop-doctor-res" style="font-size: 13px; color: #333;">ఫోటో ప్రాసెస్ అవుతోంది...</div>
+    </div>
+
+    <!-- Result 2: Bhoosara Pariksha -->
+    <div id="soil-test-panel" style="display: none; background: #efebe9; border: 1px solid #d7ccc8; padding: 12px; border-radius: 8px; margin-top: 10px;">
+      <h4 style="margin: 0 0 6px 0; color: #4e342e;">🧪 భూసార విశ్లేషణ:</h4>
+      <div id="soil-test-details" style="font-size: 13px; color: #333; line-height: 1.6;">
+        🌱 <b>pH స్థాయి:</b> 6.7 (అనుకూలం)<br>
+        🧪 <b>నత్రజని (N):</b> మధ్యస్థం<br>
+        ⚖️ <b>భాస్వరం (P):</b> సాధారణం<br>
+        🌿 <b>పొటాష్ (K):</b> సమృద్ధిగా ఉంది<br>
+        💡 <b>ఎరువుల సూచన:</b> ఎకరాకు 25 కేజీల యూరియాతో పాటు సేంద్రీయ ఎరువులు వేయండి.
+      </div>
+    </div>
+
+    <!-- Result 3: Soil Sensors Data -->
+    <div id="soil-sensor-panel" style="display: none; background: #e1f5fe; border: 1px solid #b3e5fc; padding: 12px; border-radius: 8px; margin-top: 10px;">
+      <h4 style="margin: 0 0 6px 0; color: #0277bd;">📡 లైవ్ సెన్సార్ రీడింగ్స్:</h4>
+      <div id="soil-sensor-details" style="font-size: 13px; color: #333; line-height: 1.6;">
+        💧 <b>నేల తేమ (Moisture):</b> 45% (తగినంత తేమ ఉంది)<br>
+        🌡️ <b>నేల ఉష్ణోగ్రత:</b> 27°C<br>
+        ⚡ <b>EC (Electrical Conductivity):</b> 1.1 dS/m<br>
+        💧 <b>నీటి పారుదల:</b> ప్రస్తుతానికి నీరు పెట్టాల్సిన అవసరం లేదు.
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
             </div>
           </div>
 
