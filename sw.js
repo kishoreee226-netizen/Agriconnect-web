@@ -1,9 +1,9 @@
 const CACHE_NAME = 'agriconnect-v1';
 const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './logo.png',
-  './manifest.json'
+  '/Agriconnect-web/',
+  '/Agriconnect-web/index.html',
+  '/Agriconnect-web/logo.png',
+  '/Agriconnect-web/manifest.json'
 ];
 
 self.addEventListener('install', (event) => {
