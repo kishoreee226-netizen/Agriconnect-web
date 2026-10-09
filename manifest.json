@@ -8,6 +8,7 @@
   "start_url": "/Agriconnect-web/",
   "scope": "/Agriconnect-web/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#1b5e20",
   "theme_color": "#1b5e20",
@@ -15,15 +16,15 @@
   "icons": [
     {
       "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/logo.png",
-      "sizes": "192x192",
+      "sizes": "any",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/logo.png",
-      "sizes": "512x512",
+      "sizes": "any",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
@@ -35,7 +36,8 @@
       "icons": [
         {
           "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/logo.png",
-          "sizes": "192x192"
+          "sizes": "any",
+          "type": "image/png"
         }
       ]
     }
@@ -43,21 +45,30 @@
   "screenshots": [
     {
       "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/logo.png",
-      "sizes": "512x512",
+      "sizes": "any",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "AgriConnect Home Screen"
+      "label": "AgriConnect Mobile Home"
     },
     {
       "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/logo.png",
-        "sizes": "512x512",
-        "type": "image/png",
-        "form_factor": "wide",
-        "label": "AgriConnect Dashboard"
-      }
-    ],
-    "launch_handler": {
-      "client_mode": "navigate-existing"
-    },
-    "prefer_related_applications": false
-  }
+      "sizes": "any",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "AgriConnect Desktop View"
+    }
+  ],
+  "share_target": {
+    "action": "/Agriconnect-web/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "prefer_related_applications": false
+}
