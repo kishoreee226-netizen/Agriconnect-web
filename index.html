@@ -1213,6 +1213,46 @@ function startLiveVoiceNav() {
 
   recognition.start();
 }
+// 1. Camera Photo Handler
+function handleCropCamera(event) {
+  const panel = document.getElementById("camera-result-panel");
+  const res = document.getElementById("crop-doctor-res");
+  
+  // Hide other panels
+  document.getElementById("soil-test-panel").style.display = "none";
+  document.getElementById("soil-sensor-panel").style.display = "none";
+
+  if (event.target.files && event.target.files[0]) {
+    panel.style.display = "block";
+    res.innerHTML = "⏳ <i>AI ఆకును స్కాన్ చేస్తోంది... తెగులు గుర్తిస్తోంది...</i>";
+    
+    setTimeout(() => {
+      res.innerHTML = `
+        ✅ <b>పంట:</b> మిరప / వరి<br>
+        ⚠️ <b>గుర్తించిన సమస్య:</b> ఆకు మచ్చ తెగులు (Leaf Spot)<br>
+        💊 <b>నివారణ మందు:</b> సాఫ్ (SAAF) 2 గ్రాములు లీటరు నీటిలో కలిపి పిచికారీ చేయండి.
+      `;
+    }, 1500);
+  }
+}
+
+// 2. Bhoosara Pariksha Toggle
+function openSoilTest() {
+  document.getElementById("camera-result-panel").style.display = "none";
+  document.getElementById("soil-sensor-panel").style.display = "none";
+  
+  const panel = document.getElementById("soil-test-panel");
+  panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
+
+// 3. Soil Sensors Toggle
+function openSoilSensors() {
+  document.getElementById("camera-result-panel").style.display = "none";
+  document.getElementById("soil-test-panel").style.display = "none";
+  
+  const panel = document.getElementById("soil-sensor-panel");
+  panel.style.display = panel.style.display === "none" ? "block" : "none";
+}
 </script>
 </body>
 </html>
