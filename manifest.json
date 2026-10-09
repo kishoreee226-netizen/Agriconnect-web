@@ -55,7 +55,8 @@
       "form_factor": "wide",
       "label": "AgriConnect Dashboard"
     }
-        "label": "AgriConnect Dashboard"
+              "form_factor": "wide",
+      "label": "AgriConnect Dashboard"
     }
   ],
   "launch_handler": {
