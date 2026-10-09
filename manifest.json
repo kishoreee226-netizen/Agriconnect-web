@@ -50,8 +50,8 @@
     },
     {
       "src": "https://kishoreee226-netizen.github.io/Agriconnect-web/logo.png",
-      "sizes": "512x512",
-              "type": "image/png",
+        "sizes": "512x512",
+        "type": "image/png",
         "form_factor": "wide",
         "label": "AgriConnect Dashboard"
       }
