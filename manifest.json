@@ -55,5 +55,13 @@
       "form_factor": "wide",
       "label": "AgriConnect Dashboard"
     }
-  ]
+  ],
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "prefer_related_applications": false
+}
+
 }
