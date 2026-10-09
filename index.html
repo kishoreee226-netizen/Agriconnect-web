@@ -1080,40 +1080,78 @@ function getLiveLocationWeather() {
     }
   );
 }
-// Smart Voice Navigation (Telugu Speech-to-Text)
+// Smart Multilingual Voice Navigation
 function startLiveVoiceNav() {
   const output = document.getElementById("voice-nav-output");
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
-    alert("మీ బ్రౌజర్‌లో వాయిస్ రికగ్నిషన్‌కు మద్దతు లేదు. Chrome ఉపయోగించండి.");
+    alert("మీ బ్రౌజర్‌లో వాయిస్ రికగ్నిషన్ పనిచేయడం లేదు. దయచేసి Google Chrome వాడండి.");
     return;
   }
 
   const recognition = new SpeechRecognition();
-  recognition.lang = 'te-IN'; // స్వచ్ఛమైన తెలుగు గుర్తింపు
-  
-  if (output) output.innerHTML = "🎙️ <i>వినపడుతోంది... స్పష్టంగా మాట్లాడండి...</i>";
+  recognition.lang = navigator.language || 'te-IN';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 5;
+
+  if (output) output.innerHTML = "🎙️ <i>వింటున్నాను... ఏ భాషలోనైనా మాట్లాడండి...</i>";
 
   recognition.onresult = function(event) {
-    const speechResult = event.results[0][0].transcript.toLowerCase();
-    
-    if (output) {
-      output.innerHTML = `🗣️ <b>మీరు మాట్లాడినది:</b> "${speechResult}"`;
+    let speechWords = "";
+    for (let i = 0; i < event.results[0].length; i++) {
+      speechWords += " " + event.results[0][i].transcript.toLowerCase();
     }
 
-    // వాయిస్ కమాండ్ ద్వారా పేజీ నావిగేషన్
-    if (speechResult.includes("వాతావరణం") || speechResult.includes("weather")) {
-      const weatherCard = document.getElementById("card-weather");
-      if (weatherCard) weatherCard.scrollIntoView({ behavior: 'smooth' });
-    } else if (speechResult.includes("డాక్టర్") || speechResult.includes("తెగులు") || speechResult.includes("crop")) {
-      const doctorCard = document.querySelector("#ai-doctor-view") || document.querySelector("h5");
-      if (doctorCard) doctorCard.scrollIntoView({ behavior: 'smooth' });
+    const originalText = event.results[0][0].transcript;
+    if (output) output.innerHTML = `🗣️ <b>మీరు చెప్పినది:</b> "${originalText}"`;
+
+    const weatherKeywords = [
+      "వాతావరణం", "వర్షం", "ఎండ", "చలి", "గాలులు", "weather", "rain", 
+      "climate", "forecast", "vatavaranam", "varsham", "yenda", "mausam", "barish"
+    ];
+
+    const doctorKeywords = [
+      "డాక్టర్", "తెగులు", "పురుగు", "మందు", "ఆకు", "పంట", "చెట్టు", 
+      "doctor", "crop", "pest", "disease", "medicine", "leaf", "plant", 
+      "thegulu", "tegulu", "purugu", "panta", "kida", "bimari"
+    ];
+
+    const mandiKeywords = [
+      "ధర", "ధరలు", "రేటు", "రేట్లు", "మార్కెట్", "మండి", "అమ్మకం", 
+      "price", "rate", "market", "mandi", "cost", "dhara", "retu", "bhav"
+    ];
+
+    const matches = (keywords) => keywords.some(word => speechWords.includes(word));
+
+    if (matches(weatherKeywords)) {
+      const el = document.getElementById("card-weather") || document.getElementById("gps-weather-res");
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (typeof getLiveLocationWeather === "function") getLiveLocationWeather();
+      }
+    } else if (matches(doctorKeywords)) {
+      const el = document.querySelector("#ai-doctor-view") || document.getElementById("crop-doctor-res") || document.querySelector("input[type='file']");
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const fileInput = document.querySelector("input[type='file']");
+        if (fileInput) setTimeout(() => fileInput.click(), 400);
+      }
+    } else if (matches(mandiKeywords)) {
+      const el = document.getElementById("offline-saved-msg") || document.body;
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (typeof saveMandiOfflineData === "function") saveMandiOfflineData();
+      }
+    } else {
+      if (output) {
+        output.innerHTML += `<br><span style="color: #e65100; font-size: 13px;">💡 'వాతావరణం' (Weather), 'పంట డాక్టర్' (Crop Doctor), లేదా 'ధరలు' అని చెప్పండి.</span>`;
+      }
     }
   };
 
-  recognition.onerror = function(err) {
-    if (output) output.innerText = "వాయిస్ సరిగ్గా వినపడలేదు, మళ్ళీ నొక్కి మాట్లాడండి.";
+  recognition.onerror = function() {
+    if (output) output.innerText = "వాయిస్ సరిగ్గా వినపడలేదు. మళ్ళీ మైక్ నొక్కి మాట్లాడండి.";
   };
 
   recognition.start();
