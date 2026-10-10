@@ -1,38 +1,62 @@
-function loadLaborers() {
-  const container = document.getElementById("labor-list");
-  if (!container) return;
+// ================= LABOR & JOBS DIRECT LOADER =================
 
-  // Firebase ready ayyevaraku wait chesthundi
-  if (typeof firebase === "undefined" || !firebase.apps || !firebase.apps.length) {
-    setTimeout(loadLaborers, 250);
-    return;
-  }
+(function() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyAvev9rVOBx5xE1A993EtSD7FG9JxAmbyI",
+    authDomain: "agriconnect-5fc39.firebaseapp.com",
+    projectId: "agriconnect-5fc39",
+    storageBucket: "agriconnect-5fc39.firebasestorage.app",
+    messagingSenderId: "491716802186",
+    appId: "1:491716802186:web:087ee5f6c30ec75ce75f73"
+  };
 
-  const db = firebase.firestore();
+  function startSync() {
+    const el = document.getElementById("labor-list");
+    if (!el) return;
 
-  // Firestore nundi direct ga laborers thesthunnam
-  db.collection("laborers").onSnapshot(function(snapshot) {
-    if (snapshot.empty) {
-      container.innerHTML = "<p style='color:#666;'>👷 Koolila vivaralu emi levu.</p>";
+    if (typeof firebase === "undefined") {
+      setTimeout(startSync, 200);
       return;
     }
 
-    let output = "<div style='font-weight:bold; color:#1b5e20; margin-bottom:6px;'>👷 Namodhaina Koolilu:</div>";
-    snapshot.forEach(function(doc) {
-      const data = doc.data();
-      output += `
-        <div style="background:#f1f8e9; padding:8px 10px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px;">
-          <div style="font-weight:bold; color:#1b5e20;">${data.name || "Kooli"}</div>
-          <div style="font-size:0.85rem; color:#444;">🌾 Pani: <b>${data.skills || data.work || "Vyavasayam"}</b> | 📍 Ooru: <b>${data.village || "Warangal"}</b></div>
-          ${data.phone ? `<div style="font-size:0.85rem; margin-top:3px;">📞 <a href="tel:${data.phone}" style="color:#2e7d32; font-weight:bold;">${data.phone}</a></div>` : ""}
-        </div>
-      `;
-    });
-    container.innerHTML = output;
-  }, function(error) {
-    container.innerHTML = "<span style='color:red;'>Firestore Error: " + error.message + "</span>";
-  });
-}
+    try {
+      if (!firebase.apps || !firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      const db = firebase.firestore();
 
-// Window load ayyaka run avvadaniki
-window.addEventListener("load", loadLaborers);
+      db.collection("laborers").onSnapshot(function(snap) {
+        if (snap.empty) {
+          el.innerHTML = "<p style='color:#666; font-size:0.9rem;'>👷 నమోదైన కూలీలు ఎవరూ లేరు.</p>";
+          return;
+        }
+
+        let html = "<div style='font-size:0.85rem; font-weight:bold; color:#1b5e20; margin-bottom:6px;'>👷 నమోదైన కూలీలు:</div>";
+        snap.forEach(function(doc) {
+          const d = doc.data();
+          html += `
+            <div style="background:#f1f8e9; padding:8px 12px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px;">
+              <div style="font-weight:bold; color:#1b5e20;">${d.name || "కూలీ"}</div>
+              <div style="font-size:0.82rem; color:#444; margin-top:2px;">
+                🌾 పని: <b>${d.skills || d.work || "వ్యవసాయ పనులు"}</b> | 📍 ఊరు: <b>${d.village || "వరంగల్"}</b>
+              </div>
+              ${d.phone ? `<div style="margin-top:3px; font-size:0.85rem;">📞 <a href="tel:${d.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${d.phone}</a></div>` : ""}
+            </div>
+          `;
+        });
+        el.innerHTML = html;
+      }, function(err) {
+        el.innerHTML = "<div style='color:red; font-size:0.85rem;'>⚠️ Firestore Error: " + err.message + "</div>";
+      });
+
+    } catch(e) {
+      el.innerHTML = "<div style='color:red; font-size:0.85rem;'>⚠️ JS Error: " + e.message + "</div>";
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startSync);
+  } else {
+    startSync();
+  }
+})();
