@@ -1,70 +1,80 @@
-// ================= REAL-TIME LABOR & JOBS MODULE =================
+// ================= REAL-TIME LABOR & JOBS COMBINED MODULE =================
 
-function initLaborAndJobs() {
-  listenLiveLaborList();
-  listenLiveJobsList();
-}
+function loadLaborDirectory() {
+  const container = document.getElementById("labor-list");
+  if (!container) return;
 
-// 1. కూలీల లిస్ట్
-function listenLiveLaborList() {
-  const listEl = document.getElementById("labor-list");
-  if (!listEl || !window.db) return;
+  if (!navigator.onLine) {
+    container.innerHTML = "<small style='color:#d32f2f;'>⚠️ ఇంటర్నెట్ కనెక్షన్ లేదు.</small>";
+    return;
+  }
 
-  window.db.collection("laborers").onSnapshot((snapshot) => {
-    if (snapshot.empty) {
-      listEl.innerHTML = "<p style='color:#666; font-size:0.9rem;'>👷 <i>కూలీలు ఎవరూ ఇంకా నమోదు చేసుకోలేదు.</i></p>";
-      return;
-    }
+  // Firebase ready ayye varaku wait chesthundi
+  if (!window.db) {
+    setTimeout(loadLaborDirectory, 300);
+    return;
+  }
 
-    let html = "<div style='display:flex; flex-direction:column; gap:8px;'>";
-    snapshot.forEach((doc) => {
-      const l = doc.data();
-      html += `
-        <div style="background:#f1f8e9; padding:10px; border-radius:6px; border-left:4px solid #2e7d32;">
-          <div style="font-weight:bold; color:#1b5e20;">${l.name || "కూలీ పేరు లేదు"}</div>
-          <div style="font-size:0.85rem; color:#444;">పని: ${l.workType || l.work || "వ్యవసాయ పనులు"} | ఊరు: ${l.village || l.location || "వరంగల్"}</div>
-          <div style="margin-top:4px;">
-            📞 <a href="tel:${l.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${l.phone || "నంబర్ లేదు"}</a>
-          </div>
-        </div>
-      `;
+  // Jobs collection nundi data thevadam (Meeru add chesina data idhe!)
+  window.db.collection("jobs").onSnapshot((jobsSnap) => {
+    // Laborers collection nundi data thevadam
+    window.db.collection("laborers").onSnapshot((laborSnap) => {
+      
+      let html = "";
+
+      // 1. Jobs List (రైతులు పెట్టిన రిక్వెస్ట్‌లు)
+      if (!jobsSnap.empty) {
+        html += "<div style='font-size:0.8rem; font-weight:bold; color:#e65100; margin-bottom:4px;'>🌾 రైతుల పనుల అవసరాలు (Jobs):</div>";
+        jobsSnap.forEach((doc) => {
+          const j = doc.data();
+          html += `
+            <div style="background:#fff8e1; padding:8px 10px; border-radius:6px; border-left:4px solid #f57f17; margin-bottom:8px;">
+              <div style="font-weight:bold; color:#d84315;">${j.farmer || "రైతు"} (కూలీలు: ${j.count || 1} మంది)</div>
+              <div style="font-size:0.82rem; color:#444;">పని: ${j.work || "వ్యవసాయ పని"} | ఊరు: ${j.location || "స్థానిక"}</div>
+              <div style="margin-top:3px; font-size:0.85rem;">
+                📞 <a href="tel:${j.phone}" style="color:#d84315; font-weight:bold; text-decoration:none;">${j.phone || "నంబర్ లేదు"}</a>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // 2. Laborers List (కూలీల వివరాలు)
+      if (!laborSnap.empty) {
+        html += "<div style='font-size:0.8rem; font-weight:bold; color:#2e7d32; margin:8px 0 4px 0;'>👷 కూలీల జాబితా:</div>";
+        laborSnap.forEach((doc) => {
+          const l = doc.data();
+          html += `
+            <div style="background:#f1f8e9; padding:8px 10px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px;">
+              <div style="font-weight:bold; color:#1b5e20;">${l.name || "కూలీ పేరు"}</div>
+              <div style="font-size:0.82rem; color:#444;">పని: ${l.workType || l.work || "వ్యవసాయ పనులు"} | ఊరు: ${l.village || l.location || "స్థానిక"}</div>
+              <div style="margin-top:3px; font-size:0.85rem;">
+                📞 <a href="tel:${l.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${l.phone || "నంబర్ లేదు"}</a>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      // రెండింటిలోనూ డేటా లేకపోతే
+      if (jobsSnap.empty && laborSnap.empty) {
+        container.innerHTML = "<p style='color:#666; font-size:0.85rem;'>👷 ప్రస్తుతం ఎలాంటి వివరాలు నమోదు కాలేదు.</p>";
+      } else {
+        container.innerHTML = html;
+      }
+
+    }, (err) => {
+      console.error("Laborers read error:", err);
     });
-    html += "</div>";
-    listEl.innerHTML = html;
+  }, (err) => {
+    console.error("Jobs read error:", err);
+    container.innerHTML = "<small style='color:#d32f2f;'>డేటా లోడ్ కాలేదు.</small>";
   });
 }
 
-// 2. రైతులు పెట్టిన పనులు (Jobs Requests)
-function listenLiveJobsList() {
-  const jobsEl = document.getElementById("jobs-list");
-  if (!jobsEl || !window.db) return;
-
-  window.db.collection("jobs").onSnapshot((snapshot) => {
-    if (snapshot.empty) {
-      jobsEl.innerHTML = "<p style='color:#666; font-size:0.85rem;'>🌾 ప్రస్తుతానికి కొత్త పనుల రిక్వెస్ట్‌లు లేవు.</p>";
-      return;
-    }
-
-    let html = "<div style='display:flex; flex-direction:column; gap:8px; margin-top:6px;'>";
-    snapshot.forEach((doc) => {
-      const j = doc.data();
-      html += `
-        <div style="background:#fff8e1; padding:10px; border-radius:6px; border-left:4px solid #f57f17;">
-          <div style="font-weight:bold; color:#e65100;">${j.farmer || "రైతు"} (అవసరం: ${j.count || 1} మంది)</div>
-          <div style="font-size:0.85rem; color:#333;">పని: ${j.work || "పని వివరాలు లేవు"} | ప్రాంతం: ${j.location || "స్థానిక"}</div>
-          <div style="margin-top:4px;">
-            📞 <a href="tel:${j.phone}" style="color:#e65100; font-weight:bold; text-decoration:none;">${j.phone || "నంబర్ లేదు"}</a>
-          </div>
-        </div>
-      `;
-    });
-    html += "</div>";
-    jobsEl.innerHTML = html;
-  });
-}
-
+// Start
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initLaborAndJobs);
+  document.addEventListener("DOMContentLoaded", loadLaborDirectory);
 } else {
-  initLaborAndJobs();
+  loadLaborDirectory();
 }
