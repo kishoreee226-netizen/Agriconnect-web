@@ -1,88 +1,73 @@
-// ================= REAL-TIME LABOR & JOBS MODULE =================
+// ================= REAL-TIME LABOR & JOBS DIRECT MODULE =================
 
-function fetchLaborAndJobsData() {
+async function loadLaborDirectly() {
   const container = document.getElementById("labor-list");
   if (!container) return;
 
-  // Firebase SDK పూర్తిగా లోడ్ అయిందో లేదో తనిఖీ చేయడం
-  if (typeof firebase === "undefined" || !firebase.apps || !firebase.apps.length) {
-    setTimeout(fetchLaborAndJobsData, 300);
+  // Firebase సిద్ధమయ్యే వరకు ప్రయత్నించడం
+  if (typeof firebase === "undefined") {
+    container.innerHTML = "<small style='color:#d32f2f;'>⚠️ Firebase లైబ్రరీ లోడ్ కాలేదు.</small>";
+    setTimeout(loadLaborDirectly, 500);
     return;
   }
 
-  // డైరెక్ట్ Firestore ఇన్‌స్టాన్స్ తీసుకోవడం (app.js పై ఆధారపడకుండా)
-  const db = window.db || firebase.firestore();
+  try {
+    const db = window.db || firebase.firestore();
 
-  // 1. కూలీల వివరాలు (laborers)
-  db.collection("laborers").onSnapshot((laborSnap) => {
-    // 2. రైతుల పనుల అవసరాలు (jobs)
-    db.collection("jobs").onSnapshot((jobsSnap) => {
-      let html = "";
+    // 1. కూలీల సమాచారం (laborers)
+    const laborSnap = await db.collection("laborers").get();
 
-      // కూలీల లిస్ట్
-      if (!laborSnap.empty) {
-        html += "<div style='font-size:0.85rem; font-weight:bold; color:#1b5e20; margin-bottom:6px;'>👷 నమోదైన కూలీలు:</div>";
-        laborSnap.forEach((doc) => {
-          const l = doc.data();
-          const pName = l.name || "కూలీ పేరు లేదు";
-          const pSkills = l.skills || l.workType || l.work || "వ్యవసాయ పనులు";
-          const pVillage = l.village || l.location || "హనుమకొండ / వరంగల్";
-          const pPhone = l.phone || "";
+    // 2. రైతుల పనుల వివరాలు (jobs)
+    const jobsSnap = await db.collection("jobs").get();
 
-          html += `
-            <div style="background:#f1f8e9; padding:8px 12px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-              <div style="font-weight:bold; color:#1b5e20;">${pName}</div>
-              <div style="font-size:0.83rem; color:#444; margin-top:2px;">
-                🌾 పని: <b>${pSkills}</b> | 📍 ఊరు: <b>${pVillage}</b>
-              </div>
-              ${pPhone ? `
-                <div style="margin-top:4px; font-size:0.85rem;">
-                  📞 <a href="tel:${pPhone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${pPhone}</a>
-                </div>
-              ` : ""}
+    let html = "";
+
+    // కూలీల వివరాలు ఉంటే
+    if (!laborSnap.empty) {
+      html += "<div style='font-size:0.85rem; font-weight:bold; color:#1b5e20; margin-bottom:6px;'>👷 నమోదైన కూలీలు:</div>";
+      laborSnap.forEach((doc) => {
+        const l = doc.data();
+        html += `
+          <div style="background:#f1f8e9; padding:8px 10px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px;">
+            <div style="font-weight:bold; color:#1b5e20;">${l.name || "పేరు లేదు"}</div>
+            <div style="font-size:0.82rem; color:#444;">పని: ${l.skills || l.work || "వ్యవసాయ పనులు"} | ఊరు: ${l.village || "హనుమకొండ"}</div>
+            <div style="margin-top:3px; font-size:0.85rem;">
+              📞 <a href="tel:${l.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${l.phone || "నంబర్ లేదు"}</a>
             </div>
-          `;
-        });
-      }
+          </div>
+        `;
+      });
+    }
 
-      // రైతుల జాబ్స్ లిస్ట్
-      if (!jobsSnap.empty) {
-        html += "<div style='font-size:0.85rem; font-weight:bold; color:#e65100; margin:10px 0 6px 0;'>🌾 రైతుల పనుల అవసరాలు (Jobs):</div>";
-        jobsSnap.forEach((doc) => {
-          const j = doc.data();
-          html += `
-            <div style="background:#fff8e1; padding:8px 12px; border-radius:6px; border-left:4px solid #f57f17; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-              <div style="font-weight:bold; color:#d84315;">${j.farmer || "రైతు"} (అవసరం: ${j.count || 1} మంది)</div>
-              <div style="font-size:0.83rem; color:#333; margin-top:2px;">పని: ${j.work || "కూలీ పనులు"} | ఊరు: ${j.location || "స్థానిక"}</div>
-              ${j.phone ? `
-                <div style="margin-top:4px; font-size:0.85rem;">
-                  📞 <a href="tel:${j.phone}" style="color:#d84315; font-weight:bold; text-decoration:none;">${j.phone}</a>
-                </div>
-              ` : ""}
+    // రైతుల జాబ్స్ ఉంటే
+    if (!jobsSnap.empty) {
+      html += "<div style='font-size:0.85rem; font-weight:bold; color:#e65100; margin:10px 0 6px 0;'>🌾 రైతుల పనుల అవసరాలు:</div>";
+      jobsSnap.forEach((doc) => {
+        const j = doc.data();
+        html += `
+          <div style="background:#fff8e1; padding:8px 10px; border-radius:6px; border-left:4px solid #f57f17; margin-bottom:8px;">
+            <div style="font-weight:bold; color:#d84315;">${j.farmer || "రైతు"} (అవసరం: ${j.count || 1} మంది)</div>
+            <div style="font-size:0.82rem; color:#333;">పని: ${j.work || "కూలీ పనులు"}</div>
+            <div style="margin-top:3px; font-size:0.85rem;">
+              📞 <a href="tel:${j.phone}" style="color:#d84315; font-weight:bold;">${j.phone || ""}</a>
             </div>
-          `;
-        });
-      }
+          </div>
+        `;
+      });
+    }
 
-      if (laborSnap.empty && jobsSnap.empty) {
-        container.innerHTML = "<p style='color:#666; font-size:0.85rem; padding:8px 0;'>👷 ప్రస్తుతం ఎలాంటి వివరాలు నమోదు కాలేదు.</p>";
-      } else {
-        container.innerHTML = html;
-      }
+    if (laborSnap.empty && jobsSnap.empty) {
+      container.innerHTML = "<p style='color:#666; font-size:0.85rem;'>👷 డేటాబేస్ ఖాళీగా ఉంది.</p>";
+    } else {
+      container.innerHTML = html;
+    }
 
-    }, (err) => {
-      console.error("Jobs error:", err);
-      container.innerHTML = "<small style='color:#d32f2f;'>జాబ్స్ లోడ్ కాలేదు.</small>";
-    });
-  }, (err) => {
-    console.error("Labor error:", err);
-    container.innerHTML = "<small style='color:#d32f2f;'>కూలీల వివరాలు లోడ్ కాలేదు.</small>";
-  });
+  } catch (err) {
+    console.error("Firestore Error:", err);
+    container.innerHTML = `<small style='color:#d32f2f;'>ఎర్రర్: ${err.message}</small>`;
+  }
 }
 
-// వెంటనే ఎగ్జిక్యూట్ చేయడానికి
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", fetchLaborAndJobsData);
-} else {
-  fetchLaborAndJobsData();
-}
+// వెంటనే రన్ అవ్వడానికి
+loadLaborDirectly();
+document.addEventListener("DOMContentLoaded", loadLaborDirectly);
