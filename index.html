@@ -263,7 +263,45 @@
     <!-- Labor Directory -->
     <section class="card" id="labor-section">
       <h2>👥 కూలీల వివరాలు (Labor Directory)</h2>
-      <div id="labor-list" style="margin-top:10px;">
+      <div id="labor-list"
+<div id="labor-list" style="margin-top:10px;">
+  <i>కూలీల జాబితా లోడ్ అవుతోంది...</i>
+</div>
+
+<!-- లైవ్ డీబగ్గర్: ఎర్రర్‌ను నేరుగా స్క్రీన్ మీదే చూపిస్తుంది -->
+<script>
+  window.addEventListener('error', function(e) {
+    var el = document.getElementById('labor-list');
+    if (el) {
+      el.innerHTML = "<div style='color:red; background:#ffebee; padding:10px; border-radius:5px; font-size:12px;'><b>JS Error:</b> " + e.message + "<br><small>" + e.filename + " (Line " + e.lineno + ")</small></div>";
+    }
+  });
+
+  // డైరెక్ట్ టెస్ట్
+  setTimeout(function() {
+    var el = document.getElementById('labor-list');
+    if (typeof firebase === 'undefined') {
+      el.innerHTML = "<span style='color:red;'>⚠️ Firebase SDK అసలు లోడ్ కాలేదు! (CDN లింక్స్ చెక్ చేయండి)</span>";
+    } else if (!firebase.apps || !firebase.apps.length) {
+      el.innerHTML = "<span style='color:orange;'>⚠️ Firebase Initialize కాలేదు (app.js లో firebase.initializeApp రన్ కాలేదు).</span>";
+    } else {
+      var db = firebase.firestore();
+      db.collection('laborers').get().then(function(snap) {
+        if (snap.empty) {
+          el.innerHTML = "<span style='color:blue;'>ℹ️ కనెక్షన్ సక్సెస్, కానీ డేటా ఖాళీగా ఉంది!</span>";
+        } else {
+          var names = [];
+          snap.forEach(function(d) { names.push(d.data().name); });
+          el.innerHTML = "<span style='color:green;'>✅ సక్సెస్! వచ్చిన పేర్లు: " + names.join(", ") + "</span>";
+        }
+      }).catch(function(err) {
+        el.innerHTML = "<span style='color:red;'>⚠️ Firestore Error: " + err.message + "</span>";
+      });
+    }
+  }, 1000);
+</script>
+
+ style="margin-top:10px;">
         <i>కూలీల జాబితా లోడ్ అవుతోంది...</i>
       </div>
     </section>
