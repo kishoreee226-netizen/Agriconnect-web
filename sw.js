@@ -1,7 +1,10 @@
-const CACHE_NAME = 'agriconnect-v2';
+const CACHE_NAME = 'agriconnect-v3';
 const ASSETS_TO_CACHE = [
   '/Agriconnect-web/',
   '/Agriconnect-web/index.html',
+  '/Agriconnect-web/style.css',
+  '/Agriconnect-web/app.js',
+  '/Agriconnect-web/firebase-db.js',
   '/Agriconnect-web/logo.png',
   '/Agriconnect-web/manifest.json'
 ];
