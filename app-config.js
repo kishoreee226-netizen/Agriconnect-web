@@ -2,17 +2,17 @@
 const APP_CONFIG = Object.freeze({
   // Regional & Market Defaults
   defaultMarket: "వరంగల్ మార్కెట్ (Warangal)",
-  defaultCoordinates: { lat: 17.9689, lon: 79.5941 }, // Hanamkonda/Warangal GPS
-  
-  // Real-time Thresholds (Soil Sensors)
+  defaultCoordinates: { lat: 17.9689, lon: 79.5941 },
+
+  // Soil Sensor Alert Limits
   soilThresholds: {
-    minMoisture: 35, // 35% kante takkuva unte water alert
+    minMoisture: 35,
     idealMoisture: 50,
     idealPhMin: 6.0,
     idealPhMax: 7.5
   },
 
-  // Fallback Mandi Rates (Firestore network lekapothe app crash avvakunda chupinchadaniki)
+  // Fallback Mandi Rates (Firestore network lekapothe app chupinchadaniki)
   defaultMandiRates: [
     { crop: "వరి (Paddy)", market: "వరంగల్", price: "2,320" },
     { crop: "మిర్చి (Chilli)", market: "వరంగల్", price: "14,500" },
