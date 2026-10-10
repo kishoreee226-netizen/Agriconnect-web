@@ -1,21 +1,15 @@
 // ================= REAL-TIME LABOR & JOBS MODULE =================
 
+function initLaborAndJobs() {
+  listenLiveLaborList();
+  listenLiveJobsList();
+}
+
+// 1. కూలీల లిస్ట్
 function listenLiveLaborList() {
   const listEl = document.getElementById("labor-list");
-  if (!listEl) return;
+  if (!listEl || !window.db) return;
 
-  if (!navigator.onLine) {
-    listEl.innerHTML = "<small style='color:#d32f2f;'>⚠️ ఇంటర్నెట్ లేదు.</small>";
-    return;
-  }
-
-  if (!window.db) {
-    console.error("Firebase db అందుబాటులో లేదు");
-    listEl.innerHTML = "<small style='color:#777;'>కనెక్షన్ రాలేదు...</small>";
-    return;
-  }
-
-  // Firestore 'laborers' collection listener
   window.db.collection("laborers").onSnapshot((snapshot) => {
     if (snapshot.empty) {
       listEl.innerHTML = "<p style='color:#666; font-size:0.9rem;'>👷 <i>కూలీలు ఎవరూ ఇంకా నమోదు చేసుకోలేదు.</i></p>";
@@ -28,24 +22,49 @@ function listenLiveLaborList() {
       html += `
         <div style="background:#f1f8e9; padding:10px; border-radius:6px; border-left:4px solid #2e7d32;">
           <div style="font-weight:bold; color:#1b5e20;">${l.name || "కూలీ పేరు లేదు"}</div>
-          <div style="font-size:0.85rem; color:#444;">పని: ${l.workType || l.work || "వ్యవసాయ పనులు"} | ఊరు: ${l.village || l.location || "స్థానిక"}</div>
+          <div style="font-size:0.85rem; color:#444;">పని: ${l.workType || l.work || "వ్యవసాయ పనులు"} | ఊరు: ${l.village || l.location || "వరంగల్"}</div>
           <div style="margin-top:4px;">
-            📞 <a href="tel:${l.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${l.phone || "ఫోన్ లేదు"}</a>
+            📞 <a href="tel:${l.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${l.phone || "నంబర్ లేదు"}</a>
           </div>
         </div>
       `;
     });
     html += "</div>";
     listEl.innerHTML = html;
-  }, (error) => {
-    console.error("Labor fetch error:", error);
-    listEl.innerHTML = "<small style='color:#d32f2f;'>కూలీల వివరాలు లోడ్ చేయలేకపోయాం.</small>";
   });
 }
 
-// పేజీ లోడ్ అవ్వగానే రన్ అవ్వడానికి
+// 2. రైతులు పెట్టిన పనులు (Jobs Requests)
+function listenLiveJobsList() {
+  const jobsEl = document.getElementById("jobs-list");
+  if (!jobsEl || !window.db) return;
+
+  window.db.collection("jobs").onSnapshot((snapshot) => {
+    if (snapshot.empty) {
+      jobsEl.innerHTML = "<p style='color:#666; font-size:0.85rem;'>🌾 ప్రస్తుతానికి కొత్త పనుల రిక్వెస్ట్‌లు లేవు.</p>";
+      return;
+    }
+
+    let html = "<div style='display:flex; flex-direction:column; gap:8px; margin-top:6px;'>";
+    snapshot.forEach((doc) => {
+      const j = doc.data();
+      html += `
+        <div style="background:#fff8e1; padding:10px; border-radius:6px; border-left:4px solid #f57f17;">
+          <div style="font-weight:bold; color:#e65100;">${j.farmer || "రైతు"} (అవసరం: ${j.count || 1} మంది)</div>
+          <div style="font-size:0.85rem; color:#333;">పని: ${j.work || "పని వివరాలు లేవు"} | ప్రాంతం: ${j.location || "స్థానిక"}</div>
+          <div style="margin-top:4px;">
+            📞 <a href="tel:${j.phone}" style="color:#e65100; font-weight:bold; text-decoration:none;">${j.phone || "నంబర్ లేదు"}</a>
+          </div>
+        </div>
+      `;
+    });
+    html += "</div>";
+    jobsEl.innerHTML = html;
+  });
+}
+
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", listenLiveLaborList);
+  document.addEventListener("DOMContentLoaded", initLaborAndJobs);
 } else {
-  listenLiveLaborList();
+  initLaborAndJobs();
 }
