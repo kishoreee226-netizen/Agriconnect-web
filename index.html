@@ -343,18 +343,16 @@
 <script src="crop-doctor.js?v=new1"></script>
 <script src="voice-nav.js?v=new1"></script>
 
-  <!-- Service Worker ను తాత్కాలికంగా ఆపడం -->
-<!--
+  <!-- Service Worker ను బ్రౌజర్ నుండి శాశ్వతంగా అన్‌రిజిస్టర్ చేయడం -->
 <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch((err) => {
-        console.warn('ServiceWorker registration error:', err);
-      });
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+      for (let registration of registrations) {
+        registration.unregister();
+      }
     });
   }
 </script>
--->
 
 </body>
 </html>
