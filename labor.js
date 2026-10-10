@@ -14,27 +14,30 @@
   let jobsData = [];
   let currentTab = 'labor';
 
-  function renderUI(container) {
+  function renderTabs() {
+    const container = document.getElementById("labor-list");
+    if (!container) return;
+
     container.innerHTML = `
-      <div style="display:flex; gap:8px; margin-bottom:12px; border-bottom:2px solid #e0e0e0; padding-bottom:6px;">
-        <button id="btn-tab-labor" style="flex:1; padding:7px 10px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; background:${currentTab === 'labor' ? '#2e7d32' : '#e8f5e9'}; color:${currentTab === 'labor' ? '#fff' : '#2e7d32'}; font-size:0.85rem;">
+      <div style="display:flex; gap:8px; margin-bottom:12px; border-bottom:2px solid #e0e0e0; padding-bottom:8px;">
+        <button id="btn-tab-labor" style="flex:1; padding:8px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.85rem; background:${currentTab === 'labor' ? '#2e7d32' : '#e8f5e9'}; color:${currentTab === 'labor' ? '#ffffff' : '#2e7d32'};">
           👷 కూలీలు (${laborData.length})
         </button>
-        <button id="btn-tab-jobs" style="flex:1; padding:7px 10px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; background:${currentTab === 'jobs' ? '#e65100' : '#fff3e0'}; color:${currentTab === 'jobs' ? '#fff' : '#e65100'}; font-size:0.85rem;">
+        <button id="btn-tab-jobs" style="flex:1; padding:8px; border:none; border-radius:6px; font-weight:bold; cursor:pointer; font-size:0.85rem; background:${currentTab === 'jobs' ? '#e65100' : '#fff3e0'}; color:${currentTab === 'jobs' ? '#ffffff' : '#e65100'};">
           🌾 పనులు / Jobs (${jobsData.length})
         </button>
       </div>
       <div id="tab-content-area"></div>
     `;
 
-    document.getElementById('btn-tab-labor').onclick = () => {
+    document.getElementById('btn-tab-labor').onclick = function() {
       currentTab = 'labor';
-      renderUI(container);
+      renderTabs();
     };
 
-    document.getElementById('btn-tab-jobs').onclick = () => {
+    document.getElementById('btn-tab-jobs').onclick = function() {
       currentTab = 'jobs';
-      renderUI(container);
+      renderTabs();
     };
 
     const contentArea = document.getElementById('tab-content-area');
@@ -46,12 +49,12 @@
         let html = "";
         laborData.forEach(d => {
           html += `
-            <div style="background:#f1f8e9; padding:8px 12px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px;">
+            <div style="background:#f1f8e9; padding:10px 12px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px;">
               <div style="font-weight:bold; color:#1b5e20;">${d.name || "కూలీ"}</div>
               <div style="font-size:0.82rem; color:#444; margin-top:2px;">
-                🌾 పని: <b>${d.skills || d.work || "వ్యవసాయ పనులు"}</b> | 📍 ఊరు: <b>${d.village || "హనుమకొండ"}</b>
+                🌾 పని: <b>${d.skills || d.work || "వ్యవసాయ పనులు"}</b> | 📍 ఊరు: <b>${d.village || d.location || "హనుమకొండ"}</b>
               </div>
-              ${d.phone ? `<div style="margin-top:3px; font-size:0.85rem;">📞 <a href="tel:${d.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${d.phone}</a></div>` : ""}
+              ${d.phone ? `<div style="margin-top:4px; font-size:0.85rem;">📞 <a href="tel:${d.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${d.phone}</a></div>` : ""}
             </div>
           `;
         });
@@ -59,17 +62,17 @@
       }
     } else {
       if (jobsData.length === 0) {
-        contentArea.innerHTML = "<p style='color:#666; font-size:0.85rem;'>🌾 ప్రస్తుతం రైతుల పనుల అవసరాలు ఏవీ నమోదు కాలేదు.</p>";
+        contentArea.innerHTML = "<p style='color:#666; font-size:0.85rem;'>🌾 ప్రస్తుతం పనుల అవసరాలు (Jobs) ఏవీ లేవు.</p>";
       } else {
         let html = "";
         jobsData.forEach(j => {
           html += `
-            <div style="background:#fff8e1; padding:8px 12px; border-radius:6px; border-left:4px solid #f57f17; margin-bottom:8px;">
-              <div style="font-weight:bold; color:#d84315;">${j.farmer || j.farmerName || "రైతు"} (అవసరం: ${j.count || j.laborCount || 1} మంది)</div>
-              <div style="font-size:0.82rem; color:#444; margin-top:2px;">
-                🌾 పని: <b>${j.work || j.workType || "పని"}</b> | 📍 ప్రాంతం: <b>${j.location || j.village || "గ్రామం"}</b>
+            <div style="background:#fff8e1; padding:10px 12px; border-radius:6px; border-left:4px solid #f57f17; margin-bottom:8px;">
+              <div style="font-weight:bold; color:#d84315;">${j.farmer || "రైతు"} <span style="font-size:0.8rem; background:#ffe082; color:#b71c1c; padding:2px 6px; border-radius:4px; margin-left:6px;">అవసరం: ${j.count || 1} మంది</span></div>
+              <div style="font-size:0.82rem; color:#444; margin-top:4px;">
+                🌾 పని: <b>${j.work || "కూలీ పనులు"}</b> | 📍 ప్రాంతం: <b>${j.location || "హనుమకొండ"}</b>
               </div>
-              ${j.phone ? `<div style="margin-top:3px; font-size:0.85rem;">📞 <a href="tel:${j.phone}" style="color:#d84315; font-weight:bold; text-decoration:none;">${j.phone}</a></div>` : ""}
+              ${j.phone ? `<div style="margin-top:4px; font-size:0.85rem;">📞 <a href="tel:${j.phone}" style="color:#d84315; font-weight:bold; text-decoration:none;">${j.phone}</a></div>` : ""}
             </div>
           `;
         });
@@ -93,21 +96,25 @@
       }
       const db = firebase.firestore();
 
-      // 1. కూలీల సమాచారం లైవ్ సింక్
-      db.collection("laborers").onSnapshot(snap => {
+      // 1. కూలీల రియల్-టైమ్ రీడింగ్
+      db.collection("laborers").onSnapshot(function(snap) {
         laborData = [];
         snap.forEach(doc => laborData.push(doc.data()));
-        renderUI(container);
-      }, err => console.error("Labor error:", err));
+        renderTabs();
+      }, function(err) {
+        console.error("Labor error:", err);
+      });
 
-      // 2. రైతుల జాబ్స్ లైవ్ సింక్
-      db.collection("jobs").onSnapshot(snap => {
+      // 2. రైతుల జాబ్స్ రియల్-టైమ్ రీడింగ్
+      db.collection("jobs").onSnapshot(function(snap) {
         jobsData = [];
         snap.forEach(doc => jobsData.push(doc.data()));
-        renderUI(container);
-      }, err => console.error("Jobs error:", err));
+        renderTabs();
+      }, function(err) {
+        console.error("Jobs error:", err);
+      });
 
-    } catch (e) {
+    } catch(e) {
       container.innerHTML = "<div style='color:red;'>⚠️ Error: " + e.message + "</div>";
     }
   }
