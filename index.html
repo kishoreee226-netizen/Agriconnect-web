@@ -3,260 +3,325 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriConnect Technologies - The Voice of Smart Farming</title>
-
-  <!-- PWA & Web App Manifest -->
+  <title>AgriConnect - The Voice of Smart Farming</title>
+  
+  <!-- Manifest & Theme -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1B5E20">
-  <link rel="icon" type="image/png" href="icon-192.png">
+  <meta name="theme-color" content="#1b5e20">
 
-  <!-- External Clean Stylesheet -->
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --primary: #1b5e20;
+      --primary-light: #2e7d32;
+      --accent: #ff8f00;
+      --bg: #f4f6f8;
+      --text: #212121;
+      --card-bg: #ffffff;
+    }
 
-  <!-- Firebase Core SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 70px;
+    }
+
+    /* Network Toast Banner */
+    #network-status-banner {
+      display: none;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    /* Header */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+    }
+
+    #live-clock {
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    /* Main Container */
+    main {
+      padding: 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* Buttons */
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+    }
+
+    /* Mandi Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    table th, table td {
+      border: 1px solid #e0e0e0;
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    table th {
+      background-color: #f1f8e9;
+    }
+
+    /* Action Panels */
+    .result-panel {
+      display: none;
+      background: #e8f5e9;
+      border: 1px solid #c8e6c9;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 10px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-top: 1px solid #ddd;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
+    }
+
+    .bottom-nav button {
+      background: none;
+      border: none;
+      font-size: 0.75rem;
+      color: #616161;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .bottom-nav button.active {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* Footer Meta */
+    footer {
+      font-size: 0.75rem;
+      text-align: center;
+      color: #757575;
+      padding: 20px 10px;
+      line-height: 1.5;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- ================= TOP HEADER ================= -->
+  <!-- Offline Warning Banner -->
+  <div id="network-status-banner"></div>
+
+  <!-- Header -->
   <header>
-    <div class="header-brand" onclick="switchView('dashboard-view')">
-      <img src="icon-192.png" alt="AgriConnect Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/42?text=🌱'">
-      <h1>AgriConnect</h1>
+    <div>
+      <h1 id="cmp-name">AgriConnect</h1>
+      <small id="cmp-tagline">The Voice of Smart Farming</small>
     </div>
-    <div class="nav-actions">
-      <div class="nav-links">
-        <button onclick="switchView('dashboard-view')" id="nav-btn-dash" class="active-nav">🏠 హోమ్</button>
-        <button onclick="switchView('ai-doctor-view')" id="nav-btn-doc">🔬 AI డాక్టర్</button>
-        <button onclick="switchView('labor-view')" id="nav-btn-labor">👷 కూలీలు</button>
-      </div>
-      <button class="btn-hamburger" onclick="toggleNavMenu()" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-    </div>
+    <div id="live-clock">--:--:--</div>
   </header>
-<!-- ================= SIDE DRAWER MENU ================= -->
-<div id="side-menu-drawer" style="display: none; position: fixed; top: 0; right: 0; width: 260px; height: 100%; background: #ffffff; box-shadow: -2px 0 10px rgba(0,0,0,0.3); z-index: 9999; padding: 20px; flex-direction: column; gap: 15px;">
-  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
-    <h3 style="margin: 0; color: #1B5E20;">AgriConnect Menu</h3>
-    <button onclick="toggleNavMenu()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
-  </div>
-  
-  <a href="index.html" style="text-decoration: none; color: #333; font-weight: bold; padding: 8px 0;">🏠 Home</a>
-  <a href="services.html" style="text-decoration: none; color: #333; font-weight: bold; padding: 8px 0;">🌾 Services</a>
-  <a href="about.html" style="text-decoration: none; color: #333; font-weight: bold; padding: 8px 0;">ℹ️ About Us</a>
-  <a href="privacy.html" style="text-decoration: none; color: #333; font-weight: bold; padding: 8px 0;">🔒 Privacy Policy</a>
-  <a href="terms.html" style="text-decoration: none; color: #333; font-weight: bold; padding: 8px 0;">📜 Terms & Conditions</a>
-  
-  <hr style="margin-top: auto; border: 0; border-top: 1px solid #eee;">
-  <small style="color: #777; text-align: center;">AgriConnect Technologies © 2026</small>
-</div>
 
-  <!-- ================= HERO BANNER ================= -->
-  <section class="hero">
-    <div class="hero-logo-container">
-      <img src="icon-192.png" alt="Logo" class="hero-logo" onerror="this.src='https://via.placeholder.com/90?text=AgriConnect'">
-    </div>
-    <h2>AgriConnect Technologies</h2>
-    <p class="tagline">The Voice of Smart Farming</p>
-    <div class="voice-pill">🎙️ మాట్లాడి యాప్‌ను నడపండి (Voice Powered)</div>
-  </section>
+  <!-- Main Content Areas -->
+  <main>
+    <!-- Weather Card -->
+    <section class="card" id="weather-section">
+      <h2>
+        <span>🌤️ వాతావరణం (Live Weather)</span>
+        <button class="btn" onclick="getLiveLocationWeather()">GPS Update</button>
+      </h2>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div id="weather-temp" style="font-size:1.8rem; font-weight:bold; color:var(--primary);">--°C</div>
+          <div id="weather-desc" style="color:#666;">GPS బటన్ క్లిక్ చేయండి</div>
+        </div>
+        <div id="gps-weather-res" style="font-size:0.85rem; color:#444;"></div>
+      </div>
+    </section>
 
-  <!-- ================= 1. DASHBOARD VIEW ================= -->
-  <main id="dashboard-view" class="page-view active-view">
-    <div class="dashboard-container">
+    <!-- Crop Doctor & Diagnostics -->
+    <section class="card" id="crop-doctor-section">
+      <h2>🌿 పంటల డాక్టర్ (Crop Doctor)</h2>
+      <p style="font-size:0.85rem; color:#555; margin-bottom:12px;">ఆకు లేదా తెగులు ఉన్న భాగాన్ని ఫోటో తీయండి:</p>
       
-      <!-- Date & Live Clock Card -->
-      <div class="dash-card speakable" onclick="speakElement(this)">
-        <h4>🕒 సమయం & తేదీ</h4>
-        <div id="clock-display" class="clock-display">--:--:--</div>
-        <div id="date-display" class="date-display">తేదీ లోడ్ అవుతోంది...</div>
+      <label class="btn btn-accent" style="display:inline-block; margin-bottom:10px;">
+        📷 ఫోటో తీయండి
+        <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleCropCamera(event)">
+      </label>
+
+      <!-- Results Panel -->
+      <div id="camera-result-panel" class="result-panel">
+        <div id="crop-doctor-res"></div>
+      </div>
+    </section>
+
+    <!-- Soil Management -->
+    <section class="card" id="soil-section">
+      <h2>🌱 నేల పరీక్ష & సెన్సార్లు (Soil Health)</h2>
+      <div style="display:flex; gap:10px; margin-bottom:10px;">
+        <button class="btn" onclick="openSoilSensors()">💧 సాయిల్ సెన్సార్లు</button>
+        <button class="btn" onclick="openSoilTest()">🧪 భూసార పరీక్ష</button>
       </div>
 
-      <!-- Live GPS Weather Card -->
-      <div id="card-weather" class="dash-card speakable" onclick="speakElement(this)">
-        <h4>🌤️ వాతావరణ నివేదిక (Weather)</h4>
-        <div class="weather-info">
-          <div>
-            <div id="weather-temp" class="weather-temp">31°C</div>
-            <div id="weather-desc">పాక్షికంగా మేఘావృతం</div>
-          </div>
-          <div style="font-size: 2.2rem;">⛅</div>
-        </div>
-        <button onclick="getLiveLocationWeather()" style="width:100%; margin-top:10px; padding:8px; background:#1B5E20; color:#fff; border:none; border-radius:6px; cursor:pointer;">
-          📍 నా లొకేషన్ వాతావరణం
-        </button>
-        <div id="gps-weather-res" style="font-size:0.85rem; margin-top:5px; color:#444;"></div>
+      <!-- Soil Sensor Panel -->
+      <div id="soil-sensor-panel" class="result-panel">
+        <div></div>
       </div>
 
-      <!-- Live Mandi Rates Card -->
-      <div id="card-mandi" class="dash-card speakable" onclick="speakElement(this)">
-        <h4>📊 మార్కెట్ ధరలు (Mandi Rates)</h4>
-        <table class="rates-table">
-          <thead>
-            <tr>
-              <th>పంట</th>
-              <th>మార్కెట్</th>
-              <th>ధర (క్వింటాల్)</th>
-            </tr>
-          </thead>
-          <tbody id="mandi-rates-body">
-            <tr>
-              <td>వరి (Paddy)</td>
-              <td>వరంగల్</td>
-              <td class="rate-high">₹2,320</td>
-            </tr>
-            <tr>
-              <td>మిర్చి (Chilli)</td>
-              <td>వరంగల్</td>
-              <td class="rate-high">₹14,500</td>
-            </tr>
-            <tr>
-              <td>పత్తి (Cotton)</td>
-              <td>వరంగల్</td>
-              <td class="rate-high">₹7,200</td>
-            </tr>
-          </tbody>
-        </table>
-        <button onclick="saveMandiOfflineData()" style="width:100%; margin-top:10px; padding:8px; background:#e65100; color:#fff; border:none; border-radius:6px; cursor:pointer;">
-          💾 ధరలు ఆఫ్‌లైన్‌లో సేవ్ చేయండి
-        </button>
-        <div id="offline-saved-msg" style="font-size:0.82rem; margin-top:4px;"></div>
+      <!-- Soil Test Panel -->
+      <div id="soil-test-panel" class="result-panel">
+        <div></div>
       </div>
+    </section>
 
-      <!-- Voice Assistant Trigger Card -->
-      <div class="dash-card" style="border-top-color: #0288d1;">
-        <h4 style="color: #0288d1;">🎙️ వాయిస్ కమాండ్ అసిస్టెంట్</h4>
-        <p style="font-size: 0.88rem; color: #555; margin-bottom: 10px;">తెలుగు లేదా ఇంగ్లీషులో మాట్లాడి సమాచారం పొందండి.</p>
-        <button onclick="startLiveVoiceNav()" style="width:100%; padding:12px; background:#0288d1; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:1rem;">
-          🎤 మాట్లాడండి (Voice Search)
-        </button>
-        <div id="voice-nav-output" style="margin-top:8px; font-size:0.85rem; color:#333;">మైక్ బటన్ నొక్కి మాట్లాడండి...</div>
+    <!-- Mandi Rates -->
+    <section class="card" id="mandi-rates-section">
+      <h2>
+        <span>🌾 మార్కెట్ ధరలు (Mandi Rates)</span>
+        <span id="mandi-status-msg"></span>
+      </h2>
+      <table>
+        <thead>
+          <tr>
+            <th>పంట</th>
+            <th>మార్కెట్</th>
+            <th>ధర (క్వింటాల్)</th>
+          </tr>
+        </thead>
+        <tbody id="mandi-rates-body">
+          <tr>
+            <td colspan="3" style="text-align:center;">⏳ <i>ధరలు లోడ్ అవుతున్నాయి...</i></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Labor Directory -->
+    <section class="card" id="labor-section">
+      <h2>👥 కూలీల వివరాలు (Labor Directory)</h2>
+      <div id="labor-list" style="margin-top:10px;">
+        <i>కూలీల జాబితా లోడ్ అవుతోంది...</i>
       </div>
+    </section>
 
-    </div>
+    <!-- Voice Command Assistant -->
+    <section class="card" style="text-align:center;">
+      <h2>🎙️ వాయిస్ అసిస్టెంట్</h2>
+      <p id="voice-status-text" style="font-size:0.85rem; color:#666; margin-bottom:10px;">మైక్ క్లిక్ చేసి "వాతావరణం", "సెన్సార్", లేదా "రేట్లు" అని మాట్లాడండి.</p>
+      <button class="btn btn-accent" onclick="startVoiceCommand()">🎤 మాట్లాడండి (Voice)</button>
+    </section>
   </main>
 
-  <!-- ================= 2. AI CROP DOCTOR & SENSORS VIEW ================= -->
-  <main id="ai-doctor-view" class="page-view" style="max-width: 800px; margin: 1.5rem auto; padding: 0 1rem;">
-    <div id="card-doctor" class="dash-card" style="border-top-color: #2e7d32;">
-      <h3 style="color: #1b5e20; text-align: center; margin-bottom: 8px;">🔬 AI పంట డాక్టర్ & భూసార పరీక్ష</h3>
-      <p style="text-align: center; font-size: 0.9rem; color: #666; margin-bottom: 16px;">
-        పంట తెగుళ్ళు గుర్తించడానికి లేదా భూసార రీడింగ్స్ కోసం క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:
-      </p>
+  <!-- Company Metadata Footer -->
+  <footer>
+    <div id="cmp-address">📍 Hanamkonda, Telangana</div>
+    <div id="cmp-udyam" style="margin: 4px 0;">UDYAM Registration</div>
+    <div id="cmp-copyright">© AgriConnect Technologies. All rights reserved.</div>
+  </footer>
 
-      <!-- 3 Primary Action Buttons -->
-      <div style="display: grid; gap: 10px; margin-bottom: 15px;">
-        <!-- 1. Camera Button -->
-        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #e65100; color: #fff; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center;">
-          📷 ఆకు ఫోటో తీయండి (Camera)
-          <input type="file" accept="image/*" capture="environment" onchange="handleCropCamera(event)" style="display: none;">
-        </label>
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="active" onclick="window.scrollTo({top:0, behavior:'smooth'})">🏠 హోమ్</button>
+    <button onclick="document.getElementById('crop-doctor-section').scrollIntoView({behavior:'smooth'})">🌿 డాక్టర్</button>
+    <button onclick="document.getElementById('mandi-rates-section').scrollIntoView({behavior:'smooth'})">🌾 మండి</button>
+    <button onclick="document.getElementById('soil-section').scrollIntoView({behavior:'smooth'})">🌱 సాయిల్</button>
+  </nav>
 
-        <!-- 2. Soil Test Button -->
-        <button type="button" onclick="openSoilTest()" style="padding: 12px; background: #795548; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-          🧪 భూసార పరీక్ష (NPK & pH)
-        </button>
+  <!-- ================= SCRIPTS LOAD ORDER ================= -->
+  <!-- 1. Firebase Compatibility Core SDKs (CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-        <!-- 3. Sensor Live Readings Button -->
-        <button type="button" onclick="openSoilSensors()" style="padding: 12px; background: #0288d1; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
-          📡 సెన్సార్ లైవ్ రీడింగ్స్ (Moisture)
-        </button>
-      </div>
+  <!-- 2. Protected Configs (Credentials & Company Info Locked) -->
+  <script src="firebase-config.js"></script>
+  <script src="config.js"></script>
+  <script src="app-config.js"></script>
 
-      <!-- Action Results Display Panels -->
-      <div id="camera-result-panel" style="display: none; background: #f1f8e9; border: 1px solid #c5e1a5; padding: 12px; border-radius: 8px; margin-top: 10px;">
-        <h4 style="margin: 0 0 6px 0; color: #2e7d32;">🔬 AI స్కానింగ్ ఫలితం:</h4>
-        <div id="crop-doctor-res" style="font-size: 0.88rem; color: #333;">ప్రాసెస్ అవుతోంది...</div>
-      </div>
-
-      <div id="soil-test-panel" style="display: none; background: #efebe9; border: 1px solid #d7ccc8; padding: 12px; border-radius: 8px; margin-top: 10px;">
-        <h4 style="margin: 0 0 6px 0; color: #4e342e;">🧪 భూసార విశ్లేషణ:</h4>
-        <div style="font-size: 0.88rem; color: #333; line-height: 1.6;">
-          🌱 <b>pH స్థాయి:</b> 6.7 (అనుకూలం)<br>
-          ⚖️ <b>NPK:</b> N-మధ్యస్థం | P-సాధారణం | K-ఎక్కువ<br>
-          💡 <b>సూచన:</b> ఎకరాకు 25 కేజీల యూరియాతో పాటు సేంద్రీయ ఎరువులు వేయండి.
-        </div>
-      </div>
-
-      <div id="soil-sensor-panel" style="display: none; background: #e1f5fe; border: 1px solid #b3e5fc; padding: 12px; border-radius: 8px; margin-top: 10px;">
-        <h4 style="margin: 0 0 6px 0; color: #0277bd;">📡 లైవ్ సెన్సార్ రీడింగ్స్:</h4>
-        <div style="font-size: 0.88rem; color: #333; line-height: 1.6;">
-          💧 <b>నేల తేమ (Moisture):</b> 45% (సరైన స్థాయిలో ఉంది)<br>
-          🌡️ <b>ఉష్ణోగ్రత:</b> 27°C | <b>EC:</b> 1.1 dS/m
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <!-- ================= 3. LABOR & WORKERS VIEW ================= -->
-  <main id="labor-view" class="page-view" style="max-width: 800px; margin: 1.5rem auto; padding: 0 1rem;">
-    <div class="dash-card">
-      <h3 style="color: #1b5e20; margin-bottom: 12px;">👷 వ్యవసాయ కూలీల రిజిస్ట్రేషన్ & అవసరాలు</h3>
-      <p style="font-size: 0.88rem; color: #555;">మీ ప్రాంతంలో అందుబాటులో ఉన్న కూలీలు మరియు పనుల వివరాలు ఇక్కడ చూడవచ్చు.</p>
-      <div id="labor-list" style="margin-top: 12px; font-size: 0.88rem; color: #444;">
-        <i>కూలీల సమాచారం లోడ్ అవుతోంది...</i>
-      </div>
-    </div>
-  </main>
-
-  <!-- ================= MODULAR SCRIPTS (IN CORRECT ORDER) ================= -->
-  <!-- 1. Database and Sensor Logic -->
+  <!-- 3. Realtime Firestore Database Layer -->
   <script src="firebase-db.js"></script>
 
-  <!-- 2. Application Logic, Camera & Voice Navigation -->
+  <!-- 4. Standalone Feature Modules -->
+  <script src="weather.js"></script>
+  <script src="mandi.js"></script>
+  <script src="crop-doctor.js"></script>
+  <script src="voice-nav.js"></script>
+
+  <!-- 5. Main App Controller -->
   <script src="app.js"></script>
 
-<script>
-  // 1. Live Clock & Date Function
-  function startClock() {
-    function refreshTime() {
-      const now = new Date();
-      const clockEl = document.getElementById("clock-display");
-      const dateEl = document.getElementById("date-display");
-      
-      if (clockEl) {
-        clockEl.textContent = now.toLocaleTimeString('en-US', { hour12: true });
-      }
-      if (dateEl) {
-        dateEl.textContent = now.toLocaleDateString('te-IN', { 
-          weekday: 'long', 
-          year: 'numeric', 
-          month: 'long', 
-          day: 'numeric' 
+  <!-- 6. Service Worker Registration (PWA) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.warn('ServiceWorker registration error:', err);
         });
-      }
+      });
     }
-    refreshTime();
-    setInterval(refreshTime, 1000);
-  }
-  startClock();
-
-  // 2. 3-line Menu Toggle Function
-  function toggleNavMenu() {
-    const drawer = document.getElementById("side-menu-drawer");
-    if (drawer) {
-      if (drawer.style.display === "none" || drawer.style.display === "") {
-        drawer.style.display = "flex";
-      } else {
-        drawer.style.display = "none";
-      }
-    }
-  }
-</script>
-<footer style="text-align: center; padding: 25px 15px; font-size: 0.85rem; color: #666; background: #f9f9f9; border-top: 1px solid #e0e0e0; margin-top: 30px;">
-  <p>© 2026 AgriConnect Technologies - The Voice of Smart Farming</p>
-  <p>
-    <a href="services.html" style="color: #1B5E20; text-decoration: none; margin: 0 8px;">Services</a> |
-    <a href="privacy.html" style="color: #1B5E20; text-decoration: none; margin: 0 8px;">Privacy Policy</a> |
-    <a href="terms.html" style="color: #1B5E20; text-decoration: none; margin: 0 8px;">Terms & Conditions</a>
-  </p>
-</footer>
-
+  </script>
 </body>
 </html>
