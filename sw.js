@@ -7,6 +7,10 @@ const ASSETS_TO_CACHE = [
   '/Agriconnect-web/firebase-db.js',
   '/Agriconnect-web/logo.png',
   '/Agriconnect-web/manifest.json'
+  '/Agriconnect-web/services.html',
+  '/Agriconnect-web/privacy.html',
+  '/Agriconnect-web/terms.html',
+
 ];
 
 // 1. Install Event: Cache Core Assets
