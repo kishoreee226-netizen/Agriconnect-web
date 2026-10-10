@@ -14,6 +14,9 @@
   // 2. Safe App Initialization
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
+window.db = firebase.firestore();
+console.log("Firebase initialized successfully!");
+
   }
 
   // 3. Database Instance Lock (Global 'db' ni evaru rewrite/modify cheyakunda freeze)
