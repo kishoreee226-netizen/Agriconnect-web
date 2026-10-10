@@ -1,4 +1,4 @@
-// ================= REAL-TIME MANDI RATES MODULE (GENUINE DATA ONLY) =================
+// ================= REAL-TIME MANDI RATES MODULE (LIVE AGMARKNET) =================
 
 async function fetchLiveMandiRates() {
   const tbody = document.getElementById("mandi-rates-body");
@@ -10,52 +10,55 @@ async function fetchLiveMandiRates() {
     return;
   }
 
-  tbody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>⏳ <i>మార్కెట్ ధరలు లోడ్ అవుతున్నాయి...</i></td></tr>";
+  tbody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>⏳ <i>Live Agmarknet server nundi dharalu thesthunnam...</i></td></tr>";
 
-  // Agmarknet Government API (Telangana)
-  const API_KEY = "579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b";
-  const url = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${API_KEY}&format=json&filters[state]=Telangana&limit=15`;
+  // Data.gov.in Telangana Mandi Endpoint
+  const rawApiUrl = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&filters[state]=Telangana&limit=15";
+
+  // Browser CORS block kaakunda proxy dwara request
+  const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(rawApiUrl);
 
   try {
-    const res = await fetch(url);
-    const data = await res.json();
+    const res = await fetch(proxyUrl);
+    if (!res.ok) throw new Error("Network response not ok");
+
+    const wrapper = await res.json();
+    const data = JSON.parse(wrapper.contents);
 
     if (data && data.records && data.records.length > 0) {
       let rowsHtml = "";
       data.records.forEach((r) => {
         rowsHtml += `
           <tr>
-            <td><b>${r.commodity || "పంట"}</b></td>
-            <td>${r.market || "వరంగల్"}</td>
-            <td style="color:#1B5E20; font-weight:bold;">₹${r.modal_price || "N/A"}</td>
+            <td><b>${r.commodity || "Panta"}</b></td>
+            <td>${r.market || "Telangana"}</td>
+            <td style="color:#1B5E20; font-weight:bold;">₹${r.modal_price || "-"}</td>
           </tr>
         `;
       });
       tbody.innerHTML = rowsHtml;
       if (statusEl) {
-        statusEl.innerHTML = `<span style="color:#2e7d32; font-size:0.8rem;">🟢 Live Govt Agmarknet (${new Date().toLocaleTimeString()})</span>`;
+        statusEl.innerHTML = `<span style="color:#2e7d32; font-size:0.8rem;">🟢 Live Agmarknet (${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})})</span>`;
       }
       return;
     } else {
-      // డేటా లేకపోతే Firebase లో అసలు ధరలు ఏవైనా ఉన్నాయేమో చూస్తుంది
-      checkFirestoreRealRates(tbody, statusEl);
+      checkFirestoreBackup(tbody, statusEl);
     }
   } catch (err) {
-    console.warn("API direct fetch error, checking Firestore backup:", err);
-    checkFirestoreRealRates(tbody, statusEl);
+    console.warn("Live API proxy call failed, checking Firestore:", err);
+    checkFirestoreBackup(tbody, statusEl);
   }
 }
 
-// కేవలం Firestore లో మీరు/అధికారులు వేసిన అసలు డేటా మాత్రమే చూపిస్తుంది
-function checkFirestoreRealRates(tbody, statusEl) {
+function checkFirestoreBackup(tbody, statusEl) {
   if (!window.db) {
-    showNoDataMessage(tbody, statusEl);
+    showNoDataNotice(tbody, statusEl);
     return;
   }
 
   window.db.collection("mandi_rates").get().then((snapshot) => {
     if (snapshot.empty) {
-      showNoDataMessage(tbody, statusEl);
+      showNoDataNotice(tbody, statusEl);
       return;
     }
 
@@ -71,23 +74,22 @@ function checkFirestoreRealRates(tbody, statusEl) {
       `;
     });
     tbody.innerHTML = rowsHtml;
-    if (statusEl) statusEl.innerHTML = "<small style='color:#2e7d32;'>🟢 లైవ్ డేటా</small>";
-  }).catch((err) => {
-    console.error("Firestore read error:", err);
-    showNoDataMessage(tbody, statusEl);
+    if (statusEl) statusEl.innerHTML = "<small style='color:#2e7d32;'>🟢 Firebase Live</small>";
+  }).catch(() => {
+    showNoDataNotice(tbody, statusEl);
   });
 }
 
-function showNoDataMessage(tbody, statusEl) {
+function showNoDataNotice(tbody, statusEl) {
   tbody.innerHTML = `
     <tr>
       <td colspan="3" style="text-align:center; padding:15px; color:#555;">
-        🌾 <b>ఈ రోజు మార్కెట్ ధరలు ఇంకా అప్‌డేట్ కాలేదు.</b><br>
-        <small style="color:#777;">(మార్కెట్ సెలవు కావచ్చు లేదా సర్వర్ నుండి డేటా రాలేదు)</small>
+        🌾 <b>Ee roju market dharalu inka update kaledu.</b><br>
+        <small style="color:#777;">(Market selavu kaavachu leda server busy ga undi)</small>
       </td>
     </tr>
   `;
-  if (statusEl) statusEl.innerHTML = "<small style='color:#e65100;'>అందుబాటులో లేదు</small>";
+  if (statusEl) statusEl.innerHTML = "<small style='color:#e65100;'>Data ledu</small>";
 }
 
 function showMandiOfflineWarning(tbody, statusEl) {
@@ -95,8 +97,8 @@ function showMandiOfflineWarning(tbody, statusEl) {
     tbody.innerHTML = `
       <tr>
         <td colspan="3" style="text-align:center; padding:12px; color:#d32f2f;">
-          ⚠️ <b>ఇంటర్నెట్ లేదు!</b><br>
-          <small>లైవ్ ధరల కోసం నెట్‌వర్క్ చెక్ చేయండి.</small>
+          ⚠️ <b>Internet ledu!</b><br>
+          <small>Live dharala kosam connection check cheyandi.</small>
         </td>
       </tr>
     `;
