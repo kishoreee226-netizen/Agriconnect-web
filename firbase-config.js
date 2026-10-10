@@ -1,16 +1,17 @@
-// Firebase Configuration & Global Init
-const firebaseConfig = {
+// Firebase Configuration (Frozen & Globally Accessible)
+const firebaseConfig = Object.freeze({
   apiKey: "AIzaSyAvev9rVOBx5xE1A993EtSD7FG9JxAmbyI",
   authDomain: "agriconnect-5fc39.firebaseapp.com",
   projectId: "agriconnect-5fc39",
   storageBucket: "agriconnect-5fc39.firebasestorage.app",
   messagingSenderId: "491716802186",
   appId: "1:491716802186:web:087ee5f6c30ec75ce75f73"
-};
+});
 
+// Initialize only once
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// అందరు వాడుకోవడానికి db ని గ్లోబల్ చేస్తున్నాం
+// Global window object ki db assign chesthunnam
 window.db = (typeof firebase !== 'undefined') ? firebase.firestore() : null;
