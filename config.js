@@ -5,11 +5,10 @@ const COMPANY_CONFIG = Object.freeze({
   udyamRegNo: "UDYAM-TS-31-0063048",
   location: "Maruthi Colony, Gopalpur, Hanamkonda, Telangana - 506370",
   copyrightYear: new Date().getFullYear(),
-  supportEmail: "support@agriconnect.in", // మీ అఫీషియల్ ఈమెయిల్
   appVersion: "v3.0.0"
 });
 
-// HTML లోని ప్లేస్‌హోల్డర్స్‌లోకి వివరాలను ఆటోమేటిక్‌గా నింపే ఫంక్షన్
+// HTML lo details auto ga update avvadaniki helper
 function renderCompanyDetails() {
   const elName = document.getElementById("cmp-name");
   const elUdyam = document.getElementById("cmp-udyam");
@@ -22,5 +21,4 @@ function renderCompanyDetails() {
   if (elCopyright) elCopyright.textContent = `© ${COMPANY_CONFIG.copyrightYear} ${COMPANY_CONFIG.name}. All rights reserved.`;
 }
 
-// పేజీ లోడ్ అవ్వగానే వివరాలు ఆటోమేటిక్‌గా డిస్‌ప్లే అవుతాయి
 document.addEventListener("DOMContentLoaded", renderCompanyDetails);
