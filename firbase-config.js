@@ -1,4 +1,4 @@
-// Firebase Configuration (Frozen & Globally Accessible)
+// Firebase Configuration & Safe Global Init
 const firebaseConfig = Object.freeze({
   apiKey: "AIzaSyAvev9rVOBx5xE1A993EtSD7FG9JxAmbyI",
   authDomain: "agriconnect-5fc39.firebaseapp.com",
@@ -8,10 +8,16 @@ const firebaseConfig = Object.freeze({
   appId: "1:491716802186:web:087ee5f6c30ec75ce75f73"
 });
 
-// Initialize only once
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+function initFirebaseGlobal() {
+  if (typeof firebase === 'undefined') {
+    setTimeout(initFirebaseGlobal, 50);
+    return;
+  }
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  window.db = firebase.firestore();
+  console.log("Firebase & window.db ready!");
 }
 
-// Global window object ki db assign chesthunnam
-window.db = (typeof firebase !== 'undefined') ? firebase.firestore() : null;
+initFirebaseGlobal();
