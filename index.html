@@ -1,1336 +1,200 @@
 <!DOCTYPE html>
 <html lang="te">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AgriConnect Technologies - The Voice of Smart Farming</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgriConnect Technologies - The Voice of Smart Farming</title>
 
-    <!-- PWA Setup Files -->
-    <link rel="manifest" href="manifest.json">
+  <!-- PWA & Web App Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1B5E20">
+  <link rel="icon" type="image/png" href="icon-192.png">
 
-    <meta name="theme-color" content="#1B5E20">
-    <link rel="apple-touch-icon" href="https://kishoreee226-netizen.github.io/Agriconnect-web/icon-192.png">
+  <!-- External Clean Stylesheet -->
+  <link rel="stylesheet" href="style.css">
 
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="style.css">
-
-    <!-- Google Firebase SDKs (Compat version for pure HTML/JS) -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-messaging-compat.js"></script>
+  <!-- Firebase Core SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 </head>
 <body>
 
-    <!-- Header Navigation -->
-    <header>
-        <div class="header-brand" onclick="switchView('home')">
-            <img src="logo.png" alt="AgriConnect Logo" class="header-logo" onerror="this.style.display='none'">
-            <h1>AgriConnect Technologies</h1>
-        </div>
-        <div class="nav-actions">
-            <div class="nav-links">
-                <button id="nav-btn-home" class="active-nav" onclick="switchView('home')">🏠 Home</button>
-                <button id="nav-btn-services" onclick="switchView('services')">🌾 Services</button>
-                <button id="nav-btn-about" onclick="switchView('about')">ℹ️ About Us</button>
-                <button id="nav-btn-why" onclick="switchView('why')">⭐ Why Choose Us</button>
-            </div>
-
-            <button class="btn-hamburger" onclick="toggleDrawer()" title="Menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-    </header>
-
-    <!-- Side Navigation Drawer -->
-    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
-    <div class="drawer-sidebar" id="drawerSidebar">
-        <div class="drawer-header">
-            <h3>🌱 AgriConnect మెనూ</h3>
-            <button class="drawer-close" onclick="toggleDrawer()">&times;</button>
-        </div>
-        <ul class="drawer-menu-list">
-            <li>
-                <button class="drawer-menu-item" onclick="openLoginModalFromDrawer()">
-                    <span>👤</span> <strong id="drawer-login-text">Login / ప్రొఫైల్</strong>
-                </button>
-            </li>
-            <li>
-                <button class="drawer-menu-item" onclick="openWalletModalFromDrawer()">
-                    <span>💰</span> <strong>AgriConnect Wallet (వాలెట్)</strong>
-                </button>
-            </li>
-            <li>
-                <button class="drawer-menu-item" onclick="enablePushNotifications()">
-                    <span>🔔</span> <strong>పుష్ నోటిఫికేషన్లు ఆన్ చేయండి</strong>
-                </button>
-            </li>
-            <li>
-                <button class="drawer-menu-item" onclick="openDiaryModalFromDrawer()">
-                    <span>📖</span> రైతు ఖాతా డైరీ (Farm Diary)
-                </button>
-            </li>
-            <li>
-                <button class="drawer-menu-item" onclick="openAlertsModalFromDrawer()">
-                    <span>🔔</span> స్మార్ట్ ధర హెచ్చరికలు (Price Alerts)
-                </button>
-            </li>
-            <li>
-                <button class="drawer-menu-item" onclick="openSharedMachineryModalFromDrawer()">
-                    <span>🚜</span> రైతు గ్రూప్ యంత్రాల బుకింగ్
-                </button>
-            </li>
-            <li>
-                <button class="drawer-menu-item" onclick="openSettingsModalFromDrawer()">
-                    <span>⚙️</span> Settings & భాష
-                </button>
-            </li>
-            <li>
-                <button class="drawer-menu-item" onclick="openContactModalFromDrawer()">
-                    <span>📞</span> Contact Us (సంప్రదించండి)
-                </button>
-            </li>
-            <li>
-                <a href="privacy.html" class="drawer-menu-item">
-                    <span>📄</span> Privacy Policy (22 సెక్షన్లు)
-                </a>
-            </li>
-            <li>
-                <a href="terms.html" class="drawer-menu-item">
-                    <span>📜</span> Terms & Conditions (24 సెక్షన్లు)
-                </a>
-            </li>
-            <li>
-                <button class="drawer-menu-item" style="color:#d32f2f;" onclick="handleDrawerLogout()">
-                    <span>🚪</span> లాగౌట్ (Logout)
-                </button>
-            </li>
-        </ul>
-        <div class="drawer-footer">
-            AgriConnect Technologies<br>
-            UDYAM-TS-31-0063048 | Warangal
-        </div>
+  <!-- ================= TOP HEADER ================= -->
+  <header>
+    <div class="header-brand" onclick="switchView('dashboard-view')">
+      <img src="icon-192.png" alt="AgriConnect Logo" class="header-logo" onerror="this.src='https://via.placeholder.com/42?text=🌱'">
+      <h1>AgriConnect</h1>
     </div>
-
-    <!-- Direct In-Page Install Banner (Auto-visible on open) -->
-    <div id="pwaInstallBanner" class="install-banner">
-        <div>
-            <strong style="font-size: 1rem;">📲 AgriConnect మొబైల్ యాప్ అందుబాటులో ఉంది!</strong>
-            <div style="font-size: 0.85rem; color: #2e4a2e; margin-top: 2px;">
-                హోమ్ స్క్రీన్ పై యాప్ లాగా వేగంగా ఓపెన్ చేసుకోవడానికి ఇప్పుడే ఇన్‌స్టాల్ చేసుకోండి.
-            </div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <button id="pwaInstallBtn" class="install-btn">ఇన్‌స్టాల్ చేయండి (Install)</button>
-            <button class="install-close-btn" onclick="dismissInstallBanner()" title="మూసివేయి">&times;</button>
-        </div>
+    <div class="nav-actions">
+      <div class="nav-links">
+        <button onclick="switchView('dashboard-view')" id="nav-btn-dash" class="active-nav">🏠 హోమ్</button>
+        <button onclick="switchView('ai-doctor-view')" id="nav-btn-doc">🔬 AI డాక్టర్</button>
+        <button onclick="switchView('labor-view')" id="nav-btn-labor">👷 కూలీలు</button>
+      </div>
+      <button class="btn-hamburger" onclick="toggleNavMenu()" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
+  </header>
 
-    <!-- Hero Banner -->
-    <section class="hero">
-        <div class="hero-logo-container">
-            <img src="logo.png" alt="AgriConnect Logo" class="hero-logo" onerror="this.style.display='none'">
-        </div>
-        <h2>AgriConnect</h2>
-        <div class="tagline">The Voice of Smart Farming</div>
-                <div class="voice-pill" style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px; background: #e8f5e9; border-radius: 10px; border: 1px solid #c8e6c9;">
-          <div>📣 స్పీకర్ నొక్కి ఏ బాక్స్ మీదైనా టచ్ చేయండి – సమాచారం తెలుగులో చదివి వినిపిస్తుంది!</div>
-          
-          <!-- Smart Voice Navigation Button -->
-          <button type="button" onclick="startLiveVoiceNav()" style="background: #1b5e20; color: #ffffff; border: none; padding: 7px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
-            🎙️ మైక్ నొక్కి మాట్లాడండి
-          </button>
-          <div id="voice-nav-output" style="font-size: 0.8rem; color: #2e7d32; font-weight: bold; min-height: 18px;"></div>
-        </div>
-
-    </section>
-
-    <!-- User Welcome Banner -->
-    <div id="userWelcomeBanner" class="user-welcome-banner">
-        <div>
-            <span id="welcomeUserName" style="font-size: 1.1rem; font-weight: bold; color: #1B5E20;">స్వాగతం!</span>
-            <div id="welcomeUserRoleBadge" style="font-size: 0.85rem; color: #555;">రైతు డాష్‌బోర్డ్ యాక్టివ్‌గా ఉంది</div>
-        </div>
-        <button style="background: #e8f5e9; border: 1px solid #c8e6c9; color: #1B5E20; padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer;" onclick="openWalletModal()">
-            💰 వాలెట్ ఓపెన్ చేయండి
-        </button>
+  <!-- ================= HERO BANNER ================= -->
+  <section class="hero">
+    <div class="hero-logo-container">
+      <img src="icon-192.png" alt="Logo" class="hero-logo" onerror="this.src='https://via.placeholder.com/90?text=AgriConnect'">
     </div>
+    <h2>AgriConnect Technologies</h2>
+    <p class="tagline">The Voice of Smart Farming</p>
+    <div class="voice-pill">🎙️ మాట్లాడి యాప్‌ను నడపండి (Voice Powered)</div>
+  </section>
 
-    <!-- ================= VIEW 1: HOME DASHBOARD ================= -->
-    <main id="home-view" class="page-view active-view">
-        <div class="dashboard-container">
-
-            <!-- 1. Live Time & Date Widget -->
-            <div class="dash-card speakable" onclick="speakElement(this)">
-                <h4>📅 లైవ్ సమయం & క్యాలెండర్</h4>
-                <div class="clock-display" id="liveClock">00:00:00 AM</div>
-                <div class="date-display" id="liveDate">తేదీ లోడ్ అవుతోంది...</div>
-                <div style="margin-top: 10px; background: #f9fbf9; padding: 8px; border-radius: 6px; font-size: 0.85rem; text-align: center; color: #2e7d32;">
-                    🌾 నేటి సూచన: విత్తనాలు నాటడానికి మరియు సేంద్రీయ ఎరువుల వాడకానికి అనుకూలమైన వాతావరణం.
-                </div>
-            </div>
-
-            <!-- 2. Live Weather Widget -->
-            <div class="dash-card speakable" onclick="speakElement(this)">
-                <h4>🌦️ లైవ్ వాతావరణం (వరంగల్ పరిసరాలు)</h4>
-                <div class="weather-info">
-                    <div>
-                        <div style="font-size: 2.2rem;">⛅</div>
-                        <div style="font-size: 0.85rem; color: #666;">పాక్షికంగా మేఘావృతం</div>
-                    </div>
-                    <div>
-                        <div class="weather-temp">31°C</div>
-                        <div style="font-size: 0.82rem; color: #444;">తేమ: 68% | గాలి: 12 km/h</div>
-                    </div>
-                </div>
-                <p style="font-size: 0.82rem; color: #555; margin-top: 8px; text-align: center;">
-                    🌧️ రాబోయే 24 గంటల్లో తేలికపాటి జల్లులు కురిసే అవకాశం ఉంది.
-                </p>
-                <div style="text-align: center;">
-                    <button class="btn-wa-share" onclick="shareToWhatsApp('🌦️ AgriConnect లైవ్ వాతావరణం (వరంగల్): ఉష్ణోగ్రత 31°C, తేమ 68%. రాబోయే 24 గంటల్లో తేలికపాటి జల్లుల సూచన.')">
-                        📲 వాట్సాప్‌లో షేర్ చేయండి
-                    </button>
-                </div>
-            </div>
-
-            <!-- 3. Mandi Rates Widget -->
-            <div class="dash-card speakable" onclick="speakElement(this)">
-                <h4>📈 మార్కెట్ యార్డ్ లైవ్ ధరలు (క్వింటాల్‌కి)</h4>
-                <table class="rates-table">
-                    <thead>
-                        <tr>
-                            <th>పంట పేరు</th>
-                            <th>కనిష్ట ధర</th>
-                            <th>గరిష్ట ధర</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>మిర్చి (తేజ రకం)</td><td>₹ 14,500</td><td class="rate-high">₹ 18,200</td></tr>
-                        <tr><td>పత్తి (Cotton)</td><td>₹ 6,800</td><td class="rate-high">₹ 7,650</td></tr>
-                        <tr><td>వరి (BPT / సన్నాలు)</td><td>₹ 2,320</td><td class="rate-high">₹ 2,450</td></tr>
-                        <tr><td>మొక్కజొన్న (Maize)</td><td>₹ 2,050</td><td class="rate-high">₹ 2,200</td></tr>
-                    </tbody>
-                </table>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <button class="btn-wa-share" onclick="shareToWhatsApp('📈 నేటి వరంగల్ మార్కెట్ లైవ్ ధరలు (క్వింటాల్‌కి):\nమిర్చి: ₹ 18,200\nపత్తి: ₹ 7,650\nవరి: ₹ 2,450\nమొక్కజొన్న: ₹ 2,200\nసమగ్ర వివరాలకు AgriConnect చూడండి!')">
-                        📲 ధరలు షేర్ చేయండి
-                    </button>
-                    <button style="background:#e8f5e9; color:#1B5E20; border:1px solid #c8e6c9; border-radius:20px; padding:6px 12px; font-size:0.82rem; font-weight:bold; cursor:pointer;" onclick="openAlertsModal()">
-                        🔔 రేట్ అలర్ట్
-                    </button>
-                </div>
-            </div>
-
-            <!-- 4. Agriculture Helpline Widget -->
-            <div class="dash-card speakable" onclick="speakElement(this)">
-                <h4>📞 వ్యవసాయ శాఖ హెల్ప్‌లైన్ నంబర్లు</h4>
-                <div class="helpline-item">
-                    <span>కిసాన్ కాల్ సెంటర్ (ఉచితం)</span>
-                    <a href="tel:18001801551" class="helpline-number">1800-180-1551</a>
-                </div>
-                <div class="helpline-item">
-                    <span>వరంగల్ జిల్లా వ్యవసాయ అధికారి (DAO)</span>
-                    <a href="tel:08702444123" class="helpline-number">0870-2444123</a>
-                </div>
-                <div class="helpline-item">
-                    <span>వ్యవసాయ విద్యుత్ ఫిర్యాదుల విభాగం</span>
-                    <a href="tel:1912" class="helpline-number">1912</a>
-                </div>
-                <div class="helpline-item">
-                    <span>భూసార పరీక్షల కేంద్రం (హనుమకొండ)</span>
-                    <a href="tel:08702578900" class="helpline-number">0870-2578900</a>
-                </div>
-            </div>
-
-            <!-- 5. Fertilizer Ads Widget -->
-            <div class="dash-card speakable" onclick="speakElement(this)">
-                <h4>📢 విత్తనాలు & ఎరువుల ఆఫర్లు (Agri Ads)</h4>
-                <div class="ad-banner-box">
-                    <h5>🌾 హైబ్రిడ్ వరి & మిర్చి విత్తనాలు అందుబాటులో ఉన్నాయి</h5>
-                    <p>ప్రభుత్వ గుర్తింపు పొందిన నాణ్యమైన విత్తనాలపై 15% డిస్కౌంట్. సమీప డీలర్ షాపుల్లో లభ్యం.</p>
-                </div>
-                <div class="ad-banner-box" style="background:#e8f5e9; border-color:#2e7d32;">
-                    <h5 style="color:#1b5e20;">🌱 సేంద్రీయ బయో-ఫెర్టిలైజర్స్ & వేప పిండి</h5>
-                    <p>భూసారాన్ని పెంచే బయో-ఎరువుల హోల్‌సేల్ సప్లై. రైతు గ్రూపులకు ఉచిత డెలివరీ.</p>
-                </div>
-            </div>
-
-            <!-- 6. Machinery Ads Widget -->
-            <div class="dash-card speakable" onclick="speakElement(this)">
-                <h4>🚜 యంత్రాల అద్దె & డ్రోన్ పిచికారీ ప్రకటనలు</h4>
-                <div class="ad-banner-box" style="background:#e0f2f1; border-color:#00897b;">
-                    <h5 style="color:#004d40;">🤝 రైతు గ్రూప్ షేరింగ్ (Shared Machinery Booking)</h5>
-                    <p>3-4 మంది రైతులు కలిసి ఒకే హార్వెస్టర్ లేదా డ్రోన్ అద్దెకు తీసుకుంటే ఎకరానికి 30% ఖర్చు ఆదా!</p>
-                    <button style="background:#00897b; color:white; border:none; padding:5px 10px; border-radius:6px; font-size:0.8rem; font-weight:bold; cursor:pointer; margin-top:5px;" onclick="openSharedMachineryModal()">
-                        గ్రూప్ బుకింగ్ ప్రారంభించండి
-                    </button>
-                </div>
-                <div class="ad-banner-box" style="background:#f3e5f5; border-color:#8e24aa;">
-                    <h5 style="color:#6a1b9a;">🚁 డ్రోన్ స్ప్రేయింగ్ సేవలు (ఎకరానికి ₹ 399/-)</h5>
-                    <p>త్వరగా మరియు సమర్థవంతంగా పురుగుమందుల పిచికారీ. బుకింగ్ కోసం సంప్రదించండి.</p>
-                </div>
-            </div>
-
-            <!-- 7. Offline Audio Notes Widget -->
-            <div class="dash-card speakable" onclick="speakElement(this)">
-                <h4>🎧 ఆఫ్ లైన్ వాయిస్ నోట్స్ (Offline Audio Cache)</h4>
-                <p style="font-size: 0.85rem; color: #555;">ఇంటర్నెట్ లేకపోయినా పొలంలో ఉండి ఈ వాయిస్ సలహాలు వినవచ్చు:</p>
-                <div class="audio-player-offline">
-                    <span style="font-size: 0.85rem; font-weight: 600;">మిర్చిలో తామర పురుగు నివారణ</span>
-                    <button style="background:#1B5E20; color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="playOfflineAudio('మిర్చి పంటలో తామర పురుగు మరియు నల్లి నివారణకు వేపనూనె లేదా ఫిప్రోనిల్ పిచికారీ చేయండి.')">▶ ప్లే చేయండి</button>
-                </div>
-                <div class="audio-player-offline">
-                    <span style="font-size: 0.85rem; font-weight: 600;">వరిలో ఎరువుల యాజమాన్యం</span>
-                    <button style="background:#1B5E20; color:white; border:none; padding:4px 10px; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="playOfflineAudio('వరి నాట్లు వేసిన 20 రోజులకు యూరియాతో పాటు జింక్ సల్ఫేట్ అందించండి.')">▶ ప్లే చేయండి</button>
-                </div>
-                          <!-- kotha offline data save feature -->
-          <div style="margin-top: 12px; padding-top: 10px; border-top: 1px dashed #ccc; text-align: center;">
-            <button type="button" style="background: #2e7d32; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;" onclick="event.stopPropagation(); saveMandiOfflineData();">
-              💾 నేటి మార్కెట్ డేటా ఆఫ్‌లైన్ సేవ్
-            </button>
-            <div id="offline-saved-msg" style="margin-top: 6px; font-size: 0.78rem; color: #1b5e20; font-weight: 500;"></div>
-          </div>
-          
-            </div>
-
-        </div>
-    </main>
-
-    <!-- ================= VIEW 2: SERVICES & ROLES ================= -->
-    <section id="services-view" class="page-view">
-        <h2 class="section-title">మా సేవలు & విభాగాలు</h2>
-        <p class="section-subtitle">వివరాలు మరియు ఫీచర్లు చూడటానికి కింది విభాగంపై క్లిక్ చేయండి</p>
-
-        <!-- Role Selectors -->
-        <div class="role-widgets-container">
-            <div id="tab-farmer" class="role-widget active speakable" onclick="showFeature('farmer', this); speakElement(this)">
-                <span class="role-active-indicator" id="ind-farmer">యాక్టివ్</span>
-                <div class="role-icon" style="font-size:2.3rem;">🌾</div>
-                <h3>రైతులు</h3>
-                <span>(Smart Farmers Hub)</span>
-            </div>
-
-            <div id="tab-labor" class="role-widget speakable" onclick="showFeature('labor', this); speakElement(this)">
-                <span class="role-active-indicator" id="ind-labor">యాక్టివ్</span>
-                <div class="role-icon" style="font-size:2.3rem;">👨‍🌾</div>
-                <h3>వ్యవసాయ కూలీలు</h3>
-                <span>(Farm Laborers)</span>
-            </div>
-
-            <div id="tab-trader" class="role-widget speakable" onclick="showFeature('trader', this); speakElement(this)">
-                <span class="role-active-indicator" id="ind-trader">యాక్టివ్</span>
-                <div class="role-icon" style="font-size:2.3rem;">🏪</div>
-                <h3>వ్యాపారధారులు</h3>
-                <span>(Traders & Buyers)</span>
-            </div>
-        </div>
-
-        <div class="feature-details-box">
-
-            <!-- 1. Farmers Features (Full 12 Cards) -->
-            <div id="farmer-feature" class="feature-content active">
-                <h4>🌾 రైతులకు లభించే సమగ్ర స్మార్ట్ వ్యవసాయ సేవలు (12 ఫీచర్లు):</h4>
-                <div class="features-grid">
-
-                    <div id="card-doctor" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🩺</div>
-                        <div class="feature-info">
-                                         <h5>1. క్రాప్ డాక్టర్ (AI Crop Doctor)</h5>
-              <p>పంట ఆకు లేదా తెగులు సోకిన భాగాన్ని ఫోటో తీసి అప్‌లోడ్ చేస్తే, వ్యాధిని గుర్తించి తక్షణ నివారణ మందులు, సలహాలు అందిస్తుంది.</p>
-              
-             <!-- ================= AI CROP DOCTOR TAB CONTENT ================= -->
-<div id="ai-doctor-view" style="padding: 15px; max-width: 500px; margin: auto;">
-
-  <div style="background: #ffffff; border-radius: 14px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 4px solid #2e7d32;">
-    <h3 style="margin: 0 0 12px 0; color: #1b5e20; text-align: center;">🌿 AI పంట డాక్టర్ & నేల పరీక్ష</h3>
-    <p style="font-size: 13px; color: #666; text-align: center; margin-bottom: 16px;">
-      క్రింది ఆప్షన్లలో ఒకదాన్ని ఎంచుకోండి:
-    </p>
-
-    <!-- 3 MAIN ACTION BUTTONS -->
-    <div style="display: grid; gap: 10px; margin-bottom: 15px;">
+  <!-- ================= 1. DASHBOARD VIEW ================= -->
+  <main id="dashboard-view" class="page-view active-view">
+    <div class="dashboard-container">
       
-      <!-- 1. Camera Button -->
-      <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #2e7d32; color: #ffffff; border-radius: 10px; font-weight: bold; cursor: pointer; text-align: center;">
-        📸 కెమెరా (ఆకు తెగులు ఫోటో)
-        <input type="file" id="crop-camera-input" accept="image/*" capture="environment" onchange="handleCropCamera(event)" style="display: none;">
-      </label>
-
-      <!-- 2. Bhoosara Pariksha Button -->
-      <button onclick="openSoilTest()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #795548; color: #ffffff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
-        🧪 భూసార పరీక్ష (NPK & pH)
-      </button>
-
-      <!-- 3. Live Soil Sensors Button -->
-      <button onclick="openSoilSensors()" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #0288d1; color: #ffffff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
-        📡 సెన్సార్ లైవ్ డేటా (Moisture & Temp)
-      </button>
-
-    </div>
-
-    <!-- ================= DYNAMIC RESULT PANELS (Buttons nokkithene open avthayi) ================= -->
-
-    <!-- Result 1: Camera Pest Detection -->
-    <div id="camera-result-panel" style="display: none; background: #f1f8e9; border: 1px solid #c5e1a5; padding: 12px; border-radius: 8px; margin-top: 10px;">
-      <h4 style="margin: 0 0 6px 0; color: #2e7d32;">🔬 AI స్కానింగ్ ఫలితం:</h4>
-      <div id="crop-doctor-res" style="font-size: 13px; color: #333;">ఫోటో ప్రాసెస్ అవుతోంది...</div>
-    </div>
-
-    <!-- Result 2: Bhoosara Pariksha -->
-    <div id="soil-test-panel" style="display: none; background: #efebe9; border: 1px solid #d7ccc8; padding: 12px; border-radius: 8px; margin-top: 10px;">
-      <h4 style="margin: 0 0 6px 0; color: #4e342e;">🧪 భూసార విశ్లేషణ:</h4>
-      <div id="soil-test-details" style="font-size: 13px; color: #333; line-height: 1.6;">
-        🌱 <b>pH స్థాయి:</b> 6.7 (అనుకూలం)<br>
-        🧪 <b>నత్రజని (N):</b> మధ్యస్థం<br>
-        ⚖️ <b>భాస్వరం (P):</b> సాధారణం<br>
-        🌿 <b>పొటాష్ (K):</b> సమృద్ధిగా ఉంది<br>
-        💡 <b>ఎరువుల సూచన:</b> ఎకరాకు 25 కేజీల యూరియాతో పాటు సేంద్రీయ ఎరువులు వేయండి.
+      <!-- Date & Live Clock Card -->
+      <div class="dash-card speakable" onclick="speakElement(this)">
+        <h4>🕒 సమయం & తేదీ</h4>
+        <div id="clock-display" class="clock-display">--:--:--</div>
+        <div id="date-display" class="date-display">తేదీ లోడ్ అవుతోంది...</div>
       </div>
-    </div>
 
-    <!-- Result 3: Soil Sensors Data -->
-    <div id="soil-sensor-panel" style="display: none; background: #e1f5fe; border: 1px solid #b3e5fc; padding: 12px; border-radius: 8px; margin-top: 10px;">
-      <h4 style="margin: 0 0 6px 0; color: #0277bd;">📡 లైవ్ సెన్సార్ రీడింగ్స్:</h4>
-      <div id="soil-sensor-details" style="font-size: 13px; color: #333; line-height: 1.6;">
-        💧 <b>నేల తేమ (Moisture):</b> 45% (తగినంత తేమ ఉంది)<br>
-        🌡️ <b>నేల ఉష్ణోగ్రత:</b> 27°C<br>
-        ⚡ <b>EC (Electrical Conductivity):</b> 1.1 dS/m<br>
-        💧 <b>నీటి పారుదల:</b> ప్రస్తుతానికి నీరు పెట్టాల్సిన అవసరం లేదు.
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-            </div>
+      <!-- Live GPS Weather Card -->
+      <div id="card-weather" class="dash-card speakable" onclick="speakElement(this)">
+        <h4>🌤️ వాతావరణ నివేదిక (Weather)</h4>
+        <div class="weather-info">
+          <div>
+            <div id="weather-temp" class="weather-temp">31°C</div>
+            <div id="weather-desc">పాక్షికంగా మేఘావృతం</div>
           </div>
-
-          <div id="card-weather" class="feature-card speakable" onclick="speakElement(this)">
-            <div class="feature-img-icon">🌦️</div>
-            <div class="feature-info">
-              <h5>2. వాతావరణ నివేదిక (Weather Report)</h5>
-              <p>మీ గ్రామానికి సంబంధించిన రోజువారీ వర్ష సూచన, ఉష్ణోగ్రత మరియు గాలి తేమ శాతం వివరాల లైవ్ అప్‌డేట్స్.</p>
-
-              <!-- GPS Weather Feature -->
-              <div style="margin-top: 8px;">
-                <button type="button" onclick="event.stopPropagation(); getLiveLocationWeather();" style="background: #0288d1; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;">
-                  📍 నా లొకేషన్ వాతావరణం
-                </button>
-                <div id="gps-weather-res" style="margin-top: 6px; font-size: 0.8rem; color: #01579b; line-height: 1.4;"></div>
-              </div>
-                        </div>
-                    </div>
-
-                    <div id="card-satellite" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🛰️</div>
-                        <div class="feature-info">
-                            <h5>3. శాటిలైట్ సేవలు (Satellite Farming)</h5>
-                            <p>మీ పొలం లొకేషన్ ఆధారంగా ఉపగ్రహ ఛాయాచిత్రాల ద్వారా పంట పచ్చదనం (NDVI), నేలలో తేమ లభ్యత ముందస్తు అంచనా.</p>
-                        </div>
-                    </div>
-
-                    <div id="card-subsidy" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🏛️</div>
-                        <div class="feature-info">
-                            <h5>4. ప్రభుత్వ పథకాలు & సబ్సిడీలు (Govt Subsidy)</h5>
-                            <p>రైతు భరోసా, వ్యవసాయ పరికరాల సబ్సిడీలు, పంట బీమా (PMFBY), డ్రిప్ ఇరిగేషన్ పథకాల సమాచారం మరియు దరఖాస్తు లింకులు.</p>
-                        </div>
-                    </div>
-
-                    <div id="card-power" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">⚡</div>
-                        <div class="feature-info">
-                            <h5>5. వ్యవసాయ విద్యుత్ సరఫరా (Electricity Info)</h5>
-                            <p>పొలాలకు ఉచిత వ్యవసాయ కరెంట్ సరఫరా వేళలు, షెడ్యూల్డ్ పవర్ కట్స్ మరియు లో-వోల్టేజ్ సమస్యల సమాచారం.</p>
-                        </div>
-                    </div>
-
-                    <div id="card-crop" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🌱</div>
-                        <div class="feature-info">
-                            <h5>6. పంటల సమగ్ర సమాచారం (Crop Advisory)</h5>
-                            <p>వరి, మిర్చి, పత్తి మొదలైన పంటలకు విత్తన ఎంపిక, ఎరువుల సమతుల్య వాడకం, తెగుళ్ల నివారణ సలహాలు.</p>
-                        </div>
-                    </div>
-
-                    <div id="card-ecommerce" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🛒</div>
-                        <div class="feature-info">
-                            <h5>7. వ్యవసాయ ఇ-కామర్స్ (Agri E-Commerce)</h5>
-                            <p>నాణ్యమైన విత్తనాలు, సేంద్రీయ ఎరువులు, పిచికారీ మందులు మరియు వ్యవసాయ పనిముట్లను ఆన్‌లైన్‌లో కొనుగోలు చేసే వెసులుబాటు.</p>
-                        </div>
-                    </div>
-
-                    <!-- 8. HYPERLOCAL LABOR HUB (GPS 5-10 KM + UPI + 3 DISPATCH BUTTONS) -->
-                    <div id="card-labor" class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32;">
-                        <div class="accordion-header" onclick="toggleLaborBookingAccordion()">
-                            <div style="display:flex; align-items:center; gap:1rem;">
-                                <div class="feature-img-icon">👥</div>
-                                <div class="feature-info">
-                                    <h5>8. వ్యవసాయ కూలీల బుకింగ్ (5-10 KM Range)</h5>
-                                    <p style="margin-bottom:0;">మేస్త్రీల వివరాలు చూడటానికి & కూలీల కోసం ఇక్కడ క్లిక్ చేయండి ▼</p>
-                                </div>
-                            </div>
-                            <span class="accordion-arrow" id="arrowLaborBooking">▼</span>
-                        </div>
-
-                        <!-- HIDDEN PANEL -->
-                        <div class="accordion-body" id="bodyLaborBooking">
-                            <div class="labor-interactive-box">
-                                <div style="display: flex; justify-content: space-between; align-items: center; background: #e8f5e9; padding: 8px 12px; border-radius: 8px; margin-bottom: 10px;">
-                                    <strong style="color: #1B5E20; font-size: 0.88rem;">📍 సమీప దూరం ఫిల్టర్:</strong>
-                                    <select id="gpsRadiusFilter" onchange="filterLaborersByDistance()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #2e7d32; font-size: 0.82rem; font-weight: bold;">
-                                        <option value="all">అన్ని ప్రాంతాల మేస్త్రీలు</option>
-                                        <option value="5" selected>5 KM లోపు మేస్త్రీలు</option>
-                                        <option value="10">10 KM లోపు మేస్త్రీలు</option>
-                                        <option value="20">20 KM లోపు మేస్త్రీలు</option>
-                                    </select>
-                                </div>
-
-                                <strong style="color: #1B5E20; font-size: 0.95rem;">📍 అందుబాటులో ఉన్న మేస్త్రీల బృందాలు:</strong>
-
-                                <div id="activeLaborListContainer" style="margin-top: 6px;">
-                                    <div style="text-align:center; padding:10px; color:#666; font-size:0.85rem;">క్లౌడ్ డేటాబేస్ నుండి లోడ్ అవుతోంది...</div>
-                                </div>
-
-                                <!-- IN-PAGE FARMER JOB BROADCAST -->
-                                <div style="margin-top: 15px; background: #e8f5e9; padding: 12px; border-radius: 8px; border: 1px dashed #2e7d32;">
-                                    <strong style="color: #1B5E20; font-size: 0.92rem;">📢 నాకు కూలీలు కావాలి (రైతు రిక్వెస్ట్):</strong>
-
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
-                                        <input type="text" id="postFarmerName" placeholder="రైతు పేరు *" style="padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
-                                        <input type="tel" id="postFarmerPhone" placeholder="ఫోన్ నంబర్ *" maxlength="10" style="padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
-                                    </div>
-                                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px; margin-top: 6px;">
-                                        <input type="number" id="postLaborCount" placeholder="కూలీల సంఖ్య *" style="padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
-                                        <input type="text" id="postWorkDetails" placeholder="పని వివరాలు (ఉదా: వరి నాట్లు) *" style="padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem;">
-                                    </div>
-                                    <input type="text" id="postFarmLocation" placeholder="పొలం ఉన్న గ్రామం / ప్రాంతం" style="width: 100%; padding: 7px 8px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.85rem; margin-top: 6px;">
-
-                                    <!-- THREE DISPATCH BUTTONS (WHATSAPP, SMS, CLOUD) -->
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px;">
-                                        <button type="button" onclick="broadcastJobRequest()" style="background: #25D366; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer;">
-                                            📲 WhatsApp
-                                        </button>
-                                        <button type="button" onclick="sendJobSmsDirect()" style="background: #0277bd; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer;">
-                                            ✉️ SMS అలర్ట్
-                                        </button>
-                                        <button type="button" id="btnSubmitJobCloud" onclick="submitJobRequestToCloud()" style="background: #1B5E20; color: white; border: none; padding: 9px; border-radius: 6px; font-weight: bold; font-size: 0.82rem; cursor: pointer;">
-                                            ☁️ సబ్మిట్
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="card-machinery" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🚜</div>
-                        <div class="feature-info">
-                            <h5>9. యంత్రాల అద్దె (Machinery Rentals)</h5>
-                            <p>ట్రాక్టర్లు, రోటవేటర్లు, హార్వెస్టర్లు మరియు డ్రోన్ స్ప్రేయింగ్ ఆపరేటర్ల వివరాలు, ఫోన్ నంబర్లు క్షణాల్లో లభిస్తాయి.</p>
-                        </div>
-                    </div>
-
-                    <div id="card-market" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">📈</div>
-                        <div class="feature-info">
-                            <h5>10. లైవ్ మార్కెట్ యార్డ్ ధరలు</h5>
-                            <p>వరంగల్ ఏనుమాముల యార్డ్ మరియు చుట్టుపక్కల మార్కెట్లలో రోజువారీ కనిష్ట, గరిష్ట మరియు మోడల్ ధరల తాజా వివరాలు.</p>
-                        </div>
-                    </div>
-
-                    <div id="card-sales" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">📢</div>
-                        <div class="feature-info">
-                            <h5>11. పంట అమ్మకం ప్రకటనలు</h5>
-                            <p>మీ వద్ద సిద్ధంగా ఉన్న దిగుబడి వివరాలు, ఫోటోలు పోస్ట్ చేసి వ్యాపారుల నుండి ఉత్తమ ధరను నేరుగా పొందవచ్చు.</p>
-                        </div>
-                    </div>
-
-                    <!-- 12TH FEATURE: LAND LEASE / KAULU -->
-                    <div id="card-kaulu" class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🏞️</div>
-                        <div class="feature-info">
-                            <h5>12. భూమి కౌలు & మునాభా కేంద్రం (Land Lease / Kaulu)</h5>
-                            <p>వ్యవసాయం చేయలేని యజమానులు తమ పొలాన్ని కౌలు/మునాభాకు ఇవ్వడానికి మరియు సాగుకు భూమి కావలసిన రైతులు మధ్యవర్తులు లేకుండా నేరుగా సంప్రదించుకునే వేదిక.</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- 2. Labor Features -->
-            <div id="labor-feature" class="feature-content">
-                <h4>👨‍🌾 వ్యవసాయ కూలీలకు లభించే సేవలు & నమోదు కేంద్రం:</h4>
-                <div class="features-grid">
-
-                    <!-- DAILY FARM JOBS (ACCORDION) -->
-                    <div class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #2e7d32;">
-                        <div class="accordion-header" onclick="toggleDailyJobsAccordion()">
-                            <div style="display:flex; align-items:center; gap:1rem;">
-                                <div class="feature-img-icon">📋</div>
-                                <div class="feature-info">
-                                    <h5>రోజువారీ పనుల సమాచారం (రైతులు పోస్ట్ చేసిన పనులు)</h5>
-                                    <p style="margin-bottom:0;">రైతులు పోస్ట్ చేసిన పనుల లిస్ట్ చూడటానికి ఇక్కడ క్లిక్ చేయండి ▼</p>
-                                </div>
-                            </div>
-                            <span class="accordion-arrow" id="arrowDailyJobs">▼</span>
-                        </div>
-
-                        <div class="accordion-body" id="bodyDailyJobs">
-                            <div style="background: #f9fbf9; padding: 10px; border-radius: 8px; border: 1px solid #c8e6c9;">
-                                <strong style="color: #1B5E20; font-size: 0.9rem;">🌾 ప్రస్తుత వ్యవసాయ పనులు (లైవ్ క్లౌడ్ లిస్ట్):</strong>
-                                <div id="activeDailyJobsContainer" style="margin-top: 6px; max-height: 280px; overflow-y: auto;">
-                                    <div style="text-align:center; padding:10px; color:#666; font-size:0.85rem;">రైతులు పోస్ట్ చేసిన పనులు లోడ్ అవుతున్నాయి...</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- MESTRY REGISTRATION (ACCORDION) -->
-                    <div class="feature-card" style="flex-direction: column; align-items: stretch; border: 2px solid #1B5E20; background: #fff;">
-                        <div class="accordion-header" onclick="toggleMestryRegisterAccordion()">
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <div class="feature-img-icon">👥</div>
-                                <div class="feature-info">
-                                    <h5>మేస్త్రీ / గ్రూప్ నమోదు (Mestry Registration)</h5>
-                                    <p style="margin-bottom:0;">మేస్త్రీలు తమ గ్రూప్‌ను నమోదు చేసుకోవడానికి ఇక్కడ క్లిక్ చేయండి ▼</p>
-                                </div>
-                            </div>
-                            <span class="accordion-arrow" id="arrowMestryRegister">▼</span>
-                        </div>
-
-                        <div class="accordion-body" id="bodyMestryRegister">
-                            <div style="background: #f9fbf9; padding: 12px; border-radius: 8px; border: 1px solid #c8e6c9;">
-                                <div class="form-group" style="margin-top: 6px;">
-                                    <label style="font-size:0.85rem; font-weight:bold;">మేస్త్రీ / గ్రూప్ లీడర్ పేరు:</label>
-                                    <input type="text" id="directMestryName" placeholder="ఉదా: వెంకన్న మేస్త్రీ" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
-                                </div>
-                                <div class="form-group" style="margin-top: 8px;">
-                                    <label style="font-size:0.85rem; font-weight:bold;">మొబైల్ నంబర్ (కాల్స్ కోసం):</label>
-                                    <input type="tel" id="directMestryPhone" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
-                                </div>
-                                <div class="form-group" style="margin-top: 8px;">
-                                    <label style="font-size:0.85rem; font-weight:bold;">UPI ID (కూలీల పేమెంట్స్ నేరుగా పొందడానికి):</label>
-                                    <input type="text" id="directMestryUpi" placeholder="ఉదా: 9876543210@ybl లేదా phonepe" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
-                                </div>
-                                <div class="form-group" style="margin-top: 8px;">
-                                    <label style="font-size:0.85rem; font-weight:bold;">మీ గ్రూప్‌లో ఉన్న కూలీల సంఖ్య:</label>
-                                    <input type="number" id="directMestryCount" placeholder="ఉదా: 15 మంది" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
-                                </div>
-                                <div class="form-group" style="margin-top: 8px;">
-                                    <label style="font-size:0.85rem; font-weight:bold;">గ్రామం / మండలం:</label>
-                                    <input type="text" id="directMestryVillage" placeholder="గ్రామం పేరు" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
-                                </div>
-                                <div class="form-group" style="margin-top: 8px;">
-                                    <label style="font-size:0.85rem; font-weight:bold;">చేయగల పనులు:</label>
-                                    <input type="text" id="directMestrySkills" placeholder="ఉదా: వరి నాట్లు, మిర్చి కోత, పత్తి ఏరడం" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:0.9rem;">
-                                </div>
-
-                                <button type="button" id="btnSubmitMestry" onclick="submitDirectLaborRegistration()" style="width: 100%; background: #1B5E20; color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 0.95rem; cursor: pointer; margin-top: 12px;">
-                                    📍 GPS లొకేషన్‌తో నమోదు చేయండి (Live Sync)
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">📞</div>
-                        <div class="feature-info">
-                            <h5>నేరుగా రైతులతో మాట్లాడే అవకాశం</h5>
-                            <p>దళారులు లేకుండా నేరుగా రైతు ఫోన్ నంబర్‌కు కాల్ చేసి పని మరియు రోజువారీ కూలీ రేట్లను ఖరారు చేసుకోవచ్చు.</p>
-                        </div>
-                    </div>
-
-                    <div class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🎙️</div>
-                        <div class="feature-info">
-                            <h5>వాయిస్ అసిస్టెంట్ మార్గదర్శకత్వం</h5>
-                            <p>చదవడం రాని వారి కోసం సులభంగా తెలుగు మాటల ద్వారా పనుల వివరాలు వినే ప్రత్యేక సదుపాయం.</p>
-                                      <!-- Voice Recognition Action -->
-              <div style="margin-top: 8px;">
-                <button type="button" onclick="event.stopPropagation(); startLiveVoiceNav();" style="background: #1b5e20; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.82rem; font-weight: bold; cursor: pointer;">
-                  🎙️ మాట్లాడండి (వాయిస్ కమాండ్)
-                </button>
-                <div id="voice-nav-output" style="margin-top: 6px; font-size: 0.8rem; color: #1b5e20;"></div>
-              </div>
-              
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- 3. Trader Features -->
-            <div id="trader-feature" class="feature-content">
-                <h4>🏪 వ్యాపారధారులకు లభించే సేవలు (Traders & Buyers):</h4>
-                <div class="features-grid">
-                    <div class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🌾</div>
-                        <div class="feature-info">
-                            <h5>రైతుల నుండి ప్రత్యక్ష కొనుగోలు</h5>
-                            <p>వరి, మిర్చి, పత్తి పంటలను గ్రామాల వారీగా రైతులు అమ్మకానికి ఉంచిన లాట్లను నేరుగా పరిశీలించవచ్చు.</p>
-                        </div>
-                    </div>
-                    <div class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">🤝</div>
-                        <div class="feature-info">
-                            <h5>రైతులతో డైరెక్ట్ డీల్స్</h5>
-                            <p>మధ్యవర్తులు లేకుండా నాణ్యమైన పంట కోసం రైతులతో నేరుగా సంప్రదించి వ్యాపార ఒప్పందాలు చేసుకోవచ్చు.</p>
-                        </div>
-                    </div>
-                    <div class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">📊</div>
-                        <div class="feature-info">
-                            <h5>పంట దిగుబడి అంచనా</h5>
-                            <p>ప్రాంతాల వారీగా ఏ పంటలు ఎంత పరిమాణంలో కోతకు సిద్ధంగా ఉన్నాయో ముందస్తు మార్కెట్ విశ్లేషణ పొందవచ్చు.</p>
-                        </div>
-                    </div>
-                    <div class="feature-card speakable" onclick="speakElement(this)">
-                        <div class="feature-img-icon">📢</div>
-                        <div class="feature-info">
-                            <h5>కొనుగోలు అవసరాల ప్రకటనలు</h5>
-                            <p>మీకు కావలసిన నాణ్యత, పరిమాణం గల ధాన్యాల కొనుగోలు ప్రకటనలు ఇచ్చి రైతులను ఆకర్షించవచ్చు.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+          <div style="font-size: 2.2rem;">⛅</div>
         </div>
-    </section>
+        <button onclick="getLiveLocationWeather()" style="width:100%; margin-top:10px; padding:8px; background:#1B5E20; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+          📍 నా లొకేషన్ వాతావరణం
+        </button>
+        <div id="gps-weather-res" style="font-size:0.85rem; margin-top:5px; color:#444;"></div>
+      </div>
 
-    <!-- ================= VIEW 3: ABOUT US ================= -->
-    <section id="about-view" class="page-view">
-        <div class="info-page-box">
-            <h3>ℹ️ మా గురించి & ప్రధాన ఆవిష్కరణలు (About AgriConnect Technologies)</h3>
-            <p><strong>AgriConnect Technologies (UDYAM-TS-31-0063048)</strong> అనేది తెలంగాణ రాష్ట్రంలోని హనుమకొండ/వరంగల్ కేంద్రంగా ఏర్పడిన ఒక సరికొత్త డిజిటల్ వ్యవసాయ విప్లవం. గ్రామీణ రైతులు, వ్యవసాయ కూలీలు మరియు వ్యాపారులను అత్యాధునిక సాంకేతికతతో ఒకే తాటిపైకి తీసుకురావడమే మా ప్రధాన ధ్యేయం.</p>
+      <!-- Live Mandi Rates Card -->
+      <div id="card-mandi" class="dash-card speakable" onclick="speakElement(this)">
+        <h4>📊 మార్కెట్ ధరలు (Mandi Rates)</h4>
+        <table class="rates-table">
+          <thead>
+            <tr>
+              <th>పంట</th>
+              <th>మార్కెట్</th>
+              <th>ధర (క్వింటాల్)</th>
+            </tr>
+          </thead>
+          <tbody id="mandi-rates-body">
+            <tr>
+              <td>వరి (Paddy)</td>
+              <td>వరంగల్</td>
+              <td class="rate-high">₹2,320</td>
+            </tr>
+            <tr>
+              <td>మిర్చి (Chilli)</td>
+              <td>వరంగల్</td>
+              <td class="rate-high">₹14,500</td>
+            </tr>
+            <tr>
+              <td>పత్తి (Cotton)</td>
+              <td>వరంగల్</td>
+              <td class="rate-high">₹7,200</td>
+            </tr>
+          </tbody>
+        </table>
+        <button onclick="saveMandiOfflineData()" style="width:100%; margin-top:10px; padding:8px; background:#e65100; color:#fff; border:none; border-radius:6px; cursor:pointer;">
+          💾 ధరలు ఆఫ్‌లైన్‌లో సేవ్ చేయండి
+        </button>
+        <div id="offline-saved-msg" style="font-size:0.82rem; margin-top:4px;"></div>
+      </div>
 
-            <div class="innovation-banner speakable" onclick="speakElement(this)">
-                <h4>🚀 మా ప్రధాన ఆవిష్కరణ (Our Core Innovation):</h4>
-                <p>చదవడం, రాయడం రాని నిరుపేద గ్రామీణ రైతులు మరియు వ్యవసాయ కూలీల కోసం <strong>100% తెలుగు వాయిస్ గైడెన్స్ (Voice Guidance)</strong> తో నడిచే ప్రపంచంలోనే మొట్టమొదటి హైపర్‌లోకల్ వేదిక AgriConnect.</p>
-            </div>
+      <!-- Voice Assistant Trigger Card -->
+      <div class="dash-card" style="border-top-color: #0288d1;">
+        <h4 style="color: #0288d1;">🎙️ వాయిస్ కమాండ్ అసిస్టెంట్</h4>
+        <p style="font-size: 0.88rem; color: #555; margin-bottom: 10px;">తెలుగు లేదా ఇంగ్లీషులో మాట్లాడి సమాచారం పొందండి.</p>
+        <button onclick="startLiveVoiceNav()" style="width:100%; padding:12px; background:#0288d1; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; font-size:1rem;">
+          🎤 మాట్లాడండి (Voice Search)
+        </button>
+        <div id="voice-nav-output" style="margin-top:8px; font-size:0.85rem; color:#333;">మైక్ బటన్ నొక్కి మాట్లాడండి...</div>
+      </div>
 
-            <div class="about-highlights">
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>📍 5-10 కి.మీ హైపర్‌లోకల్ లేబర్ మ్యాచింగ్</h5>
-                    <p>రైతు తన పొలం ఉన్న ప్రాంతం నుండి కేవలం <strong>5 నుండి 10 కిలోమీటర్ల పరిధిలోని</strong> వ్యవసాయ కూలీలను, గ్రూపులను క్షణాల్లో కనుగొనవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🤝 రైతు - కూలీ ప్రత్యక్ష సంభాషణ</h5>
-                    <p>మధ్యలో ఎటువంటి దళారులు, ఏజెంట్లు ఉండరు. రైతులు నేరుగా కూలీల ఫోన్ నంబర్‌కు కాల్ చేసి రోజువారీ పనులు, కూలీ రేట్లను మాట్లాడవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🌾 కొనుగోలుదారులకు నేరుగా పంట విక్రయం</h5>
-                    <p>మధ్యవర్తుల మోసాలకు తావులేకుండా రైతులు తాము పండించిన పంటను నేరుగా ట్రేడర్స్ మరియు బయ్యర్లకు అత్యుత్తమ మార్కెట్ ధర వద్ద విక్రయించవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🌱 సేంద్రీయ వ్యవసాయానికి ప్రోత్సాహం</h5>
-                    <p>భూసారాన్ని రక్షించే సహజ సిద్ధమైన సేంద్రీయ ఎరువులు, బయో-ఫెర్టిలైజర్స్ వాడకాన్ని ప్రోత్సహిస్తూ ఆర్గానిక్ పంటలకు ప్రత్యేక మార్కెట్ గుర్తింపు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🎙️ స్థానిక భాషలో పంటలు & తెగుళ్ల నివారణ</h5>
-                    <p>వరి, మిర్చి, పత్తితో సహా అన్ని రకాల పంటల వివరాలు, ఆశించే చీడపీడలు మరియు వాటి నివారణ మార్గాలను స్థానిక తెలుగు భాషలో వాయిస్ ద్వారా వినవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🎯 రైతే రాజు - సాంకేతికతే బలం</h5>
-                    <p>ఆర్టిఫిషియల్ ఇంటెలిజెన్స్, శాటిలైట్ మానిటరింగ్ మరియు వాయిస్ సాంకేతికతను జోడించి ప్రతి రైతును ఆర్థికంగా బలోపేతం చేయడమే లక్ష్యం.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ================= VIEW 4: WHY CHOOSE US ================= -->
-    <section id="why-view" class="page-view">
-        <div class="info-page-box">
-            <h3>⭐ మమ్మల్ని ఎందుకు ఎంచుకోవాలి? (Why Choose AgriConnect)</h3>
-            <div class="world-first-card speakable" onclick="speakElement(this)">
-                <span class="badge-world-first">🌍 World's 1st Innovation</span>
-                <h4>హైపర్‌లోకల్ లేబర్ మ్యాచింగ్ విత్ వాయిస్ గైడెన్స్</h4>
-                <p><strong>This is the first time introduced in the world with Voice Guidance!</strong><br>
-                ప్రపంచంలోనే మొట్టమొదటిసారిగా, చదవడం మరియు టైప్ చేయడం రాని గ్రామీణ రైతులు & కూలీల కోసం <strong>100% వాయిస్ గైడెన్స్</strong> తో Hyperlocal Labor Matching (5-10 KM Range) సాంకేతికతను AgriConnect ఆవిష్కరించింది.</p>
-            </div>
-
-            <div class="about-highlights">
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🚫 దళారులు లేని పారదర్శకత</h5>
-                    <p>కూలీల బుకింగ్ అయినా, యంత్రాల అద్దె అయినా లేదా పంట అమ్మకం అయినా – నేరుగా రైతులే అవతలి వ్యక్తులతో ఫోన్ చేసి డీల్ కుదుర్చుకోవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🎙️ పూర్తి వాయిస్ నావిగేషన్</h5>
-                    <p>యాప్ ఎలా వాడాలో తెలియకపోయినా, మైక్ బటన్ నొక్కి తెలుగులో మాట్లాడితే చాలు – అడిగిన ఫీచర్ స్క్రీన్ పై వెంటనే ప్రత్యక్షమవుతుంది.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>🛰️ పొలం శాటిలైట్ మానిటరింగ్</h5>
-                    <p>మీ పొలం జియో-లొకేషన్ ఆధారంగా ఉపగ్రహ సమాచారంతో పంట ఆరోగ్యాన్ని, తేమ శాతాన్ని ఎప్పటికప్పుడు విశ్లేషించవచ్చు.</p>
-                </div>
-
-                <div class="highlight-item speakable" onclick="speakElement(this)">
-                    <h5>📈 లైవ్ మార్కెట్ యార్డ్ రేట్లు</h5>
-                    <p>వరంగల్ ఏనుమాముల మార్కెట్ రోజువారీ క్వింటాల్ లైవ్ రేట్లను పారదర్శకంగా తెలుసుకుని పంటకు సరైన ధర పొందవచ్చు.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Floating Dock: Speaker & Mic -->
-    <div class="floating-dock">
-        <button class="dock-btn btn-speaker" id="speakerBtn" onclick="toggleVoiceReader()" title="వాయిస్ రీడర్">🔊</button>
-        <button class="dock-btn btn-mic" id="voiceBtn" onclick="toggleVoiceAssistant()" title="తెలుగులో మాట్లాడండి">🎙️</button>
     </div>
+  </main>
 
-    <div id="voice-toast" class="voice-status-toast">వింటున్నాము...</div>
+  <!-- ================= 2. AI CROP DOCTOR & SENSORS VIEW ================= -->
+  <main id="ai-doctor-view" class="page-view" style="max-width: 800px; margin: 1.5rem auto; padding: 0 1rem;">
+    <div id="card-doctor" class="dash-card" style="border-top-color: #2e7d32;">
+      <h3 style="color: #1b5e20; text-align: center; margin-bottom: 8px;">🔬 AI పంట డాక్టర్ & భూసార పరీక్ష</h3>
+      <p style="text-align: center; font-size: 0.9rem; color: #666; margin-bottom: 16px;">
+        పంట తెగుళ్ళు గుర్తించడానికి లేదా భూసార రీడింగ్స్ కోసం క్రింది బటన్లలో ఒకదాన్ని ఎంచుకోండి:
+      </p>
 
-    <!-- ================= MODALS SECTION ================= -->
+      <!-- 3 Primary Action Buttons -->
+      <div style="display: grid; gap: 10px; margin-bottom: 15px;">
+        <!-- 1. Camera Button -->
+        <label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; background: #e65100; color: #fff; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center;">
+          📷 ఆకు ఫోటో తీయండి (Camera)
+          <input type="file" accept="image/*" capture="environment" onchange="handleCropCamera(event)" style="display: none;">
+        </label>
 
-    <!-- MODAL 1: LOGIN & PROFILE SETUP (REAL SMS OTP & RECAPTCHA INTEGRATED) -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeLoginModal()">&times;</span>
-            <div id="modal-step-login">
-                <h3 class="modal-title">🌾 AgriConnect లాగిన్</h3>
-                <p style="font-size: 0.85rem; color: #666;">మొబైల్ నంబర్ మరియు అసలైన SMS OTP ద్వారా లాగిన్ అవ్వండి</p>
+        <!-- 2. Soil Test Button -->
+        <button type="button" onclick="openSoilTest()" style="padding: 12px; background: #795548; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+          🧪 భూసార పరీక్ష (NPK & pH)
+        </button>
 
-                <div class="form-group">
-                    <label>మొబైల్ నంబర్ (Mobile Number):</label>
-                    <div style="display:flex; gap:6px;">
-                        <span style="background:#eee; padding:10px 12px; border-radius:6px; font-weight:bold; border:1px solid #ccc; font-size:0.95rem;">+91</span>
-                        <input type="tel" id="mobileNumberInput" placeholder="10 అంకెల మొబైల్ నంబర్" maxlength="10" style="flex:1;">
-                    </div>
-                </div>
+        <!-- 3. Sensor Live Readings Button -->
+        <button type="button" onclick="openSoilSensors()" style="padding: 12px; background: #0288d1; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+          📡 సెన్సార్ లైవ్ రీడింగ్స్ (Moisture)
+        </button>
+      </div>
 
-                <!-- Invisible reCAPTCHA Container for Google Security Verification -->
-                <div id="recaptcha-container"></div>
+      <!-- Action Results Display Panels -->
+      <div id="camera-result-panel" style="display: none; background: #f1f8e9; border: 1px solid #c5e1a5; padding: 12px; border-radius: 8px; margin-top: 10px;">
+        <h4 style="margin: 0 0 6px 0; color: #2e7d32;">🔬 AI స్కానింగ్ ఫలితం:</h4>
+        <div id="crop-doctor-res" style="font-size: 0.88rem; color: #333;">ప్రాసెస్ అవుతోంది...</div>
+      </div>
 
-                <div class="otp-inputs" id="otpSection" style="display:none; margin-top:0.8rem;">
-                    <div class="form-group">
-                        <label>మొబైల్‌కు వచ్చిన 6 అంకెల OTP నమోదు చేయండి:</label>
-                        <input type="text" id="otpInput" placeholder="6 అంకెల SMS OTP" maxlength="6">
-                    </div>
-                </div>
-                <button type="button" class="btn-action-primary" id="btnOtpAction" onclick="handleOtpFlow()">OTP పంపండి</button>
-            </div>
-
-            <div id="modal-step-profile" style="display: none;">
-                <h3 class="modal-title">👤 యూజర్ ప్రొఫైల్ సెటప్</h3>
-                <div class="photo-preview-container">
-                    <img id="profilePreviewImg" src="https://via.placeholder.com/90?text=Photo" alt="Profile" class="photo-preview"><br>
-                    <label for="photoUploadInput" class="btn-photo-upload">📷 మీ ఫోటో మార్చండి (Upload Photo)</label>
-                    <input type="file" id="photoUploadInput" accept="image/*" style="display:none" onchange="previewPhoto(event)">
-                </div>
-                <div class="form-group">
-                    <label>మీ పూర్తి పేరు (Full Name):</label>
-                    <input type="text" id="farmerNameInput" placeholder="పేరు రాయండి">
-                </div>
-                <div class="form-group">
-                    <label>మీ ప్రధాన విభాగం ఎంచుకోండి:</label>
-                    <select id="userCategorySelect" onchange="handleCategorySelection(this.value)">
-                        <option value="farmer">రైతు (Farmer)</option>
-                        <option value="laborer">వ్యవసాయ కూలీ (Farm Laborer)</option>
-                        <option value="trader">వ్యాపారధారి (Trader/Buyer)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>🛰️ స్థానిక లొకేషన్ (GPS):</label>
-                    <div class="gps-box">
-                        <button type="button" style="background:#2e7d32; color:white; border:none; padding:6px 12px; border-radius:6px; font-weight:bold; cursor:pointer;" onclick="captureLocation()">📍 నా లొకేషన్ గుర్తించండి</button>
-                        <div class="gps-status" id="gpsStatusText">లొకేషన్ ఇంకా నమోదు కాలేదు</div>
-                    </div>
-                </div>
-                <button type="button" class="btn-action-primary" onclick="saveProfile()">ప్రొఫైల్ సేవ్ చేసి ప్రారంభించండి</button>
-            </div>
+      <div id="soil-test-panel" style="display: none; background: #efebe9; border: 1px solid #d7ccc8; padding: 12px; border-radius: 8px; margin-top: 10px;">
+        <h4 style="margin: 0 0 6px 0; color: #4e342e;">🧪 భూసార విశ్లేషణ:</h4>
+        <div style="font-size: 0.88rem; color: #333; line-height: 1.6;">
+          🌱 <b>pH స్థాయి:</b> 6.7 (అనుకూలం)<br>
+          ⚖️ <b>NPK:</b> N-మధ్యస్థం | P-సాధారణం | K-ఎక్కువ<br>
+          💡 <b>సూచన:</b> ఎకరాకు 25 కేజీల యూరియాతో పాటు సేంద్రీయ ఎరువులు వేయండి.
         </div>
-    </div>
+      </div>
 
-    <!-- MODAL 2: SETTINGS -->
-    <div class="modal-overlay" id="settingsModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeSettingsModal()">&times;</span>
-            <h3 class="modal-title">⚙️ యాప్ సెట్టింగ్స్ (Settings)</h3>
-            <div class="form-group">
-                <label>🌐 భాష ఎంపిక:</label>
-                <select id="appLanguageSelect">
-                    <option value="te" selected>తెలుగు (Telugu)</option>
-                    <option value="en">English</option>
-                    <option value="hi">हिंदी (Hindi)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>✏️ పేరు మార్పు:</label>
-                <input type="text" id="settingFarmerName" placeholder="పేరును సరిచేయండి">
-            </div>
-            <div class="form-group">
-                <label>📱 మొబైల్ నంబర్ మార్పు:</label>
-                <input type="tel" id="settingMobileNumber" placeholder="కొత్త మొబైల్ నంబర్" maxlength="10">
-            </div>
-            <div class="form-group">
-                <label>🌾 ప్రధాన పంట & విస్తీర్ణం (Acres):</label>
-                <input type="text" id="settingFarmDetails" placeholder="ఉదా: 4 ఎకరాలు - వరి & మిర్చి">
-            </div>
-            <button type="button" class="btn-action-primary" onclick="saveSettings()">సెట్టింగ్స్ సేవ్ చేయండి</button>
+      <div id="soil-sensor-panel" style="display: none; background: #e1f5fe; border: 1px solid #b3e5fc; padding: 12px; border-radius: 8px; margin-top: 10px;">
+        <h4 style="margin: 0 0 6px 0; color: #0277bd;">📡 లైవ్ సెన్సార్ రీడింగ్స్:</h4>
+        <div style="font-size: 0.88rem; color: #333; line-height: 1.6;">
+          💧 <b>నేల తేమ (Moisture):</b> 45% (సరైన స్థాయిలో ఉంది)<br>
+          🌡️ <b>ఉష్ణోగ్రత:</b> 27°C | <b>EC:</b> 1.1 dS/m
         </div>
+      </div>
+
     </div>
+  </main>
 
-    <!-- MODAL 3: CONTACT US -->
-    <div class="modal-overlay" id="contactModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeContactModal()">&times;</span>
-            <h3 class="modal-title">📞 మమ్మల్ని సంప్రదించండి</h3>
-            <div style="background:#f9fbf9; border:1px solid #c8e6c9; border-radius:8px; padding:1rem; font-size:0.9rem;">
-                <p>🏢 <strong>కంపెనీ:</strong> AgriConnect Technologies</p>
-                <p>📜 <strong>UDYAM Reg:</strong> UDYAM-TS-31-0063048</p>
-                <p>📍 <strong>చిరునామా:</strong> హనుమకొండ / వరంగల్, తెలంగాణ, భారతదేశం - 506001</p>
-                <p>✉️ <strong>ఈమెయిల్:</strong> <a href="mailto:agriconnect.office@gmail.com" style="color:#1B5E20; font-weight:bold;">agriconnect.office@gmail.com</a></p>
-                <p>📞 <strong>హెల్ప్‌లైన్:</strong> +91 98765 43210</p>
-            </div>
-            <button type="button" class="btn-action-primary" onclick="closeContactModal()">సరే (Close)</button>
-        </div>
+  <!-- ================= 3. LABOR & WORKERS VIEW ================= -->
+  <main id="labor-view" class="page-view" style="max-width: 800px; margin: 1.5rem auto; padding: 0 1rem;">
+    <div class="dash-card">
+      <h3 style="color: #1b5e20; margin-bottom: 12px;">👷 వ్యవసాయ కూలీల రిజిస్ట్రేషన్ & అవసరాలు</h3>
+      <p style="font-size: 0.88rem; color: #555;">మీ ప్రాంతంలో అందుబాటులో ఉన్న కూలీలు మరియు పనుల వివరాలు ఇక్కడ చూడవచ్చు.</p>
+      <div id="labor-list" style="margin-top: 12px; font-size: 0.88rem; color: #444;">
+        <i>కూలీల సమాచారం లోడ్ అవుతోంది...</i>
+      </div>
     </div>
+  </main>
 
-    <!-- MODAL 4: UNIVERSAL 3-IN-1 WALLET -->
-    <div class="modal-overlay" id="walletModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeWalletModal()">&times;</span>
-            <h3 class="modal-title">💰 AgriConnect Wallet</h3>
+  <!-- ================= MODULAR SCRIPTS (IN CORRECT ORDER) ================= -->
+  <!-- 1. Database and Sensor Logic -->
+  <script src="firebase-db.js"></script>
 
-            <div class="wallet-card-box">
-                <span class="wallet-role-badge" id="walletRoleBadge">రైతు ఖాతా (Farmer)</span>
-                <div style="font-size: 0.9rem; opacity: 0.9;">అందుబాటులో ఉన్న బ్యాలెన్స్:</div>
-                <div class="wallet-balance-num" id="walletBalance">₹ 14,850.00</div>
-                <div style="font-size: 0.8rem; opacity: 0.85;" id="walletUpiId">UPI: agriconnect.farmer@upi</div>
-            </div>
+  <!-- 2. Application Logic, Camera & Voice Navigation -->
+  <script src="app.js"></script>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #e8f5e9; padding: 6px 10px; border-radius: 8px;">
-                <span style="font-size: 0.82rem; font-weight: bold; color: #1B5E20;">వాలెట్ లావాదేవీల మోడ్:</span>
-                <select id="walletModeSwitcher" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #c8e6c9; font-size: 0.82rem;" onchange="switchWalletMode(this.value)">
-                    <option value="farmer">రైతు (Farmer View)</option>
-                    <option value="laborer">కూలీ (Laborer View)</option>
-                    <option value="trader">వ్యాపారి (Trader View)</option>
-                </select>
-            </div>
-
-            <div id="dynamicWalletActions" class="wallet-actions-grid"></div>
-
-            <h5 style="margin-top: 1.2rem; color: #1B5E20; border-bottom: 1px solid #eee; padding-bottom: 4px;">తాజా లావాదేవీలు:</h5>
-            <div id="walletTransactions" style="font-size: 0.85rem; max-height: 140px; overflow-y: auto; margin-top: 6px;"></div>
-
-            <button type="button" class="btn-action-primary" onclick="closeWalletModal()">ముగించు</button>
-        </div>
-    </div>
-
-    <!-- MODAL 5: PRICE ALERTS -->
-    <div class="modal-overlay" id="alertsModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeAlertsModal()">&times;</span>
-            <h3 class="modal-title">🔔 స్మార్ట్ ధర హెచ్చరికలు (Price Alerts)</h3>
-            <p style="font-size: 0.85rem; color: #666;">మీరు కోరుకున్న ధర మార్కెట్లో రాగానే మీకు SMS ద్వారా అలర్ట్ వస్తుంది:</p>
-
-            <div class="form-group">
-                <label>పంట ఎంపిక:</label>
-                <select id="alertCropSelect">
-                    <option>మిర్చి (తేజ రకం)</option>
-                    <option>పత్తి (Cotton)</option>
-                    <option>వరి (BPT / సన్నాలు)</option>
-                    <option>మొక్కజొన్న (Maize)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>మీరు ఆశిస్తున్న టార్గెట్ ధర (క్వింటాల్‌కి ₹):</label>
-                <input type="number" id="alertTargetPrice" placeholder="ఉదా: 19000">
-            </div>
-            <button type="button" class="btn-action-primary" onclick="savePriceAlert()">అలర్ట్ యాక్టివేట్ చేయండి</button>
-        </div>
-    </div>
-
-    <!-- MODAL 6: VOICE FARM LEDGER DIARY -->
-    <div class="modal-overlay" id="diaryModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeDiaryModal()">&times;</span>
-            <h3 class="modal-title">📖 రైతు ఖాతా డైరీ (Farm Ledger)</h3>
-            <p style="font-size: 0.85rem; color: #666;">పొలం ఖర్చులు మరియు అమ్మిన లాభాలు సులభంగా రాసుకోండి:</p>
-
-            <div class="form-group">
-                <label>వివరణ (ఉదా: విత్తనాలు, కూలీల ఖర్చు, యూరియా):</label>
-                <input type="text" id="diaryDesc" placeholder="ఖర్చు లేదా రాబడి వివరణ">
-            </div>
-            <div class="form-group">
-                <label>మొత్తం (₹):</label>
-                <input type="number" id="diaryAmount" placeholder="మొత్తం వేయండి">
-            </div>
-            <div class="form-group">
-                <label>రకం:</label>
-                <select id="diaryType">
-                    <option value="expense">ఖర్చు (Expense -)</option>
-                    <option value="income">రాబడి (Income +)</option>
-                </select>
-            </div>
-            <button type="button" class="btn-action-primary" onclick="addDiaryEntry()">డైరీలో నమోదు చేయండి</button>
-
-            <h5 style="margin-top: 1rem; color: #1B5E20;">నమోదైన లెక్కలు:</h5>
-            <div id="diaryList" style="max-height: 120px; overflow-y: auto; margin-top: 6px;"></div>
-        </div>
-    </div>
-
-    <!-- MODAL 7: SHARED MACHINERY GROUP BOOKING -->
-    <div class="modal-overlay" id="sharedMachineryModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeSharedMachineryModal()">&times;</span>
-            <h3 class="modal-title">🤝 రైతు గ్రూప్ యంత్రాల అద్దె</h3>
-            <p style="font-size: 0.85rem; color: #666;">సమీప పొలాల రైతులతో కలిసి గ్రూప్ బుకింగ్ చేసుకోండి:</p>
-
-            <div class="form-group">
-                <label>యంత్రం ఎంపిక:</label>
-                <select>
-                    <option>వరి కోత మిషన్ (హార్వెస్టర్) - ₹ 2,200/గంట</option>
-                    <option>స్ప్రేయింగ్ డ్రోన్ - ₹ 399/ఎకరం</option>
-                    <option>భారీ ట్రాక్టర్ రోటవేటర్ - ₹ 1,100/గంట</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>కలిసి బుక్ చేసుకునే రైతుల సంఖ్య (రైతులు):</label>
-                <input type="number" min="2" max="6" value="3">
-            </div>
-            <div class="form-group">
-                <label>మొత్తం విస్తీర్ణం (ఎకరాలు):</label>
-                <input type="text" placeholder="ఉదా: 8 ఎకరాలు">
-            </div>
-            <button type="button" class="btn-action-primary" onclick="alert('మీ గ్రూప్ బుకింగ్ రిక్వెస్ట్ సమీప యంత్ర ఆపరేటర్లకు పంపబడింది! 30% రాయితీ వర్తిస్తుంది.'); closeSharedMachineryModal();">
-                గ్రూప్ బుకింగ్ ఖరారు చేయండి
-            </button>
-        </div>
-    </div>
-
-    <!-- MODAL 8: DIRECT UPI PAYMENT (PHONEPE / GPAY) -->
-    <div class="modal-overlay" id="upiPaymentModal">
-        <div class="modal-box">
-            <span class="modal-close" onclick="closeUpiModal()">&times;</span>
-            <h3 class="modal-title">💸 నేరుగా UPI ద్వారా వేతనం చెల్లింపు</h3>
-            <div style="background:#f3e5f5; border:1px solid #ce93d8; border-radius:8px; padding:12px; margin-top:12px;">
-                <div style="font-size:0.9rem;">మేస్త్రీ పేరు: <strong id="upiPayMestryName">-</strong></div>
-                <div style="font-size:0.85rem; color:#4a148c;">UPI ID: <span id="upiPayMestryVpa">-</span></div>
-            </div>
-            <div class="form-group">
-                <label>చెల్లించాల్సిన మొత్తం (₹):</label>
-                <input type="number" id="upiPayAmount" placeholder="ఉదా: 3500">
-            </div>
-            <div class="form-group">
-                <label>వివరణ (Note):</label>
-                <input type="text" id="upiPayNote" value="వ్యవసాయ కూలీ వేతనం">
-            </div>
-            <button type="button" class="btn-action-primary" style="background:#5c2d91;" onclick="processDirectUpiPay()">
-                📲 PhonePe / GPay / Paytm లో చెల్లించండి
-            </button>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer>
-        <p><strong>AgriConnect Technologies</strong> | UDYAM-TS-31-0063048</p>
-        <p>Hanamkonda / Warangal, Telangana, India</p>
-        <p>Contact: <a href="mailto:agriconnect.office@gmail.com" style="color:#FFD54F;">agriconnect.office@gmail.com</a></p>
-    </footer>
-
-    <!-- Logic Engine File -->
-    <script src="app.js"></script>
-<script>
-  // Register Service Worker
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/Agriconnect-web/sw.js')
-        .then((reg) => {
-          console.log('AgriConnect Service Worker Ready:', reg.scope);
-
-          // Request Push Notification Permission
-          if ('Notification' in window && Notification.permission === 'default') {
-            Notification.requestPermission().then((permission) => {
-              if (permission === 'granted') {
-                console.log('Notification permission granted!');
-              }
-            });
-          }
-        })
-        .catch((err) => {
-          console.error('Service Worker registration failed:', err);
-        });
-    });
-  }
-// Register Periodic Sync
-if ('periodicSync' in reg) {
-  reg.periodicSync.register('agri-news-sync', {
-    minInterval: 12 * 60 * 60 * 1000 // ప్రతి 12 గంటలకు ఒకసారి అప్‌డేట్ అవుతుంది
-  }).then(() => {
-    console.log('AgriConnect Periodic Sync Registered Successfully!');
-  }).catch((err) => {
-    console.log('Periodic sync permission or browser support check:', err);
-  });
-}
-// Web Bluetooth - Soil Sensor Testing Integration
-async function connectSoilSensor() {
-  if (!navigator.bluetooth) {
-    alert("మీ బ్రౌజర్‌లో Web Bluetooth ఫీచర్‌కు మద్దతు లేదు. దయచేసి Chrome బ్రౌజర్ ఉపయోగించండి.");
-    return;
-  }
-
-  try {
-    const device = await navigator.bluetooth.requestDevice({
-      acceptAllDevices: true,
-      optionalServices: ['battery_service']
-    });
-
-    console.log("Soil Sensor Device Found:", device.name);
-    alert("భూసార సెన్సార్ (" + (device.name || "Unknown Device") + ") విజయవంతంగా అనుసంధానమైంది!");
-  } catch (error) {
-    console.log("Soil Sensor Connection error:", error);
-  }
-}
-// Offline Data LocalStorage Logic
-function saveMandiOfflineData() {
-  const offlineData = {
-    mandi: "వరంగల్ మార్కెట్ - పత్తి: ₹7,450 | మిర్చి: ₹18,200",
-    savedAt: new Date().toLocaleTimeString('te-IN')
-  };
-  localStorage.setItem("agri_offline_data", JSON.stringify(offlineData));
-  
-  const msgBox = document.getElementById("offline-saved-msg");
-  if (msgBox) {
-    msgBox.innerHTML = `✅ ఫోన్‌లో సేవ్ అయ్యింది: <b>${offlineData.mandi}</b> (${offlineData.savedAt})`;
-  }
-}
-// AI Crop Doctor - Camera Analysis
-function detectCropPest(event) {
-  const resultDiv = document.getElementById("crop-doctor-res");
-  const file = event.target.files[0];
-  if (file) {
-    resultDiv.innerHTML = `⏳ <b>${file.name}</b> పరిశీలిస్తోంది...`;
-    setTimeout(() => {
-      resultDiv.innerHTML = `✅ <b>గుర్తించిన వ్యాధి:</b> ఆకుమచ్చ తెగులు (Leaf Spot)<br>💊 <b>నివారణ:</b> మాంకోజెబ్ (Mancozeb) 2 గ్రాములు లీటరు నీటికి కలిపి పిచికారీ చేయండి.`;
-    }, 1200);
-  }
-}
-
-// Hyperlocal Weather - GPS Geolocation
-function getLiveLocationWeather() {
-  const resultDiv = document.getElementById("gps-weather-res");
-  if (!navigator.geolocation) {
-    resultDiv.innerText = "మీ ఫోన్‌లో GPS సపోర్ట్ లేదు.";
-    return;
-  }
-  resultDiv.innerText = "📡 మీ ప్రస్తుత ప్రాంత వివరాలను తీసుకుంటోంది...";
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const lat = pos.coords.latitude.toFixed(2);
-      const lon = pos.coords.longitude.toFixed(2);
-      resultDiv.innerHTML = `📍 <b>స్థానం:</b> Lat: ${lat}, Lon: ${lon}<br>☀️ <b>వాతావరణం:</b> 29°C, తేమ 62%, వర్ష సూచన లేదు (పంట కోతకు అనుకూలం).`;
-    },
-    () => {
-      resultDiv.innerText = "లొకేషన్ అనుమతి నిరాకరించబడింది. ఫోన్ సెట్టింగ్స్‌లో GPS ఆన్ చేయండి.";
-    }
-  );
-}
-// Smart Multilingual Voice Navigation
-function startLiveVoiceNav() {
-  const output = document.getElementById("voice-nav-output");
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    alert("మీ బ్రౌజర్‌లో వాయిస్ రికగ్నిషన్ పనిచేయడం లేదు. దయచేసి Google Chrome వాడండి.");
-    return;
-  }
-
-  const recognition = new SpeechRecognition();
-  recognition.lang = navigator.language || 'te-IN';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 5;
-
-  if (output) output.innerHTML = "🎙️ <i>వింటున్నాను... ఏ భాషలోనైనా మాట్లాడండి...</i>";
-
-  recognition.onresult = function(event) {
-    let speechWords = "";
-    for (let i = 0; i < event.results[0].length; i++) {
-      speechWords += " " + event.results[0][i].transcript.toLowerCase();
-    }
-
-    const originalText = event.results[0][0].transcript;
-    if (output) output.innerHTML = `🗣️ <b>మీరు చెప్పినది:</b> "${originalText}"`;
-
-    const weatherKeywords = [
-      "వాతావరణం", "వర్షం", "ఎండ", "చలి", "గాలులు", "weather", "rain", 
-      "climate", "forecast", "vatavaranam", "varsham", "yenda", "mausam", "barish"
-    ];
-
-    const doctorKeywords = [
-      "డాక్టర్", "తెగులు", "పురుగు", "మందు", "ఆకు", "పంట", "చెట్టు", 
-      "doctor", "crop", "pest", "disease", "medicine", "leaf", "plant", 
-      "thegulu", "tegulu", "purugu", "panta", "kida", "bimari"
-    ];
-
-    const mandiKeywords = [
-      "ధర", "ధరలు", "రేటు", "రేట్లు", "మార్కెట్", "మండి", "అమ్మకం", 
-      "price", "rate", "market", "mandi", "cost", "dhara", "retu", "bhav"
-    ];
-
-    const matches = (keywords) => keywords.some(word => speechWords.includes(word));
-
-    if (matches(weatherKeywords)) {
-      const el = document.getElementById("card-weather") || document.getElementById("gps-weather-res");
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (typeof getLiveLocationWeather === "function") getLiveLocationWeather();
-      }
-    } else if (matches(doctorKeywords)) {
-      const el = document.querySelector("#ai-doctor-view") || document.getElementById("crop-doctor-res") || document.querySelector("input[type='file']");
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        const fileInput = document.querySelector("input[type='file']");
-        if (fileInput) setTimeout(() => fileInput.click(), 400);
-      }
-    } else if (matches(mandiKeywords)) {
-      const el = document.getElementById("offline-saved-msg") || document.body;
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (typeof saveMandiOfflineData === "function") saveMandiOfflineData();
-      }
-    } else {
-      if (output) {
-        output.innerHTML += `<br><span style="color: #e65100; font-size: 13px;">💡 'వాతావరణం' (Weather), 'పంట డాక్టర్' (Crop Doctor), లేదా 'ధరలు' అని చెప్పండి.</span>`;
-      }
-    }
-  };
-
-  recognition.onerror = function() {
-    if (output) output.innerText = "వాయిస్ సరిగ్గా వినపడలేదు. మళ్ళీ మైక్ నొక్కి మాట్లాడండి.";
-  };
-
-  recognition.start();
-}
-// 1. Camera Photo Handler
-function handleCropCamera(event) {
-  const panel = document.getElementById("camera-result-panel");
-  const res = document.getElementById("crop-doctor-res");
-  
-  // Hide other panels
-  document.getElementById("soil-test-panel").style.display = "none";
-  document.getElementById("soil-sensor-panel").style.display = "none";
-
-  if (event.target.files && event.target.files[0]) {
-    panel.style.display = "block";
-    res.innerHTML = "⏳ <i>AI ఆకును స్కాన్ చేస్తోంది... తెగులు గుర్తిస్తోంది...</i>";
-    
-    setTimeout(() => {
-      res.innerHTML = `
-        ✅ <b>పంట:</b> మిరప / వరి<br>
-        ⚠️ <b>గుర్తించిన సమస్య:</b> ఆకు మచ్చ తెగులు (Leaf Spot)<br>
-        💊 <b>నివారణ మందు:</b> సాఫ్ (SAAF) 2 గ్రాములు లీటరు నీటిలో కలిపి పిచికారీ చేయండి.
-      `;
-    }, 1500);
-  }
-}
-
-// ================= FIREBASE REALTIME SOIL & SENSOR LOGIC =================
-
-// 1. Firebase Firestore నుండి లైవ్ భూసార సెన్సార్ డేటా
-function openSoilSensors() {
-  const cam = document.getElementById("camera-result-panel");
-  const test = document.getElementById("soil-test-panel");
-  if (cam) cam.style.display = "none";
-  if (test) test.style.display = "none";
-
-  const panel = document.getElementById("soil-sensor-panel");
-  if (!panel) return;
-  panel.style.display = "block";
-
-  const details = document.getElementById("soil-sensor-details") || panel.querySelector("div");
-  if (details) details.innerHTML = "⏳ <i>Firebase క్లౌడ్ నుండి లైవ్ సెన్సార్ డేటా లోడ్ అవుతోంది...</i>";
-
-  // Firestore "soil_sensors" కలెక్షన్ నుండి రియల్-టైమ్ డేటా
-  db.collection("soil_sensors")
-    .orderBy("timestamp", "desc")
-    .limit(1)
-    .onSnapshot((snapshot) => {
-      if (snapshot.empty) {
-        if (details) {
-          details.innerHTML = `
-            💧 <b>నేల తేమ (Moisture):</b> 45% (సరైన స్థాయిలో ఉంది)<br>
-            🌡️ <b>ఉష్ణోగ్రత:</b> 27°C | <b>EC:</b> 1.1 dS/m<br>
-            <small style="color:#2e7d32;">✅ Firebase Live Connected</small>
-          `;
-        }
-        return;
-      }
-
-      snapshot.forEach((doc) => {
-        const s = doc.data();
-        if (details) {
-          details.innerHTML = `
-            💧 <b>నేల తేమ (Moisture):</b> ${s.moisture || 42}%<br>
-            🌡️ <b>నేల ఉష్ణోగ్రత:</b> ${s.temperature || 28}°C<br>
-            ⚡ <b>EC కండక్టివిటీ:</b> ${s.ec || "1.2"} dS/m<br>
-            🕒 <b>సమయం:</b> ${s.time || new Date().toLocaleTimeString()}
-          `;
-        }
-      });
-    }, (error) => {
-      console.error("Firestore Sensor Error:", error);
-      if (details) details.innerHTML = "సెన్సార్ డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.";
-    });
-}
-
-// 2. Firebase Firestore నుండి భూసార పరీక్ష ఫలితాలు (Soil Test)
-function openSoilTest() {
-  const cam = document.getElementById("camera-result-panel");
-  const sensor = document.getElementById("soil-sensor-panel");
-  if (cam) cam.style.display = "none";
-  if (sensor) sensor.style.display = "none";
-
-  const panel = document.getElementById("soil-test-panel");
-  if (!panel) return;
-  panel.style.display = "block";
-
-  const details = document.getElementById("soil-test-details") || panel.querySelector("div");
-  if (details) details.innerHTML = "⏳ <i>ల్యాబ్ & క్లౌడ్ పరీక్ష రిపోర్టును తెస్తోంది...</i>";
-
-  // Firestore "soil_tests" కలెక్షన్ నుండి డేటా
-  db.collection("soil_tests")
-    .orderBy("createdAt", "desc")
-    .limit(1)
-    .onSnapshot((snapshot) => {
-      if (snapshot.empty) {
-        if (details) {
-          details.innerHTML = `
-            🌱 <b>pH స్థాయి:</b> 6.7 (అనుకూల తటస్థ నేల)<br>
-            🧪 <b>నత్రజని (N):</b> మధ్యస్థం | <b>భాస్వరం (P):</b> సాధారణం | <b>పొటాష్ (K):</b> సమృద్ధిగా ఉంది<br>
-            💡 <b>ఎరువుల సూచన:</b> ఎకరాకు 25 కేజీల యూరియాతో పాటు సేంద్రీయ ఎరువులు వాడండి.<br>
-            <small style="color:#2e7d32;">✅ ల్యాబ్ డేటా సింక్ అయింది</small>
-          `;
-        }
-        return;
-      }
-
-      snapshot.forEach((doc) => {
-        const t = doc.data();
-        if (details) {
-          details.innerHTML = `
-            🌱 <b>pH స్థాయి:</b> ${t.ph || 6.7}<br>
-            🧪 <b>NPK విలువ:</b> N: ${t.n || 'మధ్యస్థం'} | P: ${t.p || 'సాధారణం'} | K: ${t.k || 'ఎక్కువ'}<br>
-            💡 <b>సూచన:</b> ${t.recommendation || 'సేంద్రీయ ఎరువులు వాడండి.'}
-          `;
-        }
-      });
-    }, (err) => {
-      console.error("Soil Test Error:", err);
-      if (details) details.innerHTML = "భూసార వివరాలు లోడ్ చేయడంలో లోపం.";
-    });
-}
-</script>
 </body>
 </html>
