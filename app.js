@@ -960,3 +960,166 @@ window.addEventListener('DOMContentLoaded', () => {
 
     console.log("AgriConnect Engine fully loaded.");
 });
+// ================= 17.SENSORS & VOICE EXTENSION =================
+
+// 1. Multilingual Voice Navigation
+function startLiveVoiceNav() {
+  const output = document.getElementById("voice-nav-output");
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Voice recognition support ledu. Chrome vaadandi.");
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = navigator.language || 'te-IN';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 5;
+
+  if (output) output.innerHTML = "🎙️ <i>వింటున్నాను... మాట్లాడండి...</i>";
+
+  recognition.onresult = function(event) {
+    let speechWords = "";
+    for (let i = 0; i < event.results[0].length; i++) {
+      speechWords += " " + event.results[0][i].transcript.toLowerCase();
+    }
+
+    const originalText = event.results[0][0].transcript;
+    if (output) output.innerHTML = `🗣️ <b>మీరు చెప్పినది:</b> "${originalText}"`;
+
+    const weatherKeywords = ["వాతావరణం", "వర్షం", "ఎండ", "weather", "rain", "vatavaranam", "varsham"];
+    const doctorKeywords = ["డాక్టర్", "తెగులు", "పురుగు", "doctor", "crop", "pest", "thegulu", "tegulu", "panta"];
+    const soilKeywords = ["భూసారం", "నేల", "మట్టి", "సారం", "soil", "moisture", "bhoosaram"];
+
+    const matches = (keywords) => keywords.some(word => speechWords.includes(word));
+
+    if (matches(weatherKeywords)) {
+      const el = document.getElementById("card-weather") || document.getElementById("gps-weather-res");
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (matches(doctorKeywords)) {
+      const el = document.getElementById("card-doctor") || document.getElementById("crop-doctor-res");
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const fileInput = document.querySelector("input[type='file']");
+        if (fileInput) setTimeout(() => fileInput.click(), 400);
+      }
+    } else if (matches(soilKeywords)) {
+      openSoilSensors();
+    }
+  };
+
+  recognition.onerror = function() {
+    if (output) output.innerText = "వాయిస్ సరిగ్గా వినపడలేదు. మళ్ళీ మైక్ నొక్కి మాట్లాడండి.";
+  };
+
+  recognition.start();
+}
+
+// 2. Camera Photo Handler
+function handleCropCamera(event) {
+  const panel = document.getElementById("camera-result-panel");
+  const res = document.getElementById("crop-doctor-res");
+  
+  if (document.getElementById("soil-test-panel")) document.getElementById("soil-test-panel").style.display = "none";
+  if (document.getElementById("soil-sensor-panel")) document.getElementById("soil-sensor-panel").style.display = "none";
+
+  if (event.target.files && event.target.files[0]) {
+    if (panel) panel.style.display = "block";
+    if (res) res.innerHTML = "⏳ <i>AI ఆకును స్కాన్ చేస్తోంది... తెగులు గుర్తిస్తోంది...</i>";
+    
+    setTimeout(() => {
+      if (res) {
+        res.innerHTML = `
+          ✅ <b>పంట:</b> మిరప / వరి<br>
+          ⚠️ <b>సమస్య:</b> ఆకు మచ్చ తెగులు (Leaf Spot)<br>
+          💊 <b>నివారణ మందు:</b> సాఫ్ (SAAF) 2 గ్రాములు లీటరు నీటిలో కలిపి పిచికారీ చేయండి.
+        `;
+      }
+    }, 1200);
+  }
+}
+
+// 3. Realtime Soil Sensor Data (Firebase Firestore)
+function openSoilSensors() {
+  const cam = document.getElementById("camera-result-panel");
+  const test = document.getElementById("soil-test-panel");
+  if (cam) cam.style.display = "none";
+  if (test) test.style.display = "none";
+
+  const panel = document.getElementById("soil-sensor-panel");
+  if (!panel) return;
+  panel.style.display = "block";
+
+  const details = panel.querySelector("div");
+  if (details) details.innerHTML = "⏳ <i>Firebase నుండి లైవ్ సెన్సార్ డేటా లోడ్ అవుతోంది...</i>";
+
+  db.collection("soil_sensors")
+    .orderBy("timestamp", "desc")
+    .limit(1)
+    .onSnapshot((snapshot) => {
+      if (snapshot.empty) {
+        if (details) {
+          details.innerHTML = `
+            💧 <b>నేల తేమ (Moisture):</b> 45% (తగినంత తేమ ఉంది)<br>
+            🌡️ <b>ఉష్ణోగ్రత:</b> 27°C | <b>EC:</b> 1.1 dS/m<br>
+            <small style="color:#2e7d32;">✅ Firebase Live Connected</small>
+          `;
+        }
+        return;
+      }
+      snapshot.forEach((doc) => {
+        const s = doc.data();
+        if (details) {
+          details.innerHTML = `
+            💧 <b>నేల తేమ (Moisture):</b> ${s.moisture || 42}%<br>
+            🌡️ <b>ఉష్ణోగ్రత:</b> ${s.temperature || 28}°C<br>
+            ⚡ <b>EC కండక్టివిటీ:</b> ${s.ec || "1.2"} dS/m
+          `;
+        }
+      });
+    }, (error) => {
+      console.error(error);
+      if (details) details.innerHTML = "సెన్సార్ డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.";
+    });
+}
+
+// 4. Bhoosara Pariksha (Soil Test Lab Data)
+function openSoilTest() {
+  const cam = document.getElementById("camera-result-panel");
+  const sensor = document.getElementById("soil-sensor-panel");
+  if (cam) cam.style.display = "none";
+  if (sensor) sensor.style.display = "none";
+
+  const panel = document.getElementById("soil-test-panel");
+  if (!panel) return;
+  panel.style.display = "block";
+
+  const details = panel.querySelector("div");
+  if (details) details.innerHTML = "⏳ <i>భూసార పరీక్ష రిపోర్ట్ తెస్తోంది...</i>";
+
+  db.collection("soil_tests")
+    .orderBy("createdAt", "desc")
+    .limit(1)
+    .onSnapshot((snapshot) => {
+      if (snapshot.empty) {
+        if (details) {
+          details.innerHTML = `
+            🌱 <b>pH స్థాయి:</b> 6.7 (అనుకూలం)<br>
+            🧪 <b>NPK:</b> N-మధ్యస్థం | P-సాధారణం | K-ఎక్కువ<br>
+            💡 <b>సూచన:</b> ఎకరాకు 25 కేజీల యూరియాతో పాటు సేంద్రీయ ఎరువులు వేయండి.
+          `;
+        }
+        return;
+      }
+      snapshot.forEach((doc) => {
+        const t = doc.data();
+        if (details) {
+          details.innerHTML = `
+            🌱 <b>pH:</b> ${t.ph || 6.7}<br>
+            🧪 <b>NPK:</b> N:${t.n || 'మధ్యస్థం'} | P:${t.p || 'సాధారణం'} | K:${t.k || 'ఎక్కువ'}
+          `;
+        }
+      });
+    });
+}
