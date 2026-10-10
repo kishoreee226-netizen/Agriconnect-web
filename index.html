@@ -212,5 +212,51 @@
   <!-- 2. Application Logic, Camera & Voice Navigation -->
   <script src="app.js"></script>
 
+<script>
+  // 1. Live Clock & Date Function
+  function startClock() {
+    function refreshTime() {
+      const now = new Date();
+      const clockEl = document.getElementById("clock-display");
+      const dateEl = document.getElementById("date-display");
+      
+      if (clockEl) {
+        clockEl.textContent = now.toLocaleTimeString('en-US', { hour12: true });
+      }
+      if (dateEl) {
+        dateEl.textContent = now.toLocaleDateString('te-IN', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+      }
+    }
+    refreshTime();
+    setInterval(refreshTime, 1000);
+  }
+  startClock();
+
+  // 2. 3-line Menu Toggle Function
+  function toggleNavMenu() {
+    const drawer = document.getElementById("side-menu-drawer");
+    if (drawer) {
+      if (drawer.style.display === "none" || drawer.style.display === "") {
+        drawer.style.display = "flex";
+      } else {
+        drawer.style.display = "none";
+      }
+    }
+  }
+</script>
+<footer style="text-align: center; padding: 25px 15px; font-size: 0.85rem; color: #666; background: #f9f9f9; border-top: 1px solid #e0e0e0; margin-top: 30px;">
+  <p>© 2026 AgriConnect Technologies - The Voice of Smart Farming</p>
+  <p>
+    <a href="services.html" style="color: #1B5E20; text-decoration: none; margin: 0 8px;">Services</a> |
+    <a href="privacy.html" style="color: #1B5E20; text-decoration: none; margin: 0 8px;">Privacy Policy</a> |
+    <a href="terms.html" style="color: #1B5E20; text-decoration: none; margin: 0 8px;">Terms & Conditions</a>
+  </p>
+</footer>
+
 </body>
 </html>
