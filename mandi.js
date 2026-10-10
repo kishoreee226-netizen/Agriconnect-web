@@ -1,6 +1,5 @@
-// ================= REAL-TIME MANDI RATES & LABOR MODULE =================
+// ================= REAL-TIME MANDI RATES MODULE =================
 
-// 1. Real-time Mandi Rates (Firestore Live)
 function listenLiveMandiRates() {
   const tbody = document.getElementById("mandi-rates-body");
   const statusEl = document.getElementById("mandi-status-msg");
@@ -20,7 +19,14 @@ function listenLiveMandiRates() {
 
   window.db.collection("mandi_rates").onSnapshot((snapshot) => {
     if (snapshot.empty) {
-      tbody.innerHTML = "<tr><td colspan='3' style='text-align:center;'>Dharalu inka update kaledu.</td></tr>";
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="3" style="text-align:center; padding:12px; color:#555;">
+            🌾 <i>Mandi dharalu inka enter cheyaledu.</i>
+          </td>
+        </tr>
+      `;
+      if (statusEl) statusEl.innerHTML = "<small style='color:#e65100;'>Data ledu</small>";
       return;
     }
 
@@ -38,7 +44,7 @@ function listenLiveMandiRates() {
     tbody.innerHTML = rowsHtml;
 
     if (statusEl) {
-      statusEl.innerHTML = `<span style="color:#2e7d32; font-size:0.8rem;">🟢 Live Rates (${new Date().toLocaleTimeString()})</span>`;
+      statusEl.innerHTML = `<span style="color:#2e7d32; font-size:0.8rem;">🟢 Live (${new Date().toLocaleTimeString()})</span>`;
     }
   }, (error) => {
     console.error("Mandi Firestore error:", error);
@@ -62,47 +68,6 @@ function showMandiOfflineWarning(tbody, statusEl) {
   }
 }
 
-// 2. Real-time Coolilu / Labor List (Directly from 'laborers')
-function listenLiveLaborList() {
-  const listEl = document.getElementById("labor-list");
-  if (!listEl || !window.db) return;
-
-  // Actual 'laborers' collection listener
-  window.db.collection("laborers").onSnapshot((snapshot) => {
-    if (snapshot.empty) {
-      listEl.innerHTML = "<i>Coolilu evaru inka register kaledu.</i>";
-      return;
-    }
-
-    let html = "<ul style='padding-left:18px; line-height:1.6;'>";
-    snapshot.forEach((doc) => {
-      const l = doc.data();
-      html += `
-        <li style="margin-bottom:8px;">
-          <b>${l.name || "Peru ledu"}</b> - ${l.workType || "Vyavasaya Panulu"} (${l.village || "Gramam"})<br>
-          📞 <a href="tel:${l.phone}" style="color:#1B5E20; text-decoration:none; font-weight:bold;">${l.phone || "No phone"}</a>
-        </li>
-      `;
-    });
-    html += "</ul>";
-    listEl.innerHTML = html;
-  }, (error) => {
-    console.error("Laborers fetch error:", error);
-    listEl.innerHTML = "<small style='color:#d32f2f;'>Coolila data thevalekapoyam.</small>";
-  });
-}
-:8px;">
-          <b>${l.name || "Peru"}</b> - ${l.workType || "Panulu"} (${l.village || "Gramam"})<br>
-          📞 <a href="tel:${l.phone}" style="color:#1B5E20; text-decoration:none;">${l.phone || "No phone"}</a>
-        </li>
-      `;
-    });
-    html += "</ul>";
-    listEl.innerHTML = html;
-  });
-}
-
-// Network events & Auto-load
 window.addEventListener("online", listenLiveMandiRates);
 window.addEventListener("offline", () => {
   const tbody = document.getElementById("mandi-rates-body");
@@ -112,5 +77,4 @@ window.addEventListener("offline", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   listenLiveMandiRates();
-  listenLiveLaborList();
 });
