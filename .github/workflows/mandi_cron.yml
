@@ -2,9 +2,8 @@ name: Daily Mandi Live Data Sync
 
 on:
   schedule:
-    # ప్రతిరోజూ ఉదయం భారత కాలమానం ప్రకారం ఆటోమేటిక్‌గా రన్ అవుతుంది
     - cron: '0 6 * * *'
-  workflow_dispatch: # మాన్యువల్‌గా రన్ చేయడానికి బటన్ ఇస్తుంది
+  workflow_dispatch:
 
 jobs:
   update-mandi:
