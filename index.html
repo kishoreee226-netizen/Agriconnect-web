@@ -3,242 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriConnect Technologies</title>
+  <title>AgriConnect</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    body {
-      background-color: #f4f6f8;
-      color: #333;
-      padding-bottom: 70px;
-    }
-    header {
-      background-color: #1b5e20;
-      color: white;
-      padding: 12px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .header-title h1 {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-    .header-title p {
-      font-size: 0.75rem;
-      opacity: 0.85;
-    }
-    .clock {
-      font-size: 0.75rem;
-      background: rgba(255, 255, 255, 0.15);
-      padding: 4px 8px;
-      border-radius: 4px;
-    }
-    .main-container {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .card {
-      background: white;
-      border-radius: 8px;
-      padding: 14px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      border: 1px solid #e0e0e0;
-    }
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-    .btn-small {
-      background: #2e7d32;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      cursor: pointer;
-    }
-    .btn-orange {
-      background: #e65100;
-    }
-    .btn-blue {
-      background: #0277bd;
-    }
-    .footer-info {
-      text-align: center;
-      font-size: 0.75rem;
-      color: #777;
-      margin-top: 15px;
-      padding: 10px;
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      border-top: 1px solid #ddd;
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0;
-      z-index: 1000;
-    }
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 0.75rem;
-      color: #555;
-      text-decoration: none;
-      cursor: pointer;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background-color: #f4f6f8; padding: 12px; }
+    header { background: #1b5e20; color: white; padding: 12px; border-radius: 8px; margin-bottom: 12px; text-align: center; }
+    .card { background: white; border-radius: 8px; padding: 14px; margin-bottom: 12px; border: 1px solid #ddd; }
+    .card-title { font-weight: bold; margin-bottom: 10px; color: #2e7d32; }
+    .item { background: #f1f8e9; padding: 10px; border-radius: 6px; margin-bottom: 8px; border-left: 4px solid #2e7d32; }
   </style>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 </head>
 <body>
 
-  <!-- Header -->
   <header>
-    <div class="header-title">
-      <h1>AgriConnect Technologies</h1>
-      <p>The Voice of Smart Farming</p>
-    </div>
-    <div id="live-clock" class="clock">00:00:00 AM</div>
+    <h2>🌾 AgriConnect Technologies</h2>
+    <p>Live Dashboard</p>
   </header>
 
-  <main class="main-container">
+  <div class="card">
+    <div class="card-title">👥 కూలీల వివరాలు (Laborers)</div>
+    <div id="labor-list">డేటా లోడ్ అవుతోంది...</div>
+  </div>
 
-    <!-- Live Weather -->
-    <section class="card">
-      <div class="card-header">
-        <span>☀️ వాతావరణం (Live Weather)</span>
-        <button class="btn-small" onclick="if(window.getWeather) window.getWeather();">GPS Update</button>
-      </div>
-      <div id="weather-display" style="font-size: 1.4rem; font-weight: bold; margin-bottom: 4px;">-- °C</div>
-      <div style="font-size: 0.8rem; color: #666;">GPS బటన్ క్లిక్ చేయండి</div>
-    </section>
+  <div class="card">
+    <div class="card-title">🌾 మార్కెట్ ధరలు (Mandi Rates)</div>
+    <div id="mandi-list">ధరలు లోడ్ అవుతున్నాయి...</div>
+  </div>
 
-    <!-- Crop Doctor -->
-    <section class="card">
-      <div class="card-header">
-        <span>🌿 పంటల డాక్టర్ (Crop Doctor)</span>
-      </div>
-      <p style="font-size: 0.8rem; color: #555; margin-bottom: 8px;">ఆకు లేదా తెగులు ఉన్న భాగాన్ని ఫోటో తీయండి:</p>
-      <button class="btn-small btn-orange" style="padding: 8px 12px; font-size: 0.85rem;">📷 ఫోటో తీయండి</button>
-    </section>
-
-    <!-- Soil Health -->
-    <section class="card">
-      <div class="card-header">
-        <span>🌱 నేల పరీక్ష & సెన్సార్లు (Soil Health)</span>
-      </div>
-      <div style="display: flex; gap: 8px;">
-        <button class="btn-small btn-blue">💧 సాయిల్ సెన్సార్లు</button>
-        <button class="btn-small">🧪 భూసార పరీక్ష</button>
-      </div>
-    </section>
-
-    <!-- Mandi Rates -->
-    <section class="card">
-      <div class="card-header">
-        <span style="color: #2e7d32;">🌾 మార్కెట్ ధరలు (Mandi Rates)</span>
-        <span id="mandi-status" style="font-size: 0.75rem; color: #d84315;">Data loading...</span>
-      </div>
-      <div id="mandi-table-container">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: left;">
-          <thead>
-            <tr style="background: #e8f5e9; border-bottom: 1px solid #c8e6c9;">
-              <th style="padding: 6px;">పంట</th>
-              <th style="padding: 6px;">మార్కెట్</th>
-              <th style="padding: 6px;">ధర (క్వింటాల్)</th>
-            </tr>
-          </thead>
-          <tbody id="mandi-list">
-            <tr>
-              <td colspan="3" style="padding: 12px; text-align: center; color: #777;">
-                🌾 మార్కెట్ ధరలు లోడ్ అవుతున్నాయి...
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- Labor & Jobs Directory -->
-    <section class="card">
-      <div class="card-header">
-        <span style="color: #1565c0;">👥 కూలీల వివరాలు (Labor Directory)</span>
-      </div>
-      <div id="labor-list">
-        <p style="font-size: 0.85rem; color: #666;">డేటా లోడ్ అవుతోంది...</p>
-      </div>
-    </section>
-
-    <!-- Voice Assistant -->
-    <section class="card" style="text-align: center;">
-      <div class="card-header" style="justify-content: center;">
-        <span>🎙️ వాయిస్ అసిస్టెంట్</span>
-      </div>
-      <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">
-        మైక్ క్లిక్ చేసి "వాతావరణం", "సెన్సార్", లేదా "రేట్లు" అని మాట్లాడండి.
-      </p>
-      <button class="btn-small btn-orange" style="padding: 8px 16px; font-size: 0.85rem;">
-        🎤 మాట్లాడండి (Voice)
-      </button>
-    </section>
-
-    <!-- Footer Address -->
-    <footer class="footer-info">
-      <p>📍 Maruthi Colony, Gopalpur, Hanamkonda, Telangana - 506370</p>
-      <p>UDYAM-TS-31-0063048</p>
-      <p>© 2026 AgriConnect Technologies. All rights reserved.</p>
-    </footer>
-
-  </main>
-
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <div class="nav-item">🏠 హోమ్</div>
-    <div class="nav-item">🌿 డాక్టర్</div>
-    <div class="nav-item">🌾 మండి</div>
-    <div class="nav-item">🌱 సాయిల్</div>
-  </nav>
-
-  <!-- Clock Script -->
   <script>
-    function updateClock() {
-      const now = new Date();
-      const clockEl = document.getElementById("live-clock");
-      if (clockEl) {
-        clockEl.innerText = now.toLocaleTimeString();
-      }
+    const firebaseConfig = {
+      apiKey: "AIzaSyAvev9rVOBx5xE1A993EtSD7FG9JxAmbyI",
+      authDomain: "agriconnect-5fc39.firebaseapp.com",
+      projectId: "agriconnect-5fc39",
+      storageBucket: "agriconnect-5fc39.firebasestorage.app",
+      messagingSenderId: "491716802186",
+      appId: "1:491716802186:web:087ee5f6c30ec75ce75f73"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
     }
-    setInterval(updateClock, 1000);
-    updateClock();
+    const db = firebase.firestore();
+
+    // 1. కూలీలు
+    db.collection("laborers").onSnapshot(snap => {
+      const el = document.getElementById("labor-list");
+      if (snap.empty) {
+        el.innerHTML = "<p>డేటా ఏదీ లేదు.</p>";
+        return;
+      }
+      let html = "";
+      snap.forEach(doc => {
+        const d = doc.data();
+        html += `<div class="item"><b>${d.name || "కూలీ"}</b> - ${d.skills || d.work || "పనులు"} (${d.village || d.location || "హనుమకొండ"})</div>`;
+      });
+      el.innerHTML = html;
+    }, err => {
+      document.getElementById("labor-list").innerHTML = "<p style='color:red;'>Error: " + err.message + "</p>";
+    });
+
+    // 2. మండి రేట్లు
+    db.collection("mandi_rates").onSnapshot(snap => {
+      const el = document.getElementById("mandi-list");
+      if (snap.empty) {
+        el.innerHTML = "<p>మార్కెట్ ధరలు ఏవీ లేవు.</p>";
+        return;
+      }
+      let html = "";
+      snap.forEach(doc => {
+        const m = doc.data();
+        html += `<div class="item"><b>${m.crop || m.commodity || "పంట"}</b>: ₹${m.price || "--"} (${m.market || "మార్కెట్"})</div>`;
+      });
+      el.innerHTML = html;
+    }, err => {
+      document.getElementById("mandi-list").innerHTML = "<p style='color:red;'>Error: " + err.message + "</p>";
+    });
   </script>
-
-  <!-- ================= FIREBASE & APP SCRIPTS ================= -->
-  <!-- 1. Firebase Core CDN Libraries -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-  <!-- 2. Central Config (Initializes Firebase and creates window.db) -->
-  <script src="firebase-config.js"></script>
-
-  <!-- 3. Independent Feature Modules -->
-  <script src="labor.js"></script>
-  <script src="mandi.js"></script>
 
 </body>
 </html>
