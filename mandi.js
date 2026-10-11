@@ -4,17 +4,25 @@ const MANDI_CONFIG = {
   apiKey: "579b464db66ec23bdd0000012873d6e8fa3847a564325d817ed2b023",
   resourceId: "9ef84268-d588-465a-a308-a864a43d0070",
   limit: 50,
-  // ముంబై సుపాబేస్ ప్రాక్సీ URL
   proxyUrl: "https://tmqzfgzmrcveadccjtaa.supabase.co/functions/v1/smart-action?url="
 };
 
+// Supabase Publishable Key
+const SUPABASE_PUBLISHABLE_KEY = "Sb_publishable_pEAkeToFDT6NM0Ph-oku9w_xra27Kjh";
+
 // 1. ముంబై సర్వర్ ప్రాక్సీ ద్వారా సురక్షితంగా డేటా తెచ్చే ఫంక్షన్
 async function fetchMandiRates() {
-  // data.gov.in నుండి నేరుగా JSON ఫార్మాట్ అభ్యర్థన
   const targetApi = `https://api.data.gov.in/resource/${MANDI_CONFIG.resourceId}?api-key=${MANDI_CONFIG.apiKey}&format=json&limit=${MANDI_CONFIG.limit}`;
   const finalUrl = MANDI_CONFIG.proxyUrl + encodeURIComponent(targetApi);
 
-  const response = await fetch(finalUrl);
+  const response = await fetch(finalUrl, {
+    method: "GET",
+    headers: {
+      "apikey": SUPABASE_PUBLISHABLE_KEY,
+      "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+    }
+  });
+
   if (!response.ok) {
     throw new Error(`సర్వర్ ఎర్రర్: ${response.status}`);
   }
