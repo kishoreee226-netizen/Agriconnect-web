@@ -13,7 +13,8 @@ const MANDI_CONFIG = {
  */
 async function getLiveMandiPrices() {
     const targetUrl = `https://api.data.gov.in/resource/${MANDI_CONFIG.resourceId}?api-key=${MANDI_CONFIG.apiKey}&format=json&limit=${MANDI_CONFIG.limit}`;
-  const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+
 
   try {
     const response = await fetch(url);
