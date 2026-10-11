@@ -100,3 +100,7 @@ async function renderMandiTable(containerId) {
 
   container.innerHTML = tableHtml;
 }
+// mandi.js ఫైల్ చివరలో ఇది పెడితే పేజీ ఓపెన్ అవ్వగానే ఆటోమేటిక్‌గా లోడ్ అవుతుంది
+window.addEventListener("DOMContentLoaded", () => {
+  renderMandiTable("mandi-box");
+});
