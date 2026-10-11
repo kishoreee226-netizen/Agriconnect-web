@@ -3,101 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>మండి ధరలు - లైవ్ సెర్చ్</title>
+  <title>Live Govt Mandi Realtime Test</title>
   <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #f4f6f8;
-      padding: 16px;
-      margin: 0;
-    }
-    .card {
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 10px;
-      max-width: 600px;
-      margin: 0 auto;
-      border: 1px solid #dcdcdc;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-    }
-    h2 {
-      margin: 0 0 14px 0;
-      color: #1b5e20;
-      font-size: 1.2rem;
-    }
-    .controls {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    select, input {
-      padding: 10px;
-      font-size: 0.95rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      outline: none;
-    }
-    select {
-      background: #e8f5e9;
-      font-weight: bold;
-      color: #1b5e20;
-    }
-    input {
-      width: 100%;
-      box-sizing: border-box;
-    }
-    #status {
-      font-size: 0.85rem;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #2e7d32;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-    }
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 10px 6px;
-      text-align: left;
-    }
-    th {
-      background: #e8f5e9;
-      color: #1b5e20;
-    }
+    body { font-family: sans-serif; background: #f0f2f5; padding: 16px; margin: 0; }
+    .card { background: #fff; padding: 16px; border-radius: 8px; max-width: 650px; margin: 0 auto; border: 1px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    h2 { margin: 0 0 12px; color: #1b5e20; font-size: 1.2rem; }
+    .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .row { display: flex; gap: 8px; }
+    select, input, button { padding: 9px; font-size: 0.9rem; border-radius: 4px; border: 1px solid #aaa; }
+    select { flex: 1; font-weight: bold; }
+    button { background: #2e7d32; color: #fff; border: none; font-weight: bold; cursor: pointer; }
+    #status-box { padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; background: #e8f5e9; color: #1b5e20; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+    th { background: #2e7d32; color: #fff; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2>🌾 మార్కెట్ లైవ్ ధరలు & సెర్చ్</h2>
+    <h2>🌾 Live Government Mandi Rates (Real-Time API)</h2>
     
     <div class="controls">
-      <select id="state-select" onchange="renderMandiTable()">
-        <option value="Telangana">తెలంగాణ (Telangana)</option>
-        <option value="Andhra Pradesh">ఆంధ్రప్రదేశ్ (Andhra Pradesh)</option>
-        <option value="Karnataka">కర్ణాటక (Karnataka)</option>
-        <option value="Maharashtra">మహారాష్ట్ర (Maharashtra)</option>
-      </select>
-      <input type="text" id="crop-search" placeholder="🔍 పంట పేరు సెర్చ్ చేయండి (ఉదా: పత్తి, మిర్చి, టమాటా)..." oninput="renderMandiTable()">
+      <div class="row">
+        <select id="state-select">
+          <option value="Telangana">Telangana</option>
+          <option value="Andhra Pradesh">Andhra Pradesh</option>
+          <option value="Karnataka">Karnataka</option>
+          <option value="Maharashtra">Maharashtra</option>
+          <option value="Punjab">Punjab</option>
+          <option value="Uttar Pradesh">Uttar Pradesh</option>
+          <option value="Gujarat">Gujarat</option>
+        </select>
+        <button onclick="fetchGovtLiveMandi()">లైవ్ రేట్లు లాగండి</button>
+      </div>
+      <input type="text" id="crop-filter" placeholder="🔍 పంట పేరుతో ఫిల్టర్ చేయండి..." oninput="filterTable()">
     </div>
 
-    <div id="status">ధరలు లోడ్ అవుతున్నాయి...</div>
+    <div id="status-box">సిద్ధంగా ఉంది. "లైవ్ రేట్లు లాగండి" బటన్ క్లిక్ చేయండి.</div>
 
     <div style="overflow-x:auto;">
       <table>
         <thead>
           <tr>
-            <th>పంట</th>
-            <th>మార్కెట్</th>
-            <th>ధర (క్వింటాల్)</th>
+            <th>పంట (Commodity)</th>
+            <th>మార్కెట్ (Market)</th>
+            <th>జిల్లా (District)</th>
+            <th>ధర (Modal Price ₹)</th>
           </tr>
         </thead>
-        <tbody id="mandi-body">
+        <tbody id="mandi-table-body">
           <tr>
-            <td colspan="3" style="text-align: center; color: #888;">డేటా సిద్ధమవుతోంది...</td>
+            <td colspan="4" style="text-align: center; padding: 14px; color: #777;">ఇంకా డేటా లోడ్ కాలేదు.</td>
           </tr>
         </tbody>
       </table>
@@ -105,88 +62,101 @@
   </div>
 
   <script>
-    const mandiDatabase = {
-      "Telangana": [
-        { crop: "పత్తి (Cotton)", market: "వరంగల్ (ఎనుమాముల)", price: "₹7,850" },
-        { crop: "మిర్చి (Chilli Red)", market: "ఖమ్మం యార్డ్", price: "₹16,400" },
-        { crop: "వరి (Paddy BPT)", market: "నిజామాబాద్", price: "₹2,380" },
-        { crop: "మొక్కజొన్న (Maize)", market: "బాదేపల్లి", price: "₹2,320" },
-        { crop: "పసుపు (Turmeric)", market: "నిజామాబాద్", price: "₹14,200" },
-        { crop: "టమాటా (Tomato)", market: "బోయిన్‌పల్లి (హైదరాబాద్)", price: "₹1,800" },
-        { crop: "ఉల్లి (Onion)", market: "మలక్‌పేట్", price: "₹2,200" },
-        { crop: "కంది (Toor / Red Gram)", market: "తాండూరు", price: "₹9,800" },
-        { crop: "సోయాబీన్ (Soyabean)", market: "ఆదిలాబాద్", price: "₹4,450" },
-        { crop: "వేరుశనగ (Groundnut)", market: "మహబూబ్‌నగర్", price: "₹6,700" }
-      ],
-      "Andhra Pradesh": [
-        { crop: "మిర్చి (Teja Chilli)", market: "గుంటూరు మార్కెట్", price: "₹17,200" },
-        { crop: "పత్తి (Cotton)", market: "కర్నూలు", price: "₹7,700" },
-        { crop: "వరి (Paddy)", market: "నెల్లూరు", price: "₹2,360" },
-        { crop: "వేరుశనగ (Groundnut)", market: "అనంతపురం", price: "₹6,900" },
-        { crop: "పసుపు (Turmeric)", market: "దుగ్గిరాల", price: "₹13,800" },
-        { crop: "టమాటా (Tomato)", market: "మదనపల్లె", price: "₹1,600" },
-        { crop: "ఉల్లి (Onion)", market: "కర్నూలు", price: "₹1,950" },
-        { crop: "మొక్కజొన్న (Maize)", market: "కడప", price: "₹2,250" },
-        { crop: "అరటి (Banana)", market: "రాజమండ్రి", price: "₹1,500" }
-      ],
-      "Karnataka": [
-        { crop: "పత్తి (Cotton)", market: "రాయచూర్ (Raichur)", price: "₹7,600" },
-        { crop: "కంది (Tur / Arhar)", market: "కలబురగి (Gulbarga)", price: "₹10,200" },
-        { crop: "మొక్కజొన్న (Maize)", market: "దావణగెరె (Davangere)", price: "₹2,290" },
-        { crop: "బ్యాడగి మిర్చి (Chilli)", market: "బ్యాడగి (Byadgi)", price: "₹24,500" },
-        { crop: "టమాటా (Tomato)", market: "కోలార్ (Kolar)", price: "₹1,700" }
-      ],
-      "Maharashtra": [
-        { crop: "పత్తి (Cotton)", market: "నాగ్‌పూర్ (Nagpur)", price: "₹7,750" },
-        { crop: "సోయాబీన్ (Soyabean)", market: "లాతూర్ (Latur)", price: "₹4,600" },
-        { crop: "ఉల్లి (Onion)", market: "లాసల్‌గావ్ (Nashik)", price: "₹1,850" },
-        { crop: "శనగ (Chana)", market: "అకోలా (Akola)", price: "₹5,800" },
-        { crop: "దానిమ్మ (Pomegranate)", market: "షోలాపూర్ (Solapur)", price: "₹9,500" }
-      ]
-    };
+    let rawRecords = [];
 
-    function renderMandiTable() {
-      const stateSelect = document.getElementById("state-select");
-      const searchInput = document.getElementById("crop-search");
-      const statusEl = document.getElementById("status");
-      const tbody = document.getElementById("mandi-body");
+    // Govt Live Agmarknet API - JSONP Handler
+    function fetchGovtLiveMandi() {
+      const state = document.getElementById("state-select").value;
+      const statusBox = document.getElementById("status-box");
+      const tbody = document.getElementById("mandi-table-body");
 
-      if (!stateSelect || !tbody) return;
+      statusBox.style.background = "#fff3e0";
+      statusBox.style.color = "#e65100";
+      statusBox.innerText = `🔄 కేంద్ర ప్రభుత్వ సర్వర్ (data.gov.in) నుండి ${state} లైవ్ రికార్డులను తెస్తోంది...`;
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:16px;">ప్రభుత్వ సర్వర్ కనెక్ట్ అవుతోంది... వేచి చూడండి...</td></tr>`;
 
-      const state = stateSelect.value;
-      const searchKey = searchInput ? searchInput.value.trim().toLowerCase() : "";
-      const crops = mandiDatabase[state] || [];
+      // పాత JSONP స్క్రిప్ట్ ఉంటే తీసేయడం
+      const oldScript = document.getElementById("govt-api-script");
+      if (oldScript) oldScript.remove();
 
-      const filtered = crops.filter(item => {
-        return item.crop.toLowerCase().includes(searchKey) || 
-               item.market.toLowerCase().includes(searchKey);
-      });
+      // data.gov.in JSONP కాల్ (CORS నిబంధన ఉండదు)
+      const callbackName = "handleGovtApiResponse";
+      const apiUrl = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=jsonp&callback=${callbackName}&limit=50&filters[state]=${encodeURIComponent(state)}`;
 
-      if (filtered.length === 0) {
-        statusEl.innerText = `"${searchKey}" పేరుతో పంటలు ఏవీ దొరకలేదు.`;
-        statusEl.style.color = "#c62828";
-        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:16px; color:#888;">ఫలితాలు లేవు.</td></tr>`;
+      const script = document.createElement("script");
+      script.id = "govt-api-script";
+      script.src = apiUrl;
+
+      // 10 సెకన్లలో రెస్పాన్స్ రాకపోతే టైమ్‌అవుట్
+      const timer = setTimeout(() => {
+        if (rawRecords.length === 0) {
+          statusBox.style.background = "#ffebee";
+          statusBox.style.color = "#c62828";
+          statusBox.innerText = "❌ ప్రభుత్వ సర్వర్ నుండి రెస్పాన్స్ ఆలస్యమైంది లేదా ఫైర్‌వాల్ బ్లాక్ చేసింది. నెట్‌వర్క్ లాగ్ చెక్ చేయండి.";
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#c62828; padding:14px;">లైవ్ డేటా రాలేదు.</td></tr>`;
+        }
+      }, 10000);
+
+      window[callbackName] = function(data) {
+        clearTimeout(timer);
+        if (data && data.records && data.records.length > 0) {
+          rawRecords = data.records;
+          statusBox.style.background = "#e8f5e9";
+          statusBox.style.color = "#1b5e20";
+          statusBox.innerText = `✅ సక్సెస్: ప్రభుత్వ సర్వర్ నుండి ${rawRecords.length} అసలైన లైవ్ రికార్డులు వచ్చాయి!`;
+          renderTable(rawRecords);
+        } else {
+          statusBox.style.background = "#fff3e0";
+          statusBox.style.color = "#e65100";
+          statusBox.innerText = `⚠️ ${state} రాష్ట్రానికి ప్రస్తుతం ప్రభుత్వ పోర్టల్‌లో కొత్త రికార్డులు అప్‌డేట్ కాలేదు.`;
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px;">రికార్డులు ఖాళీగా ఉన్నాయి.</td></tr>`;
+        }
+      };
+
+      script.onerror = function() {
+        clearTimeout(timer);
+        statusBox.style.background = "#ffebee";
+        statusBox.style.color = "#c62828";
+        statusBox.innerText = "❌ ప్రభుత్వ API నెట్‌వర్క్ ఎర్రర్ వచ్చింది.";
+      };
+
+      document.body.appendChild(script);
+    }
+
+    function renderTable(list) {
+      const tbody = document.getElementById("mandi-table-body");
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px; color:#777;">ఫలితాలు లేవు.</td></tr>`;
         return;
       }
 
-      statusEl.innerText = `${state} లో ${filtered.length} పంటల ధరలు అందుబాటులో ఉన్నాయి.`;
-      statusEl.style.color = "#1b5e20";
-
-      let rows = "";
-      filtered.forEach(item => {
-        rows += `
+      let html = "";
+      list.forEach(r => {
+        html += `
           <tr>
-            <td style="font-weight: 600; color: #2e7d32;">${item.crop}</td>
-            <td style="color: #444;">${item.market}</td>
-            <td style="font-weight: bold; color: #d84315;">${item.price}</td>
+            <td style="font-weight: bold; color: #2e7d32;">${r.commodity || "N/A"}</td>
+            <td>${r.market || "N/A"}</td>
+            <td>${r.district || "N/A"}</td>
+            <td style="font-weight: bold; color: #d84315;">₹${r.modal_price || "--"}</td>
           </tr>
         `;
       });
-      tbody.innerHTML = rows;
+      tbody.innerHTML = html;
     }
 
-    // పేజీ లోడ్ కాగానే వెంటనే రన్ అవుతుంది
-    renderMandiTable();
+    function filterTable() {
+      const q = document.getElementById("crop-filter").value.trim().toLowerCase();
+      if (!rawRecords.length) return;
+      const filtered = rawRecords.filter(r => 
+        (r.commodity && r.commodity.toLowerCase().includes(q)) ||
+        (r.market && r.market.toLowerCase().includes(q)) ||
+        (r.district && r.district.toLowerCase().includes(q))
+      );
+      renderTable(filtered);
+    }
+
+    // మొదటిసారి ఆటోమేటిక్‌గా రన్ చేయడం
+    fetchGovtLiveMandi();
   </script>
 </body>
 </html>
