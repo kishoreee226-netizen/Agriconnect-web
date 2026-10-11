@@ -3,98 +3,136 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mandi Rates Live Test</title>
+  <title>Mandi Search & Rates Test</title>
   <style>
     body { font-family: sans-serif; background: #f4f6f8; padding: 16px; margin: 0; }
-    .card { background: #fff; padding: 16px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #ccc; }
+    .card { background: #fff; padding: 16px; border-radius: 8px; max-width: 600px; margin: 0 auto; border: 1px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
     h2 { margin: 0 0 12px; color: #1b5e20; }
-    .controls { display: flex; gap: 8px; margin-bottom: 12px; }
-    select, button { padding: 8px; font-size: 0.9rem; border-radius: 4px; border: 1px solid #aaa; }
-    button { background: #2e7d32; color: #fff; border: none; font-weight: bold; cursor: pointer; }
-    #status { font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
+    .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .row { display: flex; gap: 8px; }
+    select, input { padding: 9px; font-size: 0.9rem; border-radius: 6px; border: 1px solid #ccc; outline: none; }
+    select { flex: 1; background: #e8f5e9; font-weight: bold; color: #1b5e20; }
+    input { width: 100%; box-sizing: border-box; }
+    #status { font-size: 0.82rem; font-weight: bold; margin-bottom: 10px; color: #2e7d32; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 6px; }
+    th, td { border-bottom: 1px solid #eee; padding: 9px 6px; text-align: left; }
     th { background: #e8f5e9; color: #1b5e20; }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h2>🌾 Live Mandi Rates Test</h2>
+    <h2>🌾 Mandi Search & Live Rates</h2>
+    
     <div class="controls">
-      <select id="state-select">
-        <option value="Telangana">తెలంగాణ (Telangana)</option>
-        <option value="Andhra Pradesh">ఆంధ్రప్రదేశ్ (AP)</option>
-        <option value="Karnataka">కర్ణాటక (Karnataka)</option>
-        <option value="Maharashtra">మహారాష్ట్ర (Maharashtra)</option>
-      </select>
-      <button onclick="fetchLiveRates()">Fetch Rates</button>
+      <div class="row">
+        <select id="state-select" onchange="renderMandiTable()">
+          <option value="Telangana">తెలంగాణ (Telangana)</option>
+          <option value="Andhra Pradesh">ఆంధ్రప్రదేశ్ (Andhra Pradesh)</option>
+          <option value="Karnataka">కర్ణాటక (Karnataka)</option>
+          <option value="Maharashtra">మహారాష్ట్ర (Maharashtra)</option>
+        </select>
+      </div>
+      <input type="text" id="crop-search" placeholder="🔍 పంట పేరు సెర్చ్ చేయండి (ఉదా: Cotton, Mirchi, వరి)..." oninput="renderMandiTable()">
     </div>
 
-    <div id="status" style="color: #555;">స్టేటస్: వేచి చూస్తోంది...</div>
+    <div id="status">లోడ్ అవుతోంది...</div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>పంట (Crop)</th>
-          <th>మార్కెట్ (Market)</th>
-          <th>ధర (₹/క్వింటాల్)</th>
-        </tr>
-      </thead>
-      <tbody id="mandi-body">
-        <tr>
-          <td colspan="3" style="text-align: center; color: #888;">డేటా లోడ్ అవుతోంది...</td>
-        </tr>
-      </tbody>
-    </table>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>పంట (Crop)</th>
+            <th>మార్కెట్ (Market)</th>
+            <th>ధర (₹/క్వింటాల్)</th>
+          </tr>
+        </thead>
+        <tbody id="mandi-body">
+          <tr>
+            <td colspan="3" style="text-align: center; color: #888;">డేటా లోడ్ అవుతోంది...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
-    // రాష్ట్రాల వారీగా నిజమైన మార్కెట్ డేటా ఫీడ్
+    // Comprehensive Pan-India Multi-Crop Database
     const stateMandiFeeds = {
       "Telangana": [
         { crop: "పత్తి (Cotton)", market: "వరంగల్ (ఎనుమాముల)", price: "7,850" },
         { crop: "మిర్చి (Chilli Red)", market: "ఖమ్మం మార్కెట్", price: "16,400" },
         { crop: "వరి (Paddy BPT)", market: "నిజామాబాద్", price: "2,380" },
         { crop: "మొక్కజొన్న (Maize)", market: "బాదేపల్లి", price: "2,320" },
-        { crop: "పసుపు (Turmeric)", market: "నిజామాబాద్", price: "14,200" }
+        { crop: "పసుపు (Turmeric)", market: "నిజామాబాద్", price: "14,200" },
+        { crop: "టమాటా (Tomato)", market: "బోయిన్‌పల్లి (హైదరాబాద్)", price: "1,800" },
+        { crop: "ఉల్లిగడ్డ (Onion)", market: "మలక్‌పేట్", price: "2,200" },
+        { crop: "కంది (Red Gram / Toor)", market: "తాండూరు", price: "9,800" },
+        { crop: "సోయాబీన్ (Soyabean)", market: "ఆదిలాబాద్", price: "4,450" },
+        { crop: "వేరుశనగ (Groundnut)", market: "మహబూబ్‌నగర్", price: "6,700" }
       ],
       "Andhra Pradesh": [
         { crop: "మిర్చి (Teja Chilli)", market: "గుంటూరు యార్డ్", price: "17,200" },
         { crop: "పత్తి (Cotton)", market: "కర్నూలు", price: "7,700" },
         { crop: "వరి (Paddy)", market: "నెల్లూరు", price: "2,360" },
         { crop: "వేరుశనగ (Groundnut)", market: "అనంతపురం", price: "6,900" },
-        { crop: "పసుపు (Turmeric)", market: "దుగ్గిరాల", price: "13,800" }
+        { crop: "పసుపు (Turmeric)", market: "దుగ్గిరాల", price: "13,800" },
+        { crop: "టమాటా (Tomato)", market: "మదనపల్లె", price: "1,600" },
+        { crop: "ఉల్లి (Onion)", market: "కర్నూలు", price: "1,950" },
+        { crop: "మొక్కజొన్న (Maize)", market: "కడప", price: "2,250" },
+        { crop: "అరటి (Banana)", market: "రాజమండ్రి", price: "1,500" },
+        { crop: "మామిడి (Mango)", market: "విజయవాడ", price: "4,200" }
       ],
       "Karnataka": [
         { crop: "Cotton", market: "Raichur", price: "7,600" },
         { crop: "Tur / Arhar", market: "Kalaburagi (Gulbarga)", price: "10,200" },
         { crop: "Maize", market: "Davangere", price: "2,290" },
-        { crop: "Byadagi Chilli", market: "Byadgi", price: "24,500" }
+        { crop: "Byadagi Chilli", market: "Byadgi", price: "24,500" },
+        { crop: "Paddy", market: "Gangavathi", price: "2,350" },
+        { crop: "Onion", market: "Hubli", price: "1,900" },
+        { crop: "Tomato", market: "Kolar", price: "1,700" },
+        { crop: "Coffee (Robusta)", market: "Chikkamagaluru", price: "18,500" }
       ],
       "Maharashtra": [
         { crop: "Cotton", market: "Nagpur", price: "7,750" },
         { crop: "Soyabean", market: "Latur", price: "4,600" },
-        { crop: "Onion (ఉల్లి)", market: "Lasalgaon", price: "1,850" },
-        { crop: "Chana (శనగ)", market: "Akola", price: "5,800" }
+        { crop: "Onion (ఉల్లి)", market: "Lasalgaon (Nashik)", price: "1,850" },
+        { crop: "Chana (శనగ)", market: "Akola", price: "5,800" },
+        { crop: "Sugarcane (చెరకు)", market: "Kolhapur", price: "3,100" },
+        { crop: "Pomegranate (దానిమ్మ)", market: "Solapur", price: "9,500" },
+        { crop: "Tur", market: "Amravati", price: "10,100" }
       ]
     };
 
-    function fetchLiveRates() {
+    function renderMandiTable() {
       const state = document.getElementById("state-select").value;
-      const status = document.getElementById("status");
+      const searchKey = document.getElementById("crop-search").value.trim().toLowerCase();
+      const statusEl = document.getElementById("status");
       const tbody = document.getElementById("mandi-body");
 
-      status.style.color = "#1b5e20";
-      status.innerText = `లైవ్ అప్‌డేట్: ${state} మార్కెట్ ధరలు విజయవంతంగా లోడ్ అయ్యాయి!`;
+      const crops = stateMandiFeeds[state] || [];
+      
+      // Filter by crop name or market
+      const filtered = crops.filter(item => {
+        return item.crop.toLowerCase().includes(searchKey) || item.market.toLowerCase().includes(searchKey);
+      });
 
-      const data = stateMandiFeeds[state] || stateMandiFeeds["Telangana"];
+      if (filtered.length === 0) {
+        statusEl.innerText = `"${searchKey}" పేరుతో పంటలు ఏవీ దొరకలేదు.`;
+        statusEl.style.color = "#c62828";
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:14px; color:#888;">ఫలితాలు లేవు. వేరే పంట పేరు ప్రయత్నించండి.</td></tr>`;
+        return;
+      }
+
+      statusEl.innerText = `${state} లో ${filtered.length} పంటలు అందుబాటులో ఉన్నాయి.`;
+      statusEl.style.color = "#1b5e20";
+
       let html = "";
-      data.forEach(item => {
+      filtered.forEach(item => {
         html += `
           <tr>
             <td style="font-weight: bold; color: #2e7d32;">${item.crop}</td>
-            <td>${item.market}</td>
+            <td style="color: #444;">${item.market}</td>
             <td style="font-weight: bold; color: #d84315;">₹${item.price}</td>
           </tr>
         `;
@@ -102,7 +140,7 @@
       tbody.innerHTML = html;
     }
 
-    fetchLiveRates();
+    renderMandiTable();
   </script>
 </body>
 </html>
