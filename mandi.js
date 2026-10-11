@@ -1,41 +1,26 @@
-// mandi.js - Official Live Agmarknet Mandi Rates Service (CORS-free JSONP)
+// mandi.js - Official Live Agmarknet Mandi Rates Service (Powered by Mumbai Supabase Proxy)
 
 const MANDI_CONFIG = {
   apiKey: "579b464db66ec23bdd0000012873d6e8fa3847a564325d817ed2b023",
   resourceId: "9ef84268-d588-465a-a308-a864a43d0070",
-  limit: 50
+  limit: 50,
+  // ముంబై సుపాబేస్ ప్రాక్సీ URL
+  proxyUrl: "https://tmqzfgzmrcveadccjtaa.supabase.co/functions/v1/smart-action?url="
 };
 
-// 1. JSONP పద్ధతిలో గవర్నమెంట్ API నుండి నేరుగా డేటా తెచ్చే ఫంక్షన్
-function fetchMandiJSONP() {
-  return new Promise((resolve, reject) => {
-    const callbackName = "handleMandiData_" + Math.round(100000 * Math.random());
-    const script = document.createElement("script");
+// 1. ముంబై సర్వర్ ప్రాక్సీ ద్వారా సురక్షితంగా డేటా తెచ్చే ఫంక్షన్
+async function fetchMandiRates() {
+  // data.gov.in నుండి నేరుగా JSON ఫార్మాట్ అభ్యర్థన
+  const targetApi = `https://api.data.gov.in/resource/${MANDI_CONFIG.resourceId}?api-key=${MANDI_CONFIG.apiKey}&format=json&limit=${MANDI_CONFIG.limit}`;
+  const finalUrl = MANDI_CONFIG.proxyUrl + encodeURIComponent(targetApi);
 
-    const timer = setTimeout(() => {
-      cleanup();
-      reject(new Error("కనెక్షన్ టైమౌట్ అయింది. దయచేసి మళ్లీ ప్రయత్నించండి."));
-    }, 15000);
+  const response = await fetch(finalUrl);
+  if (!response.ok) {
+    throw new Error(`సర్వర్ ఎర్రర్: ${response.status}`);
+  }
 
-    function cleanup() {
-      if (window[callbackName]) delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-      clearTimeout(timer);
-    }
-
-    window[callbackName] = function(data) {
-      cleanup();
-      resolve(data);
-    };
-
-    script.src = `https://api.data.gov.in/resource/${MANDI_CONFIG.resourceId}?api-key=${MANDI_CONFIG.apiKey}&format=jsonp&callback=${callbackName}&limit=${MANDI_CONFIG.limit}`;
-    script.onerror = function() {
-      cleanup();
-      reject(new Error("ప్రభుత్వ సర్వర్ నుండి డేటా లోడ్ కాలేదు."));
-    };
-
-    document.head.appendChild(script);
-  });
+  const data = await response.json();
+  return data;
 }
 
 // 2. లైవ్ డేటాను వెబ్‌సైట్‌లో టేబుల్ రూపంలో చూపించే ఫంక్షన్
@@ -50,7 +35,7 @@ async function renderMandiTable(containerId) {
   `;
 
   try {
-    const data = await fetchMandiJSONP();
+    const data = await fetchMandiRates();
     const records = data.records || [];
 
     if (records.length === 0) {
