@@ -173,7 +173,7 @@
     <section class="card">
       <div class="card-header">
         <span style="color: #2e7d32;">🌾 మార్కెట్ ధరలు (Mandi Rates)</span>
-        <span id="mandi-count" style="font-size: 0.75rem; color: #666;">లెక్కిస్తోంది...</span>
+        <span id="mandi-count" style="font-size: 0.75rem; color: #666;">లోడ్ అవుతోంది...</span>
       </div>
       <div style="overflow-x:auto;">
         <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
@@ -260,175 +260,10 @@
     }
     const db = firebase.firestore();
 
-    // 3. Mandi Rates (Firestore Live Sync)
-    db.collection("mandi_rates").onSnapshot(snap => {
+    // 3. Live Mandi Rates (Government CORS Proxy + Firestore Fallback)
+    async function loadMandiData() {
       const tbody = document.getElementById("mandi-table-body");
       const countEl = document.getElementById("mandi-count");
-      if (!tbody) return;
 
-      if (snap.empty) {
-        tbody.innerHTML = "<tr><td colspan='3' style='padding:12px; text-align:center; color:#777;'>మార్కెట్ ధరలు ఏవీ లేవు.</td></tr>";
-        if (countEl) countEl.innerText = "0 పంటలు";
-        return;
-      }
-
-      let html = "";
-      let count = 0;
-      snap.forEach(doc => {
-        count++;
-        const m = doc.data();
-        html += `
-          <tr style="border-bottom: 1px solid #eee;">
-            <td style="padding: 8px 6px; font-weight: 600; color: #2e7d32;">${m.crop || m.commodity || "పంట"}</td>
-            <td style="padding: 8px 6px; color: #555;">${m.market || "హనుమకొండ"}</td>
-            <td style="padding: 8px 6px; font-weight: bold; color: #d84315;">₹${m.price || "--"}</td>
-          </tr>
-        `;
-      });
-      tbody.innerHTML = html;
-      if (countEl) countEl.innerText = `${count} పంటలు`;
-    }, err => {
-      const tbody = document.getElementById("mandi-table-body");
-      if (tbody) tbody.innerHTML = `<tr><td colspan='3' style='color:red; padding:10px;'>Error: ${err.message}</td></tr>`;
-    });
-
-    // 4. Laborers & Jobs Tabs Real-time Sync
-    let laborData = [];
-    let jobsData = [];
-    let activeTab = 'labor';
-
-    function renderLaborTabs() {
-      const container = document.getElementById("labor-jobs-container");
-      if (!container) return;
-
-      container.innerHTML = `
-        <div style="display:flex; gap:8px; margin-bottom:12px; border-bottom:2px solid #e0e0e0; padding-bottom:8px;">
-          <button id="tab-btn-labor" class="tab-btn" style="background:${activeTab === 'labor' ? '#2e7d32' : '#e8f5e9'}; color:${activeTab === 'labor' ? '#ffffff' : '#2e7d32'};">
-            👷 కూలీలు (${laborData.length})
-          </button>
-          <button id="tab-btn-jobs" class="tab-btn" style="background:${activeTab === 'jobs' ? '#e65100' : '#fff3e0'}; color:${activeTab === 'jobs' ? '#ffffff' : '#e65100'};">
-            🌾 పనులు / Jobs (${jobsData.length})
-          </button>
-        </div>
-        <div id="tab-body"></div>
-      `;
-
-      const bLabor = document.getElementById("tab-btn-labor");
-      const bJobs = document.getElementById("tab-btn-jobs");
-      if (bLabor) bLabor.onclick = () => { activeTab = 'labor'; renderLaborTabs(); };
-      if (bJobs) bJobs.onclick = () => { activeTab = 'jobs'; renderLaborTabs(); };
-
-      const body = document.getElementById("tab-body");
-      if (!body) return;
-
-      if (activeTab === 'labor') {
-        if (!laborData.length) {
-          body.innerHTML = "<p style='color:#666; font-size:0.85rem;'>👷 నమోదైన కూలీలు ఎవరూ లేరు.</p>";
-          return;
-        }
-        body.innerHTML = laborData.map(d => `
-          <div style="background:#f1f8e9; padding:10px 12px; border-radius:6px; border-left:4px solid #2e7d32; margin-bottom:8px;">
-            <div style="font-weight:bold; color:#1b5e20;">${d.name || "కూలీ"}</div>
-            <div style="font-size:0.82rem; color:#444; margin-top:2px;">
-              🌾 పని: <b>${d.skills || d.work || "వ్యవసాయ పనులు"}</b> | 📍 ఊరు: <b>${d.village || d.location || "హనుమకొండ"}</b>
-            </div>
-            ${d.phone ? `<div style="margin-top:4px; font-size:0.85rem;">📞 <a href="tel:${d.phone}" style="color:#2e7d32; font-weight:bold; text-decoration:none;">${d.phone}</a></div>` : ""}
-          </div>
-        `).join('');
-      } else {
-        if (!jobsData.length) {
-          body.innerHTML = "<p style='color:#666; font-size:0.85rem;'>🌾 ప్రస్తుతం పనుల అవసరాలు (Jobs) ఏవీ లేవు.</p>";
-          return;
-        }
-        body.innerHTML = jobsData.map(j => `
-          <div style="background:#fff8e1; padding:10px 12px; border-radius:6px; border-left:4px solid #f57f17; margin-bottom:8px;">
-            <div style="font-weight:bold; color:#d84315;">${j.farmer || "రైతు"} <span style="font-size:0.75rem; background:#ffe082; color:#b71c1c; padding:2px 6px; border-radius:4px; margin-left:6px;">అవసరం: ${j.count || 1} మంది</span></div>
-            <div style="font-size:0.82rem; color:#444; margin-top:4px;">
-              🌾 పని: <b>${j.work || "కూలీ పనులు"}</b> | 📍 ప్రాంతం: <b>${j.location || "హనుమకొండ"}</b>
-            </div>
-            ${j.phone ? `<div style="margin-top:4px; font-size:0.85rem;">📞 <a href="tel:${j.phone}" style="color:#d84315; font-weight:bold; text-decoration:none;">${j.phone}</a></div>` : ""}
-          </div>
-        `).join('');
-      }
-    }
-
-    db.collection("laborers").onSnapshot(snap => {
-      laborData = [];
-      snap.forEach(doc => laborData.push(doc.data()));
-      renderLaborTabs();
-    }, err => console.warn(err));
-
-    db.collection("jobs").onSnapshot(snap => {
-      jobsData = [];
-      snap.forEach(doc => jobsData.push(doc.data()));
-      renderLaborTabs();
-    }, err => console.warn(err));
-
-    // 5. Live GPS Weather (Open-Meteo API)
-    function fetchLiveWeather() {
-      const tempEl = document.getElementById("weather-temp");
-      const descEl = document.getElementById("weather-desc");
-      if (!navigator.geolocation) {
-        descEl.innerText = "మీ బ్రౌజర్‌లో GPS సపోర్ట్ లేదు.";
-        return;
-      }
-      descEl.innerText = "లొకేషన్ తీసుకుంటోంది...";
-      navigator.geolocation.getCurrentPosition(pos => {
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
-        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
-          .then(res => res.json())
-          .then(data => {
-            if (data.current_weather) {
-              tempEl.innerText = `${data.current_weather.temperature} °C`;
-              descEl.innerText = `గాలి వేగం: ${data.current_weather.windspeed} km/h (లొకేషన్ అప్‌డేట్ అయింది)`;
-            }
-          })
-          .catch(() => {
-            descEl.innerText = "వాతావరణ సమాచారం పొందడంలో సమస్య వచ్చింది.";
-          });
-      }, () => {
-        descEl.innerText = "లొకేషన్ పర్మిషన్ అనుమతించలేదు.";
-      });
-    }
-
-    // 6. Crop Doctor Image Handler
-    function handleCropImage(input) {
-      const status = document.getElementById("crop-status");
-      if (input.files && input.files[0]) {
-        status.innerHTML = "🔍 ఫోటో స్కాన్ అవుతోంది... ప్రాథమిక పరీక్షలో పంట ఆరోగ్యంగా ఉన్నట్లు గుర్తించబడింది.";
-      }
-    }
-
-    // 7. Voice Assistant
-    function startVoiceAssistant() {
-      const resEl = document.getElementById("voice-response");
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        alert("మీ బ్రౌజర్ వాయిస్ రికగ్నిషన్‌కు సపోర్ట్ చేయదు.");
-        return;
-      }
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'te-IN';
-      resEl.innerText = "వినపడుతోంది... మాట్లాడండి...";
-      recognition.start();
-
-      recognition.onresult = (event) => {
-        const text = event.results[0][0].transcript.toLowerCase();
-        resEl.innerText = `మీరు అన్నది: "${text}"`;
-        if (text.includes("వాతావరణం") || text.includes("weather")) {
-          fetchLiveWeather();
-        } else if (text.includes("కూలీలు") || text.includes("పనులు")) {
-          document.getElementById('labor-jobs-container').scrollIntoView({behavior:'smooth'});
-        } else if (text.includes("ధరలు") || text.includes("మార్కెట్")) {
-          document.getElementById('mandi-table-body').scrollIntoView({behavior:'smooth'});
-        }
-      };
-
-      recognition.onerror = () => {
-        resEl.innerText = "వాయిస్ సరిగ్గా వినబడలేదు, మళ్ళీ ప్రయత్నించండి.";
-      };
-    }
-  </script>
-</body>
-</html>
+      const targetGovtUrl = encodeURIComponent("https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&filters[state]=Telangana");
+      
