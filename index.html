@@ -29,32 +29,30 @@
         <select id="state-select">
           <option value="Telangana">Telangana</option>
           <option value="Andhra Pradesh">Andhra Pradesh</option>
-          <option value="Karnataka">Karnataka</option>
-          <option value="Maharashtra">Maharashtra</option>
-          <option value="Punjab">Punjab</option>
-          <option value="Uttar Pradesh">Uttar Pradesh</option>
           <option value="Gujarat">Gujarat</option>
+          <option value="Maharashtra">Maharashtra</option>
+          <option value="Karnataka">Karnataka</option>
         </select>
-        <button onclick="fetchGovtLiveMandi()">లైవ్ రేట్లు లాగండి</button>
+        <button onclick="fetchGovtLiveMandi()">Live Rates Lagandi</button>
       </div>
-      <input type="text" id="crop-filter" placeholder="🔍 పంట పేరుతో ఫిల్టర్ చేయండి..." oninput="filterTable()">
+      <input type="text" id="crop-filter" placeholder="🔍 Panta perutho filter cheyandi..." oninput="filterTable()">
     </div>
 
-    <div id="status-box">సిద్ధంగా ఉంది. "లైవ్ రేట్లు లాగండి" బటన్ క్లిక్ చేయండి.</div>
+    <div id="status-box">Ready ga undi. "Live Rates Lagandi" click cheyandi.</div>
 
     <div style="overflow-x:auto;">
       <table>
         <thead>
           <tr>
-            <th>పంట (Commodity)</th>
-            <th>మార్కెట్ (Market)</th>
-            <th>జిల్లా (District)</th>
-            <th>ధర (Modal Price ₹)</th>
+            <th>Panta (Commodity)</th>
+            <th>Market</th>
+            <th>District</th>
+            <th>Modal Price (₹)</th>
           </tr>
         </thead>
         <tbody id="mandi-table-body">
           <tr>
-            <td colspan="4" style="text-align: center; padding: 14px; color: #777;">ఇంకా డేటా లోడ్ కాలేదు.</td>
+            <td colspan="4" style="text-align: center; padding: 14px; color: #777;">Inka data load kaledu.</td>
           </tr>
         </tbody>
       </table>
@@ -64,69 +62,49 @@
   <script>
     let rawRecords = [];
 
-    // Govt Live Agmarknet API - JSONP Handler
-    function fetchGovtLiveMandi() {
+    async function fetchGovtLiveMandi() {
       const state = document.getElementById("state-select").value;
       const statusBox = document.getElementById("status-box");
       const tbody = document.getElementById("mandi-table-body");
 
       statusBox.style.background = "#fff3e0";
       statusBox.style.color = "#e65100";
-      statusBox.innerText = `🔄 కేంద్ర ప్రభుత్వ సర్వర్ (data.gov.in) నుండి ${state} లైవ్ రికార్డులను తెస్తోంది...`;
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:16px;">ప్రభుత్వ సర్వర్ కనెక్ట్ అవుతోంది... వేచి చూడండి...</td></tr>`;
+      statusBox.innerText = `🔄 Government Agmarknet nundi ${state} live records thestondi...`;
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:16px;">Prabhutva server connect avthondi...</td></tr>`;
 
-      // పాత JSONP స్క్రిప్ట్ ఉంటే తీసేయడం
-      const oldScript = document.getElementById("govt-api-script");
-      if (oldScript) oldScript.remove();
+      const targetUrl = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&limit=50&filters[state]=${encodeURIComponent(state)}`;
 
-      // data.gov.in JSONP కాల్ (CORS నిబంధన ఉండదు)
-      const callbackName = "handleGovtApiResponse";
-      const apiUrl = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=jsonp&callback=${callbackName}&limit=50&filters[state]=${encodeURIComponent(state)}`;
+      // Thingproxy server-to-server gateway
+      const gatewayUrl = `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(targetUrl)}`;
 
-      const script = document.createElement("script");
-      script.id = "govt-api-script";
-      script.src = apiUrl;
+      try {
+        const response = await fetch(gatewayUrl);
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const data = await response.json();
 
-      // 10 సెకన్లలో రెస్పాన్స్ రాకపోతే టైమ్‌అవుట్
-      const timer = setTimeout(() => {
-        if (rawRecords.length === 0) {
-          statusBox.style.background = "#ffebee";
-          statusBox.style.color = "#c62828";
-          statusBox.innerText = "❌ ప్రభుత్వ సర్వర్ నుండి రెస్పాన్స్ ఆలస్యమైంది లేదా ఫైర్‌వాల్ బ్లాక్ చేసింది. నెట్‌వర్క్ లాగ్ చెక్ చేయండి.";
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#c62828; padding:14px;">లైవ్ డేటా రాలేదు.</td></tr>`;
-        }
-      }, 10000);
-
-      window[callbackName] = function(data) {
-        clearTimeout(timer);
-        if (data && data.records && data.records.length > 0) {
+        if (data.records && data.records.length > 0) {
           rawRecords = data.records;
           statusBox.style.background = "#e8f5e9";
           statusBox.style.color = "#1b5e20";
-          statusBox.innerText = `✅ సక్సెస్: ప్రభుత్వ సర్వర్ నుండి ${rawRecords.length} అసలైన లైవ్ రికార్డులు వచ్చాయి!`;
+          statusBox.innerText = `✅ Success: Prabhutva server nundi ${rawRecords.length} records vachayi!`;
           renderTable(rawRecords);
+          return;
         } else {
-          statusBox.style.background = "#fff3e0";
-          statusBox.style.color = "#e65100";
-          statusBox.innerText = `⚠️ ${state} రాష్ట్రానికి ప్రస్తుతం ప్రభుత్వ పోర్టల్‌లో కొత్త రికార్డులు అప్‌డేట్ కాలేదు.`;
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px;">రికార్డులు ఖాళీగా ఉన్నాయి.</td></tr>`;
+          statusBox.innerText = `⚠️ ${state} lo ee roju records inka update kaledu.`;
+          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px;">Records empty ga unnay.</td></tr>`;
         }
-      };
-
-      script.onerror = function() {
-        clearTimeout(timer);
+      } catch (err) {
         statusBox.style.background = "#ffebee";
         statusBox.style.color = "#c62828";
-        statusBox.innerText = "❌ ప్రభుత్వ API నెట్‌వర్క్ ఎర్రర్ వచ్చింది.";
-      };
-
-      document.body.appendChild(script);
+        statusBox.innerText = `❌ Error: ${err.message}. Govt API response ivvaledu.`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#c62828; padding:14px;">Live data load kaledu.</td></tr>`;
+      }
     }
 
     function renderTable(list) {
       const tbody = document.getElementById("mandi-table-body");
-      if (list.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px; color:#777;">ఫలితాలు లేవు.</td></tr>`;
+      if (!list.length) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px; color:#777;">Phalithalu levu.</td></tr>`;
         return;
       }
 
@@ -154,9 +132,6 @@
       );
       renderTable(filtered);
     }
-
-    // మొదటిసారి ఆటోమేటిక్‌గా రన్ చేయడం
-    fetchGovtLiveMandi();
   </script>
 </body>
 </html>
