@@ -1,36 +1,26 @@
-name: Daily Mandi Live Data Sync
+name: Update Mandi Rates
 
 on:
   schedule:
-    - cron: '0 6 * * *'
-  workflow_dispatch:
+    # Roju ki 3 sarlu automatic ga run avthundhi (IST 6 AM, 12 PM, 6 PM)
+    - cron: '30 0,6,12 * * *'
+  workflow_dispatch: # Manual ga run cheyadaniki button
 
 jobs:
-  update-mandi:
+  update-data:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+      - name: Fetch Live Data from Govt API
+        run: |
+          curl -s "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000012873d6e8fa3847a564325d817ed2b023&format=json&limit=100" > mandi_live.json
 
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Fetch Govt Live Mandi Data
-        run: python sync_mandi.py
-
-      - name: Commit and Push Live Data
+      - name: Commit and Push Updated Data
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
-          git commit -m "Auto-update live mandi data from Govt API" || echo "No changes to commit"
-          git push origin main
+          git commit -m "Auto-update live mandi rates [skip ci]" || exit 0
+          git push
