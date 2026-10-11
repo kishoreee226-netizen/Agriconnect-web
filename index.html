@@ -169,29 +169,63 @@
       </div>
     </section>
 
-    <!-- Mandi Rates Card -->
-    <section class="card">
-      <div class="card-header">
-        <span style="color: #2e7d32;">🌾 మార్కెట్ ధరలు (Mandi Rates)</span>
-        <span id="mandi-count" style="font-size: 0.75rem; color: #666;">లెక్కిస్తోంది...</span>
-      </div>
-      <div style="overflow-x:auto;">
-        <table style="width: 100%; border-collapse: collapse; font-size: 0.82rem; text-align: left;">
-          <thead>
-            <tr style="background: #e8f5e9; border-bottom: 2px solid #c8e6c9;">
-              <th style="padding: 8px 6px;">పంట</th>
-              <th style="padding: 8px 6px;">మార్కెట్</th>
-              <th style="padding: 8px 6px;">ధర (క్వింటాల్)</th>
+       // 3. Live Mandi Rates (Govt API + Firestore Fallback)
+    async function fetchLiveMandiRates() {
+      const tbody = document.getElementById("mandi-table-body");
+      const countEl = document.getElementById("mandi-count");
+
+      // Government Mandi API (Agmarknet / data.gov.in)
+      const govtApiUrl = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&filters[state]=Telangana";
+
+      try {
+        const response = await fetch(govtApiUrl);
+        const result = await response.json();
+
+        if (result.records && result.records.length > 0) {
+          let html = "";
+          result.records.slice(0, 10).forEach(r => {
+            html += `
+              <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 8px 6px; font-weight: 600; color: #2e7d32;">${r.commodity || "పంట"}</td>
+                <td style="padding: 8px 6px; color: #555;">${r.market || "వరంగల్"}</td>
+                <td style="padding: 8px 6px; font-weight: bold; color: #d84315;">₹${r.modal_price || "--"}</td>
+              </tr>
+            `;
+          });
+          tbody.innerHTML = html;
+          if (countEl) countEl.innerText = `${result.records.length} పంటలు (Live)`;
+          return;
+        }
+      } catch (err) {
+        console.warn("Govt API fetch failed, falling back to Firestore:", err);
+      }
+
+      // API లోడ్ కాకపోతే Firestore డేటా చూపిస్తుంది
+      db.collection("mandi_rates").onSnapshot(snap => {
+        if (snap.empty) {
+          tbody.innerHTML = "<tr><td colspan='3' style='padding:12px; text-align:center; color:#777;'>మార్కెట్ ధరలు ఏవీ లేవు.</td></tr>";
+          return;
+        }
+        let html = "";
+        let count = 0;
+        snap.forEach(doc => {
+          count++;
+          const m = doc.data();
+          html += `
+            <tr style="border-bottom: 1px solid #eee;">
+              <td style="padding: 8px 6px; font-weight: 600; color: #2e7d32;">${m.crop || m.commodity || "పంట"}</td>
+              <td style="padding: 8px 6px; color: #555;">${m.market || "హనుమకొండ"}</td>
+              <td style="padding: 8px 6px; font-weight: bold; color: #d84315;">₹${m.price || "--"}</td>
             </tr>
-          </thead>
-          <tbody id="mandi-table-body">
-            <tr>
-              <td colspan="3" style="padding: 14px; text-align: center; color: #777;">ధరలు లోడ్ అవుతున్నాయి...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+          `;
+        });
+        tbody.innerHTML = html;
+        if (countEl) countEl.innerText = `${count} పంటలు (Firestore)`;
+      });
+    }
+
+    fetchLiveMandiRates();
+
 
     <!-- Laborers & Jobs Tabs Card -->
     <section class="card">
