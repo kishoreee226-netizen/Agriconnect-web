@@ -12,7 +12,8 @@ const MANDI_CONFIG = {
  * భవిష్యత్తులో మొబైల్ యాప్‌లో కూడా ఈ ఫంక్షన్‌ను నేరుగా వాడుకోవచ్చు.
  */
 async function getLiveMandiPrices() {
-  const url = `https://api.data.gov.in/resource/${MANDI_CONFIG.resourceId}?api-key=${MANDI_CONFIG.apiKey}&format=json&limit=${MANDI_CONFIG.limit}`;
+    const targetUrl = `https://api.data.gov.in/resource/${MANDI_CONFIG.resourceId}?api-key=${MANDI_CONFIG.apiKey}&format=json&limit=${MANDI_CONFIG.limit}`;
+  const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
 
   try {
     const response = await fetch(url);
