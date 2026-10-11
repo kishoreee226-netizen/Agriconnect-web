@@ -1,0 +1,32 @@
+name: Daily Mandi Live Data Sync
+
+on:
+  schedule:
+    # ప్రతిరోజూ ఉదయం భారత కాలమానం ప్రకారం ఆటోమేటిక్‌గా రన్ అవుతుంది
+    - cron: '0 6 * * *'
+  workflow_dispatch: # మాన్యువల్‌గా రన్ చేయడానికి బటన్ ఇస్తుంది
+
+jobs:
+  update-mandi:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Fetch Govt Live Mandi Data
+        run: python sync_mandi.py
+
+      - name: Commit and Push Live Data
+        run: |
+          git config --global user.name "AgriConnect-Bot"
+          git config --global user.email "bot@agriconnect.local"
+          git add mandi_live.json
+          git commit -m "Auto-update live mandi data from Govt API" || exit 0
+          git push
