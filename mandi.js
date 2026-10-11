@@ -7,8 +7,8 @@ const MANDI_CONFIG = {
   proxyUrl: "https://tmqzfgzmrcveadccjtaa.supabase.co/functions/v1/smart-action?url="
 };
 
-// Supabase Publishable Key
-const SUPABASE_PUBLISHABLE_KEY = "Sb_publishable_pEAkeToFDT6NM0Ph-oku9w_xra27Kjh";
+// Supabase Legacy Anon JWT Key
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXpmZ3ptcmN2ZWFkY2NqdGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3MzAwNjYsImV4cCI6MjEwNzMwNjA2Nn0.Yp0FzxOJTMuxg6M1XFZ-39PiuPlWM-U_xdT42BlL7MI";
 
 // 1. ముంబై సర్వర్ ప్రాక్సీ ద్వారా సురక్షితంగా డేటా తెచ్చే ఫంక్షన్
 async function fetchMandiRates() {
@@ -18,8 +18,8 @@ async function fetchMandiRates() {
   const response = await fetch(finalUrl, {
     method: "GET",
     headers: {
-      "apikey": SUPABASE_PUBLISHABLE_KEY,
-      "Authorization": `Bearer ${SUPABASE_PUBLISHABLE_KEY}`
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
     }
   });
 
