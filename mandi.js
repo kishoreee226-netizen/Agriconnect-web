@@ -1,44 +1,21 @@
-// mandi.js - Official Live Agmarknet Mandi Rates Service (Powered by Mumbai Supabase Proxy)
+// mandi.js - Real Live Mandi Rates from mandi_live.json
 
-const MANDI_CONFIG = {
-  apiKey: "579b464db66ec23bdd0000012873d6e8fa3847a564325d817ed2b023",
-  resourceId: "9ef84268-d588-465a-a308-a864a43d0070",
-  limit: 50,
-  proxyUrl: "https://tmqzfgzmrcveadccjtaa.supabase.co/functions/v1/smart-action?url="
-};
-
-// Supabase Legacy Anon JWT Key
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRtcXpmZ3ptcmN2ZWFkY2NqdGFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE3MzAwNjYsImV4cCI6MjEwNzMwNjA2Nn0.Yp0FzxOJTMuxg6M1XFZ-39PiuPlWM-U_xdT42BlL7MI";
-
-// 1. ముంబై సర్వర్ ప్రాక్సీ ద్వారా సురక్షితంగా డేటా తెచ్చే ఫంక్షన్
 async function fetchMandiRates() {
-  const targetApi = `https://api.data.gov.in/resource/${MANDI_CONFIG.resourceId}?api-key=${MANDI_CONFIG.apiKey}&format=json&limit=${MANDI_CONFIG.limit}`;
-  const finalUrl = MANDI_CONFIG.proxyUrl + encodeURIComponent(targetApi);
-
-  const response = await fetch(finalUrl, {
-    method: "GET",
-    headers: {
-      "apikey": SUPABASE_ANON_KEY,
-      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-    }
-  });
-
+  const response = await fetch(`./mandi_live.json?t=${Date.now()}`);
   if (!response.ok) {
-    throw new Error(`సర్వర్ ఎర్రర్: ${response.status}`);
+    throw new Error(`Data file read error: ${response.status}`);
   }
-
   const data = await response.json();
   return data;
 }
 
-// 2. లైవ్ డేటాను వెబ్‌సైట్‌లో టేబుల్ రూపంలో చూపించే ఫంక్షన్
 async function renderMandiTable(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
   container.innerHTML = `
-    <div style="padding: 15px; font-family: sans-serif; color: #555;">
-      ⏳ తాజా ప్రభుత్వ మార్కెట్ ధరలు లోడ్ అవుతున్నాయి...
+    <div style="padding: 15px; font-family: sans-serif; color: #2e7d32;">
+      ⏳ Kendriya Prabhutva Agmarknet nundi taja live dharalu load avthunnayi...
     </div>
   `;
 
@@ -49,7 +26,7 @@ async function renderMandiTable(containerId) {
     if (records.length === 0) {
       container.innerHTML = `
         <div style="padding: 15px; color: #d32f2f; font-family: sans-serif;">
-          ⚠️ ప్రస్తుతం ఎలాంటి రికార్డులు లభించలేదు.
+          ⚠️ Prastutam records emi dorakaledhu.
         </div>
       `;
       return;
@@ -60,12 +37,12 @@ async function renderMandiTable(containerId) {
         <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
           <thead>
             <tr style="background-color: #2e7d32; color: #ffffff;">
-              <th style="padding: 10px; border: 1px solid #ddd;">రాష్ట్రం (State)</th>
-              <th style="padding: 10px; border: 1px solid #ddd;">జిల్లా (District)</th>
-              <th style="padding: 10px; border: 1px solid #ddd;">మార్కెట్ (Market)</th>
-              <th style="padding: 10px; border: 1px solid #ddd;">పంట (Commodity)</th>
-              <th style="padding: 10px; border: 1px solid #ddd;">రకం (Variety)</th>
-              <th style="padding: 10px; border: 1px solid #ddd;">ధర (₹/క్వింటాల్)</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">State</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">District</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">Market</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">Commodity</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">Variety</th>
+              <th style="padding: 10px; border: 1px solid #ddd;">Modal Price (₹/Q)</th>
             </tr>
           </thead>
           <tbody>
@@ -93,16 +70,14 @@ async function renderMandiTable(containerId) {
 
     container.innerHTML = tableHtml;
   } catch (error) {
-    console.error("Mandi Load Error:", error);
     container.innerHTML = `
       <div style="padding: 15px; color: #d32f2f; font-family: sans-serif;">
-        ⚠️ లైవ్ మార్కెట్ డేటా అందుబాటులో లేదు (${error.message}). దయచేసి కాసేపటి తర్వాత ప్రయత్నించండి.
+        ⚠️ Live market data load kaaledhu (${error.message}).
       </div>
     `;
   }
 }
 
-// పేజీ లోడ్ అవ్వగానే ఆటోమేటిక్‌గా టేబుల్ చూపించడానికి
 window.addEventListener("DOMContentLoaded", () => {
   renderMandiTable("mandi-box");
 });
