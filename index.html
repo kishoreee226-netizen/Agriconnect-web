@@ -3,135 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Govt Mandi Realtime Test</title>
-  <style>
-    body { font-family: sans-serif; background: #f0f2f5; padding: 16px; margin: 0; }
-    .card { background: #fff; padding: 16px; border-radius: 8px; max-width: 650px; margin: 0 auto; border: 1px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    h2 { margin: 0 0 12px; color: #1b5e20; font-size: 1.2rem; }
-    .controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
-    .row { display: flex; gap: 8px; }
-    select, input, button { padding: 9px; font-size: 0.9rem; border-radius: 4px; border: 1px solid #aaa; }
-    select { flex: 1; font-weight: bold; }
-    button { background: #2e7d32; color: #fff; border: none; font-weight: bold; cursor: pointer; }
-    #status-box { padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; margin-bottom: 10px; background: #e8f5e9; color: #1b5e20; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
-    th { background: #2e7d32; color: #fff; }
-  </style>
+  <title>Agriconnect - Live Mandi Rates</title>
 </head>
-<body>
+<body style="font-family: Arial, sans-serif; padding: 20px; background-color: #f4f7f6;">
 
-  <div class="card">
-    <h2>🌾 Live Government Mandi Rates (Real-Time API)</h2>
-    
-    <div class="controls">
-      <div class="row">
-        <select id="state-select">
-          <option value="Telangana">Telangana</option>
-          <option value="Andhra Pradesh">Andhra Pradesh</option>
-          <option value="Gujarat">Gujarat</option>
-          <option value="Maharashtra">Maharashtra</option>
-          <option value="Karnataka">Karnataka</option>
-        </select>
-        <button onclick="fetchGovtLiveMandi()">Live Rates Lagandi</button>
-      </div>
-      <input type="text" id="crop-filter" placeholder="🔍 Panta perutho filter cheyandi..." oninput="filterTable()">
-    </div>
+  <h2 style="color: #2e7d32;">🌱 Agriconnect - ప్రత్యక్ష మార్కెట్ ధరలు (Live Mandi Rates)</h2>
+  <p>కేంద్ర ప్రభుత్వ Agmarknet నుండి తాజా సమాచారం:</p>
 
-    <div id="status-box">Ready ga undi. "Live Rates Lagandi" click cheyandi.</div>
+  <!-- ఇక్కడ మన mandi.js డేటాను లోడ్ చేస్తుంది -->
+  <div id="mandi-box"></div>
 
-    <div style="overflow-x:auto;">
-      <table>
-        <thead>
-          <tr>
-            <th>Panta (Commodity)</th>
-            <th>Market</th>
-            <th>District</th>
-            <th>Modal Price (₹)</th>
-          </tr>
-        </thead>
-        <tbody id="mandi-table-body">
-          <tr>
-            <td colspan="4" style="text-align: center; padding: 14px; color: #777;">Inka data load kaledu.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <script>
-    let rawRecords = [];
-
-    async function fetchGovtLiveMandi() {
-      const state = document.getElementById("state-select").value;
-      const statusBox = document.getElementById("status-box");
-      const tbody = document.getElementById("mandi-table-body");
-
-      statusBox.style.background = "#fff3e0";
-      statusBox.style.color = "#e65100";
-      statusBox.innerText = `🔄 Government Agmarknet nundi ${state} live records thestondi...`;
-      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:16px;">Prabhutva server connect avthondi...</td></tr>`;
-
-      const targetUrl = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b&format=json&limit=50&filters[state]=${encodeURIComponent(state)}`;
-
-      // Thingproxy server-to-server gateway
-      const gatewayUrl = `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(targetUrl)}`;
-
-      try {
-        const response = await fetch(gatewayUrl);
-        if (!response.ok) throw new Error("HTTP " + response.status);
-        const data = await response.json();
-
-        if (data.records && data.records.length > 0) {
-          rawRecords = data.records;
-          statusBox.style.background = "#e8f5e9";
-          statusBox.style.color = "#1b5e20";
-          statusBox.innerText = `✅ Success: Prabhutva server nundi ${rawRecords.length} records vachayi!`;
-          renderTable(rawRecords);
-          return;
-        } else {
-          statusBox.innerText = `⚠️ ${state} lo ee roju records inka update kaledu.`;
-          tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px;">Records empty ga unnay.</td></tr>`;
-        }
-      } catch (err) {
-        statusBox.style.background = "#ffebee";
-        statusBox.style.color = "#c62828";
-        statusBox.innerText = `❌ Error: ${err.message}. Govt API response ivvaledu.`;
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#c62828; padding:14px;">Live data load kaledu.</td></tr>`;
-      }
-    }
-
-    function renderTable(list) {
-      const tbody = document.getElementById("mandi-table-body");
-      if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:14px; color:#777;">Phalithalu levu.</td></tr>`;
-        return;
-      }
-
-      let html = "";
-      list.forEach(r => {
-        html += `
-          <tr>
-            <td style="font-weight: bold; color: #2e7d32;">${r.commodity || "N/A"}</td>
-            <td>${r.market || "N/A"}</td>
-            <td>${r.district || "N/A"}</td>
-            <td style="font-weight: bold; color: #d84315;">₹${r.modal_price || "--"}</td>
-          </tr>
-        `;
-      });
-      tbody.innerHTML = html;
-    }
-
-    function filterTable() {
-      const q = document.getElementById("crop-filter").value.trim().toLowerCase();
-      if (!rawRecords.length) return;
-      const filtered = rawRecords.filter(r => 
-        (r.commodity && r.commodity.toLowerCase().includes(q)) ||
-        (r.market && r.market.toLowerCase().includes(q)) ||
-        (r.district && r.district.toLowerCase().includes(q))
-      );
-      renderTable(filtered);
-    }
-  </script>
+  <!-- mandi.js ఫైల్ లింక్ -->
+  <script src="mandi.js"></script>
 </body>
 </html>
