@@ -20,10 +20,13 @@ function renderTabs() {
     <div id="tab-content-area"></div>
   `;
 
-  document.getElementById('btn-tab-labor').onclick = () => { currentTab = 'labor'; renderTabs(); };
-  document.getElementById('btn-tab-jobs').onclick = () => { currentTab = 'jobs'; renderTabs(); };
+  const btnLabor = document.getElementById('btn-tab-labor');
+  const btnJobs = document.getElementById('btn-tab-jobs');
+  if (btnLabor) btnLabor.onclick = () => { currentTab = 'labor'; renderTabs(); };
+  if (btnJobs) btnJobs.onclick = () => { currentTab = 'jobs'; renderTabs(); };
 
   const contentArea = document.getElementById('tab-content-area');
+  if (!contentArea) return;
 
   if (currentTab === 'labor') {
     if (!laborData.length) {
@@ -60,28 +63,30 @@ function startSync() {
   const container = document.getElementById("labor-list");
   if (!container) return;
 
-  // window.db సిద్ధమయ్యే వరకు 150ms వేచి చూస్తుంది
-  if (!window.db) {
-    if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length) {
-      window.db = firebase.firestore();
-    } else {
-      setTimeout(startSync, 150);
-      return;
-    }
+  // window.db లేదా firebase సిద్ధమయ్యే వరకు రీట్రై చేస్తుంది
+  const database = window.db || (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length ? firebase.firestore() : null);
+
+  if (!database) {
+    setTimeout(startSync, 200);
+    return;
   }
 
-  // కూలీలు
-  window.db.collection("laborers").onSnapshot(snap => {
+  // 1. కూలీలు సింక్
+  database.collection("laborers").onSnapshot(snap => {
     laborData = [];
     snap.forEach(doc => laborData.push(doc.data()));
     renderTabs();
+  }, err => {
+    container.innerHTML = "<div style='color:red;'>⚠️ Error: " + err.message + "</div>";
   });
 
-  // పనులు
-  window.db.collection("jobs").onSnapshot(snap => {
+  // 2. జాబ్స్ సింక్
+  database.collection("jobs").onSnapshot(snap => {
     jobsData = [];
     snap.forEach(doc => jobsData.push(doc.data()));
     renderTabs();
+  }, err => {
+    console.warn("Jobs load error:", err);
   });
 }
 
