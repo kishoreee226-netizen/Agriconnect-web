@@ -1,4 +1,4 @@
-// labour.js - కూలీల డ్యాష్‌బోర్డ్ (Light Blue Header, SMS, Call, WhatsApp, Maps)
+// labour.js - కూలీల Dashboard (Light Blue Header, SMS, Call, WhatsApp, Maps)
 
 function renderLabourWidget() {
   const container = document.getElementById("labour-jobs-container");
@@ -12,17 +12,17 @@ function renderLabourWidget() {
       <!-- Light Blue Header -->
       <div style="background: #e3f2fd; border-bottom: 1.5px solid #90caf9; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0; color: #0d47a1; font-size: 14px; font-weight: 700;">
-          👷 కూలీల డ్యాష్‌బోర్డ్ (5-10 KM Jobs)
+          👷 కూలీల dashboard (5-10 KM Jobs)
         </h3>
         <span style="font-size: 10px; background: #bbdefb; color: #0d47a1; padding: 2px 7px; border-radius: 4px; font-weight: 700;">Live Feed</span>
       </div>
 
       <div class="labour-scroll" style="padding: 12px; display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;">
-${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weight: 600; text-align: right; padding: 4px 12px 0 0;">👇 మరిన్ని పనుల కోసం స్క్రోల్ చేయండి</div>' : ''}
+${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weight: 600; text-align: right; padding: 4px 12px 0 0;">👇 మరిన్ని పనుల కోసం scrole చేయండి</div>' : ''}
 
         ${jobsData.length === 0 ? `
           <div style="text-align: center; color: #666; font-size: 12px; padding: 16px; background: #fbfbfb; border-radius: 6px; border: 1px dashed #ddd;">
-            📢 ప్రస్తుతం కొత్త పనులు లేవు. పై రైతు ఫారంలో పోస్ట్ చేయగానే ఇక్కడ కనిపిస్తాయి.
+            📢 ప్రస్తుతం కొత్త పనులు లేవు. పై రైతు ఫారంలో post చేయగానే ఇక్కడ కనిపిస్తాయి.
           </div>
         ` : jobsData.map(j => {
           const isConf = j.status === "Confirmed";
@@ -57,7 +57,7 @@ ${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weigh
                     <button onclick="toggleMap('${j.id}')" id="mb-${j.id}" style="flex: 1.2; background: #fff3e0; color: #e65100; border: 1px solid #ffb74d; border-radius: 4px; padding: 6px 2px; font-size: 11px; font-weight: 600; cursor: pointer;">🗺️ దారి Map (ON)</button>
                   </div>
                   <div id="m-${j.id}" style="display: none; margin-top: 8px; background: #f5f5f5; border: 1px dashed #bdbdbd; border-radius: 6px; padding: 8px; text-align: center;">
-                    <div style="font-size: 11px; margin-bottom: 6px;">📍 లొకేషన్: (${lat.toFixed(3)}, ${lng.toFixed(3)})</div>
+                    <div style="font-size: 11px; margin-bottom: 6px;">📍 Location: (${lat.toFixed(3)}, ${lng.toFixed(3)})</div>
                     <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" style="background: #2e7d32; color: #ffffff; text-decoration: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600; display: inline-block;">🚀 Google Maps లో దారి చూడండి</a>
                   </div>
                 </div>
