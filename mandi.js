@@ -146,7 +146,7 @@ window.renderMandiWidget = async function() {
       <!-- Top Title Header Strip (Pink Background) -->
       <div style="background: #fce4ec; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f8bbd0;">
         <h3 style="margin: 0; color: #880e4f; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-          📈 మార్కెట్ / మండి లైవ్ ధరలు
+          📈 Market / మండి live ధరలు
         </h3>
         <span style="font-size: 10px; background: ${badgeBg}; color: ${badgeColor}; padding: 2px 7px; border-radius: 10px; font-weight: 600; border: 1px solid ${badgeColor}33;">
           ${badgeText}
