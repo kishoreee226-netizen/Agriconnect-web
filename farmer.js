@@ -54,7 +54,7 @@ function renderFarmerWidget() {
   <h4 style="margin: 0; font-size: 12px; color: #1b5e20;">👥 Confirm అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
   ${myAcceptedJobs.length > 2 ? '<span style="font-size: 10px; color: #2e7d32; font-weight: 600;">👇 scrole చేయండి</span>' : ''}
 </div>
-<div id="accepted-list" class="custom-scroll" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-right: 4px; min-height: 0;">
+<div id="accepted-list" class="custom-scroll" style="display: flex; flex-direction: column; gap: 6px; max-height: 135px !important; overflow-y: scroll !important; -webkit-overflow-scrolling: touch; padding-right: 4px; min-height: 0;">
 
             ${myAcceptedJobs.length === 0 ? `
               <div style="font-size: 11px; color: #777; text-align: center; padding: 6px;">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
