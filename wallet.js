@@ -1,81 +1,112 @@
-// wallet.js - రైతు మరియు కూలీల UPI పేమెంట్ & వాలెట్ సెటిల్మెంట్ మాడ్యూల్
+// wallet.js - 2-in-1 Escrow Smart Wallet (Digital Lock & Release)
 
-const WalletSystem = {
-  // లోకల్ స్టోరేజ్ నుండి వాలెట్ బ్యాలెన్స్ పొందడం
-  getBalance() {
-    return parseFloat(localStorage.getItem("agri_wallet_balance")) || 0;
-  },
+function renderWalletWidget() {
+  const container = document.getElementById("wallet-container");
+  if (!container) return;
 
-  // బ్యాలెన్స్ అప్‌డేట్ చేయడం
-  setBalance(amount) {
-    localStorage.setItem("agri_wallet_balance", amount.toFixed(2));
-    this.updateWalletUI();
-  },
+  const state = window.AgriState;
+  const walletData = state ? state.getWallet() : { farmerBalance: 2000, labourBalance: 0, lockedEscrow: [] };
 
-  // రైతు కూలీకి డబ్బులు చెల్లించే ఫంక్షన్ (UPI డీప్ లింక్)
-  payLabourViaUPI(labourUPI, amount, labourName) {
-    if (!labourUPI || !amount) {
-      alert("దయచేసి సరైన UPI ID మరియు అమౌంట్ నమోదు చేయండి.");
-      return;
-    }
-    // అధికారిక UPI డీప్ లింక్ (PhonePe, GPay, Paytm లలో డైరెక్ట్ గా ఓపెన్ అవుతుంది)
-    const upiUrl = `upi://pay?pa=${encodeURIComponent(labourUPI)}&pn=${encodeURIComponent(labourName)}&am=${amount}&cu=INR&tn=AgriConnect%20Daily%20Wage`;
-    window.location.href = upiUrl;
-  },
+  const lockedTotal = walletData.lockedEscrow
+    .filter(item => item.status === "Locked")
+    .reduce((sum, item) => sum + Number(item.amount), 0);
 
-  // వాలెట్‌లోకి డబ్బులు క్రెడిట్ చేయడం (కూలీ కోసం)
-  creditWage(amount, jobTitle) {
-    const current = this.getBalance();
-    const updated = current + parseFloat(amount);
-    this.setBalance(updated);
-    alert(`🎉 ₹${amount} మీ వాలెట్‌కు జమ అయ్యాయి! (${jobTitle})`);
-  },
-
-  // కూలీ బ్యాంక్/UPI కి విత్‌డ్రా చేయడం
-  withdrawFunds() {
-    const current = this.getBalance();
-    if (current <= 0) {
-      alert("మీ వాలెట్‌లో విత్‌డ్రా చేయడానికి తగినంత బ్యాలెన్స్ లేదు.");
-      return;
-    }
-
-    const upiId = prompt(`మీ వద్ద ₹${current} బ్యాలెన్స్ ఉంది.\nఏ UPI ID కి బదిలీ చేయాలి? (e.g. 9876543210@ybl):`);
-    if (upiId && upiId.includes("@")) {
-      this.setBalance(0);
-      alert(`✅ ₹${current} మొత్తం ${upiId} కి విజయవంతంగా బదిలీ చేయబడింది!`);
-    } else if (upiId) {
-      alert("సరైన UPI ID ఇవ్వండి.");
-    }
-  },
-
-  // వాలెట్ UI ని రెండర్ చేయడం
-  renderWalletWidget(containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-
-    const balance = this.getBalance();
-
-    container.innerHTML = `
-      <div style="background: #ffffff; border: 1.5px solid #2e7d32; border-radius: 8px; padding: 10px 14px; max-width: 480px; margin: 10px auto; font-family: sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <span style="font-size: 11px; color: #555; display: block;">💼 కిసాన్ వాలెట్ (Labour Earnings)</span>
-          <strong id="wallet-balance-display" style="font-size: 16px; color: #1b5e20;">₹${balance.toFixed(2)}</strong>
-        </div>
-        <button onclick="WalletSystem.withdrawFunds()" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 7px 12px; font-size: 12px; font-weight: 700; cursor: pointer;">
-          🏦 బ్యాంక్ విత్‌డ్రా (Instant UPI)
-        </button>
+  container.innerHTML = `
+    <div style="background: #ffffff; border: 1.5px solid #ffb300; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
+      
+      <!-- Wallet Header -->
+      <div style="background: #fff8e1; border-bottom: 1.5px solid #ffe082; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin: 0; color: #b78103; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 5px;">
+          👛 అగ్రీ స్మార్ట్ వాలెట్ (2-in-1 Escrow Lock)
+        </h3>
+        <span style="font-size: 10px; background: #ffe082; color: #b78103; padding: 2px 7px; border-radius: 4px; font-weight: 700;">100% Secured</span>
       </div>
-    `;
-  },
 
-  updateWalletUI() {
-    const display = document.getElementById("wallet-balance-display");
-    if (display) {
-      display.innerText = `₹${this.getBalance().toFixed(2)}`;
+      <div style="padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+        
+        <!-- Summary Cards: Farmer Balance vs Labour Balance -->
+        <div style="display: flex; gap: 8px;">
+          <!-- Farmer Side -->
+          <div style="flex: 1; background: #f1f8e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #2e7d32; font-weight: 600;">👨‍🌾 రైతు ఖాతా బ్యాలెన్స్</div>
+            <div style="font-size: 15px; font-weight: 800; color: #1b5e20; margin: 2px 0;">₹${walletData.farmerBalance}</div>
+            <div style="font-size: 10px; color: #d84315;">🔒 లాక్ అయినది: ₹${lockedTotal}</div>
+          </div>
+
+          <!-- Labour Side -->
+          <div style="flex: 1; background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 8px; padding: 8px; text-align: center;">
+            <div style="font-size: 11px; color: #1565c0; font-weight: 600;">👷 కూలీ మెయిన్ వాలెట్</div>
+            <div style="font-size: 15px; font-weight: 800; color: #0d47a1; margin: 2px 0;">₹${walletData.labourBalance}</div>
+            <button onclick="handleWithdrawUPI()" style="background: #1976d2; color: #ffffff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer; margin-top: 2px;">
+              💸 UPI Withdraw
+            </button>
+          </div>
+        </div>
+
+        <!-- Escrow Active Transactions List -->
+        <div style="border-top: 1.5px dashed #ffe082; padding-top: 8px;">
+          <div style="font-size: 12px; font-weight: 700; color: #5d4037; margin-bottom: 6px;">
+            🔐 ఎస్క్రో లావాదేవీలు (కూలీకి గ్యారంటీ లాక్):
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            ${walletData.lockedEscrow.length === 0 ? `
+              <div style="font-size: 11px; color: #888; text-align: center; padding: 6px; background: #fffde7; border-radius: 6px;">
+                ప్రస్తుతం ఏ లావాదేవీ లాక్ అయి లేదు.
+              </div>
+            ` : walletData.lockedEscrow.map(esc => {
+              const isLocked = esc.status === "Locked";
+              return `
+                <div style="border: 1px solid ${isLocked ? '#ffe082' : '#c8e6c9'}; background: ${isLocked ? '#fffde7' : '#f9fbf9'}; border-radius: 6px; padding: 8px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                    <span><b>${esc.jobTitle}</b> (${esc.labourName})</span>
+                    <strong style="color: ${isLocked ? '#e65100' : '#2e7d32'};">₹${esc.amount}</strong>
+                  </div>
+                  <div style="font-size: 10px; color: #555; margin-top: 2px;">
+                    స్టేటస్: <b>${isLocked ? '🔒 లాక్ అయింది (రైతు ఖాతాలో హోల్డ్)' : '✅ రిలీజ్ అయింది (కూలీ ఖాతాకు చేరింది)'}</b>
+                  </div>
+                  
+                  ${isLocked ? `
+                    <div style="display: flex; gap: 6px; margin-top: 6px;">
+                      <button onclick="handleReleasePayment('${esc.id}')" style="flex: 1; background: #2e7d32; color: #ffffff; border: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                        🔓 పని అయింది - రిలీజ్ చేయండి (రైతు)
+                      </button>
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+window.handleReleasePayment = function(escrowId) {
+  if (confirm("కూలీ పని పూర్తిగా పూర్తయిందా? డబ్బును కూలీ వాలెట్‌కు రిలీజ్ చేయమంటారా?")) {
+    if (window.AgriState) {
+      window.AgriState.releaseEscrow(escrowId);
+      renderWalletWidget();
+      alert("🎉 ₹ నిధులు కూలీ మెయిన్ వాలెట్‌కు విజయవంతంగా బదిలీ చేయబడ్డాయి!");
     }
   }
 };
 
-window.addEventListener("DOMContentLoaded", () => {
-  WalletSystem.renderWalletWidget("wallet-container");
-});
+window.handleWithdrawUPI = function() {
+  const state = window.AgriState;
+  const balance = state ? state.wallet.labourBalance : 0;
+  if (balance <= 0) {
+    alert("మీ వాలెట్‌లో విత్‌డ్రా చేయడానికి బ్యాలెన్స్ లేదు!");
+    return;
+  }
+  const upiId = prompt("మీ UPI ID నమోదు చేయండి (उदा: 9876543210@ybl):", "9876543211@upi");
+  if (upiId) {
+    alert(`✅ ₹${balance} మీ UPI (${upiId}) కి బదిలీ అభ్యర్థన విజయవంతమైంది!`);
+    state.wallet.labourBalance = 0;
+    renderWalletWidget();
+  }
+};
+
+window.renderWalletWidget = renderWalletWidget;
