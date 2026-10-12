@@ -50,8 +50,12 @@ function renderFarmerWidget() {
 
         <!-- Accepted Labours Section -->
         <div style="margin-top: 12px; border-top: 1.5px dashed #c8e6c9; padding-top: 8px;">
-          <h4 style="margin: 0 0 6px 0; font-size: 12px; color: #1b5e20;">👥 కన్ఫర్మ్ అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
-          <div id="accepted-list" style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+  <h4 style="margin: 0; font-size: 12px; color: #1b5e20;">👥 కన్ఫర్మ్ అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
+  ${myAcceptedJobs.length > 2 ? '<span style="font-size: 10px; color: #2e7d32; font-weight: 600;">👇 స్క్రోల్ చేయండి</span>' : ''}
+</div>
+<div id="accepted-list" class="custom-scroll" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; padding-right: 4px;">
+
             ${myAcceptedJobs.length === 0 ? `
               <div style="font-size: 11px; color: #777; text-align: center; padding: 6px;">కూలీలు యాక్సెప్ట్ చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
             ` : myAcceptedJobs.map(j => `
