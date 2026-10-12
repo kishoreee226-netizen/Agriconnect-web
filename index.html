@@ -30,6 +30,8 @@
 
   <!-- Shared Global Data Store -->
   <script>
+localStorage.removeItem("agri_jobs");
+
     let appJobs = [
       {
         id: "JOB-1",
@@ -53,8 +55,9 @@
   </script>
 
   <!-- External Modular Scripts -->
-  <script src="farmer.js?v=2"></script>
-<script src="labour.js?v=2"></script>
+<script src="farmer.js?v=3"></script>
+<script src="labour.js?v=3"></script>
+
 
   <!-- Initial Load -->
   <script>
