@@ -1,4 +1,4 @@
-// mandi.js - Compact Widget with Trend Chart Symbol
+// mandi.js - Compact Widget with Highlighted Trend Chart in Square Box
 
 let allRecords = [];
 
@@ -75,12 +75,17 @@ async function renderMandiTable(containerId) {
     const groups = [...new Set(allRecords.map(r => r.district).filter(Boolean))];
 
     container.innerHTML = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 10px 0 10px auto; border: 1.5px solid #2e7d32; border-radius: 10px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 10px 0 10px auto; border: 1.5px solid #2e7d32; border-radius: 8px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
         
-        <!-- Integrated Top Header Title with Styled Trend Icon -->
-        <div style="background: linear-gradient(135deg, #1b5e20, #2e7d32); color: #ffffff; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.3px; display: flex; align-items: center; gap: 6px;">
-            <span style="display: inline-flex; align-items: center; justify-content: center; background: rgba(255,215,0,0.2); border: 1px solid #ffd700; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; box-shadow: 0 0 6px rgba(255,215,0,0.5);">📈</span>
+        <!-- Header with Square Box Trend Chart Symbol -->
+        <div style="background: linear-gradient(135deg, #1b5e20, #2e7d32); color: #ffffff; padding: 7px 10px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px;">
+            
+            <!-- Highlighted Square Box for Trend Chart -->
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; background: #ffffff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.25);">
+              <span style="font-size: 14px; line-height: 1; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));">📈</span>
+            </span>
+
             కేంద్ర ప్రభుత్వ Agmarknet తాజా ధరలు
           </span>
           <span style="font-size: 9px; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px; font-weight: 600;">Live Rates</span>
