@@ -67,8 +67,9 @@ function renderWalletWidget() {
                   </div>
                   
                   ${isLocked ? `
-                    <div style="display: flex; gap: 6px; margin-top: 6px;">
-                      <button onclick="handleReleasePayment('${esc.id}')" style="flex: 1; background: #2e7d32; color: #ffffff; border: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                    <div style="display: flex; justify-content: center; margin-top: 8px;">
+
+                      <button onclick="handleReleasePayment('${esc.id}')" style="flex: 1; background: #2e7d32; color: #ffffff; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer;">
                         🔓 పని అయింది - రిలీజ్ చేయండి (రైతు)
                       </button>
                     </div>
