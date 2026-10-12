@@ -30,23 +30,18 @@ function renderFarmerWidget() {
             <input type="text" id="f-work" placeholder="పని" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
           </div>
 
-          <div style="display: flex; gap: 6px;">
-                  <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-    </div>
-
-    <div style="display: flex; flex-direction: column; align-items: center; margin: 8px 0 4px 0;">
-      <button type="button" id="loc-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer; width: fit-content;">
-        📍 పొలం GPS లొకేషన్ సెట్ చేయండి
+             <!-- GPS & Submit Buttons Side-by-Side (Single Row) -->
+    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 8px 0 4px 0; flex-wrap: wrap;">
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <button type="button" id="loc-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 600; cursor: pointer; width: fit-content;">
+          📍 GPS లొకేషన్
+        </button>
+        <span id="loc-status" style="font-size: 10px; color: #555; text-align: center; margin-top: 2px;"></span>
+      </div>
+      <button type="submit" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; width: fit-content;">
+        📢 సబ్మిట్ (Submit)
       </button>
-      <span id="loc-status" style="font-size: 10px; color: #555; text-align: center; margin-top: 2px;"></span>
     </div>
-
-          <!-- Compact Submit Button -->
-          <div style="display: flex; justify-content: center; margin-top: 4px;">
-            <button type="submit" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 7px 22px; font-size: 12px; font-weight: 700; cursor: pointer;">
-              📢 సబ్మిట్ (Submit)
-            </button>
-          </div>
         </form>
 
         <!-- Accepted Labours Section -->
