@@ -17,7 +17,9 @@ function renderLabourWidget() {
         <span style="font-size: 10px; background: #bbdefb; color: #0d47a1; padding: 2px 7px; border-radius: 4px; font-weight: 700;">Live Feed</span>
       </div>
 
-      <div style="padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+      <div class="labour-scroll" style="padding: 12px; display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;">
+${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weight: 600; text-align: right; padding: 4px 12px 0 0;">👇 మరిన్ని పనుల కోసం స్క్రోల్ చేయండి</div>' : ''}
+
         ${jobsData.length === 0 ? `
           <div style="text-align: center; color: #666; font-size: 12px; padding: 16px; background: #fbfbfb; border-radius: 6px; border: 1px dashed #ddd;">
             📢 ప్రస్తుతం కొత్త పనులు లేవు. పై రైతు ఫారంలో పోస్ట్ చేయగానే ఇక్కడ కనిపిస్తాయి.
