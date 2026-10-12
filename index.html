@@ -3,46 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriConnect - Hyperlocal Matching</title>
+  <title>AgriConnect - 8 Grid Super App</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f0f4f0; color: #333; padding: 10px; }
-    header { text-align: center; margin-bottom: 12px; }
-    header h1 { font-size: 20px; color: #1b5e20; }
-    header p { font-size: 11px; color: #388e3c; font-weight: 600; margin-top: 2px; }
-    .container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      background-color: #f0f4f0; 
+      color: #333; 
+      padding: 10px; 
+    }
+    header { 
+      text-align: center; 
+      margin-bottom: 12px; 
+    }
+    header h1 { 
+      font-size: 20px; 
+      color: #1b5e20; 
+    }
+    header p { 
+      font-size: 11px; 
+      color: #388e3c; 
+      font-weight: 600; 
+      margin-top: 2px; 
+    }
+    .container { 
+      max-width: 480px; 
+      margin: 0 auto; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+    }
+    
+    /* భవిష్యత్ 4 భాగాల కోసం కింద ఖాళీ ప్లేస్‌హోల్డర్ */
+    .future-grid-placeholder {
+      border: 2px dashed #a5d6a7;
+      border-radius: 10px;
+      padding: 20px 10px;
+      text-align: center;
+      background: #fafdfa;
+      color: #2e7d32;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
   </style>
 </head>
 <body>
 
   <header>
     <h1>🌾 AgriConnect</h1>
-    <p>⚡ లైవ్ హైపర్‌లోకల్ మ్యాచింగ్ (5-10 KM)</p>
+    <p>⚡ అగ్రీ సూపర్ యాప్ (లైవ్ హైపర్‌లోకల్ ప్లాట్‌ఫామ్)</p>
   </header>
 
   <div class="container">
-    <!-- 1. 2-in-1 Smart Escrow Wallet -->
+    <!-- 1. మార్కెట్ / మండి విడ్జెట్ -->
+    <div id="mandi-container"></div>
+
+    <!-- 2. 2-in-1 అగ్రీ స్మార్ట్ వాలెట్ -->
     <div id="wallet-container"></div>
 
-    <!-- 2. Farmer Widget Container -->
+    <!-- 3. రైతు డ్యాష్‌బోర్డ్ -->
     <div id="farmer-post-container"></div>
 
-    <!-- 3. Labour Widget Container -->
+    <!-- 4. కూలీల డ్యాష్‌బోర్డ్ -->
     <div id="labour-jobs-container"></div>
+
+    <!-- మిగిలిన 4 భాగాల కోసం ఖాళీ స్థలం (Slot 5 to 8) -->
+    <div class="future-grid-placeholder">
+      🌱 క్రింది 4 భాగాలు (పరికరాలు / విత్తనాలు / రవాణా / వాతావరణం) త్వరలో రానున్నాయి...
+    </div>
   </div>
 
-  <!-- Modular Scripts Loading -->
-  <script src="state.js?v=201"></script>
-  <script src="wallet.js?v=201"></script>
-  <script src="farmer.js?v=201"></script>
-  <script src="labour.js?v=201"></script>
+  <!-- Shared State ముందుగా లోడ్ అవ్వాలి -->
+  <script src="state.js?v=301"></script>
 
-  <!-- Start Display -->
+  <!-- 4 వేర్వేరు విడ్జెట్ల జావాస్క్రిప్ట్ ఫైల్స్ -->
+  <script src="mandi.js?v=301"></script>
+  <script src="wallet.js?v=301"></script>
+  <script src="farmer.js?v=301"></script>
+  <script src="labour.js?v=301"></script>
+
+  <!-- అన్ని విడ్జెట్లను ప్రారంభించే లాజిక్ -->
   <script>
     window.addEventListener("DOMContentLoaded", () => {
-      if (typeof renderWalletWidget === "function") renderWalletWidget();
-      if (typeof renderFarmerWidget === "function") renderFarmerWidget();
-      if (typeof renderLabourWidget === "function") renderLabourWidget();
+      // 1. Mandi
+      if (typeof renderMandiWidget === "function") {
+        renderMandiWidget();
+      } else if (typeof renderMandi === "function") {
+        renderMandi();
+      }
+
+      // 2. Wallet
+      if (typeof renderWalletWidget === "function") {
+        renderWalletWidget();
+      }
+
+      // 3. Farmer
+      if (typeof renderFarmerWidget === "function") {
+        renderFarmerWidget();
+      }
+
+      // 4. Labour
+      if (typeof renderLabourWidget === "function") {
+        renderLabourWidget();
+      }
     });
   </script>
 
