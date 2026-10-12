@@ -1,25 +1,30 @@
-// ================= COMPANY IMMUTABLE CONFIGURATION (TAMPER-PROOF) =================
+// ==================== COMPANY IMMUTABLE CONFIGURATION (TAMPER-PROOF) ====================
 (function () {
   const companyData = Object.freeze({
     name: "AgriConnect Technologies",
+    shortName: "AgriConnect",
     tagline: "The Voice of Smart Farming",
     udyamRegNo: "UDYAM-TS-31-0063048",
     location: "Maruthi Colony, Gopalpur, Hanamkonda, Telangana - 506370",
     copyrightYear: new Date().getFullYear(),
-    appVersion: "v3.0.0"
+    appVersion: "v3.0.0",
+    // బ్రాండింగ్ & లోగో వివరాలు
+    branding: Object.freeze({
+      headerLogo: "logo.png",
+      icon192: "icon_192.png",
+      icon512: "icon_512.png"
+    })
   });
 
-  // Global window object లో COMPANY_CONFIG ని పూర్తిగా లాక్ చేయడం
-  // ఎవరూ COMPANY_CONFIG = {} అని మార్చలేరు లేదా డిలీట్ చేయలేరు
   Object.defineProperty(window, "COMPANY_CONFIG", {
     value: companyData,
-    writable: false,      // మార్చడానికి వీల్లేదు
-    configurable: false,  // డిలీట్ చేయడానికి వీల్లేదు
+    writable: false,
+    configurable: false,
     enumerable: true
   });
 })();
 
-// HTML లో వివరాలు ఆటోమేటిక్‌గా అప్‌డేట్ అయ్యేలా చూసే ఫంక్షన్
+// HTML లో ఆటోమేటిక్‌గా అప్‌డేట్ అయ్యేలా చూసే ఫంక్షన్
 function renderCompanyDetails() {
   const elName = document.getElementById("cmp-name");
   const elUdyam = document.getElementById("cmp-udyam");
@@ -31,6 +36,12 @@ function renderCompanyDetails() {
     if (elUdyam) elUdyam.textContent = window.COMPANY_CONFIG.udyamRegNo;
     if (elAddress) elAddress.textContent = `📍 ${window.COMPANY_CONFIG.location}`;
     if (elCopyright) elCopyright.textContent = `© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.`;
+
+    // Header Title & Logo ని dynamic గా సెట్ చేయడం
+    const headerTitle = document.querySelector("header h1");
+    if (headerTitle && window.COMPANY_CONFIG.branding?.headerLogo) {
+      headerTitle.innerHTML = `<img src="${window.COMPANY_CONFIG.branding.headerLogo}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo"> ${window.COMPANY_CONFIG.shortName}`;
+    }
   }
 }
 
