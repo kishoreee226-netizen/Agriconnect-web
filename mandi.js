@@ -194,7 +194,7 @@ window.renderMandiWidget = async function() {
             </thead>
           </table>
           
-          <div class="mandi-sroll" style="max-height: 140px; overflow-y: auto;">
+          <div class="mandi-scroll" style="max-height: 140px; overflow-y: auto;">
             <table style="width: 100%; border-collapse: collapse; text-align: left;">
               <tbody id="mandi-table-body">
                 <!-- Records render ikkada avuthayi -->
