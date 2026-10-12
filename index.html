@@ -21,60 +21,26 @@
   </header>
 
   <div class="container">
-    <!-- 1. Farmer Widget Container -->
+    <!-- 1. 2-in-1 Smart Escrow Wallet -->
+    <div id="wallet-container"></div>
+
+    <!-- 2. Farmer Widget Container -->
     <div id="farmer-post-container"></div>
 
-    <!-- 2. Labour Widget Container -->
+    <!-- 3. Labour Widget Container -->
     <div id="labour-jobs-container"></div>
   </div>
 
-  <!-- Shared Global Data Store -->
-  <script>
-    window.AgriState = {
-      jobs: [
-        {
-          id: "JOB-1",
-          farmerName: "కిషోర్",
-          farmerPhone: "9876543210",
-          crop: "వరి (Paddy)",
-          workType: "కోత",
-          count: 2,
-          wage: 450,
-          distanceKm: "2.4",
-          lat: 17.9784,
-          lng: 79.5941,
-          status: "Confirmed",
-          labourName: "రాము (టెస్ట్ కూలీ)",
-          labourPhone: "9876543211"
-        },
-        {
-          id: "JOB-2",
-          farmerName: "వెంకటేశ్వర్లు",
-          farmerPhone: "9876543210",
-          crop: "పత్తి (Cotton)",
-          workType: "తీత",
-          count: 4,
-          wage: 500,
-          distanceKm: "3.5",
-          lat: 17.9850,
-          lng: 79.6012,
-          status: "Open",
-          labourName: "",
-          labourPhone: ""
-        }
-      ],
-      getJobs: function() { return this.jobs; },
-      addJob: function(job) { this.jobs.unshift(job); }
-    };
-  </script>
+  <!-- Modular Scripts Loading -->
+  <script src="state.js?v=201"></script>
+  <script src="wallet.js?v=201"></script>
+  <script src="farmer.js?v=201"></script>
+  <script src="labour.js?v=201"></script>
 
-  <!-- External Modular Scripts (?v=101 cache refresh kosam) -->
-  <script src="farmer.js?v=101"></script>
-  <script src="labour.js?v=101"></script>
-
-  <!-- Initial Render -->
+  <!-- Start Display -->
   <script>
     window.addEventListener("DOMContentLoaded", () => {
+      if (typeof renderWalletWidget === "function") renderWalletWidget();
       if (typeof renderFarmerWidget === "function") renderFarmerWidget();
       if (typeof renderLabourWidget === "function") renderLabourWidget();
     });
