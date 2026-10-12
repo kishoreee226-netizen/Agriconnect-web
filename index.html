@@ -28,13 +28,12 @@
     <div id="labour-jobs-container"></div>
   </div>
 
-  <!-- Shared Sync Bridge with Test Labour Data -->
+  <!-- Shared Sync Bridge (రెండు విడ్జెట్స్ మధ్య కనెక్షన్) -->
   <script>
     window.AgriState = {
       jobs: [
-        // 1. కూలీ ఒప్పుకున్న జాబ్ (ఇందులో SMS, Call, WhatsApp, Map బటన్లు వెంటనే కనిపిస్తాయి)
         {
-          id: "JOB-TEST-1",
+          id: "JOB-1",
           farmerName: "కిషోర్",
           farmerPhone: "9876543210",
           crop: "వరి (Paddy)",
@@ -44,22 +43,6 @@
           distanceKm: "2.4",
           lat: 17.9784,
           lng: 79.5941,
-          status: "Confirmed",
-          labourName: "రాము (టెస్ట్ కూలీ)",
-          labourPhone: "9876543211"
-        },
-        // 2. ఓపెన్ జాబ్ (యాక్సెప్ట్ బటన్ చెక్ చేయడానికి)
-        {
-          id: "JOB-TEST-2",
-          farmerName: "వెంకటేశ్వర్లు",
-          farmerPhone: "9876543210",
-          crop: "పత్తి (Cotton)",
-          workType: "తీత",
-          count: 4,
-          wage: 500,
-          distanceKm: "3.5",
-          lat: 17.9850,
-          lng: 79.6012,
           status: "Open",
           labourName: "",
           labourPhone: ""
@@ -70,9 +53,9 @@
     };
   </script>
 
-  <!-- External Modular Files (v=25 tho direct fresh cache load avthundi) -->
-  <script src="farmer.js?v=25"></script>
-  <script src="labour.js?v=25"></script>
+  <!-- External Modular Files -->
+  <script src="farmer.js?v=20"></script>
+  <script src="labour.js?v=20"></script>
 
   <!-- Load Widgets on Start -->
   <script>
