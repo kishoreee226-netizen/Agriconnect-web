@@ -1,10 +1,10 @@
-// farmer.js - Farmer Dashboard Module
+// farmer.js - రైతు డ్యాష్‌బోర్డ్ (Light Green Header & Compact Submit)
 
 function renderFarmerWidget() {
   const container = document.getElementById("farmer-post-container");
   if (!container) return;
 
-  const jobs = window.getAppJobs ? window.getAppJobs() : [];
+  const jobs = window.AgriState ? window.AgriState.getJobs() : [];
   const myAcceptedJobs = jobs.filter(j => j.status === "Confirmed");
 
   container.innerHTML = `
@@ -21,13 +21,13 @@ function renderFarmerWidget() {
       <div style="padding: 12px;">
         <form id="farmer-form" style="display: flex; flex-direction: column; gap: 8px;">
           <div style="display: flex; gap: 6px;">
-            <input type="text" id="f-name" placeholder="మీ పేరు (Farmer Name)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+            <input type="text" id="f-name" placeholder="మీ పేరు" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
             <input type="tel" id="f-phone" placeholder="ఫోన్ నంబర్" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
           </div>
 
           <div style="display: flex; gap: 6px;">
-            <input type="text" id="f-crop" placeholder="పంట (Cotton, Paddy...)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-            <input type="text" id="f-work" placeholder="పని (తీత, కోత...)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+            <input type="text" id="f-crop" placeholder="పంట" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+            <input type="text" id="f-work" placeholder="పని" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
           </div>
 
           <div style="display: flex; gap: 6px;">
@@ -40,9 +40,9 @@ function renderFarmerWidget() {
           </button>
           <span id="loc-status" style="font-size: 10px; color: #555; text-align: center;"></span>
 
-          <!-- Small Compact Submit Widget Box -->
+          <!-- Compact Submit Button -->
           <div style="display: flex; justify-content: center; margin-top: 4px;">
-            <button type="submit" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 7px 22px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(46,125,50,0.3);">
+            <button type="submit" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 7px 22px; font-size: 12px; font-weight: 700; cursor: pointer;">
               📢 సబ్మిట్ (Submit)
             </button>
           </div>
@@ -63,8 +63,8 @@ function renderFarmerWidget() {
                 <div style="font-size: 11px; color: #555; margin-top: 2px;">పని: ${j.crop} (${j.workType})</div>
                 <div style="display: flex; gap: 5px; margin-top: 6px;">
                   <a href="tel:${j.labourPhone}" style="flex: 1; text-align: center; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #a5d6a7;">📞 కాల్</a>
-                  <a href="sms:${j.labourPhone}?body=${encodeURIComponent('నమస్తే, అగ్రీకనెక్ట్ పనికి బయలుదేరండి.')}" style="flex: 1; text-align: center; background: #fffde7; color: #f57f17; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #fff59d;">✉️ SMS</a>
-                  <a href="https://wa.me/91${j.labourPhone}?text=${encodeURIComponent('నమస్తే, అగ్రీకనెక్ట్ పనికి ఎప్పుడు వస్తున్నారు?')}" target="_blank" style="flex: 1.2; text-align: center; background: #e8f8f0; color: #075e54; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #25d366;">💬 వాట్సాప్</a>
+                  <a href="sms:${j.labourPhone}?body=నమస్తే" style="flex: 1; text-align: center; background: #fffde7; color: #f57f17; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #fff59d;">✉️ SMS</a>
+                  <a href="https://wa.me/91${j.labourPhone}" target="_blank" style="flex: 1.2; text-align: center; background: #e8f8f0; color: #075e54; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #25d366;">💬 వాట్సాప్</a>
                 </div>
               </div>
             `).join('')}
@@ -78,17 +78,15 @@ function renderFarmerWidget() {
   let farmCoords = { lat: 17.9784, lng: 79.5941 };
 
   document.getElementById("loc-btn")?.addEventListener("click", () => {
-    const status = document.getElementById("loc-status");
+    const s = document.getElementById("loc-status");
     if (navigator.geolocation) {
-      status.innerText = "GPS లొకేషన్ గుర్తిస్తోంది...";
+      s.innerText = "GPS వెతుకుతోంది...";
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           farmCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          status.innerText = `✅ GPS సెట్ అయింది (${farmCoords.lat.toFixed(3)}, ${farmCoords.lng.toFixed(3)})`;
+          s.innerText = `✅ GPS సెట్ అయింది (${farmCoords.lat.toFixed(3)}, ${farmCoords.lng.toFixed(3)})`;
         },
-        () => {
-          status.innerText = "డీఫాల్ట్ GPS సెట్ అయింది.";
-        }
+        () => { s.innerText = "డీఫాల్ట్ GPS సెట్ అయింది."; }
       );
     }
   });
@@ -103,7 +101,7 @@ function renderFarmerWidget() {
       workType: document.getElementById("f-work").value,
       count: document.getElementById("f-count").value,
       wage: document.getElementById("f-wage").value,
-      distanceKm: (Math.random() * 4 + 1.2).toFixed(1),
+      distanceKm: "2.8",
       lat: farmCoords.lat,
       lng: farmCoords.lng,
       status: "Open",
@@ -111,12 +109,10 @@ function renderFarmerWidget() {
       labourPhone: ""
     };
 
-    if (window.addAppJob) {
-      window.addAppJob(newJob);
-    }
+    if (window.AgriState) window.AgriState.addJob(newJob);
     e.target.reset();
     renderFarmerWidget();
-    if (window.renderLabourWidget) window.renderLabourWidget();
+    if (typeof renderLabourWidget === "function") renderLabourWidget();
     alert("📢 పని కూలీల డ్యాష్‌బోర్డ్‌లో పోస్ట్ చేయబడింది!");
   });
 }
