@@ -5,39 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgriConnect - Hyperlocal Matching</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #f0f4f0;
-      color: #333;
-      padding: 10px;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 12px;
-      padding-top: 6px;
-    }
-    header h1 {
-      font-size: 20px;
-      color: #1b5e20;
-    }
-    header p {
-      font-size: 11px;
-      color: #388e3c;
-      font-weight: 600;
-      margin-top: 2px;
-    }
-    .container {
-      max-width: 480px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f0f4f0; color: #333; padding: 10px; }
+    header { text-align: center; margin-bottom: 12px; }
+    header h1 { font-size: 20px; color: #1b5e20; }
+    header p { font-size: 11px; color: #388e3c; font-weight: 600; margin-top: 2px; }
+    .container { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .card { background: #ffffff; border-radius: 10px; padding: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.06); }
+    .input-row { display: flex; gap: 6px; }
+    input { width: 100%; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none; }
+    .btn-green { background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 9px; font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; }
+    .btn-blue { background: #1976d2; color: #ffffff; border: none; border-radius: 5px; padding: 7px; font-size: 12px; font-weight: 700; cursor: pointer; width: 100%; }
   </style>
 </head>
 <body>
@@ -48,282 +26,217 @@
   </header>
 
   <div class="container">
-    <!-- 1. Farmer Widget Box -->
-    <div id="farmer-post-container"></div>
+    
+    <!-- 1. FARMER WIDGET -->
+    <div class="card" style="border: 1.5px solid #2e7d32;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="margin: 0; color: #1b5e20; font-size: 14px; font-weight: 700;">👨‍🌾 రైతు డ్యాష్‌బోర్డ్ (Farmer Widget)</h3>
+        <span style="font-size: 10px; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Active</span>
+      </div>
 
-    <!-- 2. Labour Widget Box -->
-    <div id="labour-jobs-container"></div>
+      <form id="farmer-form" style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="input-row">
+          <input type="text" id="f-name" placeholder="మీ పేరు (Farmer Name)" required />
+          <input type="tel" id="f-phone" placeholder="ఫోన్ నంబర్" required />
+        </div>
+        <div class="input-row">
+          <input type="text" id="f-crop" placeholder="పంట (Cotton, Paddy...)" required />
+          <input type="text" id="f-work" placeholder="పని (తీత, కోత...)" required />
+        </div>
+        <div class="input-row">
+          <input type="number" id="f-count" placeholder="కూలీల సంఖ్య" required />
+          <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required />
+        </div>
+
+        <button type="button" id="loc-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 7px; font-size: 12px; font-weight: 600; cursor: pointer;">
+          📍 పొలం GPS లొకేషన్ సెట్ చేయండి
+        </button>
+        <span id="loc-status" style="font-size: 10px; color: #555; text-align: center;"></span>
+
+        <button type="submit" class="btn-green">📢 కూలీల కోసం పోస్ట్ చేయండి</button>
+      </form>
+
+      <div style="margin-top: 12px; border-top: 1.5px dashed #c8e6c9; padding-top: 8px;">
+        <h4 style="margin: 0 0 6px 0; font-size: 12px; color: #1b5e20;">👥 కన్ఫర్మ్ అయిన కూలీలు:</h4>
+        <div id="accepted-list" style="display: flex; flex-direction: column; gap: 6px;"></div>
+      </div>
+    </div>
+
+    <!-- 2. LABOUR WIDGET -->
+    <div class="card" style="border: 1.5px solid #1565c0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h3 style="margin: 0; color: #0d47a1; font-size: 14px; font-weight: 700;">👷 కూలీల డ్యాష్‌బోర్డ్ (5-10 KM Jobs)</h3>
+        <span style="font-size: 10px; background: #e3f2fd; color: #1565c0; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Live Feed</span>
+      </div>
+
+      <div id="jobs-feed" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;"></div>
+    </div>
+
   </div>
 
   <script>
-    // App State Management
-    function getStoredJobs() {
-      const data = localStorage.getItem("agri_jobs");
-      if (data) {
-        return JSON.parse(data);
+    let appJobs = [
+      {
+        id: "JOB-1",
+        farmerName: "కిషోర్",
+        farmerPhone: "9876543210",
+        crop: "వరి (Paddy)",
+        workType: "కోత",
+        count: 2,
+        wage: 450,
+        distanceKm: "2.4",
+        lat: 17.9784,
+        lng: 79.5941,
+        status: "Open",
+        labourName: "",
+        labourPhone: ""
       }
-      const initialJobs = [
-        {
-          id: "JOB-101",
-          farmerName: "Kishor",
-          farmerPhone: "9876543210",
-          crop: "Vari",
-          workType: "Kotha",
-          count: 1,
-          wage: 200,
-          distanceKm: "2.5",
-          lat: 17.9784,
-          lng: 79.5941,
-          status: "Open"
-        }
-      ];
-      localStorage.setItem("agri_jobs", JSON.stringify(initialJobs));
-      return initialJobs;
+    ];
+
+    let currentLat = 17.9784;
+    let currentLng = 79.5941;
+
+    // GPS setup
+    document.getElementById("loc-btn").addEventListener("click", () => {
+      const status = document.getElementById("loc-status");
+      if (navigator.geolocation) {
+        status.innerText = "GPS లొకేషన్ గుర్తిస్తోంది...";
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            currentLat = pos.coords.latitude;
+            currentLng = pos.coords.longitude;
+            status.innerText = "✅ GPS సెట్ అయింది (" + currentLat.toFixed(3) + ", " + currentLng.toFixed(3) + ")";
+          },
+          () => {
+            status.innerText = "డీఫాల్ట్ GPS సెట్ అయింది.";
+          }
+        );
+      }
+    });
+
+    // Form submit
+    document.getElementById("farmer-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const newJob = {
+        id: "JOB-" + Date.now(),
+        farmerName: document.getElementById("f-name").value,
+        farmerPhone: document.getElementById("f-phone").value,
+        crop: document.getElementById("f-crop").value,
+        workType: document.getElementById("f-work").value,
+        count: document.getElementById("f-count").value,
+        wage: document.getElementById("f-wage").value,
+        distanceKm: (Math.random() * 4 + 1.2).toFixed(1),
+        lat: currentLat,
+        lng: currentLng,
+        status: "Open",
+        labourName: "",
+        labourPhone: ""
+      };
+
+      appJobs.unshift(newJob);
+      e.target.reset();
+      refreshUI();
+      alert("📢 పని కూలీల డ్యాష్‌బోర్డ్‌లో పోస్ట్ చేయబడింది!");
+    });
+
+    function acceptJob(id) {
+      const name = prompt("మీ పేరు (Labour Name):", "రాము");
+      if (!name) return;
+      const phone = prompt("మీ ఫోన్ నంబర్:", "9876543210");
+      if (!phone) return;
+
+      const job = appJobs.find(j => j.id === id);
+      if (job) {
+        job.status = "Confirmed";
+        job.labourName = name;
+        job.labourPhone = phone;
+        alert("🎉 పని ఖరారైంది! రైతుకు మీ నంబర్ చేరింది.");
+        refreshUI();
+      }
     }
 
-    function saveJobs(jobs) {
-      localStorage.setItem("agri_jobs", JSON.stringify(jobs));
+    function toggleMap(id) {
+      const box = document.getElementById("map-" + id);
+      const btn = document.getElementById("mbtn-" + id);
+      if (!box || !btn) return;
+
+      if (box.style.display === "none" || box.style.display === "") {
+        box.style.display = "block";
+        btn.innerText = "✖️ దారి Map (OFF)";
+        btn.style.background = "#ffebee";
+        btn.style.color = "#c62828";
+      } else {
+        box.style.display = "none";
+        btn.innerText = "🗺️ దారి Map (ON)";
+        btn.style.background = "#fff3e0";
+        btn.style.color = "#e65100";
+      }
     }
 
-    // 1. Render Farmer Widget
-    function renderFarmerWidget() {
-      const container = document.getElementById("farmer-post-container");
-      if (!container) return;
-
-      const jobs = getStoredJobs();
-      const myAcceptedJobs = jobs.filter(j => j.status === "Confirmed");
-
-      container.innerHTML = `
-        <div style="background: #ffffff; border: 1.5px solid #2e7d32; border-radius: 10px; padding: 12px; font-family: sans-serif; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h3 style="margin: 0; color: #1b5e20; font-size: 14px; font-weight: 700;">
-              👨‍🌾 రైతు డ్యాష్‌బోర్డ్ (Farmer Widget)
-            </h3>
-            <span style="font-size: 10px; background: #e8f5e9; color: #2e7d32; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Active</span>
+    function refreshUI() {
+      // 1. Update Farmer accepted list
+      const accList = document.getElementById("accepted-list");
+      const confirmed = appJobs.filter(j => j.status === "Confirmed");
+      if (confirmed.length === 0) {
+        accList.innerHTML = '<div style="font-size: 11px; color: #777; text-align: center; padding: 6px;">కూలీలు యాక్సెప్ట్ చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>';
+      } else {
+        accList.innerHTML = confirmed.map(j => `
+          <div style="border: 1px solid #c8e6c9; border-radius: 6px; padding: 8px; background: #f9fbf9;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <strong>👷 ${j.labourName}</strong>
+              <span style="color: #2e7d32; font-weight: bold;">₹${j.wage}</span>
+            </div>
+            <div style="font-size: 11px; color: #555; margin-top: 2px;">పని: ${j.crop} (${j.workType})</div>
+            <div style="display: flex; gap: 6px; margin-top: 6px;">
+              <a href="tel:${j.labourPhone}" style="flex: 1; text-align: center; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #a5d6a7;">📞 కాల్</a>
+              <a href="https://wa.me/91${j.labourPhone}?text=${encodeURIComponent('నమస్తే, పనికి ఎప్పుడు వస్తున్నారు?')}" target="_blank" style="flex: 1; text-align: center; background: #e8f8f0; color: #075e54; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #25d366;">💬 వాట్సాప్</a>
+            </div>
           </div>
+        `).join("");
+      }
 
-          <form id="farmer-post-form" style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="display: flex; gap: 6px;">
-              <input type="text" id="f-name" placeholder="మీ పేరు" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-              <input type="tel" id="f-phone" placeholder="ఫోన్ నంబర్" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+      // 2. Update Labour jobs feed
+      const feed = document.getElementById("jobs-feed");
+      feed.innerHTML = appJobs.map(j => {
+        const isConf = j.status === "Confirmed";
+        return `
+          <div style="border: 1px solid ${isConf ? '#81c784' : '#bbdefb'}; border-radius: 8px; padding: 10px; background: ${isConf ? '#f9fdf9' : '#ffffff'};">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <strong style="color: #0d47a1; font-size: 13px;">${j.crop} - ${j.workType}</strong>
+                <div style="font-size: 11px; color: #555; margin-top: 2px;">రైతు: <b>${j.farmerName}</b> | కావాల్సిన వారు: <b>${j.count}</b></div>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 14px; font-weight: 700; color: #2e7d32;">₹${j.wage}/రోజు</span>
+                <div style="font-size: 10px; color: #e65100; font-weight: 600;">📍 ${j.distanceKm} కి.మీ</div>
+              </div>
             </div>
 
-            <div style="display: flex; gap: 6px;">
-              <input type="text" id="f-crop" placeholder="పంట (Cotton, Paddy...)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-              <input type="text" id="f-work" placeholder="పని (తీత, కోత...)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-            </div>
-
-            <div style="display: flex; gap: 6px;">
-              <input type="number" id="f-count" placeholder="కూలీల సంఖ్య" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-              <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-            </div>
-
-            <button type="button" id="get-location-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 7px; font-size: 12px; font-weight: 600; cursor: pointer;">
-              📍 పొలం GPS లొకేషన్ సెట్ చేయండి
-            </button>
-            <span id="loc-status" style="font-size: 10px; color: #555; text-align: center;"></span>
-
-            <button type="submit" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 9px; font-size: 13px; font-weight: 700; cursor: pointer;">
-              📢 కూలీల కోసం పోస్ట్ చేయండి
-            </button>
-          </form>
-
-          <div style="margin-top: 12px; border-top: 1.5px dashed #c8e6c9; padding-top: 8px;">
-            <h4 style="margin: 0 0 6px 0; font-size: 12px; color: #1b5e20;">👥 కన్ఫర్మ్ అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
-            ${myAcceptedJobs.length === 0 ? `
-              <div style="font-size: 11px; color: #777; text-align: center; padding: 6px;">కూలీలు యాక్సెప్ట్ చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
+            ${!isConf ? `
+              <div style="margin-top: 8px;">
+                <button onclick="acceptJob('${j.id}')" class="btn-blue">✅ పని యాక్సెప్ట్ చేయండి</button>
+              </div>
             ` : `
-              <div style="display: flex; flex-direction: column; gap: 6px;">
-                ${myAcceptedJobs.map(job => `
-                  <div style="border: 1px solid #c8e6c9; border-radius: 6px; padding: 8px; background: #f9fbf9;">
-                    <div style="display: flex; justify-content: space-between; font-size: 12px;">
-                      <strong>👷 ${job.labourName || 'కూలీ'}</strong>
-                      <span style="color: #2e7d32; font-weight: bold;">₹${job.wage}</span>
-                    </div>
-                    <div style="font-size: 11px; color: #555; margin-top: 2px;">పని: ${job.crop} (${job.workType})</div>
-                    <div style="display: flex; gap: 6px; margin-top: 6px;">
-                      <a href="tel:${job.labourPhone || '9876543210'}" style="flex: 1; text-align: center; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #a5d6a7;">📞 కాల్</a>
-                      <a href="https://wa.me/91${job.labourPhone || '9876543210'}?text=${encodeURIComponent('నమస్తే, అగ్రీకనెక్ట్ పనికి ఎప్పుడు వస్తున్నారు?')}" target="_blank" style="flex: 1; text-align: center; background: #e8f8f0; color: #075e54; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #25d366;">💬 వాట్సాప్</a>
-                    </div>
-                  </div>
-                `).join('')}
+              <div style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px;">
+                <div style="font-size: 11px; color: #2e7d32; font-weight: 700; margin-bottom: 6px;">🎉 మీరు పనిని ఒప్పుకున్నారు! రైతుతో మాట్లాడండి:</div>
+                <div style="display: flex; gap: 5px;">
+                  <a href="tel:${j.farmerPhone}" style="flex: 1; text-align: center; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 600; border: 1px solid #a5d6a7;">📞 కాల్</a>
+                  <a href="https://wa.me/91${j.farmerPhone}?text=${encodeURIComponent('నమస్తే, నేను పని ఒప్పుకున్నాను. బయలుదేరుతున్నాను.')}" target="_blank" style="flex: 1; text-align: center; background: #e8f8f0; color: #075e54; text-decoration: none; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 600; border: 1px solid #25d366;">💬 వాట్సాప్</a>
+                  <button id="mbtn-${j.id}" onclick="toggleMap('${j.id}')" style="flex: 1.2; background: #fff3e0; color: #e65100; border: 1px solid #ffb74d; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">🗺️ దారి Map (ON)</button>
+                </div>
+                <div id="map-${j.id}" style="display: none; margin-top: 8px; background: #f5f5f5; border: 1px dashed #bdbdbd; border-radius: 6px; padding: 8px; text-align: center;">
+                  <div style="font-size: 11px; color: #333; margin-bottom: 6px;">📍 పొలం లొకేషన్: (${j.lat.toFixed(3)},${j.lng.toFixed(3)})</div>
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${j.lat},${j.lng}" target="_blank" style="display: inline-block; background: #2e7d32; color: #ffffff; text-decoration: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600;">🚀 Google Maps లో దారి చూడండి</a>
+                </div>
               </div>
             `}
           </div>
-        </div>
-      `;
-
-      let farmCoords = { lat: 17.9784, lng: 79.5941 };
-
-      document.getElementById("get-location-btn")?.addEventListener("click", () => {
-        const statusText = document.getElementById("loc-status");
-        if (navigator.geolocation) {
-          statusText.innerText = "GPS లొకేషన్ గుర్తిస్తోంది...";
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              farmCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-              statusText.innerText = `✅ GPS సెట్ చేయబడింది (${farmCoords.lat.toFixed(4)}, ${farmCoords.lng.toFixed(4)})`;
-            },
-            () => {
-              statusText.innerText = "GPS అనుమతి రాలేదు. డీఫాల్ట్ లొకేషన్ సెట్ చేయబడింది.";
-            }
-          );
-        }
-      });
-
-      document.getElementById("farmer-post-form")?.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const jobsList = getStoredJobs();
-        const newJob = {
-          id: "JOB-" + Math.floor(100 + Math.random() * 900),
-          farmerName: document.getElementById("f-name").value,
-          farmerPhone: document.getElementById("f-phone").value,
-          crop: document.getElementById("f-crop").value,
-          workType: document.getElementById("f-work").value,
-          count: parseInt(document.getElementById("f-count").value),
-          wage: parseInt(document.getElementById("f-wage").value),
-          distanceKm: (Math.random() * 4 + 1.2).toFixed(1),
-          lat: farmCoords.lat,
-          lng: farmCoords.lng,
-          status: "Open"
-        };
-
-        jobsList.unshift(newJob);
-        saveJobs(jobsList);
-        alert("📢 పని పోస్ట్ చేయబడింది!");
-        e.target.reset();
-        renderFarmerWidget();
-        renderLabourWidget();
-      });
+        `;
+      }).join("");
     }
 
-    // 2. Render Labour Widget
-    function renderLabourWidget() {
-      const container = document.getElementById("labour-jobs-container");
-      if (!container) return;
-
-      const jobsData = getStoredJobs();
-
-      container.innerHTML = `
-        <div style="background: #ffffff; border: 1.5px solid #1565c0; border-radius: 10px; padding: 12px; font-family: sans-serif; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <h3 style="margin: 0; color: #0d47a1; font-size: 14px; font-weight: 700;">
-              👷 కూలీల డ్యాష్‌బోర్డ్ (5-10 KM Jobs)
-            </h3>
-            <span style="font-size: 10px; background: #e3f2fd; color: #1565c0; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Live Feed</span>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;">
-            ${jobsData.length === 0 ? `
-              <div style="text-align: center; color: #888; font-size: 12px; padding: 16px;">
-                ప్రస్తుతం పనులు లేవు.
-              </div>
-            ` : ''}
-
-            ${jobsData.map(job => {
-              const isConfirmed = job.status === "Confirmed";
-              const lat = typeof job.lat === 'number' ? job.lat : 17.9784;
-              const lng = typeof job.lng === 'number' ? job.lng : 79.5941;
-
-              return `
-                <div style="border: 1px solid ${isConfirmed ? '#81c784' : '#bbdefb'}; border-radius: 8px; padding: 10px; background: ${isConfirmed ? '#f9fdf9' : '#ffffff'};">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div>
-                      <strong style="color: #0d47a1; font-size: 13px;">${job.crop} -${job.workType}</strong>
-                      <div style="font-size: 11px; color: #555; margin-top: 2px;">
-                        రైతు: <b>${job.farmerName \vert{}\vert{} 'రైతు'}</b> \vert{} కావాల్సిన వారు: <b>${job.count || 1}</b>
-                      </div>
-                    </div>
-                    <div style="text-align: right;">
-                      <span style="font-size: 14px; font-weight: 700; color: #2e7d32;">₹${job.wage}/రోజు</span>
-                      <div style="font-size: 10px; color: #e65100; font-weight: 600;">📍 ${job.distanceKm || '2.5'} కి.మీ</div>
-                    </div>
-                  </div>
-
-                  ${!isConfirmed ? `
-                    <div style="margin-top: 8px;">
-                      <button onclick="handleAcceptJob('${job.id}')" style="width: 100%; background: #1976d2; color: #ffffff; border: none; border-radius: 5px; padding: 7px; font-size: 12px; font-weight: 700; cursor: pointer;">
-                        ✅ పని యాక్సెప్ట్ చేయండి
-                      </button>
-                    </div>
-                  ` : `
-                    <div style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px;">
-                      <div style="font-size: 11px; color: #2e7d32; font-weight: 700; margin-bottom: 6px;">
-                        🎉 మీరు ఈ పనిని ఒప్పుకున్నారు!
-                      </div>
-
-                      <div style="display: flex; gap: 5px;">
-                        <a href="tel:${job.farmerPhone || '9876543210'}" style="flex: 1; text-align: center; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 600; border: 1px solid #a5d6a7;">📞 కాల్</a>
-                        <a href="https://wa.me/91${job.farmerPhone || '9876543210'}?text=${encodeURIComponent('నమస్తే, నేను పని ఒప్పుకున్నాను. బయలుదేరుతున్నాను.')}" target="_blank" style="flex: 1; text-align: center; background: #e8f8f0; color: #075e54; text-decoration: none; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 600; border: 1px solid #25d366;">💬 వాట్సాప్</a>
-                        <button onclick="handleToggleMap('${job.id}')" id="map-btn-${job.id}" style="flex: 1.2; background: #fff3e0; color: #e65100; border: 1px solid #ffb74d; border-radius: 4px; padding: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
-                          🗺️ దారి Map (ON)
-                        </button>
-                      </div>
-
-                      <div id="map-box-${job.id}" style="display: none; margin-top: 8px; background: #f5f5f5; border: 1px dashed #bdbdbd; border-radius: 6px; padding: 8px; text-align: center;">
-                        <div style="font-size: 11px; color: #333; margin-bottom: 6px;">
-                          📍 పొలం లొకేషన్: (${lat.toFixed(4)}, ${lng.toFixed(4)})
-                        </div>
-                        <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" style="display: inline-block; background: #2e7d32; color: #ffffff; text-decoration: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600;">
-                          🚀 Google Maps లో దారి చూడండి
-                        </a>
-                      </div>
-                    </div>
-                  `}
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
-      `;
-    }
-
-    // Global Functions for Actions
-    window.handleAcceptJob = function(jobId) {
-      const labourName = prompt("మీ పేరు నమోదు చేయండి (Labour Name):", "రాము");
-      if (!labourName) return;
-
-      const labourPhone = prompt("మీ ఫోన్ నంబర్ ఇవ్వండి:", "9876543210");
-      if (!labourPhone) return;
-
-      const jobsData = getStoredJobs();
-      const job = jobsData.find(j => j.id === jobId);
-      if (!job) return;
-
-      job.status = "Confirmed";
-      job.labourName = labourName;
-      job.labourPhone = labourPhone;
-
-      saveJobs(jobsData);
-      alert(`✅ పని ఖరారైంది! రైతు ${job.farmerName} గారికి మీ వివరాలు చేరాయి.`);
-
-      renderLabourWidget();
-      renderFarmerWidget();
-    };
-
-    window.handleToggleMap = function(jobId) {
-      const mapBox = document.getElementById(`map-box-${jobId}`);
-      const mapBtn = document.getElementById(`map-btn-${jobId}`);
-      if (!mapBox || !mapBtn) return;
-
-      if (mapBox.style.display === "none") {
-        mapBox.style.display = "block";
-        mapBtn.innerText = "✖️ దారి Map (OFF)";
-        mapBtn.style.background = "#ffebee";
-        mapBtn.style.color = "#c62828";
-      } else {
-        mapBox.style.display = "none";
-        mapBtn.innerText = "🗺️ దారి Map (ON)";
-        mapBtn.style.background = "#fff3e0";
-        mapBtn.style.color = "#e65100";
-      }
-    };
-
-    // Run directly on page load
-    window.onload = function() {
-      renderFarmerWidget();
-      renderLabourWidget();
-    };
+    // Direct execute on page load
+    refreshUI();
   </script>
 
 </body>
