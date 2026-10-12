@@ -43,8 +43,9 @@ ${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weigh
               </div>
 
               ${!isConf ? `
-                <button onclick="acceptJob('${j.id}')" style="margin-top: 8px; background: #1976d2; color: #ffffff; border: none; border-radius: 5px; padding: 7px; font-size: 12px; font-weight: 700; cursor: pointer; width: 100%;">
-                  ✅ పని యాక్సెప్ట్ చేయండి
+                         <button onclick="acceptJob('${j.id}')" style="display: block; margin: 8px auto 0 auto; background: #1976d2; color: #ffffff; border: none; border-radius: 5px; padding: 6px 16px; font-size: 11px; font-weight: 700; cursor: pointer; width: fit-content;">
+            ✅ పని Accept చేయండి
+
                 </button>
               ` : `
                 <div style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px;">
