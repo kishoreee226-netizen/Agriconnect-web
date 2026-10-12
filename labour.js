@@ -32,7 +32,7 @@ function renderLabourWidget() {
               <div style="display: flex; justify-content: space-between;">
                 <div>
                   <strong style="color: #0d47a1; font-size: 13px;">${j.crop} -${j.workType}</strong>
-                  <div style="font-size: 11px; color: #555;">రైతు: <b>${j.farmerName}</b> \vert{} సంఖ్య: <b>${j.count}</b></div>
+                  <div style="font-size: 11px; color: #555;">రైతు: <b>${j.farmerName}</b> | సంఖ్య: <b>${j.count}</b></div>
                 </div>
                 <div style="text-align: right;">
                   <span style="font-size: 14px; font-weight: 700; color: #2e7d32;">₹${j.wage}/రోజు</span>
