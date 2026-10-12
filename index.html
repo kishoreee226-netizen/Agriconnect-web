@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriConnect - Kisan & Labour Portal</title>
+  <title>AgriConnect - Hyperlocal Matching</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,14 +11,14 @@
       padding: 0;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f4f7f4;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f0f4f0;
       color: #333;
       padding: 12px;
     }
     header {
       text-align: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     header h1 {
       font-size: 20px;
@@ -26,10 +26,11 @@
     }
     header p {
       font-size: 12px;
-      color: #555;
+      color: #4caf50;
+      font-weight: 600;
     }
-    .main-layout {
-      max-width: 900px;
+    .container {
+      max-width: 500px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
@@ -41,26 +42,18 @@
 
   <header>
     <h1>🌾 AgriConnect</h1>
-    <p>రైతులు, కూలీలు & లైవ్ మార్కెట్ రేట్ల వేదిక</p>
+    <p>⚡ లైవ్ హైపర్‌లోకల్ మ్యాచింగ్ (5-10 KM)</p>
   </header>
 
-  <div class="main-layout">
-    <!-- 1. Live Mandi Rates Widget (Compact Right/Side Card) -->
-    <div id="mandi-box"></div>
-
-    <!-- 2. Kisan & Labour Instant Wallet Widget -->
-    <div id="wallet-container"></div>
-
-    <!-- 3. Farmer Post Form (5-10 KM Hyperlocal GPS) -->
+  <div class="container">
+    <!-- 1. Farmer Widget -->
     <div id="farmer-post-container"></div>
 
-    <!-- 4. Labour Jobs Feed & Route Navigation -->
+    <!-- 2. Labour Widget -->
     <div id="labour-jobs-container"></div>
   </div>
 
-  <!-- JavaScript Modules -->
-  <script src="mandi.js"></script>
-  <script src="wallet.js"></script>
+  <!-- Kevalam ee rendu modules matrame -->
   <script src="farmer.js"></script>
   <script src="labour.js"></script>
 
