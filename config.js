@@ -50,13 +50,13 @@ function renderCompanyDetails() {
       document.body.appendChild(footer);
     }
 
-    footer.innerHTML = `
-      <p style="color: #1b5e20; font-size: 13px; font-weight: bold; margin: 0 0 2px 0;">${window.COMPANY_CONFIG.name}</p>
-      <p style="margin: 2px 0; font-size: 11px; color: #555;">Udyam Reg: ${window.COMPANY_CONFIG.udyamRegNo}</p>
-      <p style="margin: 2px 0; font-size: 11px; color: #555;">📍 ${window.COMPANY_CONFIG.location}</p>
-      <p style="margin-top: 6px; color: #888; font-size: 10px;">© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.</p>
+        footer.innerHTML = `
+      <p style="color: #4caf50; font-size: 13px; font-weight: 700; margin: 0 0 4px 0; letter-spacing: 0.5px;">${window.COMPANY_CONFIG.name}</p>
+      <p style="margin: 3px 0; font-size: 11px; color: #e0e0e0; font-weight: 500;">Udyam Reg: <span style="color: #ffffff;">${window.COMPANY_CONFIG.udyamRegNo}</span></p>
+      <p style="margin: 3px 0; font-size: 11px; color: #cfd8dc;">📍 ${window.COMPANY_CONFIG.location}</p>
+      <p style="margin-top: 8px; color: #90a4ae; font-size: 10px;">© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.</p>
     `;
-    footer.style.cssText = "max-width: 420px; margin: 25px auto 15px auto; text-align: center; border-top: 1px solid #ddd; padding: 12px 10px; line-height: 1.6;";
+    footer.style.cssText = "max-width: 420px; margin: 20px auto 10px auto; text-align: center; border-top: 1px solid #333; padding: 14px 10px; line-height: 1.5;";
 
   }
 }
