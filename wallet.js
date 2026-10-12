@@ -17,7 +17,7 @@ function renderWalletWidget() {
       <!-- Wallet Header -->
       <div style="background: #fff8e1; border-bottom: 1.5px solid #ffe082; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0; color: #b78103; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 5px;">
-          👛 అగ్రీ స్మార్ట్ వాలెట్ (2-in-1 Escrow Lock)
+          💰 అగ్రీ స్మార్ట్ వాలెట్ (2-in-1 Escrow Lock)
         </h3>
         <span style="font-size: 10px; background: #ffe082; color: #b78103; padding: 2px 7px; border-radius: 4px; font-weight: 700;">100% Secured</span>
       </div>
