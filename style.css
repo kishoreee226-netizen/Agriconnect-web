@@ -1169,24 +1169,3 @@ header h1 {
   padding: 2px !important;
   display: inline-block !important;
 }
-/* రైతు డ్యాష్‌బోర్డ్ కన్ఫర్మ్ కూలీల లిస్ట్ స్క్రోల్ బాక్స్ */
-.accepted-scroll-box {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 135px;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  padding-right: 4px;
-  min-height: 0;
-}
-
-/* స్క్రోల్‌బార్ సన్నగా నీట్‌గా కనిపించడానికి */
-.accepted-scroll-box::-webkit-scrollbar {
-  width: 4px;
-}
-.accepted-scroll-box::-webkit-scrollbar-thumb {
-  background: #a5d6a7;
-  border-radius: 4px;
-}
-
