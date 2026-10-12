@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriConnect - Hyperlocal Matching</title>
+  <title>AgriConnect - Farmer & Labour Matching</title>
   <style>
     * {
       box-sizing: border-box;
@@ -14,27 +14,33 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background-color: #f0f4f0;
       color: #333;
-      padding: 12px;
+      padding: 10px;
     }
     header {
       text-align: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
+      padding-top: 6px;
     }
     header h1 {
       font-size: 20px;
       color: #1b5e20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
     header p {
-      font-size: 12px;
-      color: #4caf50;
+      font-size: 11px;
+      color: #388e3c;
       font-weight: 600;
+      margin-top: 2px;
     }
     .container {
-      max-width: 500px;
+      max-width: 480px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
   </style>
 </head>
@@ -46,12 +52,16 @@
   </header>
 
   <div class="container">
-  <div id="farmer-post-container"></div>
-  <div id="labour-jobs-container"></div>
-</div>
+    <!-- 1. Farmer Post & Accepted Labours Widget -->
+    <div id="farmer-post-container"></div>
 
-<script src="labour.js"></script>
-<script src="farmer.js"></script>
+    <!-- 2. Labour Job Feed & Navigation Widget -->
+    <div id="labour-jobs-container"></div>
+  </div>
+
+  <!-- JavaScript Modules (Labour mundhu load ayyi, tharvatha Farmer load avvali) -->
+  <script src="labour.js"></script>
+  <script src="farmer.js"></script>
 
 </body>
 </html>
