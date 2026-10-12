@@ -1,4 +1,4 @@
-// mandi.js - Ultra Compact Mini-Widget with Search, State & Panta Vibhagam
+// mandi.js - Side Card Mini-Widget with Integrated Title Header
 
 let allRecords = [];
 
@@ -74,59 +74,63 @@ async function renderMandiTable(containerId) {
     const states = [...new Set(allRecords.map(r => r.state).filter(Boolean))];
     const groups = [...new Set(allRecords.map(r => r.district).filter(Boolean))];
 
-    // Ultra-Compact Box Wrapper (1/8th page footprint)
+    // Side-aligned Compact Card (Right-aligned widget)
     container.innerHTML = `
-      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 580px; margin: 6px auto; padding: 6px; border: 1px solid #d0e7d2; border-radius: 8px; background: #ffffff; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 10px 0 10px auto; border: 1.5px solid #2e7d32; border-radius: 10px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden;">
         
-        <!-- Search, State Box, and Panta Vibhagam in Compact Row -->
-        <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; align-items: center;">
-          
-          <!-- 1. Search Box -->
-          <input 
-            type="text" 
-            id="mandi-search" 
-            placeholder="🔍 Panta peru..." 
-            style="flex: 2; min-width: 110px; padding: 5px 7px; border: 1px solid #b7dfb9; border-radius: 5px; font-size: 11px; outline: none;"
-          />
-
-          <!-- 2. State Filter Box -->
-          <select 
-            id="mandi-state-filter" 
-            style="flex: 1; min-width: 95px; padding: 5px 4px; border: 1px solid #b7dfb9; border-radius: 5px; font-size: 11px; background: #fff; color: #2e7d32; font-weight: 600;"
-          >
-            <option value="all">🌐 All States</option>
-            ${states.map(s => `<option value="${s}">${s}</option>`).join('')}
-          </select>
-
-          <!-- 3. Panta Vibhagam Box (Cereals, Pulses, etc.) -->
-          <select 
-            id="mandi-group-filter" 
-            style="flex: 1; min-width: 95px; padding: 5px 4px; border: 1px solid #b7dfb9; border-radius: 5px; font-size: 11px; background: #fff; color: #333;"
-          >
-            <option value="all">🌾 Vibhagam (All)</option>
-            ${groups.map(g => `<option value="${g}">${g}</option>`).join('')}
-          </select>
-
+        <!-- Integrated Top Header Title -->
+        <div style="background: linear-gradient(135deg, #2e7d32, #388e3c); color: #ffffff; padding: 7px 12px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.3px;">🌱 కేంద్ర ప్రభుత్వ Agmarknet తాజా ధరలు</span>
+          <span style="font-size: 9px; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 4px;">Live Rates</span>
         </div>
 
-        <!-- 3 Rows Mini Table Container (~115px height) -->
-        <div style="max-height: 115px; overflow-y: auto; overflow-x: auto; border: 1px solid #e1eee1; border-radius: 6px;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left;">
-            <thead>
-              <tr style="position: sticky; top: 0; z-index: 2; background: #2e7d32; color: #ffffff;">
-                <th style="padding: 5px 8px; font-size: 10px; font-weight: 600;">పంట (Crop)</th>
-                <th style="padding: 5px 8px; font-size: 10px; font-weight: 600;">విభాగం</th>
-                <th style="padding: 5px 8px; font-size: 10px; font-weight: 600;">MSP రకం</th>
-                <th style="padding: 5px 8px; font-size: 10px; font-weight: 600;">ధర (₹/Q)</th>
-              </tr>
-            </thead>
-            <tbody id="mandi-tbody"></tbody>
-          </table>
-        </div>
+        <div style="padding: 8px;">
+          <!-- Controls: Search, State, Vibhagam in one row -->
+          <div style="display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; align-items: center;">
+            <input 
+              type="text" 
+              id="mandi-search" 
+              placeholder="🔍 Panta peru..." 
+              style="flex: 2; min-width: 105px; padding: 5px 7px; border: 1px solid #b7dfb9; border-radius: 5px; font-size: 11px; outline: none;"
+            />
 
-        <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 9px; color: #689f38; padding: 0 2px;">
-          <span>Govt Agmarknet Live</span>
-          <span>↕️ Scroll for more</span>
+            <select 
+              id="mandi-state-filter" 
+              style="flex: 1; min-width: 90px; padding: 5px 4px; border: 1px solid #b7dfb9; border-radius: 5px; font-size: 11px; background: #fff; color: #2e7d32; font-weight: 600;"
+            >
+              <option value="all">🌐 All States</option>
+              ${states.map(s => `<option value="${s}">${s}</option>`).join('')}
+            </select>
+
+            <select 
+              id="mandi-group-filter" 
+              style="flex: 1; min-width: 90px; padding: 5px 4px; border: 1px solid #b7dfb9; border-radius: 5px; font-size: 11px; background: #fff; color: #333;"
+            >
+              <option value="all">🌾 Vibhagam (All)</option>
+              ${groups.map(g => `<option value="${g}">${g}</option>`).join('')}
+            </select>
+          </div>
+
+          <!-- 3-Rows Scrollable Table -->
+          <div style="max-height: 115px; overflow-y: auto; overflow-x: auto; border: 1px solid #e1eee1; border-radius: 6px;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <thead>
+                <tr style="position: sticky; top: 0; z-index: 2; background: #e8f5e9; color: #1b5e20; border-bottom: 1.5px solid #c8e6c9;">
+                  <th style="padding: 5px 8px; font-size: 10px; font-weight: 700;">పంట (Crop)</th>
+                  <th style="padding: 5px 8px; font-size: 10px; font-weight: 700;">విభాగం</th>
+                  <th style="padding: 5px 8px; font-size: 10px; font-weight: 700;">MSP రకం</th>
+                  <th style="padding: 5px 8px; font-size: 10px; font-weight: 700;">ధర (₹/Q)</th>
+                </tr>
+              </thead>
+              <tbody id="mandi-tbody"></tbody>
+            </table>
+          </div>
+
+          <!-- Footer status -->
+          <div style="display: flex; justify-content: space-between; margin-top: 4px; font-size: 9px; color: #689f38; padding: 0 2px;">
+            <span>Official APMC Market Rates</span>
+            <span>↕️ Scroll for more</span>
+          </div>
         </div>
 
       </div>
@@ -134,7 +138,6 @@ async function renderMandiTable(containerId) {
 
     renderTableRows(allRecords);
 
-    // Event Listeners for Filters
     document.getElementById("mandi-search")?.addEventListener("input", filterRecords);
     document.getElementById("mandi-state-filter")?.addEventListener("change", filterRecords);
     document.getElementById("mandi-group-filter")?.addEventListener("change", filterRecords);
