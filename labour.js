@@ -15,18 +15,18 @@ function renderLabourWidget(containerId) {
   const jobsData = getStoredJobs();
 
   container.innerHTML = `
-    <div style="background: #ffffff; border: 1.5px solid #1565c0; border-radius: 10px; padding: 14px; max-width: 480px; margin: 10px auto; font-family: sans-serif; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
+    <div style="background: #ffffff; border: 1.5px solid #1565c0; border-radius: 10px; padding: 12px; max-width: 480px; margin: 10px auto; font-family: sans-serif; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
       
       <!-- Top Header -->
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <h3 style="margin: 0; color: #0d47a1; font-size: 14px; font-weight: 700;">
-          👷‍♂️ కూలీల డ్యాష్‌బోర్డ్ (5-10 KM Jobs)
+          👷 కూలీల డ్యాష్‌బోర్డ్ (5-10 KM Jobs)
         </h3>
         <span style="font-size: 10px; background: #e3f2fd; color: #1565c0; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Live Feed</span>
       </div>
 
       <!-- Jobs List -->
-      <div style="display: flex; flex-direction: column; gap: 10px; max-height: 380px; overflow-y: auto;">
+      <div style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto;">
         ${jobsData.length === 0 ? `
           <div style="text-align: center; color: #888; font-size: 12px; padding: 16px;">
             ప్రస్తుతం కొత్త పనులు లేవు. రైతు పోస్ట్ చేయగానే ఇక్కడ కనిపిస్తాయి.
@@ -35,6 +35,9 @@ function renderLabourWidget(containerId) {
 
         ${jobsData.map(job => {
           const isConfirmed = job.status === "Confirmed";
+          const lat = typeof job.lat === 'number' ? job.lat : 17.9784;
+          const lng = typeof job.lng === 'number' ? job.lng : 79.5941;
+          
           return `
             <div style="border: 1px solid ${isConfirmed ? '#81c784' : '#bbdefb'}; border-radius: 8px; padding: 10px; background: ${isConfirmed ? '#f9fdf9' : '#ffffff'};">
               
@@ -42,12 +45,12 @@ function renderLabourWidget(containerId) {
                 <div>
                   <strong style="color: #0d47a1; font-size: 13px;">${job.crop} -${job.workType}</strong>
                   <div style="font-size: 11px; color: #555; margin-top: 2px;">
-                    రైతు: <b>${job.farmerName}</b> \vert{} కావాల్సిన వారు: <b>${job.count}</b>
+                    రైతు: <b>${job.farmerName \vert{}\vert{} 'రైతు'}</b> \vert{} కావాల్సిన వారు: <b>${job.count || 1}</b>
                   </div>
                 </div>
                 <div style="text-align: right;">
                   <span style="font-size: 14px; font-weight: 700; color: #2e7d32;">₹${job.wage}/రోజు</span>
-                  <div style="font-size: 10px; color: #e65100; font-weight: 600;">📍 ${job.distanceKm || '3.5'} కి.మీ</div>
+                  <div style="font-size: 10px; color: #e65100; font-weight: 600;">📍 ${job.distanceKm || '2.5'} కి.మీ</div>
                 </div>
               </div>
 
@@ -82,12 +85,12 @@ function renderLabourWidget(containerId) {
                     </button>
                   </div>
 
-                  <!-- Inline GPS Navigation Box (Default hidden, turns ON/OFF) -->
+                  <!-- Inline GPS Navigation Box -->
                   <div id="map-box-${job.id}" style="display: none; margin-top: 8px; background: #f5f5f5; border: 1px dashed #bdbdbd; border-radius: 6px; padding: 8px; text-align: center;">
                     <div style="font-size: 11px; color: #333; margin-bottom: 6px;">
-                      📍 పొలం లొకేషన్: (${job.lat.toFixed(4)}, ${job.lng.toFixed(4)})
+                      📍 పొలం లొకేషన్: (${lat.toFixed(4)}, ${lng.toFixed(4)})
                     </div>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${job.lat},${job.lng}" target="_blank" style="display: inline-block; background: #2e7d32; color: #ffffff; text-decoration: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600;">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" style="display: inline-block; background: #2e7d32; color: #ffffff; text-decoration: none; padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 600;">
                       🚀 Google Maps లో దారి చూడండి
                     </a>
                   </div>
