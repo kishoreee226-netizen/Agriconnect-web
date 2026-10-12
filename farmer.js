@@ -1,4 +1,4 @@
-// farmer.js - రైతు డ్యాష్‌బోర్డ్ (Light Green Header & Compact Submit)
+// farmer.js - రైతు Dashboard (Light Green Header & Compact Submit)
 
 function renderFarmerWidget() {
   const container = document.getElementById("farmer-post-container");
@@ -13,7 +13,7 @@ function renderFarmerWidget() {
       <!-- Light Green Header -->
       <div style="background: #e8f5e9; border-bottom: 1.5px solid #c8e6c9; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0; color: #1b5e20; font-size: 14px; font-weight: 700;">
-          👨‍🌾 రైతు డ్యాష్‌బోర్డ్ (కూలీలను వెతకడం)
+          👨‍🌾 రైతు Dashboard (కూలీలను వెతకడం)
         </h3>
         <span style="font-size: 10px; background: #c8e6c9; color: #1b5e20; padding: 2px 7px; border-radius: 4px; font-weight: 700;">Live</span>
       </div>
@@ -35,7 +35,7 @@ function renderFarmerWidget() {
             <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
         <div style="display: flex; flex-direction: column; align-items: center; margin: 6px 0;">
   <button type="button" id="loc-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 600; cursor: pointer; width: fit-content;">
-    📍 పొలం GPS లొకేషన్ సెట్ చేయండి
+    📍 పొలం GPS Location Set చేయండి
   </button>
   <span id="loc-status" style="font-size: 10px; color: #555; text-align: center; margin-top: 2px;"></span>
 </div>
@@ -51,13 +51,13 @@ function renderFarmerWidget() {
         <!-- Accepted Labours Section -->
         <div style="margin-top: 12px; border-top: 1.5px dashed #c8e6c9; padding-top: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-  <h4 style="margin: 0; font-size: 12px; color: #1b5e20;">👥 కన్ఫర్మ్ అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
-  ${myAcceptedJobs.length > 2 ? '<span style="font-size: 10px; color: #2e7d32; font-weight: 600;">👇 స్క్రోల్ చేయండి</span>' : ''}
+  <h4 style="margin: 0; font-size: 12px; color: #1b5e20;">👥 Confirm అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
+  ${myAcceptedJobs.length > 2 ? '<span style="font-size: 10px; color: #2e7d32; font-weight: 600;">👇 scrole చేయండి</span>' : ''}
 </div>
 <div id="accepted-list" class="custom-scroll" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; padding-right: 4px;">
 
             ${myAcceptedJobs.length === 0 ? `
-              <div style="font-size: 11px; color: #777; text-align: center; padding: 6px;">కూలీలు యాక్సెప్ట్ చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
+              <div style="font-size: 11px; color: #777; text-align: center; padding: 6px;">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
             ` : myAcceptedJobs.map(j => `
               <div style="border: 1px solid #c8e6c9; border-radius: 6px; padding: 8px; background: #f9fbf9;">
                 <div style="display: flex; justify-content: space-between; font-size: 12px;">
@@ -88,9 +88,9 @@ function renderFarmerWidget() {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           farmCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          s.innerText = `✅ GPS సెట్ అయింది (${farmCoords.lat.toFixed(3)}, ${farmCoords.lng.toFixed(3)})`;
+          s.innerText = `✅ GPS set అయింది (${farmCoords.lat.toFixed(3)}, ${farmCoords.lng.toFixed(3)})`;
         },
-        () => { s.innerText = "డీఫాల్ట్ GPS సెట్ అయింది."; }
+        () => { s.innerText = "default GPS set అయింది."; }
       );
     }
   });
@@ -117,7 +117,7 @@ function renderFarmerWidget() {
     e.target.reset();
     renderFarmerWidget();
     if (typeof renderLabourWidget === "function") renderLabourWidget();
-    alert("📢 పని కూలీల డ్యాష్‌బోర్డ్‌లో పోస్ట్ చేయబడింది!");
+    alert("📢 పని కూలీల dashboard లో post చేయబడింది!");
   });
 }
 
