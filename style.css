@@ -1149,3 +1149,23 @@ footer {
   border-radius: 4px;
 }
 
+/* Header Title mariyu Logo alignment */
+header h1 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+/* Config.js dwara vacche logo image size lock cheyadam */
+.app-logo {
+  width: 28px !important;
+  height: 28px !important;
+  max-width: 28px !important;
+  max-height: 28px !important;
+  object-fit: contain !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  padding: 2px !important;
+  display: inline-block !important;
+}
