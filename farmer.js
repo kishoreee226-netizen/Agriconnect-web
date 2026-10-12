@@ -34,12 +34,12 @@ function renderFarmerWidget() {
     <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 8px 0 4px 0; flex-wrap: wrap;">
       <div style="display: flex; flex-direction: column; align-items: center;">
         <button type="button" id="loc-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 600; cursor: pointer; width: fit-content;">
-          📍 GPS లొకేషన్
+          📍 పొలం GPS location
         </button>
         <span id="loc-status" style="font-size: 10px; color: #555; text-align: center; margin-top: 2px;"></span>
       </div>
       <button type="submit" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; width: fit-content;">
-        📢 సబ్మిట్ (Submit)
+        📢 Submit కూలీల కోసం 
       </button>
     </div>
         </form>
