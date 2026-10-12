@@ -12,7 +12,7 @@ function renderLabourWidget() {
       <!-- Light Blue Header -->
       <div style="background: #e3f2fd; border-bottom: 1.5px solid #90caf9; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
         <h3 style="margin: 0; color: #0d47a1; font-size: 14px; font-weight: 700;">
-          👷 కూలీల dashboard (5-10 KM Jobs)
+          👷 కూలీల Dashboard (5-10 KM Jobs)
         </h3>
         <span style="font-size: 10px; background: #bbdefb; color: #0d47a1; padding: 2px 7px; border-radius: 4px; font-weight: 700;">Live Feed</span>
       </div>
