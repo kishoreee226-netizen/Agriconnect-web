@@ -1,4 +1,4 @@
-// state.js - Shared Global Data Store for AgriConnect
+// state.js - Shared Global Data Store for AgriConnect with Escrow
 
 window.AgriState = {
   jobs: [
@@ -34,11 +34,50 @@ window.AgriState = {
     }
   ],
 
+  wallet: {
+    farmerBalance: 2500,
+    labourBalance: 0,
+    lockedEscrow: [
+      {
+        id: "ESC-1",
+        jobId: "JOB-1",
+        jobTitle: "వరి కోత",
+        labourName: "రాము",
+        amount: 450,
+        status: "Locked" // 'Locked' or 'Released'
+      }
+    ]
+  },
+
   getJobs: function() {
     return this.jobs;
   },
 
   addJob: function(job) {
     this.jobs.unshift(job);
+  },
+
+  getWallet: function() {
+    return this.wallet;
+  },
+
+  lockEscrow: function(jobId, jobTitle, labourName, amount) {
+    this.wallet.lockedEscrow.unshift({
+      id: "ESC-" + Date.now(),
+      jobId: jobId,
+      jobTitle: jobTitle,
+      labourName: labourName,
+      amount: amount,
+      status: "Locked"
+    });
+  },
+
+  releaseEscrow: function(escrowId) {
+    const esc = this.wallet.lockedEscrow.find(e => e.id === escrowId);
+    if (esc && esc.status === "Locked") {
+      esc.status = "Released";
+      this.wallet.farmerBalance -= Number(esc.amount);
+      this.wallet.labourBalance += Number(esc.amount);
+    }
   }
 };
