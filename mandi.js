@@ -6,7 +6,7 @@ const GOVT_API_URL = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a
 
 let allMandiRecords = [];
 
-// Crop Categories Map (విభాగం -> పంటల రకాలు)
+// Crop Categories Map
 const CROP_CATEGORIES = {
   "ధాన్యాలు (Cereals)": ["Paddy(Common)", "Paddy", "Maize", "Wheat", "Bajra", "Jowar"],
   "నూనె గింజలు (Oilseeds)": ["Groundnut", "Soyabean", "Mustard", "Sesamum", "Sunflower", "Castor Seed"],
@@ -30,7 +30,7 @@ async function fetchMandiData() {
       }
     }
   } catch (err) {
-    console.warn("Govt API timeout / CORS issue. Backup json vaaduthunnam...", err);
+    console.warn("Govt API timeout / CORS issue. Backup json load avthondi...", err);
   }
 
   try {
@@ -48,7 +48,7 @@ async function fetchMandiData() {
 }
 
 // ==========================================
-// 3. Render Table Rows
+// 3. Render Table Rows (Scrollable - All Records)
 // ==========================================
 function renderFilteredTable(records) {
   const tableBody = document.getElementById("mandi-table-body");
@@ -58,24 +58,25 @@ function renderFilteredTable(records) {
     tableBody.innerHTML = `
       <tr>
         <td colspan="3" style="padding: 12px; text-align: center; color: #888; font-size: 11px;">
-          ఎంచుకున్న ఫిల్టర్లకు సమాచారం అందుబాటులో లేదు.
+          ఎలాంటి పంటల సమాచారం దొరకలేదు.
         </td>
       </tr>
     `;
     return;
   }
 
-  tableBody.innerHTML = records.slice(0, 8).map(item => `
-    <tr style="border-bottom: 1px solid #dcedc8; font-size: 11px;">
-      <td style="padding: 6px 4px; font-weight: 600; color: #1b5e20;">${item.commodity || item.Commodity || "పంట"}</td>
-      <td style="padding: 6px 4px; color: #555;">${item.market || item.Market || "National APMC"}</td>
-      <td style="padding: 6px 4px; font-weight: 700; color: #2e7d32; text-align: right;">₹${item.modal_price || item.Modal_Price || item.price || "N/A"}</td>
+  // records.slice limit theesivesi mottham records chupisthunnam
+  tableBody.innerHTML = records.map(item => `
+    <tr style="border-bottom: 1px solid #f8bbd0; font-size: 11px;">
+      <td style="padding: 7px 6px; font-weight: 600; color: #880e4f;">${item.commodity || item.Commodity || "పంట"}</td>
+      <td style="padding: 7px 6px; color: #4a148c;">${item.market || item.Market || "National APMC"}</td>
+      <td style="padding: 7px 6px; font-weight: 700; color: #c2185b; text-align: right;">₹${item.modal_price || item.Modal_Price || item.price || "N/A"}</td>
     </tr>
   `).join("");
 }
 
 // ==========================================
-// 4. Filter Trigger Logic
+// 4. Filtering Logic
 // ==========================================
 function filterMandiRecords() {
   const selectedCategory = document.getElementById("mandi-category-filter")?.value || "";
@@ -88,11 +89,8 @@ function filterMandiRecords() {
     const itemCrop = (item.commodity || item.Commodity || "").toLowerCase();
     const itemState = (item.state || item.State || "Telangana").toLowerCase();
 
-    // Check category match
     const matchesCategory = !allowedCrops || allowedCrops.some(c => itemCrop.includes(c) || c.includes(itemCrop));
-    // Check state match
     const matchesState = !selectedState || itemState.includes(selectedState);
-    // Check crop match
     const matchesCrop = !selectedCrop || itemCrop.includes(selectedCrop);
 
     return matchesCategory && matchesState && matchesCrop;
@@ -101,7 +99,6 @@ function filterMandiRecords() {
   renderFilteredTable(filtered);
 }
 
-// Category change ayinappudu 3rd box (Crops) ni dynamic ga populate cheyadam
 function updateCropDropdown() {
   const selectedCategory = document.getElementById("mandi-category-filter")?.value;
   const cropSelect = document.getElementById("mandi-crop-filter");
@@ -114,7 +111,6 @@ function updateCropDropdown() {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
     });
   } else {
-    // Collect all available unique crops
     const uniqueCrops = [...new Set(allMandiRecords.map(item => item.commodity || item.Commodity).filter(Boolean))];
     uniqueCrops.forEach(crop => {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
@@ -125,7 +121,7 @@ function updateCropDropdown() {
 }
 
 // ==========================================
-// 5. Main Render Function (Widget UI)
+// 5. Main Render Function (Light Pink Theme)
 // ==========================================
 window.renderMandiWidget = async function() {
   const container = document.getElementById("mandi-container");
@@ -135,21 +131,21 @@ window.renderMandiWidget = async function() {
   allMandiRecords = result.records;
 
   const isLive = result.isLive;
-  const badgeColor = isLive ? "#2e7d32" : "#b78103";
-  const badgeBg = isLive ? "#e8f5e9" : "#fffde7";
+  const badgeColor = isLive ? "#ad1457" : "#b78103";
+  const badgeBg = isLive ? "#fce4ec" : "#fffde7";
   const badgeText = isLive ? "🟢 Live Server" : "🟡 Saved Backup";
 
-  // States extract cheyadam
   const states = [...new Set(allMandiRecords.map(item => item.state || item.State).filter(Boolean))];
   if (!states.includes("Telangana")) states.unshift("Telangana");
   if (!states.includes("Andhra Pradesh")) states.push("Andhra Pradesh");
 
+  // Mothaniki Light Pink Card Background (#fff0f5) mariyu Header (#fce4ec)
   container.innerHTML = `
-    <div style="background: #ffffff; border: 1.5px solid #81c784; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(46,125,50,0.08);">
+    <div style="background: #fff0f5; border: 1.5px solid #f48fb1; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(233,30,99,0.08);">
       
-      <!-- Top Title Header Strip with Background & Symbol -->
-      <div style="background: #e8f5e9; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #c8e6c9;">
-        <h3 style="margin: 0; color: #1b5e20; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+      <!-- Top Title Header Strip (Pink Background) -->
+      <div style="background: #fce4ec; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f8bbd0;">
+        <h3 style="margin: 0; color: #880e4f; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
           📈 మార్కెట్ / మండి లైవ్ ధరలు
         </h3>
         <span style="font-size: 10px; background: ${badgeBg}; color: ${badgeColor}; padding: 2px 7px; border-radius: 10px; font-weight: 600; border: 1px solid ${badgeColor}33;">
@@ -157,50 +153,56 @@ window.renderMandiWidget = async function() {
         </span>
       </div>
 
-      <div style="padding: 10px; background: #f9fbf9;">
-        <!-- 3 Cascading Select Bars -->
+      <div style="padding: 10px; background: #fff5f8;">
+        <!-- 3 Filter Dropdowns -->
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 10px;">
           
-          <!-- 1. పంట విభాగం (Crop Category: Oil, Cereals, etc.) -->
+          <!-- 1. Category -->
           <div>
-            <select id="mandi-category-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #a5d6a7; border-radius: 6px; background: #ffffff; color: #333; outline: none;">
+            <select id="mandi-category-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #f48fb1; border-radius: 6px; background: #ffffff; color: #4a148c; outline: none;">
               <option value="">పంట విభాగం (Category)</option>
               ${Object.keys(CROP_CATEGORIES).map(cat => `<option value="${cat}">${cat}</option>`).join("")}
             </select>
           </div>
 
-          <!-- 2. రాష్ట్రం (State Wise Selection) -->
+          <!-- 2. State -->
           <div>
-            <select id="mandi-state-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #a5d6a7; border-radius: 6px; background: #ffffff; color: #333; outline: none;">
+            <select id="mandi-state-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #f48fb1; border-radius: 6px; background: #ffffff; color: #4a148c; outline: none;">
               <option value="">రాష్ట్రం (State)</option>
               ${states.map(s => `<option value="${s}">${s}</option>`).join("")}
             </select>
           </div>
 
-          <!-- 3. పంట రకం (Commodity/Crops - Category batti auto update avuthundhi) -->
+          <!-- 3. Crop Type -->
           <div>
-            <select id="mandi-crop-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #a5d6a7; border-radius: 6px; background: #ffffff; color: #333; outline: none;">
+            <select id="mandi-crop-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #f48fb1; border-radius: 6px; background: #ffffff; color: #4a148c; outline: none;">
               <option value="">పంట (Crop)</option>
             </select>
           </div>
 
         </div>
 
-        <!-- Table Display -->
-        <div style="background: #ffffff; border-radius: 6px; border: 1px solid #c8e6c9; overflow: hidden;">
+        <!-- Scrollable Table Section (Max Height for 3-4 rows with overflow scroll) -->
+        <div style="background: #ffffff; border-radius: 6px; border: 1px solid #f8bbd0; overflow: hidden;">
           <table style="width: 100%; border-collapse: collapse; text-align: left;">
             <thead>
-              <tr style="background: #f1f8e9; font-size: 11px; color: #1b5e20; border-bottom: 1px solid #c8e6c9;">
-                <th style="padding: 6px 4px;">పంట</th>
-                <th style="padding: 6px 4px;">మార్కెట్</th>
-                <th style="padding: 6px 4px; text-align: right;">ధర (క్వింటాల్)</th>
+              <tr style="background: #fce4ec; font-size: 11px; color: #880e4f; border-bottom: 1px solid #f8bbd0;">
+                <th style="padding: 7px 6px;">పంట</th>
+                <th style="padding: 7px 6px;">మార్కెట్</th>
+                <th style="padding: 7px 6px; text-align: right;">ధర (క్వింటాల్)</th>
               </tr>
             </thead>
-            <tbody id="mandi-table-body">
-              <!-- Dynamic Rows -->
-            </tbody>
           </table>
+          
+          <div style="max-height: 140px; overflow-y: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+              <tbody id="mandi-table-body">
+                <!-- Records render ikkada avuthayi -->
+              </tbody>
+            </table>
+          </div>
         </div>
+
       </div>
 
     </div>
@@ -211,6 +213,6 @@ window.renderMandiWidget = async function() {
   document.getElementById("mandi-state-filter").addEventListener("change", filterMandiRecords);
   document.getElementById("mandi-crop-filter").addEventListener("change", filterMandiRecords);
 
-  // Initialize
+  // Initialize dropdown & table
   updateCropDropdown();
 };
