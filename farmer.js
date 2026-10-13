@@ -30,7 +30,8 @@ function renderFarmerWidget() {
             <input type="text" id="f-work" placeholder="పని" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
           </div>
     <div style="display: flex; gap: 6px; margin-top: 6px;">
-      <input type="number" id="f-count" placeholder="కూలీల సంఖ్య" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+      <input type="number" id="f-count" placeholder="కూలీల సంఖ్య"
+ required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
       <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
     </div>
 
