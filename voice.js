@@ -62,7 +62,7 @@ function handleVoiceCommand(voiceText) {
     else if (input.includes("కలుపు")) workType = "కలుపు తీత";
 
     // కూలీల సంఖ్య గుర్తింపు
-    const countMatch = input.match(/(\d+)\s*(మంది|గురు|కూలీలు)?/);
+const countMatch = input.match(/(\d+)\s*(మంది|గురు|కూలీలు)?/);
 
     if (countMatch) {
       count = countMatch[1];
