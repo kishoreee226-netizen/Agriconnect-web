@@ -81,64 +81,13 @@ window.AgriState = {
     }
   }
 };
+
 // Global App User State
-window.AppState = {
+window.AppState = window.AppState || {
   currentRole: "FARMER", // 'FARMER' leda 'LABOUR'
   autoVoice: false,
   user: {
-    name: "Kishore",
+    name: "కిషోర్",
     mobile: "9876543210"
   }
 };
-
-// Switch Role Function
-function switchUserRole(role) {
-  window.AppState.currentRole = role;
-
-  const farmerBtn = document.getElementById("btn-role-farmer");
-  const labourBtn = document.getElementById("btn-role-labour");
-  const farmerContainer = document.getElementById("farmer-post-container");
-  const labourContainer = document.getElementById("labour-jobs-container");
-
-  if (role === "FARMER") {
-    farmerBtn?.classList.add("active");
-    labourBtn?.classList.remove("active");
-
-    farmerContainer?.classList.remove("container-disabled");
-    farmerContainer?.classList.add("container-highlight");
-
-    labourContainer?.classList.add("container-disabled");
-    labourContainer?.classList.remove("container-highlight");
-
-    if (typeof speakTeluguText === "function") {
-      speakTeluguText("రైతు మోడ్ ఆన్ చేయబడింది. కూలీలు కావాలంటే వివరాలు చెప్పండి.");
-    }
-  } else {
-    labourBtn?.classList.add("active");
-    farmerBtn?.classList.remove("active");
-
-    labourContainer?.classList.remove("container-disabled");
-    labourContainer?.classList.add("container-highlight");
-
-    farmerContainer?.classList.add("container-disabled");
-    farmerContainer?.classList.remove("container-highlight");
-
-    if (typeof speakTeluguText === "function") {
-      speakTeluguText("కూలీ మోడ్ ఆన్ చేయబడింది. మీకు అనువైన పనుల వివరాలు ఇక్కడ ఉన్నాయి.");
-    }
-  }
-}
-
-// Auto Voice Toggle Handler
-function toggleAutoVoice(isEnabled) {
-  window.AppState.autoVoice = isEnabled;
-  if (isEnabled && typeof speakTeluguText === "function") {
-    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆన్ చేయబడింది. నేను ప్రతీదీ మీకు వివరించి అడుగుతాను.");
-  }
-}
-
-// Initial setup
-window.addEventListener("DOMContentLoaded", () => {
-  switchUserRole("FARMER");
-});
-
