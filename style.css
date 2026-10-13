@@ -1210,3 +1210,57 @@ header h1 {
     box-shadow: 0 0 0 0 rgba(211, 47, 47, 0);
   }
 }
+/* Role Switcher & Mode Bar */
+.role-switch-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: #ffffff;
+  padding: 10px 16px;
+  margin: 12px auto;
+  max-width: 450px;
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.role-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  background: #f0f0f0;
+  color: #555555;
+  transition: all 0.3s ease;
+}
+
+.role-btn.active {
+  background: #2e7d32;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.4);
+}
+
+/* Auto Voice Mode Switch */
+.auto-voice-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 12px;
+}
+
+/* Container Visibility Classes */
+.container-disabled {
+  display: none !important;
+}
+
+.container-highlight {
+  border: 2px solid #2e7d32 !important;
+  box-shadow: 0 4px 14px rgba(46, 125, 50, 0.25) !important;
+}
