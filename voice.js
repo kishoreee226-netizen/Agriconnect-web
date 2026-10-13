@@ -130,3 +130,14 @@ if (document.readyState === "loading") {
 } else {
   initVoiceAssistant();
 }
+// Auto Voice Toggle Function
+window.toggleAutoVoice = function(isEnabled) {
+  if (window.AppState) {
+    window.AppState.autoVoice = isEnabled;
+  }
+  if (isEnabled && typeof speakTeluguText === "function") {
+    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆన్ చేయబడింది. నేను ప్రతీదీ మీకు వివరించి అడుగుతాను.");
+  } else if (!isEnabled && typeof speakTeluguText === "function") {
+    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆఫ్ చేయబడింది.");
+  }
+};
