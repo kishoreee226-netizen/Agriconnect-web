@@ -53,3 +53,19 @@ function handleVoiceCommand(text) {
     document.getElementById("labour-jobs-container")?.scrollIntoView({ behavior: "smooth" });
   }
 }
+// Telugu Audio Response (Text to Speech)
+function speakTeluguText(msg) {
+  if ("speechSynthesis" in window) {
+    const utterance = new SpeechSynthesisUtterance(msg);
+    utterance.lang = "te-IN";
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+// Auto init on page load
+if (document.readyState === "loading") {
+  window.addEventListener("DOMContentLoaded", initVoiceAssistant);
+} else {
+  initVoiceAssistant();
+}
+
