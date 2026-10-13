@@ -15,13 +15,6 @@ function injectRoleSwitcher() {
         👷 కూలీ మోడ్
       </button>
     </div>
-
-    <div class="auto-voice-toggle">
-      <label style="cursor: pointer; display: flex; align-items: center; gap: 6px;">
-        <input type="checkbox" id="auto-voice-check" onchange="toggleAutoVoice(this.checked)">
-        🤖 ఆటోమేటిక్ వాయిస్ గైడెన్స్ (Auto Voice)
-      </label>
-    </div>
   `;
 
   // App Header తర్వాత లేదా బాడీ ప్రారంభంలో ఇన్సర్ట్ చేయడం
