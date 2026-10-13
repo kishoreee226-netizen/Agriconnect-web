@@ -141,3 +141,34 @@ window.toggleAutoVoice = function(isEnabled) {
     speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆఫ్ చేయబడింది.");
   }
 };
+
+// ఆటో వాయిస్ చెక్‌బాక్స్ బటన్‌ను స్క్రీన్‌పై చూపించడం (Auto Voice Toggle UI)
+function renderAutoVoiceToggle() {
+  if (document.getElementById("auto-voice-toggle-container")) return;
+
+  const toggleDiv = document.createElement("div");
+  toggleDiv.id = "auto-voice-toggle-container";
+  toggleDiv.style.cssText = "display:flex; justify-content:center; align-items:center; gap:8px; font-size:13px; font-weight:bold; margin:8px 0; color:#2e7d32;";
+  
+  toggleDiv.innerHTML = `
+    <label style="cursor:pointer; display:flex; align-items:center; gap:6px; background:#e8f5e9; padding:6px 14px; border-radius:16px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
+      <input type="checkbox" id="auto-voice-check" onchange="toggleAutoVoice(this.checked)" style="width:16px; height:16px; cursor:pointer;">
+      🤖 ఆటో వాయిస్ గైడెన్స్ (Auto Voice)
+    </label>
+  `;
+
+  // రోల్ స్విచ్ బార్ కింద లేదా హెడర్ కింద ఇన్సర్ట్ చేయడం
+  const roleBar = document.getElementById("role-switch-container");
+  if (roleBar && roleBar.parentNode) {
+    roleBar.parentNode.insertBefore(toggleDiv, roleBar.nextSibling);
+  } else {
+    document.body.prepend(toggleDiv);
+  }
+}
+
+// పేజీ లోడ్ అయిన వెంటనే ఆటో వాయిస్ టోగుల్ కనిపిస్తుంది
+if (document.readyState === "loading") {
+  window.addEventListener("DOMContentLoaded", renderAutoVoiceToggle);
+} else {
+  renderAutoVoiceToggle();
+}
