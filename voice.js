@@ -1,6 +1,112 @@
 // voice.js - Voice of Smart Farming Core Assistant
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+// వాయిస్ కమాండ్ ప్రాసెసింగ్ (రైతు & కూలీ ఫ్లో)
+let pendingVoiceSubmission = false;
+
+function handleVoiceCommand(voiceText) {
+  const input = voiceText.toLowerCase().trim();
+  console.log("Processing Voice:", input);
+
+  // 1. సబ్మిట్ కన్ఫర్మేషన్ (రైతు 'సరే' లేదా 'పోస్ట్ చేయ్' అన్నప్పుడు)
+  if (pendingVoiceSubmission) {
+    if (input.includes("సరే") || input.includes("చేయ్") || input.includes("పోస్ట్") || input.includes("submit") || input.includes("ఓకే")) {
+      pendingVoiceSubmission = false;
+      const submitBtn = document.querySelector("button[onclick*='postJob'], .btn-submit, #submit-job-btn") || 
+                        document.querySelector("button:has(.fa-paper-plane)") || 
+                        document.querySelector("button[type='submit']");
+      if (submitBtn) {
+        submitBtn.click();
+        speakTeluguText("కూలీల కోసం పని విజయవంతంగా పోస్ట్ చేయబడింది.");
+      } else {
+        speakTeluguText("సబ్మిట్ బటన్ క్లిక్ చేయబడింది.");
+      }
+      return;
+    } else if (input.includes("వద్దు") || input.includes("ఆపు") || input.includes("కాదు")) {
+      pendingVoiceSubmission = false;
+      speakTeluguText("సరే, వివరాలు పోస్ట్ చేయలేదు.");
+      return;
+    }
+  }
+
+  // 2. రైతు మోడ్‌లో ఉన్నప్పుడు - ఫారమ్ ఆటోమేటిక్‌గా నింపడం
+  if (window.AppState && window.AppState.currentRole === "FARMER") {
+    let crop = "";
+    let workType = "";
+    let count = "";
+    let wage = "";
+
+    // అన్ని రకాల పంటల గుర్తింపు
+    const cropKeywords = [
+      "వరి", "పత్తి", "మిర్చి", "మిరప", "మొక్కజొన్న", "పసుపు", 
+      "వేరుశనగ", "పల్లీ", "కంది", "పెసర", "మినుము", "సోయాబీన్", 
+      "మామిడి", "టమాటా", "కూరగాయలు"
+    ];
+    for (let c of cropKeywords) {
+      if (input.includes(c)) {
+        crop = c;
+        break;
+      }
+    }
+    // లిస్ట్‌లో లేని కొత్త పంటను డైనమిక్‌గా గుర్తించడం
+    if (!crop) {
+      const genericMatch = input.match(/([^\s]+)\s*(పంట|తోట)/);
+      if (genericMatch) crop = genericMatch[1];
+    }
+
+    // పని రకం గుర్తింపు
+    if (input.includes("కోత")) workType = "కోత";
+    else if (input.includes("తీత") || input.includes("ఏరడం")) workType = "తీత";
+    else if (input.includes("నాటు")) workType = "నాటు";
+    else if (input.includes("కలుపు")) workType = "కలుపు తీత";
+
+    // కూలీల సంఖ్య గుర్తింపు
+    const countMatch = input.match(/(\d+)\s*(మంది|గురు|కూలీలు)?/);
+    if (countMatch) {
+      count = countMatch[1];
+    } else {
+      if (input.includes("ఒక్కరు") || input.includes("ఒకరు")) count = "1";
+      else if (input.includes("ఇద్దరు") || input.includes("రెండు")) count = "2";
+      else if (input.includes("ముగ్గురు") || input.includes("మూడు")) count = "3";
+      else if (input.includes("నలుగురు") || input.includes("నాలుగు")) count = "4";
+      else if (input.includes("ఐదుగురు") || input.includes("ఐదు")) count = "5";
+      else if (input.includes("ఆరుగురు") || input.includes("ఆరు")) count = "6";
+    }
+
+    // కూలీ మొత్తం (రూపాయలు)
+    const wageMatch = input.match(/(\d{3,4})\s*(రూపాయలు|రూ)?/);
+    if (wageMatch) {
+      wage = wageMatch[1];
+    }
+
+    // ఫారమ్ ఇన్‌పుట్ బాక్సులను గుర్తించి నింపడం
+    const cropInput = document.getElementById("job-crop") || document.querySelector("input[placeholder*='పంట']");
+    const workInput = document.getElementById("job-work") || document.querySelector("input[placeholder*='పని']");
+    const countInput = document.getElementById("job-count") || document.querySelector("input[placeholder*='సంఖ్య']");
+    const wageInput = document.getElementById("job-wage") || document.querySelector("input[placeholder*='కూలీ']");
+
+    if (crop && cropInput) cropInput.value = crop;
+    if (workType && workInput) workInput.value = workType;
+    if (count && countInput) countInput.value = count;
+    if (wage && wageInput) wageInput.value = wage;
+
+    // వాయిస్ ఫీడ్‌బ్యాక్
+    if (crop || workType || count || wage) {
+      pendingVoiceSubmission = true;
+      let reply = "వివరాలు నమోదు చేశాను. ";
+      if (crop) reply += crop + " ";
+      if (workType) reply += workType + " పనికి ";
+      if (count) reply += count + " మంది కూలీలు, ";
+      if (wage) reply += "రోజుకు " + wage + " రూపాయలు. ";
+      reply += "పోస్ట్ చేయమంటారా?";
+      speakTeluguText(reply);
+      return;
+    }
+  }
+
+  // 3. సాధారణ సమాధానం
+  speakTeluguText("మీరు చెప్పింది అర్థం కాలేదు, దయచేసి వివరాలు మళ్లీ స్పష్టంగా చెప్పండి.");
+}
 
 function initVoiceAssistant() {
   if (document.getElementById("global-voice-btn")) return;
@@ -40,13 +146,16 @@ function initVoiceAssistant() {
     }
   });
 
-  recognition.onresult = (event) => {
+  recognition.onresult = function(event) {
+  if (typeof micBtn !== "undefined") {
     micBtn.classList.remove("listening");
-    isListening = false;
-    const voiceText = event.results[0][0].transcript;
-    console.log("యూజర్ మాట్లాడిన మాటలు:", voiceText);
-    handleVoiceCommand(voiceText);
-  };
+  }
+  isListening = false;
+  const transcript = event.results[event.results.length - 1][0].transcript;
+  console.log("Transcribed text:", transcript);
+
+  processVoiceCommand(transcript);
+};
 
   recognition.onerror = (event) => {
     micBtn.classList.remove("listening");
