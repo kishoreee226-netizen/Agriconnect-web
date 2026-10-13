@@ -1,3 +1,65 @@
+// voice.js - Voice of Smart Farming Core Assistant
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+function initVoiceAssistant() {
+  if (document.getElementById("global-voice-btn")) return;
+
+  const micBtn = document.createElement("button");
+  micBtn.id = "global-voice-btn";
+  micBtn.className = "floating-mic-btn";
+  micBtn.innerHTML = "🎙️";
+  micBtn.title = "మాట్లాడండి";
+  document.body.appendChild(micBtn);
+
+  if (!SpeechRecognition) {
+    micBtn.addEventListener("click", () => {
+      alert("మీ బ్రౌజర్‌లో Voice Speech API సపోర్ట్ లేదు. దయచేసి Google Chrome వాడండి.");
+    });
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = "te-IN";
+  recognition.interimResults = false;
+  let isListening = false;
+
+  micBtn.addEventListener("click", () => {
+    if (!isListening) {
+      try {
+        recognition.start();
+        micBtn.classList.add("listening");
+        isListening = true;
+      } catch (err) {
+        console.error("Mic start error:", err);
+      }
+    } else {
+      recognition.stop();
+      micBtn.classList.remove("listening");
+      isListening = false;
+    }
+  });
+
+  recognition.onresult = (event) => {
+    micBtn.classList.remove("listening");
+    isListening = false;
+    const voiceText = event.results[0][0].transcript;
+    console.log("యూజర్ మాట్లాడిన మాటలు:", voiceText);
+    handleVoiceCommand(voiceText);
+  };
+
+  recognition.onerror = (event) => {
+    micBtn.classList.remove("listening");
+    isListening = false;
+    console.error("Speech Error:", event.error);
+  };
+
+  recognition.onend = () => {
+    micBtn.classList.remove("listening");
+    isListening = false;
+  };
+}
+
 function handleVoiceCommand(text) {
   const query = text.toLowerCase();
   console.log("Input maata:", query);
@@ -5,13 +67,12 @@ function handleVoiceCommand(text) {
   // 1. Farmer Job Post Fill Logic
   if (query.includes("కూలీ") || query.includes("చేను") || query.includes("పని") || query.includes("మంది") || query.includes("రైతు")) {
     
-    // Inputs ni thecchukovadam
     const cropInput = document.getElementById("f-crop");
     const workInput = document.getElementById("f-work");
     const countInput = document.getElementById("f-count");
     const wageInput = document.getElementById("f-wage");
 
-    // Panta gurthimpu
+    // పంట గుర్తింపు
     if (cropInput) {
       if (query.includes("వరి") || query.includes("వరిచేను")) cropInput.value = "వరి";
       else if (query.includes("పత్తి")) cropInput.value = "పత్తి";
@@ -19,15 +80,15 @@ function handleVoiceCommand(text) {
       else if (query.includes("మొక్కజొన్న")) cropInput.value = "మొక్కజొన్న";
     }
 
-    // Pani gurthimpu
+    // పని గుర్తింపు
     if (workInput) {
       if (query.includes("కోత")) workInput.value = "కోత";
-      else if (query.includes("తీయడం") || query.includes("ఏరడం")) workInput.value = "తీత";
-      else if (query.includes("నాటు")) workInput.value = "నాట్లు";
+      else if (query.includes("తీయడం") || query.includes("తీత") || query.includes("ఏరడం")) workInput.value = "తీత";
+      else if (query.includes("నాటు") || query.includes("నాట్లు")) workInput.value = "నాట్లు";
       else workInput.value = "పని";
     }
 
-    // Numbers (Coolila sankhya & wage)
+    // కూలీల సంఖ్య & కూలీ రేటు
     const numbers = text.match(/\d+/g);
     if (numbers) {
       if (numbers.length >= 1 && countInput) countInput.value = numbers[0];
@@ -53,6 +114,7 @@ function handleVoiceCommand(text) {
     document.getElementById("labour-jobs-container")?.scrollIntoView({ behavior: "smooth" });
   }
 }
+
 // Telugu Audio Response (Text to Speech)
 function speakTeluguText(msg) {
   if ("speechSynthesis" in window) {
@@ -68,4 +130,3 @@ if (document.readyState === "loading") {
 } else {
   initVoiceAssistant();
 }
-
