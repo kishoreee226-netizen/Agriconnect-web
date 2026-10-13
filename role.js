@@ -75,14 +75,6 @@ window.switchUserRole = function(role) {
   }
 };
 
-// ఆటో వాయిస్ టోగుల్
-window.toggleAutoVoice = function(isEnabled) {
-  window.AppState.autoVoice = isEnabled;
-  if (isEnabled && typeof speakTeluguText === "function") {
-    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆన్ చేయబడింది.");
-  }
-};
-
 // పేజీ లోడ్ కాగానే రన్ అవ్వడం
 if (document.readyState === "loading") {
   window.addEventListener("DOMContentLoaded", injectRoleSwitcher);
