@@ -74,3 +74,10 @@ if (document.readyState === "loading") {
 } else {
   injectRoleSwitcher();
 }
+if (window.AppState && window.AppState.autoVoice && typeof speakTeluguText === "function") {
+  if (role === "LABOUR") {
+    speakTeluguText("కూలీ మోడ్ కి మారారు. అందుబాటులో ఉన్న పనులను చూడవచ్చు.");
+  } else {
+    speakTeluguText("రైతు మోడ్ కి మారారు. కూలీల కోసం పని వివరాలు చెప్పండి.");
+  }
+}
