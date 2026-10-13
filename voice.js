@@ -210,15 +210,32 @@ function speakTeluguText(msg, onEndCallback) {
     window.speechSynthesis.speak(utterance);
   }
 }
-
-// 4. ఆటో వాయిస్ టోగుల్ లాజిక్
+// 4. ఆటో వాయిస్ టోగుల్ లాజిక్ (రైతు & కూలీ కోసం విడివిడిగా)
 window.toggleAutoVoice = function(isEnabled) {
   if (window.AppState) {
     window.AppState.autoVoice = isEnabled;
   }
+  
   if (isEnabled) {
-    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆన్ చేయబడింది. మీకు ఏ పనికి కూలీలు కావాలో చెప్పండి.", () => {
-      // మాట పూర్తయ్యాక రైతు సమాధానం వినడానికి మైక్ ఆటోమేటిక్‌గా ఆన్ అవుతుంది
+    const currentRole = (window.AppState && window.AppState.currentRole) ? window.AppState.currentRole : "FARMER";
+
+    // కూలీ మోడ్ లో ఉన్నప్పుడు
+    if (currentRole === "LABOUR") {
+      speakTeluguText("కూలీ మోడ్ ఆటో వాయిస్ ఆన్ చేయబడింది. మీకు సమీపంలో ఉన్న పనుల వివరాలు చూపిస్తున్నాను. మీకు ఏ పని కావాలో చెప్పండి.", () => {
+        startListening();
+      });
+    } 
+    // రైతు మోడ్ లో ఉన్నప్పుడు
+    else {
+      speakTeluguText("రైతు మోడ్ ఆటో వాయిస్ ఆన్ చేయబడింది. మీకు ఏ పనికి కూలీలు కావాలో చెప్పండి.", () => {
+        startListening();
+      });
+    }
+  } else {
+    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆఫ్ చేయబడింది.");
+  }
+};
+
       startListening();
     });
   } else {
