@@ -217,6 +217,24 @@ window.toggleAutoVoice = function(isEnabled) {
   }
   
   if (isEnabled) {
+    // ప్రస్తుతం ఏ మోడ్‌లో ఉన్నారో చెక్ చేయడం
+    const currentRole = (window.AppState && window.AppState.currentRole) ? window.AppState.currentRole : "FARMER";
+
+    if (currentRole === "LABOUR") {
+      speakTeluguText("కూలీ మోడ్ ఆటో వాయిస్ ఆన్ చేయబడింది. మీకు సమీపంలో ఉన్న పనుల వివరాలు చూపిస్తున్నాను. మీకు ఏ పని కావాలో చెప్పండి.", () => {
+        startListening();
+      });
+    } else {
+      speakTeluguText("రైతు మోడ్ ఆటో వాయిస్ ఆన్ చేయబడింది. మీకు ఏ పనికి కూలీలు కావాలో చెప్పండి.", () => {
+        startListening();
+      });
+    }
+  } else {
+    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆఫ్ చేయబడింది.");
+  }
+};
+  
+  if (isEnabled) {
     const currentRole = (window.AppState && window.AppState.currentRole) ? window.AppState.currentRole : "FARMER";
 
     // కూలీ మోడ్ లో ఉన్నప్పుడు
