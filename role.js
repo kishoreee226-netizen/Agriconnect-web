@@ -1,6 +1,6 @@
 // role.js - AgriConnect Smart Role Cards & Dashboard Controller
 
-// Helper function: Raitu dashboard container ni correct ga pattukovadaniki
+// Helper function: రైతు డ్యాష్‌బోర్డ్ కంటైనర్ గుర్తించడానికి
 function getFarmerDashboardElement() {
   return document.getElementById("farmer-dashboard-container") || 
          document.getElementById("farmer-post-container") || 
@@ -13,7 +13,7 @@ function getFarmerDashboardElement() {
          );
 }
 
-// 1. Roles mariyu Widgets visibility control
+// 1. Roles మరియు Widgets visibility control
 function applyUserRoleView() {
   const state = window.AppState;
   const publicCardsContainer = document.getElementById("public-user-cards-container");
@@ -29,21 +29,21 @@ function applyUserRoleView() {
   const walletContainer = document.getElementById("wallet-container") || 
                           document.querySelector(".wallet-card");
 
-  // A. Inka Login kani Public / Guest Landing Page
+  // A. లాగిన్ కానప్పుడు (Public Landing Page)
   if (!state || !state.isLoggedIn) {
     if (publicCardsContainer) publicCardsContainer.style.display = "block";
     if (roleSwitchBar) roleSwitchBar.style.display = "none";
-    if (farmerContainer) farmerContainer.style.display = "none"; // Login ki mundu hide
+    if (farmerContainer) farmerContainer.style.display = "none";
     if (labourContainer) labourContainer.style.display = "none";
     if (walletContainer) walletContainer.style.display = "none";
-    if (mandiContainer) mandiContainer.style.display = "block";  // Mandi public ga kanipistundi
+    if (mandiContainer) mandiContainer.style.display = "block";
     return;
   }
 
-  // B. Login ayyaka Public Cards hide cheyali
+  // B. లాగిన్ అయిన తర్వాత పబ్లిక్ కార్డ్స్ దాచడం
   if (publicCardsContainer) publicCardsContainer.style.display = "none";
 
-  // C. Direct Kooli Login (LABOUR_ONLY)
+  // C. డైరెక్ట్ కూలీ లాగిన్ (LABOUR_ONLY)
   if (state.userType === "LABOUR_ONLY") {
     if (roleSwitchBar) roleSwitchBar.style.display = "none";
     if (farmerContainer) farmerContainer.style.display = "none";
@@ -52,7 +52,7 @@ function applyUserRoleView() {
     if (labourContainer) labourContainer.style.display = "block";
     if (walletContainer) walletContainer.style.display = "block";
   } 
-  // D. Raitu Login (FARMER - 2-in-1 Full Access)
+  // D. రైతు లాగిన్ (FARMER)
   else if (state.userType === "FARMER") {
     if (roleSwitchBar) roleSwitchBar.style.display = "flex";
     if (mandiContainer) mandiContainer.style.display = "block";
@@ -74,7 +74,7 @@ window.loginAsRole = function(roleType) {
   const phone = document.getElementById(inputId)?.value.trim();
 
   if (!phone || phone.length < 10) {
-    alert("Dayachesi saraina 10 ankela mobile number enter cheyandi.");
+    alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
     return;
   }
 
@@ -84,7 +84,6 @@ window.loginAsRole = function(roleType) {
 
   applyUserRoleView();
 
-  // Login tharuvatha Voice Feedback
   if (typeof speakTeluguText === "function") {
     if (roleType === "LABOUR_ONLY") {
       speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. అందుబాటులో ఉన్న పనుల వివరాలు మరియు మీ వాలెట్ ఇక్కడ ఉన్నాయి.");
@@ -94,7 +93,7 @@ window.loginAsRole = function(roleType) {
   }
 };
 
-// 3. Homepage Layout: AgriConnect Header -> Auto Voice Toggle -> User Cards -> Mandi
+// 3. Homepage Layout: Cards insertion logic
 function renderPublicUserCards() {
   if (document.getElementById("public-user-cards-container")) return;
 
@@ -142,14 +141,15 @@ function renderPublicUserCards() {
     </div>
   `;
 
-      // Voice toggle kanipisthe daani kindha, lekapothe direct Header kindha insert chestundi
+  // Voice toggle కనిపిస్తే దాని కింద, లేకపోతే AgriConnect Header కింద మాత్రమే ఇన్సర్ట్ చేస్తుంది
   const voiceToggle = document.getElementById("auto-voice-toggle-container");
   const header = document.querySelector(".header") || 
                  document.querySelector("header") || 
                  Array.from(document.querySelectorAll("div")).find(d => 
                    d.textContent && 
                    d.textContent.trim().startsWith("AgriConnect") && 
-                   !d.id.includes("card")
+                   !d.id.includes("card") && 
+                   !d.id.includes("toggle")
                  );
 
   if (voiceToggle && voiceToggle.parentNode) {
@@ -161,13 +161,15 @@ function renderPublicUserCards() {
   }
 }
 
-
-// Page load ayyaka initialization
+// పేజీ లోడ్ అయినప్పుడు ప్రారంభించడం
 function initRoleFlow() {
+  // voice.js టోగుల్ పూర్తికావడానికి స్వల్ప సమయం ఇచ్చి ఖచ్చితమైన ఆర్డర్‌లో అమర్చడం
+  if (typeof renderAutoVoiceToggle === "function") {
+    renderAutoVoiceToggle();
+  }
   renderPublicUserCards();
   applyUserRoleView();
-  // Safe check kosam DOM poorthiga settle ayyaka malli view apply chestam
-  setTimeout(applyUserRoleView, 200);
+  setTimeout(applyUserRoleView, 250);
 }
 
 if (document.readyState === "loading") {
