@@ -206,22 +206,34 @@ function handleVoiceCommand(voiceText) {
     }
   }
 
-  // F. Wallet Balance by Voice
+    // F. Wallet Balance by Voice
   if (input.includes("పైసలు ఎంత") || input.includes("బ్యాలెన్స్ చెప్పు") || input.includes("డబ్బులు ఎంత") || input.includes("ఖాతా") || input.includes("వాలెట్")) {
     let balanceText = "";
     const isLabour = (window.AppState && (window.AppState.currentRole === "LABOUR" || window.AppState.userType === "LABOUR_ONLY"));
     
+    // డైరెక్ట్ కార్డ్ బాక్స్ నుంచి ఎమౌంట్ తీసుకోవడం
+    const allCards = Array.from(document.querySelectorAll("div"));
+    
     if (isLabour) {
-      const labourBalElem = document.querySelector("#labour-wallet-balance") || 
-                            Array.from(document.querySelectorAll("div, span, p")).find(el => el.textContent && el.textContent.includes("కూలీ main wallet"));
-      const amount = labourBalElem ? labourBalElem.parentElement.innerText.match(/₹\s*(\d+)/) : null;
-      balanceText = amount ? `మీ కూలీ మెయిన్ వాలెట్‌లో ${amount[1]} రూపాయలు ఉన్నాయి.` : "మీ వాలెట్ వివరాలు ఇక్కడ ఉన్నాయి.";
+      // కూలీ బాక్స్ కోసం వెతకడం
+      const labourBox = allCards.find(d => d.textContent && d.textContent.includes("కూలీ main wallet") && d.textContent.includes("₹"));
+      let amount = null;
+      if (labourBox) {
+        const matches = labourBox.innerText.match(/₹\s*(\d+)/);
+        if (matches) amount = matches[1];
+      }
+      balanceText = amount ? `మీ కూలీ మెయిన్ వాలెట్‌లో ${amount} రూపాయలు ఉన్నాయి.` : "మీ వాలెట్ వివరాలు ఇక్కడ ఉన్నాయి.";
     } else {
-      const farmerBalElem = document.querySelector("#farmer-wallet-balance") || 
-                            Array.from(document.querySelectorAll("div, span, p")).find(el => el.textContent && el.textContent.includes("రైతు ఖాతా balance"));
-      const amount = farmerBalElem ? farmerBalElem.parentElement.innerText.match(/₹\s*(\d+)/) : null;
-      balanceText = amount ? `మీ రైతు ఖాతాలో ${amount[1]} రూపాయలు ఉన్నాయి.` : "మీ రైతు ఖాతా బ్యాలెన్స్ వివరాలు ఇక్కడ ఉన్నాయి.";
+      // రైతు బాక్స్ కోసం వెతకడం
+      const farmerBox = allCards.find(d => d.textContent && d.textContent.includes("రైతు ఖాతా balance") && d.textContent.includes("₹"));
+      let amount = null;
+      if (farmerBox) {
+        const matches = farmerBox.innerText.match(/₹\s*(\d+)/);
+        if (matches) amount = matches[1];
+      }
+      balanceText = amount ? `మీ రైతు ఖాతాలో ${amount} రూపాయలు ఉన్నాయి.` : "మీ రైతు ఖాతా బ్యాలెన్స్ వివరాలు ఇక్కడ ఉన్నాయి.";
     }
+
     speakTeluguText(balanceText, null, true);
     document.getElementById("wallet-container")?.scrollIntoView({ behavior: "smooth" });
     return;
