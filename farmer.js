@@ -34,10 +34,10 @@ function renderFarmerWidget() {
  required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
       <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
     </div>
-                                        <!-- Row 4: Exact Compact Date + GPS status + Village button right border aligned -->
-              <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; box-sizing: border-box; margin-top: 6px;">
+                                                      <!-- Row 4: Compact Date + GPS status + Village button (Border ki touch avvakunda gap tho) -->
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 0 4px;">
                 
-                <!-- 1. Compact Date Box (Fixed width exactly as in screenshot) -->
+         <!-- 1. Compact Date Box -->
                 <input 
                   type="text" 
                   id="f-date" 
@@ -56,8 +56,8 @@ function renderFarmerWidget() {
                   <span id="loc-status" style="font-size: 8px; color: #2e7d32; text-align: center; line-height: 1.1; margin-top: 3px; white-space: nowrap;"></span>
                 </div>
 
-                <!-- 3. Village Button (Border touch ayyela right align) -->
-                <button type="button" id="f-village-btn" style="height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 10px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box;">
+                <!-- 3. Village Button (Right side border nundi 6px gap tho) -->
+                <button type="button" id="f-village-btn" style="height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 8px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box; margin-right: 6px;">
                   🏛️ Hyderabad
                 </button>
 
