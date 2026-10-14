@@ -146,10 +146,10 @@ function renderRoleSwitchBar() {
 
   switchContainer.innerHTML = `
     <button onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${isFarmerRole ? 'background:#2e7d32; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#2e7d32;'}">
-      🌾 రైతు మోడ్ (Farmer)
+      🌾 Farmer mode (రైతు)
     </button>
     <button onclick="switchRoleMode('LABOUR')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${!isFarmerRole ? 'background:#e65100; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#e65100;'}">
-      👷 కూలీ మోడ్ (Labour)
+      👷 Labour mode (కూలీ)
     </button>
   `;
 }
