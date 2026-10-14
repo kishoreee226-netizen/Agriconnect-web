@@ -34,6 +34,10 @@ function renderFarmerWidget() {
  required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
       <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
     </div>
+              <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
+                <label style="font-size: 11px; font-weight: bold; color: #2e7d32;">📅 పని కావలసిన తేదీ:</label>
+                <input type="date" id="f-date" required style="padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none; background: #fff;" />
+              </div>
 
              <!-- GPS & Submit Buttons Side-by-Side (Single Row) -->
     <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 8px 0 4px 0; flex-wrap: wrap;">
