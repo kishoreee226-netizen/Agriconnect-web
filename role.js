@@ -137,16 +137,22 @@ function prefillFarmerFormDefaults() {
 
   const nameInput = document.getElementById("f-name");
   const phoneInput = document.getElementById("f-phone");
+  const villageBtn = document.getElementById("f-village-btn");
 
   if (nameInput) {
     nameInput.value = profile.name;
     nameInput.readOnly = true;
     nameInput.style.backgroundColor = "#e8f5e9";
   }
+
   if (phoneInput) {
     phoneInput.value = profile.phone;
     phoneInput.readOnly = true;
     phoneInput.style.backgroundColor = "#e8f5e9";
+  }
+
+  if (villageBtn && profile.village) {
+    villageBtn.textContent = "🏘️ " + profile.village;
   }
 }
 
