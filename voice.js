@@ -265,23 +265,32 @@ function renderAutoVoiceToggle() {
     </label>
   `;
 
-    // AgriConnect లోగో/హెడర్‌ను కచ్చితంగా గుర్తించి దాని కింద మాత్రమే పెట్టే లాజిక్
-  const headerElem = document.querySelector(".header") || 
-                     document.querySelector("header") ||
-                     Array.from(document.querySelectorAll("div")).find(d => 
-                       d.innerHTML && d.innerHTML.includes("AgriConnect") && !d.id.includes("card") && !d.id.includes("toggle")
-                     );
+      // AgriConnect ఆకుపచ్చ హెడర్‌ను పక్కాగా గుర్తించే లాజిక్
+  const findHeader = () => {
+    return document.querySelector(".header") || 
+           document.querySelector("header") ||
+           Array.from(document.querySelectorAll("div")).find(d => 
+             d.textContent && 
+             d.textContent.trim().startsWith("AgriConnect") && 
+             !d.id.includes("card") && 
+             !d.id.includes("toggle")
+           );
+  };
+
+  const headerElem = findHeader();
 
   if (headerElem && headerElem.parentNode) {
     headerElem.parentNode.insertBefore(toggleDiv, headerElem.nextSibling);
   } else {
-    // హెడర్ వెంటనే దొరక్కపోతే పైన పెట్టకుండా కాసేపు ఆగి మళ్లీ ప్రయత్నిస్తుంది
-    setTimeout(() => {
-      const retryHeader = Array.from(document.querySelectorAll("div")).find(d => d.innerHTML && d.innerHTML.includes("AgriConnect"));
+    // వెంటనే దొరక్కపోతే మళ్లీ ట్రై చేసి హెడర్ కిందే వేస్తుంది
+    const timer = setInterval(() => {
+      const retryHeader = findHeader();
       if (retryHeader && retryHeader.parentNode) {
         retryHeader.parentNode.insertBefore(toggleDiv, retryHeader.nextSibling);
+        clearInterval(timer);
       }
-    }, 300);
+    }, 100);
+    setTimeout(() => clearInterval(timer), 2000);
   }
 
 // పేజీ లోడ్ అయిన వెంటనే ప్రారంభించడం
