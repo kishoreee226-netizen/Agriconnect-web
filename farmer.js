@@ -34,8 +34,10 @@ function renderFarmerWidget() {
  required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
       <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
     </div>
-                           <!-- Row 4: Fixed Compact Date + GPS + Village (Paina boxes border ki fix ayyela) -->
-              <div style="display: flex; gap: 6px; align-items: center; width: 100%; box-sizing: border-box; margin-top: 6px;">
+                                        <!-- Row 4: Exact Compact Date + GPS status + Village button right border aligned -->
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; box-sizing: border-box; margin-top: 6px;">
+                
+                <!-- 1. Compact Date Box (Fixed width exactly as in screenshot) -->
                 <input 
                   type="text" 
                   id="f-date" 
@@ -43,19 +45,22 @@ function renderFarmerWidget() {
                   onfocus="(this.type='date'); this.showPicker && this.showPicker();" 
                   onblur="if(!this.value) this.type='text';" 
                   required 
-                  style="width: 120px; flex: 0 0 120px; height: 34px; padding: 0 6px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 11px; outline: none; background: #fff; box-sizing: border-box; cursor: pointer; text-align: center;" 
+                  style="width: 110px; min-width: 110px; max-width: 110px; height: 34px; padding: 0 4px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 11px; outline: none; background: #fff; box-sizing: border-box; cursor: pointer; text-align: center;" 
                 />
                 
-                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0;">
-                  <button type="button" id="loc-btn" style="width: 100%; max-width: 115px; height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 4px; font-size: 10px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 2px; box-sizing: border-box;">
+                <!-- 2. GPS Button + Status Text below -->
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+                  <button type="button" id="loc-btn" style="height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 8px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box;">
                     📍 పొలం GPS
                   </button>
-                  <span id="loc-status" style="font-size: 8px; color: #555; text-align: center; line-height: 1; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"></span>
+                  <span id="loc-status" style="font-size: 8px; color: #2e7d32; text-align: center; line-height: 1.1; margin-top: 3px; white-space: nowrap;"></span>
                 </div>
 
-                <button type="button" id="f-village-btn" style="flex: 0 0 auto; height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 10px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box; margin-left: auto;">
+                <!-- 3. Village Button (Border touch ayyela right align) -->
+                <button type="button" id="f-village-btn" style="height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 10px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box;">
                   🏛️ Hyderabad
                 </button>
+
               </div>
 
                <!-- Row 5: Compact Submit Button (Center aligned, Fit width) -->
