@@ -1,10 +1,21 @@
 // labour.js - కూలీల Dashboard (Light Blue Header, SMS, Call, WhatsApp, Maps)
 
+function getLabourJobsList() {
+  if (window.AgriState && typeof window.AgriState.getJobs === "function") {
+    return window.AgriState.getJobs();
+  }
+  try {
+    return JSON.parse(localStorage.getItem("agri_jobs") || "[]");
+  } catch (e) {
+    return [];
+  }
+}
+
 function renderLabourWidget() {
   const container = document.getElementById("labour-jobs-container");
   if (!container) return;
 
-  const jobsData = window.AgriState ? window.AgriState.getJobs() : [];
+  const jobsData = getLabourJobsList();
 
   container.innerHTML = `
     <div style="background: #ffffff; border: 1.5px solid #64b5f6; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
@@ -17,8 +28,8 @@ function renderLabourWidget() {
         <span style="font-size: 10px; background: #bbdefb; color: #0d47a1; padding: 2px 7px; border-radius: 4px; font-weight: 700;">Live Feed</span>
       </div>
 
-      <div class="labour-scroll" style="padding: 12px; display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;">
-${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weight: 600; text-align: right; padding: 4px 12px 0 0;">👇 మరిన్ని పనుల కోసం scrole చేయండి</div>' : ''}
+      <div class="labour-scroll" style="padding: 12px; display: flex; flex-direction: column; gap: 8px; max-height: 250px; overflow-y: auto;">
+        ${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weight: 600; text-align: right; padding: 2px 6px;">👇 మరిన్ని పనుల కోసం scroll చేయండి</div>' : ''}
 
         ${jobsData.length === 0 ? `
           <div style="text-align: center; color: #666; font-size: 12px; padding: 16px; background: #fbfbfb; border-radius: 6px; border: 1px dashed #ddd;">
@@ -28,28 +39,34 @@ ${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weigh
           const isConf = j.status === "Confirmed";
           const lat = typeof j.lat === 'number' ? j.lat : 17.9784;
           const lng = typeof j.lng === 'number' ? j.lng : 79.5941;
+          const villageName = j.village || "గ్రామం";
+          const workDate = j.date ? `📅 ${j.date}` : "";
 
           return `
-            <div style="border: 1px solid ${isConf ? '#81c784' : '#90caf9'}; border-radius: 8px; padding: 10px; background: ${isConf ? '#f9fdf9' : '#ffffff'};">
-              <div style="display: flex; justify-content: space-between;">
+            <div class="job-card" data-village="${villageName}" style="border: 1px solid ${isConf ? '#81c784' : '#90caf9'}; border-radius: 8px; padding: 10px; background: ${isConf ? '#f9fdf9' : '#ffffff'};">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
-                  <strong style="color: #0d47a1; font-size: 13px;">${j.crop} -${j.workType}</strong>
-                  <div style="font-size: 11px; color: #555;">రైతు: <b>${j.farmerName}</b> | సంఖ్య: <b>${j.count}</b></div>
+                  <strong style="color: #0d47a1; font-size: 13px;">🌾 ${j.crop} -${j.workType}</strong>
+                  <div style="font-size: 11px; color: #555; margin-top: 2px;">
+                    రైతు: <b>${j.farmerName}</b> \vert{} కూలీలు: <b>${j.count}</b>
+                  </div>
+                  <div style="font-size: 10px; color: #455a64; margin-top: 3px; display: flex; gap: 6px; align-items: center;">
+                    <span style="background: #e0f2f1; color: #00695c; padding: 1px 5px; border-radius: 4px;">🏛️ ${villageName}</span>${workDate ? `<span style="background: #ede7f6; color: #4527a0; padding: 1px 5px; border-radius: 4px;">${workDate}</span>` : ''}
+                  </div>
                 </div>
                 <div style="text-align: right;">
                   <span style="font-size: 14px; font-weight: 700; color: #2e7d32;">₹${j.wage}/రోజు</span>
-                  <div style="font-size: 10px; color: #e65100; font-weight: 600;">📍 ${j.distanceKm} కి.మీ</div>
+                  <div style="font-size: 10px; color: #e65100; font-weight: 600; margin-top: 2px;">📍 ${j.distanceKm || '2.5'} కి.మీ</div>
                 </div>
               </div>
 
               ${!isConf ? `
-                         <button onclick="acceptJob('${j.id}')" style="display: block; margin: 8px auto 0 auto; background: #1976d2; color: #ffffff; border: none; border-radius: 5px; padding: 6px 16px; font-size: 11px; font-weight: 700; cursor: pointer; width: fit-content;">
-            ✅ పని Accept చేయండి
-
+                <button onclick="acceptJob('${j.id}')" style="display: block; margin: 8px auto 0 auto; background: #1976d2; color: #ffffff; border: none; border-radius: 5px; padding: 6px 16px; font-size: 11px; font-weight: 700; cursor: pointer; width: fit-content; box-shadow: 0 1px 4px rgba(25,118,210,0.3);">
+                  ✅ పని Accept చేయండి
                 </button>
               ` : `
                 <div style="margin-top: 8px; border-top: 1px solid #e0e0e0; padding-top: 8px;">
-                  <div style="font-size: 11px; color: #2e7d32; font-weight: 700; margin-bottom: 6px;">🎉 మీరు పనిని ఒప్పుకున్నారు! రైతుతో మాట్లాడండి:</div>
+                  <div style="font-size: 11px; color: #2e7d32; font-weight: 700; margin-bottom: 6px;">🎉 పని ఖరారైంది (${j.labourName})! రైతుతో మాట్లాడండి:</div>
                   <div style="display: flex; gap: 4px;">
                     <a href="tel:${j.farmerPhone}" style="flex: 1; text-align: center; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 4px; padding: 6px 2px; font-size: 11px; font-weight: 600; border: 1px solid #a5d6a7;">📞 కాల్</a>
                     <a href="sms:${j.farmerPhone}?body=నమస్తే" style="flex: 1; text-align: center; background: #fffde7; color: #f57f17; text-decoration: none; border-radius: 4px; padding: 6px 2px; font-size: 11px; font-weight: 600; border: 1px solid #fff59d;">✉️ SMS</a>
@@ -72,16 +89,50 @@ ${jobsData.length > 2 ? '<div style="font-size: 10px; color: #1565c0; font-weigh
 }
 
 window.acceptJob = function(id) {
-  const name = prompt("మీ పేరు:", "రాము"); if (!name) return;
-  const phone = prompt("ఫోన్ నంబర్:", "9876543211"); if (!phone) return;
-  const jobs = window.AgriState ? window.AgriState.getJobs() : [];
-  const j = jobs.find(x => x.id === id);
-  if (j) {
-    j.status = "Confirmed";
-    j.labourName = name;
-    j.labourPhone = phone;
-    renderLabourWidget();
-    if (typeof renderFarmerWidget === "function") renderFarmerWidget();
+  let name = "";
+  let phone = "";
+
+  // యూజర్ ఆల్రెడీ లాగిన్ అయి ఉంటే నేరుగా వివరాలు తీసుకోవడం
+  if (window.AppState && window.AppState.userProfile) {
+    name = window.AppState.userProfile.name;
+    phone = window.AppState.userProfile.phone;
+  }
+
+  if (!name || !phone) {
+    name = prompt("మీ పేరు:", "రాము");
+    if (!name) return;
+    phone = prompt("ఫోన్ నంబర్:", "9876543211");
+    if (!phone) return;
+  }
+
+  // 1. AgriState లో అప్‌డేట్
+  if (window.AgriState && typeof window.AgriState.getJobs === "function") {
+    const jobs = window.AgriState.getJobs();
+    const j = jobs.find(x => x.id === id);
+    if (j) {
+      j.status = "Confirmed";
+      j.labourName = name;
+      j.labourPhone = phone;
+    }
+  }
+
+  // 2. LocalStorage లో అప్‌డేట్
+  try {
+    let localJobs = JSON.parse(localStorage.getItem("agri_jobs") || "[]");
+    const localJ = localJobs.find(x => x.id === id);
+    if (localJ) {
+      localJ.status = "Confirmed";
+      localJ.labourName = name;
+      localJ.labourPhone = phone;
+      localStorage.setItem("agri_jobs", JSON.stringify(localJobs));
+    }
+  } catch (e) {}
+
+  renderLabourWidget();
+  if (typeof renderFarmerWidget === "function") renderFarmerWidget();
+
+  if (typeof speakTeluguText === "function") {
+    speakTeluguText("పని విజయవంతంగా ఖరారైంది. రైతుకు సమాచారం పంపబడింది.");
   }
 };
 
