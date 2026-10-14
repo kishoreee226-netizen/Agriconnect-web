@@ -261,12 +261,20 @@ window.toggleAutoVoice = function(isEnabled) {
   }
 };
 
-// 5. Checkbox Sync Event
+// 5. Checkbox Listener & Safety Setup
 function setupCheckboxListener() {
+  // స్క్రీన్ మీద ఉన్న చెక్‌బాక్స్‌ను వెతకడం
   const existingCheck = document.getElementById("auto-voice-check") || 
                         document.querySelector("input[type='checkbox']");
+
   if (existingCheck) {
+    // అది హైడ్ కాకుండా స్పష్టంగా కనిపించేలా చేయడం
+    if (existingCheck.parentElement) {
+      existingCheck.parentElement.style.display = "flex";
+      existingCheck.parentElement.style.visibility = "visible";
+    }
     existingCheck.id = "auto-voice-check";
+    existingCheck.checked = false; // డిఫాల్ట్‌గా సిద్ధంగా ఉంచడం
     existingCheck.onchange = function() {
       window.toggleAutoVoice(this.checked);
     };
@@ -277,6 +285,7 @@ function setupCheckboxListener() {
 window.speakTeluguText = speakTeluguText;
 window.startListening = startListening;
 
+// పేజీ లోడ్ అయినప్పుడు లిజనర్‌ను యాక్టివేట్ చేయడం
 if (document.readyState === "loading") {
   window.addEventListener("DOMContentLoaded", () => {
     initVoiceAssistant();
