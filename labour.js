@@ -48,7 +48,7 @@ function renderLabourWidget() {
                 <div>
                   <strong style="color: #0d47a1; font-size: 13px;">🌾 ${j.crop} -${j.workType}</strong>
                   <div style="font-size: 11px; color: #555; margin-top: 2px;">
-                    రైతు: <b>${j.farmerName}</b> \ కూలీలు: <b>${j.count}</b>
+                    రైతు: <b>${j.farmerName}</b> \vert{} కూలీలు: <b>${j.count}</b>
                   </div>
                   <div style="font-size: 10px; color: #455a64; margin-top: 3px; display: flex; gap: 6px; align-items: center;">
                     <span style="background: #e0f2f1; color: #00695c; padding: 1px 5px; border-radius: 4px;">🏛️ ${villageName}</span>${workDate ? `<span style="background: #ede7f6; color: #4527a0; padding: 1px 5px; border-radius: 4px;">${workDate}</span>` : ''}
@@ -92,7 +92,6 @@ window.acceptJob = function(id) {
   let name = "";
   let phone = "";
 
-  // యూజర్ ఆల్రెడీ లాగిన్ అయి ఉంటే నేరుగా వివరాలు తీసుకోవడం
   if (window.AppState && window.AppState.userProfile) {
     name = window.AppState.userProfile.name;
     phone = window.AppState.userProfile.phone;
@@ -107,7 +106,6 @@ window.acceptJob = function(id) {
 
   let acceptedJobObj = null;
 
-  // 1. AgriState లో అప్‌డేట్
   if (window.AgriState && typeof window.AgriState.getJobs === "function") {
     const jobs = window.AgriState.getJobs();
     const j = jobs.find(x => x.id === id);
@@ -119,7 +117,6 @@ window.acceptJob = function(id) {
     }
   }
 
-  // 2. LocalStorage లో అప్‌డేట్
   try {
     let localJobs = JSON.parse(localStorage.getItem("agri_jobs") || "[]");
     const localJ = localJobs.find(x => x.id === id);
@@ -132,12 +129,10 @@ window.acceptJob = function(id) {
     }
   } catch (e) {}
 
-  // 3. Smart Escrow Wallet లోకి జాబ్‌ను లాక్ చేయడం
   if (acceptedJobObj && typeof window.lockJobToEscrow === "function") {
     window.lockJobToEscrow(acceptedJobObj, name);
   }
 
-  // డాష్‌బోర్డ్‌లు మరియు వాలెట్‌ను లైవ్‌గా రీఫ్రెష్ చేయడం
   renderLabourWidget();
   if (typeof renderFarmerWidget === "function") renderFarmerWidget();
   if (typeof renderWalletWidget === "function") renderWalletWidget();
