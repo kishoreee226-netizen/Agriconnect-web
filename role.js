@@ -1,6 +1,6 @@
-// role.js - AgriConnect Smart Role Cards & Dashboard Controller
+// role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
 
-// Helper function: రైతు డ్యాష్‌బోర్డ్ కంటైనర్ గుర్తించడానికి
+// Helper: రైతు డ్యాష్‌బోర్డ్ ఎలిమెంట్‌ను గుర్తించడం
 function getFarmerDashboardElement() {
   return document.getElementById("farmer-dashboard-container") || 
          document.getElementById("farmer-post-container") || 
@@ -13,7 +13,7 @@ function getFarmerDashboardElement() {
          );
 }
 
-// 1. Roles మరియు Widgets visibility control
+// 1. Roles & Widgets Visibility + Profile Banner Setup
 function applyUserRoleView() {
   const state = window.AppState;
   const publicCardsContainer = document.getElementById("public-user-cards-container");
@@ -37,13 +37,17 @@ function applyUserRoleView() {
     if (labourContainer) labourContainer.style.display = "none";
     if (walletContainer) walletContainer.style.display = "none";
     if (mandiContainer) mandiContainer.style.display = "block";
+    removeProfileHeader();
     return;
   }
 
   // B. లాగిన్ అయిన తర్వాత పబ్లిక్ కార్డ్స్ దాచడం
   if (publicCardsContainer) publicCardsContainer.style.display = "none";
 
-  // C. డైరెక్ట్ కూలీ లాగిన్ (LABOUR_ONLY)
+  // యూజర్ ప్రొఫైల్ బ్యానర్ చూపించడం
+  renderUserProfileBanner();
+
+  // C. కూలీ లాగిన్ (LABOUR_ONLY)
   if (state.userType === "LABOUR_ONLY") {
     if (roleSwitchBar) roleSwitchBar.style.display = "none";
     if (farmerContainer) farmerContainer.style.display = "none";
@@ -51,6 +55,8 @@ function applyUserRoleView() {
 
     if (labourContainer) labourContainer.style.display = "block";
     if (walletContainer) walletContainer.style.display = "block";
+
+    filterLabourJobsByLocation(); // 5-10 కి.మీ లేదా గ్రామం ఆధారంగా ఫిల్టర్
   } 
   // D. రైతు లాగిన్ (FARMER)
   else if (state.userType === "FARMER") {
@@ -58,9 +64,12 @@ function applyUserRoleView() {
     if (mandiContainer) mandiContainer.style.display = "block";
     if (walletContainer) walletContainer.style.display = "block";
 
+    prefillFarmerFormDefaults(); // రైతు పేరు, ఫోన్, గ్రామం ఆటో-ఫిల్ చేయడం
+
     if (state.currentRole === "LABOUR") {
       if (farmerContainer) farmerContainer.style.display = "none";
       if (labourContainer) labourContainer.style.display = "block";
+      filterLabourJobsByLocation();
     } else {
       if (farmerContainer) farmerContainer.style.display = "block";
       if (labourContainer) labourContainer.style.display = "none";
@@ -68,32 +77,178 @@ function applyUserRoleView() {
   }
 }
 
-// 2. Login Action Function
-window.loginAsRole = function(roleType) {
-  const inputId = roleType === "FARMER" ? "farmer-phone" : "labour-phone";
-  const phone = document.getElementById(inputId)?.value.trim();
+// 2. ప్రొఫైల్ బ్యానర్ (లాగిన్ అయిన యూజర్ పేరు, ఫోన్, ఊరు చూపిస్తుంది)
+function renderUserProfileBanner() {
+  let banner = document.getElementById("user-profile-banner");
+  const state = window.AppState;
+  if (!state || !state.userProfile) return;
 
+  if (!banner) {
+    banner = document.createElement("div");
+    banner.id = "user-profile-banner";
+    const header = document.querySelector(".header") || document.querySelector("header") || document.body.firstChild;
+    if (header && header.parentNode) {
+      header.parentNode.insertBefore(banner, header.nextSibling);
+    } else {
+      document.body.prepend(banner);
+    }
+  }
+
+  const roleText = state.userType === "FARMER" ? "రైతు (Farmer)" : "కూలీ (Labour)";
+  const badgeColor = state.userType === "FARMER" ? "#2e7d32" : "#e65100";
+
+  banner.style.cssText = `max-width: 480px; margin: 10px auto; padding: 12px 16px; background: #ffffff; border-left: 5px solid ${badgeColor}; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center;`;
+
+  banner.innerHTML = `
+    <div>
+      <div style="font-size: 15px; font-weight: bold; color: #333;">
+        👤 ${state.userProfile.name} 
+        <span style="font-size: 11px; background: ${badgeColor}20; color: ${badgeColor}; padding: 2px 8px; border-radius: 12px; margin-left: 6px;">${roleText}</span>
+      </div>
+      <div style="font-size: 13px; color: #666; margin-top: 3px;">
+        📞 ${state.userProfile.phone} &nbsp;|&nbsp; 📍 గ్రామం: <b>${state.userProfile.village}</b>
+      </div>
+    </div>
+    <button onclick="logoutUser()" style="background: #f44336; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;">లాగౌట్</button>
+  `;
+}
+
+function removeProfileHeader() {
+  const banner = document.getElementById("user-profile-banner");
+  if (banner) banner.remove();
+}
+
+window.logoutUser = function() {
+  window.AppState.isLoggedIn = false;
+  window.AppState.userProfile = null;
+  localStorage.removeItem("agri_user_profile");
+  applyUserRoleView();
+  if (typeof speakTeluguText === "function") {
+    speakTeluguText("ఖాతా నుండి విజయవంతంగా లాగౌట్ అయ్యారు.");
+  }
+};
+
+// 3. రైతు ఫారమ్‌లో పేరు, ఫోన్, గ్రామం ఆటోమేటిక్‌గా నింపడం
+function prefillFarmerFormDefaults() {
+  const profile = window.AppState?.userProfile;
+  if (!profile) return;
+
+  const nameInput = document.getElementById("farmer-name") || document.querySelector("input[placeholder*='రైతు పేరు']");
+  const phoneInput = document.getElementById("farmer-mobile") || document.querySelector("input[placeholder*='మొబైల్']");
+  const villageInput = document.getElementById("farmer-village") || document.querySelector("input[placeholder*='గ్రామం']");
+
+  if (nameInput) { nameInput.value = profile.name; nameInput.readOnly = true; }
+  if (phoneInput) { phoneInput.value = profile.phone; phoneInput.readOnly = true; }
+  if (villageInput) { villageInput.value = profile.village; villageInput.readOnly = true; }
+}
+
+// 4. కూలీల కోసం 5-10 కి.మీ / సమీప గ్రామాల పోస్టులను ఫిల్టర్ చేయడం
+function filterLabourJobsByLocation() {
+  const profile = window.AppState?.userProfile;
+  if (!profile || !profile.village) return;
+
+  const jobCards = document.querySelectorAll(".job-card, .job-item, [data-village]");
+  jobCards.forEach(card => {
+    const jobVillage = card.getAttribute("data-village") || card.textContent;
+    // సమీప గ్రామం మ్యాచ్ అయితే హైలైట్ లేదా ఫిల్టర్
+    if (jobVillage.toLowerCase().includes(profile.village.toLowerCase())) {
+      card.style.display = "block";
+      card.style.border = "2px solid #4caf50"; // సమీప ఊరి పనికి ఆకుపచ్చ బోర్డర్
+    }
+  });
+}
+
+// 5. లాగిన్ మోడల్ (Popup Dialog) ఓపెన్ చేయడం
+window.openLoginModal = function(roleType) {
+  let modal = document.getElementById("role-login-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "role-login-modal";
+    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:9999; padding:15px;";
+    document.body.appendChild(modal);
+  }
+
+  const isFarmer = roleType === "FARMER";
+  const title = isFarmer ? "🌾 రైతు ప్రొఫైల్ వివరాలు" : "👷 కూలీ ప్రొఫైల్ వివరాలు";
+  const themeColor = isFarmer ? "#2e7d32" : "#e65100";
+
+  modal.innerHTML = `
+    <div style="background:#fff; width:100%; max-width:380px; border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
+      <h3 style="margin:0 0 14px 0; color:${themeColor}; font-size:18px; text-align:center;">${title}</h3>
+      
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; font-weight:bold; color:#555;">మీ పూర్తి పేరు:</label>
+        <input type="text" id="reg-name" placeholder="ఉదా: కిషోర్ రెడ్డి" style="width:100%; padding:10px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px; font-weight:bold; color:#555;">మొబైల్ నంబర్ (10 అంకెలు):</label>
+        <input type="tel" id="reg-phone" placeholder="9876543210" maxlength="10" style="width:100%; padding:10px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="font-size:12px; font-weight:bold; color:#555;">గ్రామం / ఊరు (Village):</label>
+        <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి / గోపాల్‌పూర్" style="width:100%; padding:10px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+      </div>
+
+      <div style="display:flex; gap:10px;">
+        <button onclick="closeLoginModal()" style="flex:1; background:#eee; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; color:#555;">రద్దు</button>
+        <button onclick="submitUserRegistration('${roleType}')" style="flex:1; background:${themeColor}; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">సమర్పించండి</button>
+      </div>
+    </div>
+  `;
+
+  modal.style.display = "flex";
+};
+
+window.closeLoginModal = function() {
+  const modal = document.getElementById("role-login-modal");
+  if (modal) modal.style.display = "none";
+};
+
+// 6. రిజిస్ట్రేషన్ సబ్మిషన్ & లాగిన్ పూర్తి చేయడం
+window.submitUserRegistration = function(roleType) {
+  const name = document.getElementById("reg-name")?.value.trim();
+  const phone = document.getElementById("reg-phone")?.value.trim();
+  const village = document.getElementById("reg-village")?.value.trim();
+
+  if (!name) {
+    alert("దయచేసి మీ పేరు నమోదు చేయండి.");
+    return;
+  }
   if (!phone || phone.length < 10) {
     alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
     return;
   }
+  if (!village) {
+    alert("దయచేసి మీ గ్రామం పేరు నమోదు చేయండి.");
+    return;
+  }
 
+  // ప్రొఫైల్ డేటాను సేవ్ చేయడం
+  const profile = { name, phone, village, roleType };
   window.AppState.isLoggedIn = true;
   window.AppState.userType = roleType;
   window.AppState.currentRole = (roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+  window.AppState.userProfile = profile;
 
+  try {
+    localStorage.setItem("agri_user_profile", JSON.stringify(profile));
+  } catch (e) {}
+
+  closeLoginModal();
   applyUserRoleView();
 
   if (typeof speakTeluguText === "function") {
     if (roleType === "LABOUR_ONLY") {
-      speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. అందుబాటులో ఉన్న పనుల వివరాలు మరియు మీ వాలెట్ ఇక్కడ ఉన్నాయి.");
+      speakTeluguText(`${name} గారు, కూలీ ఖాతాలోకి స్వాగతం. మీ గ్రామం ${village} మరియు చుట్టుపక్కల 5 నుండి 10 కిలోమీటర్ల పరిధిలోని పనుల వివరాలు ఇక్కడ ఉన్నాయి.`);
     } else {
-      speakTeluguText("రైతు ఖాతాలోకి స్వాగతం. మీ పొలం పనులకు కూలీలను నమోదు చేయవచ్చు, అవసరమైతే కూలీ మోడ్‌కు కూడా మారవచ్చు.");
+      speakTeluguText(`${name} గారు, రైతు ఖాతాలోకి స్వాగతం. మీ వివరాలు నమోదు చేయబడ్డాయి. పంట, కూలీల సంఖ్య, తేదీ వివరాలతో పనిని సులభంగా పోస్ట్ చేయవచ్చు.`);
     }
   }
 };
 
-// 3. Homepage Layout: Cards insertion logic
+// 7. హోమ్‌పేజీ పబ్లిక్ కార్డ్స్ (ఫోన్ బాక్స్ లేకుండా, కేవలం లాగిన్ బటన్ మాత్రమే)
 function renderPublicUserCards() {
   if (document.getElementById("public-user-cards-container")) return;
 
@@ -102,54 +257,46 @@ function renderPublicUserCards() {
   container.style.cssText = "max-width: 480px; margin: 12px auto; padding: 0 10px;";
 
   container.innerHTML = `
-    <!-- 🌾 Raitu User Card -->
+    <!-- 🌾 రైతు యూజర్ కార్డ్ -->
     <div style="background:#ffffff; border:2px solid #2e7d32; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <span style="font-size:24px;">🌾</span>
         <h3 style="margin:0; color:#2e7d32; font-size:18px;">రైతు సోదరుల కోసం (Farmer)</h3>
       </div>
-      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 12px 0;">
+      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 14px 0;">
         • మీ పొలం పనులకు కూలీలను వెంటనే బుక్ చేసుకోండి.<br>
         • ఉచిత జాబ్ పోస్టింగ్ & మార్కెట్ లైవ్ ధరల సమాచారం.<br>
-        • <b>స్మార్ట్ ఆటో-స్విచ్:</b> సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారి ఇతర పనులకు వెళ్లే సౌలభ్యం.
+        • <b>స్మార్ట్ ఆటో-స్విచ్:</b> సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారే సదుపాయం.
       </p>
-      <div style="display:flex; gap:8px;">
-        <input type="tel" id="farmer-phone" placeholder="మొబైల్ నంబర్ (10 అంకెలు)" maxlength="10" style="flex:1; padding:9px; border:1px solid #a5d6a7; border-radius:8px; font-size:14px; outline:none; text-align:center;">
-        <button onclick="loginAsRole('FARMER')" style="background:#2e7d32; color:#fff; border:none; padding:9px 16px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">
-          రైతుగా లాగిన్
-        </button>
-      </div>
+      <button onclick="openLoginModal('FARMER')" style="width:100%; background:#2e7d32; color:#fff; border:none; padding:11px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 2px 6px rgba(46,125,50,0.3);">
+        రైతుగా లాగిన్ / నమోదు అవ్వండి ➔
+      </button>
     </div>
 
-    <!-- 👷 Kooli User Card -->
+    <!-- 👷 కూలీ యూజర్ కార్డ్ -->
     <div style="background:#ffffff; border:2px solid #f57c00; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <span style="font-size:24px;">👷</span>
         <h3 style="margin:0; color:#e65100; font-size:18px;">కూలీల కోసం (Labour)</h3>
       </div>
-      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 12px 0;">
-        • మీ ఊరిలో, సమీప పొలాల్లో రోజువారీ వ్యవసాయ పనులను వెతుక్కోండి.<br>
+      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 14px 0;">
+        • మీ గ్రామం మరియు 5-10 కి.మీ పరిధిలోని రోజువారీ పనులను వెతుక్కోండి.<br>
         • రోజువారీ కూలీ వివరాలు, డైరెక్ట్ ఫోన్ / వాట్సాప్ కాలింగ్.<br>
         • మీ వేతనాల లెక్కల కోసం సులభమైన <b>వ్యక్తిగత వాలెట్</b>.
       </p>
-      <div style="display:flex; gap:8px;">
-        <input type="tel" id="labour-phone" placeholder="మొబైల్ నంబర్ (10 అంకెలు)" maxlength="10" style="flex:1; padding:9px; border:1px solid #ffcc80; border-radius:8px; font-size:14px; outline:none; text-align:center;">
-        <button onclick="loginAsRole('LABOUR_ONLY')" style="background:#f57c00; color:#fff; border:none; padding:9px 16px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">
-          కూలీగా లాగిన్
-        </button>
-      </div>
+      <button onclick="openLoginModal('LABOUR_ONLY')" style="width:100%; background:#f57c00; color:#fff; border:none; padding:11px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 2px 6px rgba(245,124,0,0.3);">
+        కూలీగా లాగిన్ / నమోదు అవ్వండి ➔
+      </button>
     </div>
   `;
 
-  // Voice toggle కనిపిస్తే దాని కింద, లేకపోతే AgriConnect Header కింద మాత్రమే ఇన్సర్ట్ చేస్తుంది
   const voiceToggle = document.getElementById("auto-voice-toggle-container");
   const header = document.querySelector(".header") || 
                  document.querySelector("header") || 
                  Array.from(document.querySelectorAll("div")).find(d => 
                    d.textContent && 
                    d.textContent.trim().startsWith("AgriConnect") && 
-                   !d.id.includes("card") && 
-                   !d.id.includes("toggle")
+                   !d.id.includes("card")
                  );
 
   if (voiceToggle && voiceToggle.parentNode) {
@@ -161,9 +308,22 @@ function renderPublicUserCards() {
   }
 }
 
-// పేజీ లోడ్ అయినప్పుడు ప్రారంభించడం
+// 8. పేజీ లోడ్ అయినప్పుడు ప్రారంభించడం & లోకల్ స్టోరేజ్ చెక్
 function initRoleFlow() {
-  // voice.js టోగుల్ పూర్తికావడానికి స్వల్ప సమయం ఇచ్చి ఖచ్చితమైన ఆర్డర్‌లో అమర్చడం
+  if (!window.AppState) window.AppState = {};
+
+  // గతంలో లాగిన్ అయి ఉంటే ఆటోమేటిక్‌గా ప్రొఫైల్ లోడ్ చేయడం
+  try {
+    const savedProfile = localStorage.getItem("agri_user_profile");
+    if (savedProfile) {
+      const parsed = JSON.parse(savedProfile);
+      window.AppState.isLoggedIn = true;
+      window.AppState.userProfile = parsed;
+      window.AppState.userType = parsed.roleType;
+      window.AppState.currentRole = (parsed.roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+    }
+  } catch (e) {}
+
   if (typeof renderAutoVoiceToggle === "function") {
     renderAutoVoiceToggle();
   }
