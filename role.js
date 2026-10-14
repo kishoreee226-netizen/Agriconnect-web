@@ -142,21 +142,16 @@ function renderPublicUserCards() {
     </div>
   `;
 
-  // Header -> Auto Voice Toggle -> Cards order set cheyadam
-  const appHeader = document.querySelector(".header") || 
-                    Array.from(document.querySelectorAll("div")).find(d => d.textContent && d.textContent.trim().startsWith("AgriConnect"));
+    // ఆటో వాయిస్ టోగుల్ ఎక్కడుందో చూసి, కచ్చితంగా దాని కిందే కార్డ్స్ పెట్టడం
   const voiceToggle = document.getElementById("auto-voice-toggle-container");
   const mandiContainer = document.getElementById("mandi-container") || document.querySelector(".mandi-card");
 
-  if (appHeader && voiceToggle && appHeader.parentNode) {
-    appHeader.parentNode.insertBefore(voiceToggle, appHeader.nextSibling);
-    voiceToggle.parentNode.insertBefore(container, voiceToggle.nextSibling);
-  } else if (voiceToggle && voiceToggle.parentNode) {
+  if (voiceToggle && voiceToggle.parentNode) {
     voiceToggle.parentNode.insertBefore(container, voiceToggle.nextSibling);
   } else if (mandiContainer && mandiContainer.parentNode) {
     mandiContainer.parentNode.insertBefore(container, mandiContainer);
   } else {
-    document.body.prepend(container);
+    document.body.appendChild(container);
   }
 }
 
