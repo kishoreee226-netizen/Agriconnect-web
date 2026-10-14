@@ -1,15 +1,47 @@
 // wallet.js - 2-in-1 Escrow Smart Wallet (Digital Lock & Release)
 
+// Helper: Wallet data ni localStorage nundi thecchukovadam
+function getAgriWalletData() {
+  const defaultWallet = {
+    farmerBalance: 2500,
+    labourBalance: 0,
+    lockedEscrow: [
+      {
+        id: "ESC-INIT-1",
+        jobId: "INIT-1",
+        jobTitle: "వరి కోత",
+        labourName: "రాము",
+        amount: 450,
+        status: "Locked"
+      }
+    ]
+  };
+
+  try {
+    const saved = localStorage.getItem("agri_wallet");
+    if (saved) return JSON.parse(saved);
+  } catch (e) {}
+
+  localStorage.setItem("agri_wallet", JSON.stringify(defaultWallet));
+  return defaultWallet;
+}
+
+// Helper: Wallet data ni save cheyadam
+function saveAgriWalletData(data) {
+  try {
+    localStorage.setItem("agri_wallet", JSON.stringify(data));
+  } catch (e) {}
+}
+
 function renderWalletWidget() {
   const container = document.getElementById("wallet-container");
   if (!container) return;
 
-  const state = window.AgriState;
-  const walletData = state ? state.getWallet() : { farmerBalance: 2000, labourBalance: 0, lockedEscrow: [] };
+  const walletData = getAgriWalletData();
 
   const lockedTotal = walletData.lockedEscrow
     .filter(item => item.status === "Locked")
-    .reduce((sum, item) => sum + Number(item.amount), 0);
+    .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
   container.innerHTML = `
     <div style="background: #ffffff; border: 1.5px solid #ffb300; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
@@ -29,15 +61,15 @@ function renderWalletWidget() {
           <!-- Farmer Side -->
           <div style="flex: 1; background: #f1f8e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 8px; text-align: center;">
             <div style="font-size: 11px; color: #2e7d32; font-weight: 600;">👨‍🌾 రైతు ఖాతా balance</div>
-            <div style="font-size: 15px; font-weight: 800; color: #1b5e20; margin: 2px 0;">₹${walletData.farmerBalance}</div>
-            <div style="font-size: 10px; color: #d84315;">🔒 Lock అయినది: ₹${lockedTotal}</div>
+            <div style="font-size: 16px; font-weight: 800; color: #1b5e20; margin: 2px 0;">₹${walletData.farmerBalance}</div>
+            <div style="font-size: 10px; color: #d84315; font-weight: 600;">🔒 Lock అయినది: ₹${lockedTotal}</div>
           </div>
 
           <!-- Labour Side -->
           <div style="flex: 1; background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 8px; padding: 8px; text-align: center;">
             <div style="font-size: 11px; color: #1565c0; font-weight: 600;">👷 కూలీ main wallet</div>
-            <div style="font-size: 15px; font-weight: 800; color: #0d47a1; margin: 2px 0;">₹${walletData.labourBalance}</div>
-            <button onclick="handleWithdrawUPI()" style="background: #1976d2; color: #ffffff; border: none; border-radius: 4px; padding: 3px 8px; font-size: 10px; font-weight: 700; cursor: pointer; margin-top: 2px;">
+            <div style="font-size: 16px; font-weight: 800; color: #0d47a1; margin: 2px 0;">₹${walletData.labourBalance}</div>
+            <button onclick="handleWithdrawUPI()" style="background: #1976d2; color: #ffffff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; font-weight: 700; cursor: pointer; margin-top: 2px;">
               💸 UPI Withdraw
             </button>
           </div>
@@ -49,9 +81,9 @@ function renderWalletWidget() {
             🔐 Escrow లావాదేవీలు (కూలీకి garanty lock):
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto;">
             ${walletData.lockedEscrow.length === 0 ? `
-              <div style="font-size: 11px; color: #888; text-align: center; padding: 6px; background: #fffde7; border-radius: 6px;">
+              <div style="font-size: 11px; color: #888; text-align: center; padding: 8px; background: #fffde7; border-radius: 6px;">
                 ప్రస్తుతం ఏ లావాదేవీ lock అయి లేదు.
               </div>
             ` : walletData.lockedEscrow.map(esc => {
@@ -60,7 +92,7 @@ function renderWalletWidget() {
                 <div style="border: 1px solid ${isLocked ? '#ffe082' : '#c8e6c9'}; background: ${isLocked ? '#fffde7' : '#f9fbf9'}; border-radius: 6px; padding: 8px;">
                   <div style="display: flex; justify-content: space-between; font-size: 12px;">
                     <span><b>${esc.jobTitle}</b> (${esc.labourName})</span>
-                    <strong style="color: ${isLocked ? '#e65100' : '#2e7d32'};">₹${esc.amount}</strong>
+                    <strong style="color: ${isLocked ? '#e65100' : '#2e7d32'}; font-size: 13px;">₹${esc.amount}</strong>
                   </div>
                   <div style="font-size: 10px; color: #555; margin-top: 2px;">
                     status: <b>${isLocked ? '🔒 lock అయింది (రైతు ఖాతాలో hold)' : '✅ Release అయింది (కూలీ ఖాతాకు చేరింది)'}</b>
@@ -68,8 +100,7 @@ function renderWalletWidget() {
                   
                   ${isLocked ? `
                     <div style="display: flex; justify-content: center; margin-top: 8px;">
-
-                      <button onclick="handleReleasePayment('${esc.id}')" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 4px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                      <button onclick="handleReleasePayment('${esc.id}')" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 5px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 3px rgba(46,125,50,0.3);">
                         🔓 పని అయింది - Release చేయండి (రైతు)
                       </button>
                     </div>
@@ -85,28 +116,77 @@ function renderWalletWidget() {
   `;
 }
 
+// Function: Kotha job accept chesinappudu automatic ga Escrow loki lock cheyadam
+window.lockJobToEscrow = function(job, labourName) {
+  const wallet = getAgriWalletData();
+  const amount = Number(job.wage || 0);
+
+  // Already lock ayyindo ledo check cheyadam
+  const exists = wallet.lockedEscrow.find(e => e.jobId === job.id);
+  if (exists) return;
+
+  wallet.lockedEscrow.unshift({
+    id: "ESC-" + Date.now(),
+    jobId: job.id,
+    jobTitle: `${job.crop} (${job.workType})`,
+    labourName: labourName,
+    amount: amount,
+    status: "Locked"
+  });
+
+  saveAgriWalletData(wallet);
+  renderWalletWidget();
+};
+
 window.handleReleasePayment = function(escrowId) {
-  if (confirm("కూలీ పని పూర్తిగా పూర్తయిందా? డబ్బును కూలీ వాలెట్‌కు release చేయమంటారా?")) {
-    if (window.AgriState) {
-      window.AgriState.releaseEscrow(escrowId);
-      renderWalletWidget();
-      alert("🎉 ₹ నిధులు కూలీ main వాలెట్‌కు విజయవంతంగా బదిలీ చేయబడ్డాయి!");
+  if (!confirm("కూలీ పని పూర్తిగా పూర్తయిందా? డబ్బును కూలీ వాలెట్‌కు release చేయమంటారా?")) {
+    return;
+  }
+
+  const wallet = getAgriWalletData();
+  const item = wallet.lockedEscrow.find(e => e.id === escrowId);
+
+  if (item && item.status === "Locked") {
+    const amt = Number(item.amount || 0);
+
+    // 1. Status release ga marchadam
+    item.status = "Released";
+
+    // 2. Farmer balance nundi deduct chesi Labour wallet ki add cheyadam
+    wallet.farmerBalance = Math.max(0, wallet.farmerBalance - amt);
+    wallet.labourBalance = Number(wallet.labourBalance || 0) + amt;
+
+    saveAgriWalletData(wallet);
+    renderWalletWidget();
+
+    // AgriState update (if available)
+    if (window.AgriState && window.AgriState.wallet) {
+      window.AgriState.wallet = wallet;
+    }
+
+    if (typeof speakTeluguText === "function") {
+      speakTeluguText(`కూలీకి ${amt} రూపాయలు విజయవంతంగా విడుదల చేయబడ్డాయి.`);
+    } else {
+      alert(`🎉 ₹${amt} నిధులు కూలీ main వాలెట్‌కు విజయవంతంగా బదిలీ చేయబడ్డాయి!`);
     }
   }
 };
 
 window.handleWithdrawUPI = function() {
-  const state = window.AgriState;
-  const balance = state ? state.wallet.labourBalance : 0;
+  const wallet = getAgriWalletData();
+  const balance = Number(wallet.labourBalance || 0);
+
   if (balance <= 0) {
     alert("మీ వాలెట్‌లో withdrawal చేయడానికి balance లేదు!");
     return;
   }
+
   const upiId = prompt("మీ UPI ID నమోదు చేయండి (उदा: 9876543210@ybl):", "9876543211@upi");
   if (upiId) {
-    alert(`✅ ₹${balance} మీ UPI (${upiId}) కి బదిలీ అభ్యర్థన విజయవంతమైంది!`);
-    state.wallet.labourBalance = 0;
+    wallet.labourBalance = 0;
+    saveAgriWalletData(wallet);
     renderWalletWidget();
+    alert(`✅ ₹${balance} మీ UPI (${upiId}) కి బదిలీ అభ్యర్థన విజయవంతమైంది!`);
   }
 };
 
