@@ -4,13 +4,21 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 let recognitionInstance = null;
 let pendingVoiceSubmission = false;
 
-// 1. వాయిస్ కమాండ్ ప్రాసెసింగ్ లాజిక్
+// Helper: Check if Auto Voice checkbox is ON
+function isAutoVoiceEnabled() {
+  const chk = document.getElementById("auto-voice-check") || 
+              document.querySelector("input[type='checkbox']");
+  if (chk) return chk.checked;
+  return window.AppState ? !!window.AppState.autoVoice : false;
+}
+
+// 1. Voice Command Processing Logic
 function handleVoiceCommand(voiceText) {
   if (!voiceText) return;
   const input = voiceText.toLowerCase().trim();
   console.log("Processing Voice:", input);
 
-  // A. సబ్మిట్ కన్ఫర్మేషన్
+  // A. Submit Confirmation
   if (pendingVoiceSubmission) {
     if (input.includes("సరే") || input.includes("చేయ్") || input.includes("పోస్ట్") || input.includes("submit") || input.includes("ఓకే") || input.includes("అవును")) {
       pendingVoiceSubmission = false;
@@ -19,19 +27,19 @@ function handleVoiceCommand(voiceText) {
                         document.querySelector("button[type='submit']");
       if (submitBtn) {
         submitBtn.click();
-        speakTeluguText("కూలీల కోసం పని విజయవంతంగా పోస్ట్ చేయబడింది.");
+        speakTeluguText("కూలీల కోసం పని విజయవంతంగా పోస్ట్ చేయబడింది.", null, true);
       } else {
-        speakTeluguText("వివరాలు సబ్మిట్ చేయబడ్డాయి.");
+        speakTeluguText("వివరాలు సబ్మిట్ చేయబడ్డాయి.", null, true);
       }
       return;
     } else if (input.includes("వద్దు") || input.includes("ఆపు") || input.includes("కాదు")) {
       pendingVoiceSubmission = false;
-      speakTeluguText("సరే, వివరాలు పోస్ట్ చేయలేదు.");
+      speakTeluguText("సరే, వివరాలు పోస్ట్ చేయలేదు.", null, true);
       return;
     }
   }
 
-  // B. రైతు మోడ్‌లో ఉన్నప్పుడు - ఫారమ్ ఆటోమేటిక్‌గా నింపడం
+  // B. Farmer Mode: Auto Fill Form
   if (!window.AppState || window.AppState.currentRole === "FARMER") {
     let crop = "";
     let workType = "";
@@ -97,24 +105,24 @@ function handleVoiceCommand(voiceText) {
       
       speakTeluguText(reply, () => {
         startListening();
-      });
+      }, true);
       return;
     }
   }
 
-  // సాధారణ కమాండ్లు
+  // General Commands
   if (input.includes("ఖాతా") || input.includes("వాలెట్")) {
-    speakTeluguText("మీ వాలెట్ వివరాలు ఇక్కడ ఉన్నాయి.");
+    speakTeluguText("మీ వాలెట్ వివరాలు ఇక్కడ ఉన్నాయి.", null, true);
     document.getElementById("wallet-container")?.scrollIntoView({ behavior: "smooth" });
   } else if (input.includes("ధర") || input.includes("మార్కెట్") || input.includes("మండి")) {
-    speakTeluguText("మార్కెట్ లైవ్ ధరల వివరాలు ఇక్కడ ఉన్నాయి.");
+    speakTeluguText("మార్కెట్ లైవ్ ధరల వివరాలు ఇక్కడ ఉన్నాయి.", null, true);
     document.getElementById("mandi-container")?.scrollIntoView({ behavior: "smooth" });
   } else {
-    speakTeluguText("మీరు చెప్పింది అర్థం కాలేదు, దయచేసి వివరాలు మళ్లీ స్పష్టంగా చెప్పండి.");
+    speakTeluguText("మీరు చెప్పింది అర్థం కాలేదు, దయచేసి వివరాలు మళ్లీ స్పష్టంగా చెప్పండి.", null, true);
   }
 }
 
-// మైక్ ఆన్ చేయడం
+// Mic On Cheyadam
 function startListening() {
   const micBtn = document.getElementById("global-voice-btn");
   if (recognitionInstance) {
@@ -125,7 +133,7 @@ function startListening() {
   }
 }
 
-// 2. వాయిస్ అసిస్టెంట్ ఇనిషియలైజేషన్
+// 2. Voice Assistant Initialization
 function initVoiceAssistant() {
   if (document.getElementById("global-voice-btn")) return;
 
@@ -134,6 +142,7 @@ function initVoiceAssistant() {
   micBtn.className = "floating-mic-btn";
   micBtn.innerHTML = "🎙️";
   micBtn.title = "మాట్లాడండి";
+  micBtn.style.cssText = "position:fixed; bottom:20px; right:20px; width:52px; height:52px; border-radius:50%; background:#2e7d32; color:#fff; border:none; font-size:22px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:9999;";
   document.body.appendChild(micBtn);
 
   if (!SpeechRecognition) {
@@ -152,20 +161,20 @@ function initVoiceAssistant() {
     if (!isListening) {
       try {
         recognitionInstance.start();
-        micBtn.classList.add("listening");
+        micBtn.style.background = "#d32f2f";
         isListening = true;
       } catch (err) {
         console.error("Mic start error:", err);
       }
     } else {
       recognitionInstance.stop();
-      micBtn.classList.remove("listening");
+      micBtn.style.background = "#2e7d32";
       isListening = false;
     }
   });
 
   recognitionInstance.onresult = function(event) {
-    micBtn.classList.remove("listening");
+    micBtn.style.background = "#2e7d32";
     isListening = false;
     const transcript = event.results[event.results.length - 1][0].transcript;
     console.log("Transcribed text:", transcript);
@@ -173,24 +182,35 @@ function initVoiceAssistant() {
   };
 
   recognitionInstance.onerror = (event) => {
-    micBtn.classList.remove("listening");
+    micBtn.style.background = "#2e7d32";
     isListening = false;
     console.error("Speech Error:", event.error);
   };
 
   recognitionInstance.onend = () => {
-    micBtn.classList.remove("listening");
+    micBtn.style.background = "#2e7d32";
     isListening = false;
   };
 }
 
-// 3. తెలుగు ఆడియో రెస్పాన్స్ (Text to Speech)
-function speakTeluguText(msg, onEndCallback) {
+// 3. Telugu Text to Speech (TTS)
+function speakTeluguText(msg, onEndCallback, forceSpeak = false) {
+  if (!forceSpeak && !isAutoVoiceEnabled()) {
+    return; // Auto Voice checkbox OFF lo unte matladadhu
+  }
+
   if ("speechSynthesis" in window) {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(msg);
     utterance.lang = "te-IN";
-    utterance.rate = 0.95;
+    utterance.rate = 0.92;
+    utterance.pitch = 1.0;
+
+    const voices = window.speechSynthesis.getVoices();
+    const teluguVoice = voices.find(v => v.lang === "te-IN" || v.lang.startsWith("te"));
+    if (teluguVoice) {
+      utterance.voice = teluguVoice;
+    }
     
     if (onEndCallback) {
       utterance.onend = onEndCallback;
@@ -200,79 +220,69 @@ function speakTeluguText(msg, onEndCallback) {
   }
 }
 
-// 4. ఆటో వాయిస్ టోగుల్ లాజిక్
+if ("speechSynthesis" in window) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    window.speechSynthesis.getVoices();
+  };
+}
+
+// 4. Auto Voice Toggle Logic
 window.toggleAutoVoice = function(isEnabled) {
   if (window.AppState) {
     window.AppState.autoVoice = isEnabled;
   }
   
   if (isEnabled) {
-    if (!window.AppState || !window.AppState.isLoggedIn) {
-      speakTeluguText(
-        "నమస్కారం! అగ్రి-కనెక్ట్‌కి స్వాగతం. మీరు రోజూ కూలీ పనులకు వెళ్లేవారైతే కూలీ ఆప్షన్ ఎంచుకోండి. వ్యవసాయం చేసే రైతు సోదరులైతే రైతు ఆప్షన్ ఎంచుకొని మీ మొబైల్ నంబర్‌తో లాగిన్ అవ్వండి."
-      );
-      return;
-    }
+    speakTeluguText("ఆటో వాయిస్ గైడెన్స్ ఆన్ చేయబడింది.", null, true);
 
-    if (window.AppState.userType === "LABOUR_ONLY") {
-      speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. ఇక్కడ మీకు అందుబాటులో ఉన్న పనులు మరియు మీ వాలెట్ వివరాలు మాత్రమే కనిపిస్తాయి. మీకు ఏ పని వివరాలు కావాలో చెప్పండి.", () => {
-        startListening();
-      });
-      return;
-    }
-
-    if (window.AppState.userType === "FARMER") {
-      if (window.AppState.currentRole === "LABOUR") {
-        speakTeluguText("రైతు సోదరా, మీరు ప్రస్తుతం కూలీ మోడ్‌లో ఉన్నారు. అందుబాటులో ఉన్న పనులను చూపిస్తున్నాను.");
-      } else {
-        speakTeluguText("రైతు డాష్‌బోర్డ్‌కి స్వాగతం. మీకు ఏ పంట పనికి కూలీలు కావాలో చెప్పండి.", () => {
-          startListening();
-        });
+    setTimeout(() => {
+      if (!window.AppState || !window.AppState.isLoggedIn) {
+        speakTeluguText(
+          "నమస్కారం! అగ్రి-కనెక్ట్‌కి స్వాగతం. మీరు కూలీ పనులకు వెళ్లేవారైతే కూలీ ఆప్షన్, వ్యవసాయం చేసే రైతు సోదరులైతే రైతు ఆప్షన్ ఎంచుకోండి.", null, true
+        );
+        return;
       }
-    }
+
+      if (window.AppState.userType === "LABOUR_ONLY") {
+        speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. ఇక్కడ మీకు అందుబాటులో ఉన్న పనులు మరియు మీ వాలెట్ వివరాలు కనిపిస్తాయి.", null, true);
+        return;
+      }
+
+      if (window.AppState.userType === "FARMER") {
+        if (window.AppState.currentRole === "LABOUR") {
+          speakTeluguText("రైతు సోదరా, మీరు ప్రస్తుతం కూలీ మోడ్‌లో ఉన్నారు. పనుల వివరాలు కనిపిస్తున్నాయి.", null, true);
+        } else {
+          speakTeluguText("రైతు డాష్‌బోర్డ్‌కి స్వాగతం. మీకు ఏ పంట పనికి కూలీలు కావాలో మైక్ నొక్కి చెప్పండి.", null, true);
+        }
+      }
+    }, 1200);
   } else {
-    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆఫ్ చేయబడింది.");
+    speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆఫ్ చేయబడింది.", null, true);
   }
 };
 
-// 5. ఆటో వాయిస్ చెక్‌బాక్స్ UI
-function renderAutoVoiceToggle() {
-  if (document.getElementById("auto-voice-toggle-container")) return;
-
-  const toggleDiv = document.createElement("div");
-  toggleDiv.id = "auto-voice-toggle-container";
-  toggleDiv.style.cssText = "display:flex; justify-content:center; align-items:center; gap:8px; font-size:13px; font-weight:bold; margin:10px 0; color:#2e7d32; width:100%;";
-
-  toggleDiv.innerHTML = `
-    <label style="cursor:pointer; display:flex; align-items:center; gap:6px; background:#e8f5e9; padding:6px 14px; border-radius:16px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
-      <input type="checkbox" id="auto-voice-check" onchange="toggleAutoVoice(this.checked)" style="width:16px; height:16px; cursor:pointer;">
-      🤖 ఆటో వాయిస్ గైడెన్స్ (Auto Voice)
-    </label>
-  `;
-
-  const header = document.querySelector(".header") || 
-                 document.querySelector("header") || 
-                 Array.from(document.querySelectorAll("div")).find(d => 
-                   d.textContent && 
-                   d.textContent.trim().startsWith("AgriConnect") && 
-                   !d.id.includes("card") && 
-                   !d.id.includes("toggle")
-                 );
-
-  if (header && header.parentNode) {
-    header.parentNode.insertBefore(toggleDiv, header.nextSibling);
-  } else {
-    document.body.prepend(toggleDiv);
+// 5. Checkbox Sync Event
+function setupCheckboxListener() {
+  const existingCheck = document.getElementById("auto-voice-check") || 
+                        document.querySelector("input[type='checkbox']");
+  if (existingCheck) {
+    existingCheck.id = "auto-voice-check";
+    existingCheck.onchange = function() {
+      window.toggleAutoVoice(this.checked);
+    };
   }
 }
 
-// పేజీ లోడ్ అయిన వెంటనే ప్రారంభించడం
+// Global functions setup
+window.speakTeluguText = speakTeluguText;
+window.startListening = startListening;
+
 if (document.readyState === "loading") {
   window.addEventListener("DOMContentLoaded", () => {
     initVoiceAssistant();
-    renderAutoVoiceToggle();
+    setupCheckboxListener();
   });
 } else {
   initVoiceAssistant();
-  renderAutoVoiceToggle();
+  setupCheckboxListener();
 }
