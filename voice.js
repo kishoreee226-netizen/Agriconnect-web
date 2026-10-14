@@ -256,8 +256,8 @@ function renderAutoVoiceToggle() {
 
   const toggleDiv = document.createElement("div");
   toggleDiv.id = "auto-voice-toggle-container";
-  toggleDiv.style.cssText = "display:flex; justify-content:center; align-items:center; gap:8px; font-size:13px; font-weight:bold; margin:8px 0; color:#2e7d32;";
-  
+  toggleDiv.style.cssText = "display:flex; justify-content:center; align-items:center; gap:8px; font-size:13px; font-weight:bold; margin:10px 0; color:#2e7d32;";
+
   toggleDiv.innerHTML = `
     <label style="cursor:pointer; display:flex; align-items:center; gap:6px; background:#e8f5e9; padding:6px 14px; border-radius:16px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
       <input type="checkbox" id="auto-voice-check" onchange="toggleAutoVoice(this.checked)" style="width:16px; height:16px; cursor:pointer;">
@@ -265,9 +265,14 @@ function renderAutoVoiceToggle() {
     </label>
   `;
 
-  const roleBar = document.getElementById("role-switch-container");
-  if (roleBar && roleBar.parentNode) {
-    roleBar.parentNode.insertBefore(toggleDiv, roleBar.nextSibling);
+  // AgriConnect ఆకుపచ్చ హెడర్‌ను గుర్తించి దాని కింద మాత్రమే పెట్టే లాజిక్
+  const headerElem = document.querySelector(".header") || 
+                     Array.from(document.querySelectorAll("div")).find(d => 
+                       d.textContent && d.textContent.trim().startsWith("AgriConnect") && !d.id.includes("card")
+                     );
+
+  if (headerElem && headerElem.parentNode) {
+    headerElem.parentNode.insertBefore(toggleDiv, headerElem.nextSibling);
   } else {
     document.body.prepend(toggleDiv);
   }
