@@ -48,7 +48,7 @@ function renderLabourWidget() {
                 <div style="flex: 1;">
                   <strong style="color: #0d47a1; font-size: 13px;">🌾 ${j.crop} -${j.workType}</strong>
                   <div style="font-size: 11px; color: #555; margin-top: 2px;">
-                    రైతు: <b>${j.farmerName}</b> \vert{} కూలీలు: <b>${j.count}</b>
+                    రైతు: <b>${j.farmerName}</b> | కూలీలు: <b>${j.count}</b>
                   </div>
                   <div style="font-size: 10px; color: #455a64; margin-top: 3px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                     <span style="background: #e0f2f1; color: #00695c; padding: 1px 5px; border-radius: 4px;">🏛️ ${villageName}</span>${workDate ? `<span style="background: #ede7f6; color: #4527a0; padding: 1px 5px; border-radius: 4px;">${workDate}</span>` : ''}
