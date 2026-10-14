@@ -265,18 +265,24 @@ function renderAutoVoiceToggle() {
     </label>
   `;
 
-  // AgriConnect ఆకుపచ్చ హెడర్‌ను గుర్తించి దాని కింద మాత్రమే పెట్టే లాజిక్
+    // AgriConnect లోగో/హెడర్‌ను కచ్చితంగా గుర్తించి దాని కింద మాత్రమే పెట్టే లాజిక్
   const headerElem = document.querySelector(".header") || 
+                     document.querySelector("header") ||
                      Array.from(document.querySelectorAll("div")).find(d => 
-                       d.textContent && d.textContent.trim().startsWith("AgriConnect") && !d.id.includes("card")
+                       d.innerHTML && d.innerHTML.includes("AgriConnect") && !d.id.includes("card") && !d.id.includes("toggle")
                      );
 
   if (headerElem && headerElem.parentNode) {
     headerElem.parentNode.insertBefore(toggleDiv, headerElem.nextSibling);
   } else {
-    document.body.prepend(toggleDiv);
+    // హెడర్ వెంటనే దొరక్కపోతే పైన పెట్టకుండా కాసేపు ఆగి మళ్లీ ప్రయత్నిస్తుంది
+    setTimeout(() => {
+      const retryHeader = Array.from(document.querySelectorAll("div")).find(d => d.innerHTML && d.innerHTML.includes("AgriConnect"));
+      if (retryHeader && retryHeader.parentNode) {
+        retryHeader.parentNode.insertBefore(toggleDiv, retryHeader.nextSibling);
+      }
+    }, 300);
   }
-}
 
 // పేజీ లోడ్ అయిన వెంటనే ప్రారంభించడం
 if (document.readyState === "loading") {
