@@ -34,8 +34,8 @@ function renderFarmerWidget() {
  required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
       <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
     </div>
-                           <!-- Row 4: Compact Date + GPS + Village (Full fit without cut) -->
-              <div style="display: flex; gap: 4px; align-items: center; justify-content: space-between; margin-top: 6px; width: 100%; box-sizing: border-box;">
+                           <!-- Row 4: Fixed Compact Date + GPS + Village (Paina boxes border ki fix ayyela) -->
+              <div style="display: flex; gap: 6px; align-items: center; width: 100%; box-sizing: border-box; margin-top: 6px;">
                 <input 
                   type="text" 
                   id="f-date" 
@@ -43,18 +43,18 @@ function renderFarmerWidget() {
                   onfocus="(this.type='date'); this.showPicker && this.showPicker();" 
                   onblur="if(!this.value) this.type='text';" 
                   required 
-                  style="flex: 1.1; min-width: 0; height: 34px; padding: 0 4px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 11px; outline: none; background: #fff; box-sizing: border-box; cursor: pointer; text-align: center;" 
+                  style="width: 120px; flex: 0 0 120px; height: 34px; padding: 0 6px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 11px; outline: none; background: #fff; box-sizing: border-box; cursor: pointer; text-align: center;" 
                 />
                 
-                <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0;">
-                  <button type="button" id="loc-btn" style="height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 6px; font-size: 10px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 2px;">
+                <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 0;">
+                  <button type="button" id="loc-btn" style="width: 100%; max-width: 115px; height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 4px; font-size: 10px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 2px; box-sizing: border-box;">
                     📍 పొలం GPS
                   </button>
-                  <span id="loc-status" style="font-size: 8px; color: #555; text-align: center; line-height: 1; margin-top: 2px;"></span>
+                  <span id="loc-status" style="font-size: 8px; color: #555; text-align: center; line-height: 1; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;"></span>
                 </div>
 
-                <button type="button" id="f-village-btn" style="flex-shrink: 0; height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 6px; font-size: 10px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 2px;">
-                  🏛️ ఊరు
+                <button type="button" id="f-village-btn" style="flex: 0 0 auto; height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 10px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box; margin-left: auto;">
+                  🏛️ Hyderabad
                 </button>
               </div>
 
