@@ -133,13 +133,19 @@ function prefillFarmerFormDefaults() {
   const profile = window.AppState?.userProfile;
   if (!profile) return;
 
-  const nameInput = document.getElementById("farmer-name") || document.querySelector("input[placeholder*='రైతు పేరు']");
-  const phoneInput = document.getElementById("farmer-mobile") || document.querySelector("input[placeholder*='మొబైల్']");
-  const villageInput = document.getElementById("farmer-village") || document.querySelector("input[placeholder*='గ్రామం']");
+  const nameInput = document.getElementById("f-name");
+  const phoneInput = document.getElementById("f-phone");
 
-  if (nameInput) { nameInput.value = profile.name; nameInput.readOnly = true; }
-  if (phoneInput) { phoneInput.value = profile.phone; phoneInput.readOnly = true; }
-  if (villageInput) { villageInput.value = profile.village; villageInput.readOnly = true; }
+  if (nameInput) {
+    nameInput.value = profile.name;
+    nameInput.readOnly = true;
+    nameInput.style.backgroundColor = "#e8f5e9";
+  }
+  if (phoneInput) {
+    phoneInput.value = profile.phone;
+    phoneInput.readOnly = true;
+    phoneInput.style.backgroundColor = "#e8f5e9";
+  }
 }
 
 // 4. కూలీల కోసం 5-10 కి.మీ / సమీప గ్రామాల పోస్టులను ఫిల్టర్ చేయడం
