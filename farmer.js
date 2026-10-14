@@ -34,23 +34,27 @@ function renderFarmerWidget() {
  required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
       <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
     </div>
-              <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 6px;">
-                <label style="font-size: 11px; font-weight: bold; color: #2e7d32;">📅 పని కావలసిన తేదీ:</label>
-                <input type="date" id="f-date" required style="padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none; background: #fff;" />
+                            <!-- Row 4: తేదీ (Date) & GPS Location పక్కపక్కనే -->
+              <div style="display: flex; gap: 8px; align-items: flex-end; margin-top: 6px;">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 3px;">
+                  <label style="font-size: 11px; font-weight: bold; color: #2e7d32;">📅 పని తేదీ:</label>
+                  <input type="date" id="f-date" required style="padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none; background: #fff; width: 100%; box-sizing: border-box;" />
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-end;">
+                  <button type="button" id="loc-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 7px 10px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                    📍 పొలం GPS
+                  </button>
+                  <span id="loc-status" style="font-size: 9px; color: #555; text-align: center; margin-top: 2px;"></span>
+                </div>
               </div>
 
-             <!-- GPS & Submit Buttons Side-by-Side (Single Row) -->
-    <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin: 8px 0 4px 0; flex-wrap: wrap;">
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <button type="button" id="loc-btn" style="background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 600; cursor: pointer; width: fit-content;">
-          📍 పొలం GPS location
-        </button>
-        <span id="loc-status" style="font-size: 10px; color: #555; text-align: center; margin-top: 2px;"></span>
-      </div>
-      <button type="submit" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; width: fit-content;">
-        📢 Submit కూలీల కోసం 
-      </button>
-    </div>
+              <!-- Row 5: విడిగా క్రింద Submit బటన్ -->
+              <div style="margin-top: 10px;">
+                <button type="submit" style="width: 100%; background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; padding: 10px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(46,125,50,0.25);">
+                  📢 Submit కూలీల కోసం
+                </button>
+              </div>
+
         </form>
 
         <!-- Accepted Labours Section -->
