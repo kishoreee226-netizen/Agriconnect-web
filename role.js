@@ -38,6 +38,7 @@ function applyUserRoleView() {
     if (walletContainer) walletContainer.style.display = "none";
     if (mandiContainer) mandiContainer.style.display = "block";
     removeProfileHeader();
+    removeRoleSwitchBar();
     return;
   }
 
@@ -49,7 +50,7 @@ function applyUserRoleView() {
 
   // C. కూలీ లాగిన్ (LABOUR_ONLY)
   if (state.userType === "LABOUR_ONLY") {
-    if (roleSwitchBar) roleSwitchBar.style.display = "none";
+    removeRoleSwitchBar();
     if (farmerContainer) farmerContainer.style.display = "none";
     if (mandiContainer) mandiContainer.style.display = "none";
 
@@ -60,12 +61,13 @@ function applyUserRoleView() {
   } 
   // D. రైతు లాగిన్ (FARMER)
   else if (state.userType === "FARMER") {
-    if (roleSwitchBar) roleSwitchBar.style.display = "flex";
+    // రైతు కోసం స్మార్ట్ స్విచ్ బార్ రెండర్ చేయడం
+    renderRoleSwitchBar();
+
     if (mandiContainer) mandiContainer.style.display = "block";
     if (walletContainer) walletContainer.style.display = "block";
 
     prefillFarmerFormDefaults(); // రైతు పేరు, ఫోన్, గ్రామం ఆటో-ఫిల్ చేయడం
-
     setTimeout(prefillFarmerFormDefaults, 150); // farmer.js లోడ్ అయ్యాక మరోసారి కచ్చితంగా ఫిల్ చేస్తుంది
 
     if (state.currentRole === "LABOUR") {
@@ -120,6 +122,58 @@ function removeProfileHeader() {
   if (banner) banner.remove();
 }
 
+// 2.A రైతు ⇄ కూలీ మోడ్ స్విచ్ బార్ (Smart Mode Switcher)
+function renderRoleSwitchBar() {
+  const state = window.AppState;
+  if (!state || !state.isLoggedIn || state.userType !== "FARMER") return;
+
+  let switchContainer = document.getElementById("role-switch-container");
+  if (!switchContainer) {
+    switchContainer = document.createElement("div");
+    switchContainer.id = "role-switch-container";
+    switchContainer.style.cssText = "max-width: 480px; margin: 8px auto; padding: 4px; background: #e8f5e9; border-radius: 25px; display: flex; justify-content: space-between; border: 1px solid #c8e6c9; box-sizing: border-box;";
+
+    const voiceToggle = document.getElementById("auto-voice-toggle-container") || 
+                        document.getElementById("user-profile-banner");
+    if (voiceToggle && voiceToggle.parentNode) {
+      voiceToggle.parentNode.insertBefore(switchContainer, voiceToggle.nextSibling);
+    } else {
+      document.body.prepend(switchContainer);
+    }
+  }
+
+  const isFarmerRole = state.currentRole === "FARMER";
+
+  switchContainer.innerHTML = `
+    <button onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${isFarmerRole ? 'background:#2e7d32; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#2e7d32;'}">
+      🌾 రైతు మోడ్ (Farmer)
+    </button>
+    <button onclick="switchRoleMode('LABOUR')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${!isFarmerRole ? 'background:#e65100; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#e65100;'}">
+      👷 కూలీ మోడ్ (Labour)
+    </button>
+  `;
+}
+
+function removeRoleSwitchBar() {
+  const switchContainer = document.getElementById("role-switch-container");
+  if (switchContainer) switchContainer.remove();
+}
+
+// మోడ్ మార్చడానికి గల ఫంక్షన్
+window.switchRoleMode = function(targetRole) {
+  if (window.AppState.currentRole === targetRole) return;
+  window.AppState.currentRole = targetRole;
+  applyUserRoleView();
+
+  if (typeof speakTeluguText === "function") {
+    if (targetRole === "LABOUR") {
+      speakTeluguText("కూలీ మోడ్‌కి మారారు. మీ చుట్టుపక్కల పనుల వివరాలు ఇక్కడ కనిపిస్తాయి.");
+    } else {
+      speakTeluguText("రైతు మోడ్‌కి మారారు. మీ పొలం పనులకు కూలీలను పోస్ట్ చేయవచ్చు.");
+    }
+  }
+};
+
 window.logoutUser = function() {
   window.AppState.isLoggedIn = false;
   window.AppState.userProfile = null;
@@ -143,16 +197,18 @@ function prefillFarmerFormDefaults() {
     nameInput.value = profile.name;
     nameInput.readOnly = true;
     nameInput.style.backgroundColor = "#e8f5e9";
+    nameInput.style.fontWeight = "bold";
   }
 
   if (phoneInput) {
     phoneInput.value = profile.phone;
     phoneInput.readOnly = true;
     phoneInput.style.backgroundColor = "#e8f5e9";
+    phoneInput.style.fontWeight = "bold";
   }
 
   if (villageBtn && profile.village) {
-    villageBtn.textContent = "🏘️ " + profile.village;
+    villageBtn.textContent = "🏛️ " + profile.village;
   }
 }
 
