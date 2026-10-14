@@ -142,18 +142,25 @@ function renderPublicUserCards() {
     </div>
   `;
 
-    // ఆటో వాయిస్ టోగుల్ ఎక్కడుందో చూసి, కచ్చితంగా దాని కిందే కార్డ్స్ పెట్టడం
+      // Voice toggle kanipisthe daani kindha, lekapothe direct Header kindha insert chestundi
   const voiceToggle = document.getElementById("auto-voice-toggle-container");
-  const mandiContainer = document.getElementById("mandi-container") || document.querySelector(".mandi-card");
+  const header = document.querySelector(".header") || 
+                 document.querySelector("header") || 
+                 Array.from(document.querySelectorAll("div")).find(d => 
+                   d.textContent && 
+                   d.textContent.trim().startsWith("AgriConnect") && 
+                   !d.id.includes("card")
+                 );
 
   if (voiceToggle && voiceToggle.parentNode) {
     voiceToggle.parentNode.insertBefore(container, voiceToggle.nextSibling);
-  } else if (mandiContainer && mandiContainer.parentNode) {
-    mandiContainer.parentNode.insertBefore(container, mandiContainer);
+  } else if (header && header.parentNode) {
+    header.parentNode.insertBefore(container, header.nextSibling);
   } else {
     document.body.appendChild(container);
   }
 }
+
 
 // Page load ayyaka initialization
 function initRoleFlow() {
