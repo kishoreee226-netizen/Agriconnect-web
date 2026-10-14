@@ -174,20 +174,37 @@ window.handleReleasePayment = function(escrowId) {
 
 window.handleWithdrawUPI = function() {
   const wallet = getAgriWalletData();
-  const balance = Number(wallet.labourBalance || 0);
+  const currentBalance = Number(wallet.labourBalance || 0);
 
-  if (balance <= 0) {
+  if (currentBalance <= 0) {
     alert("మీ వాలెట్‌లో withdrawal చేయడానికి balance లేదు!");
     return;
   }
 
-  const upiId = prompt("మీ UPI ID నమోదు చేయండి (उदा: 9876543210@ybl):", "9876543211@upi");
-  if (upiId) {
-    wallet.labourBalance = 0;
-    saveAgriWalletData(wallet);
-    renderWalletWidget();
-    alert(`✅ ₹${balance} మీ UPI (${upiId}) కి బదిలీ అభ్యర్థన విజయవంతమైంది!`);
-  }
-};
+  // 1. Amount adagadam
+  const amountStr = prompt(`మీ వద్ద మొత్తం ₹${currentBalance} ఉంది.\nఎంత amount withdraw చేయాలనుకుంటున్నారు?`, currentBalance);
+  if (!amountStr) return;
 
-window.renderWalletWidget = renderWalletWidget;
+  const withdrawAmount = Number(amountStr);
+
+  if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+    alert("దయచేసి సరైన amount నమోదు చేయండి!");
+    return;
+  }
+
+  if (withdrawAmount > currentBalance) {
+    alert(`మీ వాలెట్‌లో అంత balance లేదు! గరిష్ట balance: ₹${currentBalance}`);
+    return;
+  }
+
+  // 2. UPI ID adagadam
+  const upiId = prompt("మీ UPI ID నమోదు చేయండి (ఉదా: 9876543210@ybl):", "9876543211@upi");
+  if (!upiId) return;
+
+  // 3. Balance nundi deduct chesi migilinadhi save cheyadam
+  wallet.labourBalance = currentBalance - withdrawAmount;
+  saveAgriWalletData(wallet);
+  renderWalletWidget();
+
+  alert(`✅ ₹${withdrawAmount} మీ UPI (${upiId}) కి విజయవంతంగా బదిలీ చేయబడింది!\nమిగిలిన balance: ₹${wallet.labourBalance}`);
+};
