@@ -66,6 +66,8 @@ function applyUserRoleView() {
 
     prefillFarmerFormDefaults(); // రైతు పేరు, ఫోన్, గ్రామం ఆటో-ఫిల్ చేయడం
 
+    setTimeout(prefillFarmerFormDefaults, 150); // farmer.js లోడ్ అయ్యాక మరోసారి కచ్చితంగా ఫిల్ చేస్తుంది
+
     if (state.currentRole === "LABOUR") {
       if (farmerContainer) farmerContainer.style.display = "none";
       if (labourContainer) labourContainer.style.display = "block";
