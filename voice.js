@@ -265,32 +265,21 @@ function renderAutoVoiceToggle() {
     </label>
   `;
 
-      // AgriConnect ఆకుపచ్చ హెడర్‌ను పక్కాగా గుర్తించే లాజిక్
-  const findHeader = () => {
-    return document.querySelector(".header") || 
-           document.querySelector("header") ||
-           Array.from(document.querySelectorAll("div")).find(d => 
-             d.textContent && 
-             d.textContent.trim().startsWith("AgriConnect") && 
-             !d.id.includes("card") && 
-             !d.id.includes("toggle")
-           );
-  };
+        // Header venaka direct ga pettadam (index marchina idi Header ni vethukuntundi)
+  const header = document.querySelector(".header") || 
+                 document.querySelector("header") || 
+                 Array.from(document.querySelectorAll("div")).find(d => 
+                   d.textContent && 
+                   d.textContent.trim().startsWith("AgriConnect") && 
+                   !d.id.includes("card") && 
+                   !d.id.includes("toggle")
+                 );
 
-  const headerElem = findHeader();
-
-  if (headerElem && headerElem.parentNode) {
-    headerElem.parentNode.insertBefore(toggleDiv, headerElem.nextSibling);
+  if (header && header.parentNode) {
+    header.parentNode.insertBefore(toggleDiv, header.nextSibling);
   } else {
-    // వెంటనే దొరక్కపోతే మళ్లీ ట్రై చేసి హెడర్ కిందే వేస్తుంది
-    const timer = setInterval(() => {
-      const retryHeader = findHeader();
-      if (retryHeader && retryHeader.parentNode) {
-        retryHeader.parentNode.insertBefore(toggleDiv, retryHeader.nextSibling);
-        clearInterval(timer);
-      }
-    }, 100);
-    setTimeout(() => clearInterval(timer), 2000);
+    // Okavela header inka render avvakapothe, page start lo insert chestundi
+    document.body.prepend(toggleDiv);
   }
 
 // పేజీ లోడ్ అయిన వెంటనే ప్రారంభించడం
