@@ -10,7 +10,7 @@ function handleVoiceCommand(voiceText) {
   const input = voiceText.toLowerCase().trim();
   console.log("Processing Voice:", input);
 
-  // A. సబ్మిట్ కన్ఫర్మేషన్ (రైతు 'సరే' లేదా 'పోస్ట్ చేయ్' అన్నప్పుడు)
+  // A. సబ్మిట్ కన్ఫర్మేషన్
   if (pendingVoiceSubmission) {
     if (input.includes("సరే") || input.includes("చేయ్") || input.includes("పోస్ట్") || input.includes("submit") || input.includes("ఓకే") || input.includes("అవును")) {
       pendingVoiceSubmission = false;
@@ -38,7 +38,6 @@ function handleVoiceCommand(voiceText) {
     let count = "";
     let wage = "";
 
-    // అన్ని రకాల పంటల గుర్తింపు
     const cropKeywords = [
       "వరి", "పత్తి", "మిర్చి", "మిరప", "మొక్కజొన్న", "పసుపు", 
       "వేరుశనగ", "పల్లీ", "కంది", "పెసర", "మినుము", "సోయాబీన్", 
@@ -55,15 +54,12 @@ function handleVoiceCommand(voiceText) {
       if (genericMatch) crop = genericMatch[1];
     }
 
-    // పని రకం గుర్తింపు
     if (input.includes("కోత")) workType = "కోత";
     else if (input.includes("తీత") || input.includes("ఏరడం")) workType = "తీత";
     else if (input.includes("నాటు") || input.includes("నాట్లు")) workType = "నాట్లు";
     else if (input.includes("కలుపు")) workType = "కలుపు తీత";
 
-    // కూలీల సంఖ్య గుర్తింపు
     const countMatch = input.match(/(\d+)\s*(మంది|గురు|కూలీలు)?/);
-
     if (countMatch) {
       count = countMatch[1];
     } else {
@@ -75,13 +71,11 @@ function handleVoiceCommand(voiceText) {
       else if (input.includes("ఆరుగురు") || input.includes("ఆరు")) count = "6";
     }
 
-    // కూలీ మొత్తం (రూపాయలు)
     const wageMatch = input.match(/(\d{3,4})\s*(రూపాయలు|రూ)?/);
     if (wageMatch) {
       wage = wageMatch[1];
     }
 
-    // స్క్రీన్‌పై ఉన్న ఇన్పుట్ బాక్సులను పట్టుకోవడం (ఐడీలు లేదా ప్లేస్‌హోల్డర్స్ ద్వారా)
     const cropInput = document.getElementById("job-crop") || document.getElementById("f-crop") || document.querySelector("input[placeholder*='పంట']");
     const workInput = document.getElementById("job-work") || document.getElementById("f-work") || document.querySelector("input[placeholder*='పని']");
     const countInput = document.getElementById("job-count") || document.getElementById("f-count") || document.querySelector("input[placeholder*='సంఖ్య']");
@@ -92,7 +86,6 @@ function handleVoiceCommand(voiceText) {
     if (count && countInput) countInput.value = count;
     if (wage && wageInput) wageInput.value = wage;
 
-    // వాయిస్ ఫీడ్‌బ్యాక్ ఇవ్వడం
     if (crop || workType || count || wage) {
       pendingVoiceSubmission = true;
       let reply = "వివరాలు నమోదు చేశాను. ";
@@ -103,14 +96,13 @@ function handleVoiceCommand(voiceText) {
       reply += "పోస్ట్ చేయమంటారా?";
       
       speakTeluguText(reply, () => {
-        // మాట్లాడటం పూర్తయ్యాక సమాధానం వినడానికి మైక్ ఆన్ అవుతుంది
         startListening();
       });
       return;
     }
   }
 
-  // సాధారణ కమాండ్లకు స్పందన
+  // సాధారణ కమాండ్లు
   if (input.includes("ఖాతా") || input.includes("వాలెట్")) {
     speakTeluguText("మీ వాలెట్ వివరాలు ఇక్కడ ఉన్నాయి.");
     document.getElementById("wallet-container")?.scrollIntoView({ behavior: "smooth" });
@@ -122,16 +114,14 @@ function handleVoiceCommand(voiceText) {
   }
 }
 
-// మైక్ ఆన్ చేసే ఫంక్షన్
+// మైక్ ఆన్ చేయడం
 function startListening() {
   const micBtn = document.getElementById("global-voice-btn");
   if (recognitionInstance) {
     try {
       recognitionInstance.start();
       if (micBtn) micBtn.classList.add("listening");
-    } catch (e) {
-      // ఇప్పటికే మైక్ వింటుంటే ఎర్రర్ రాకుండా ఇగ్నోర్ చేస్తుంది
-    }
+    } catch (e) {}
   }
 }
 
@@ -179,8 +169,6 @@ function initVoiceAssistant() {
     isListening = false;
     const transcript = event.results[event.results.length - 1][0].transcript;
     console.log("Transcribed text:", transcript);
-
-    // సరైన ఫంక్షన్‌ను పిలవడం
     handleVoiceCommand(transcript);
   };
 
@@ -199,7 +187,7 @@ function initVoiceAssistant() {
 // 3. తెలుగు ఆడియో రెస్పాన్స్ (Text to Speech)
 function speakTeluguText(msg, onEndCallback) {
   if ("speechSynthesis" in window) {
-    window.speechSynthesis.cancel(); // మునుపటి మాటలను క్లియర్ చేయడం
+    window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(msg);
     utterance.lang = "te-IN";
     utterance.rate = 0.95;
@@ -212,14 +200,13 @@ function speakTeluguText(msg, onEndCallback) {
   }
 }
 
-// 4. ఆటో వాయిస్ టోగుల్ లాజిక్ (రైతు & కూలీ కోసం విడివిడిగా)
+// 4. ఆటో వాయిస్ టోగుల్ లాజిక్
 window.toggleAutoVoice = function(isEnabled) {
   if (window.AppState) {
     window.AppState.autoVoice = isEnabled;
   }
   
   if (isEnabled) {
-    // 1. ఇంకా లాగిన్ కానప్పుడు (పబ్లిక్ ల్యాండింగ్ పేజీ)
     if (!window.AppState || !window.AppState.isLoggedIn) {
       speakTeluguText(
         "నమస్కారం! అగ్రి-కనెక్ట్‌కి స్వాగతం. మీరు రోజూ కూలీ పనులకు వెళ్లేవారైతే కూలీ ఆప్షన్ ఎంచుకోండి. వ్యవసాయం చేసే రైతు సోదరులైతే రైతు ఆప్షన్ ఎంచుకొని మీ మొబైల్ నంబర్‌తో లాగిన్ అవ్వండి."
@@ -227,7 +214,6 @@ window.toggleAutoVoice = function(isEnabled) {
       return;
     }
 
-    // 2. డైరెక్ట్ కూలీ లాగిన్ అయినప్పుడు
     if (window.AppState.userType === "LABOUR_ONLY") {
       speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. ఇక్కడ మీకు అందుబాటులో ఉన్న పనులు మరియు మీ వాలెట్ వివరాలు మాత్రమే కనిపిస్తాయి. మీకు ఏ పని వివరాలు కావాలో చెప్పండి.", () => {
         startListening();
@@ -235,7 +221,6 @@ window.toggleAutoVoice = function(isEnabled) {
       return;
     }
 
-    // 3. రైతు లాగిన్ అయినప్పుడు
     if (window.AppState.userType === "FARMER") {
       if (window.AppState.currentRole === "LABOUR") {
         speakTeluguText("రైతు సోదరా, మీరు ప్రస్తుతం కూలీ మోడ్‌లో ఉన్నారు. అందుబాటులో ఉన్న పనులను చూపిస్తున్నాను.");
@@ -256,7 +241,7 @@ function renderAutoVoiceToggle() {
 
   const toggleDiv = document.createElement("div");
   toggleDiv.id = "auto-voice-toggle-container";
-  toggleDiv.style.cssText = "display:flex; justify-content:center; align-items:center; gap:8px; font-size:13px; font-weight:bold; margin:10px 0; color:#2e7d32;";
+  toggleDiv.style.cssText = "display:flex; justify-content:center; align-items:center; gap:8px; font-size:13px; font-weight:bold; margin:10px 0; color:#2e7d32; width:100%;";
 
   toggleDiv.innerHTML = `
     <label style="cursor:pointer; display:flex; align-items:center; gap:6px; background:#e8f5e9; padding:6px 14px; border-radius:16px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
@@ -265,7 +250,6 @@ function renderAutoVoiceToggle() {
     </label>
   `;
 
-        // Header venaka direct ga pettadam (index marchina idi Header ni vethukuntundi)
   const header = document.querySelector(".header") || 
                  document.querySelector("header") || 
                  Array.from(document.querySelectorAll("div")).find(d => 
@@ -278,9 +262,9 @@ function renderAutoVoiceToggle() {
   if (header && header.parentNode) {
     header.parentNode.insertBefore(toggleDiv, header.nextSibling);
   } else {
-    // Okavela header inka render avvakapothe, page start lo insert chestundi
     document.body.prepend(toggleDiv);
   }
+}
 
 // పేజీ లోడ్ అయిన వెంటనే ప్రారంభించడం
 if (document.readyState === "loading") {
