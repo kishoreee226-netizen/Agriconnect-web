@@ -35,8 +35,10 @@ function renderFarmerWidget() {
             <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
           </div>
 
-          <!-- Row 4: Compact Date + GPS + Village (Border ki touch avvakunda gap tho) -->
-          <div style="display: flex; align-items: flex-start; justify-content: space-between; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 0 4px;">
+                    <!-- Row 4: Stable Row (GPS click chesina Village button asalu kadaladhu) -->
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 0 4px;">
+            
+            <!-- 1. Date Input (Fixed Width) -->
             <input 
               type="text" 
               id="f-date" 
@@ -44,20 +46,24 @@ function renderFarmerWidget() {
               onfocus="(this.type='date'); this.showPicker && this.showPicker();" 
               onblur="if(!this.value) this.type='text';" 
               required 
-              style="width: 110px; min-width: 110px; max-width: 110px; height: 34px; padding: 0 4px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 11px; outline: none; background: #fff; box-sizing: border-box; cursor: pointer; text-align: center;" 
+              style="width: 105px; min-width: 105px; max-width: 105px; height: 34px; padding: 0 4px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 11px; outline: none; background: #fff; box-sizing: border-box; cursor: pointer; text-align: center;" 
             />
             
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
-              <button type="button" id="loc-btn" style="height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 8px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box;">
+            <!-- 2. GPS Button with Absolute Float Status (Width lock chesam kabatti pakkana vatini nettedhu) -->
+            <div style="position: relative; width: 95px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
+              <button type="button" id="loc-btn" style="width: 100%; height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 4px; font-size: 10.5px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 2px; box-sizing: border-box;">
                 📍 పొలం GPS
               </button>
-              <span id="loc-status" style="font-size: 8px; color: #2e7d32; text-align: center; line-height: 1.1; margin-top: 3px; white-space: nowrap;"></span>
+              <span id="loc-status" style="position: absolute; top: 36px; left: 50%; transform: translateX(-50%); font-size: 8px; color: #2e7d32; text-align: center; line-height: 1.1; white-space: nowrap; pointer-events: none;"></span>
             </div>
 
-            <button type="button" id="f-village-btn" style="height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 8px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box; margin-right: 6px;">
+            <!-- 3. Village Button (Right border margin tho fix ga untundhi) -->
+            <button type="button" id="f-village-btn" style="height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 8px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box; margin-right: 4px; flex-shrink: 0;">
               🏛️ Hyderabad
             </button>
+
           </div>
+
 
           <!-- Row 5: Compact Submit Button -->
           <div style="margin-top: 10px; display: flex; justify-content: center;">
