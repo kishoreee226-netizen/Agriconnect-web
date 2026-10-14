@@ -110,20 +110,87 @@ function handleVoiceCommand(voiceText) {
   const input = voiceText.toLowerCase().trim();
   console.log("Processing Voice:", input);
 
-  // A. Role Switching by Voice
-  if (input.includes("కూలీ మోడ్") || input.includes("కూలి మోడ్") || input.includes("కూలీ లాగిన్")) {
-    const labourBtn = Array.from(document.querySelectorAll("button, div, span")).find(el => el.textContent && el.textContent.includes("కూలీ మోడ్"));
-    if (labourBtn) labourBtn.click();
-    speakTeluguText("కూలీ మోడ్‌కి మార్చబడింది.", null, true);
-    playAudioCue('success');
+    // A. Role Switching by Voice
+  if (input.includes("కూలీ మోడ్") || input.includes("కూలి మోడ్") || input.includes("కూలీ లాగిన్") || input.includes("కూలీగా మార్చు")) {
+    let switched = false;
+
+    // 1. Function direct call
+    if (typeof window.switchRole === "function") {
+      window.switchRole("LABOUR");
+      switched = true;
+    } else if (typeof window.setRole === "function") {
+      window.setRole("LABOUR");
+      switched = true;
+    }
+
+    // 2. UI button click target
+    const labourTarget = 
+      document.querySelector("button[onclick*='LABOUR'], button[onclick*='labour'], [data-role='LABOUR'], #btn-labour, #role-labour") ||
+      document.querySelector("input[value='LABOUR'], input[value='labour']") ||
+      Array.from(document.querySelectorAll("button, a, .tab, label")).find(el => {
+        const txt = el.innerText || el.textContent || "";
+        return (txt.includes("కూలీ") || txt.toLowerCase().includes("labour")) && !txt.includes("Dashboard");
+      });
+
+    if (labourTarget) {
+      labourTarget.click();
+      switched = true;
+    }
+
+    // 3. AppState update & re-render
+    if (window.AppState) {
+      window.AppState.currentRole = "LABOUR";
+      if (typeof renderLabourWidget === "function") renderLabourWidget();
+      if (typeof renderFarmerWidget === "function") renderFarmerWidget();
+      switched = true;
+    }
+
+    if (switched) {
+      playAudioCue('success');
+      speakTeluguText("కూలీ మోడ్‌కి మార్చబడింది.", null, true);
+    } else {
+      speakTeluguText("కూలీ మోడ్ ఆప్షన్ కనిపించలేదు.", null, true);
+    }
     return;
   }
 
-  if (input.includes("రైతు మోడ్") || input.includes("రైతు లాగిన్")) {
-    const farmerBtn = Array.from(document.querySelectorAll("button, div, span")).find(el => el.textContent && el.textContent.includes("రైతు మోడ్"));
-    if (farmerBtn) farmerBtn.click();
-    speakTeluguText("రైతు మోడ్‌కి మార్చబడింది.", null, true);
-    playAudioCue('success');
+  if (input.includes("రైతు మోడ్") || input.includes("రైతు లాగిన్") || input.includes("రైతుగా మార్చు")) {
+    let switched = false;
+
+    if (typeof window.switchRole === "function") {
+      window.switchRole("FARMER");
+      switched = true;
+    } else if (typeof window.setRole === "function") {
+      window.setRole("FARMER");
+      switched = true;
+    }
+
+    const farmerTarget = 
+      document.querySelector("button[onclick*='FARMER'], button[onclick*='farmer'], [data-role='FARMER'], #btn-farmer, #role-farmer") ||
+      document.querySelector("input[value='FARMER'], input[value='farmer']") ||
+      Array.from(document.querySelectorAll("button, a, .tab, label")).find(el => {
+        const txt = el.innerText || el.textContent || "";
+        return (txt.includes("రైతు") || txt.toLowerCase().includes("farmer")) && !txt.includes("Dashboard");
+      });
+
+    if (farmerTarget) {
+      farmerTarget.click();
+      switched = true;
+    }
+
+    if (window.AppState) {
+      window.AppState.currentRole = "FARMER";
+      if (typeof renderFarmerWidget === "function") renderFarmerWidget();
+      if (typeof renderLabourWidget === "function") renderLabourWidget();
+      switched = true;
+    }
+
+    if (switched) {
+      playAudioCue('success');
+      speakTeluguText("రైతు మోడ్‌కి మార్చబడింది.", null, true);
+    } else {
+      speakTeluguText("రైతు మోడ్ ఆప్షన్ కనిపించలేదు.", null, true);
+    }
     return;
   }
 
