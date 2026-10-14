@@ -339,7 +339,7 @@ function renderPublicUserCards() {
         • <b>స్మార్ట్ ఆటో-స్విచ్:</b> సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారే సదుపాయం.
       </p>
       <button onclick="openLoginModal('FARMER')" style="width:100%; background:#2e7d32; color:#fff; border:none; padding:11px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 2px 6px rgba(46,125,50,0.3);">
-        రైతుగా లాగిన్ / నమోదు అవ్వండి ➔
+        రైతుగా Login / నమోదు అవ్వండి ➔
       </button>
     </div>
 
@@ -355,7 +355,7 @@ function renderPublicUserCards() {
         • మీ వేతనాల లెక్కల కోసం సులభమైన <b>వ్యక్తిగత వాలెట్</b>.
       </p>
       <button onclick="openLoginModal('LABOUR_ONLY')" style="width:100%; background:#f57c00; color:#fff; border:none; padding:11px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 2px 6px rgba(245,124,0,0.3);">
-        కూలీగా లాగిన్ / నమోదు అవ్వండి ➔
+        కూలీగా Login / నమోదు అవ్వండి ➔
       </button>
     </div>
   `;
