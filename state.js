@@ -84,10 +84,13 @@ window.AgriState = {
 
 // Global App User State
 window.AppState = window.AppState || {
-  currentRole: "FARMER", // 'FARMER' leda 'LABOUR'
+  isLoggedIn: false,        // ప్రారంభంలో లాగిన్ అవ్వలేదు
+  userType: null,           // 'LABOUR_ONLY' లేదా 'FARMER'
+  currentRole: "GUEST",     // ప్రారంభంలో 'GUEST', లాగిన్ తర్వాత 'LABOUR' లేదా 'FARMER'
   autoVoice: false,
   user: {
     name: "కిషోర్",
     mobile: "9876543210"
   }
 };
+
