@@ -219,19 +219,31 @@ window.toggleAutoVoice = function(isEnabled) {
   }
   
   if (isEnabled) {
-    const currentRole = (window.AppState && window.AppState.currentRole) ? window.AppState.currentRole : "FARMER";
+    // 1. ఇంకా లాగిన్ కానప్పుడు (పబ్లిక్ ల్యాండింగ్ పేజీ)
+    if (!window.AppState || !window.AppState.isLoggedIn) {
+      speakTeluguText(
+        "నమస్కారం! అగ్రి-కనెక్ట్‌కి స్వాగతం. మీరు రోజూ కూలీ పనులకు వెళ్లేవారైతే కూలీ ఆప్షన్ ఎంచుకోండి. వ్యవసాయం చేసే రైతు సోదరులైతే రైతు ఆప్షన్ ఎంచుకొని మీ మొబైల్ నంబర్‌తో లాగిన్ అవ్వండి."
+      );
+      return;
+    }
 
-    // కూలీ మోడ్ లో ఉన్నప్పుడు
-    if (currentRole === "LABOUR") {
-      speakTeluguText("కూలీ మోడ్ ఆటో వాయిస్ ఆన్ చేయబడింది. మీకు సమీపంలో ఉన్న పనుల వివరాలు చూపిస్తున్నాను. మీకు ఏ పని కావాలో చెప్పండి.", () => {
+    // 2. డైరెక్ట్ కూలీ లాగిన్ అయినప్పుడు
+    if (window.AppState.userType === "LABOUR_ONLY") {
+      speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. ఇక్కడ మీకు అందుబాటులో ఉన్న పనులు మరియు మీ వాలెట్ వివరాలు మాత్రమే కనిపిస్తాయి. మీకు ఏ పని వివరాలు కావాలో చెప్పండి.", () => {
         startListening();
       });
-    } 
-    // రైతు మోడ్ లో ఉన్నప్పుడు
-    else {
-      speakTeluguText("రైతు మోడ్ ఆటో వాయిస్ ఆన్ చేయబడింది. మీకు ఏ పనికి కూలీలు కావాలో చెప్పండి.", () => {
-        startListening();
-      });
+      return;
+    }
+
+    // 3. రైతు లాగిన్ అయినప్పుడు
+    if (window.AppState.userType === "FARMER") {
+      if (window.AppState.currentRole === "LABOUR") {
+        speakTeluguText("రైతు సోదరా, మీరు ప్రస్తుతం కూలీ మోడ్‌లో ఉన్నారు. అందుబాటులో ఉన్న పనులను చూపిస్తున్నాను.");
+      } else {
+        speakTeluguText("రైతు డాష్‌బోర్డ్‌కి స్వాగతం. మీకు ఏ పంట పనికి కూలీలు కావాలో చెప్పండి.", () => {
+          startListening();
+        });
+      }
     }
   } else {
     speakTeluguText("ఆటోమేటిక్ వాయిస్ ఆఫ్ చేయబడింది.");
