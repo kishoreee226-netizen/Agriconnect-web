@@ -1,131 +1,58 @@
-// role.js - Smart Role Switcher & Dynamic UI Injection
+// role.js - AgriConnect Smart Role Cards & Dashboard Controller
 
-function injectRoleSwitcher() {
-  if (document.getElementById("role-switch-container")) return;
-
-  // Header కింద UI ని ఇన్సర్ట్ చేయడానికి కంటైనర్
-  const switchWrapper = document.createElement("div");
-  switchWrapper.id = "role-switch-container";
-  switchWrapper.innerHTML = `
-    <div class="role-switch-bar">
-      <button id="btn-role-farmer" class="role-btn active" onclick="switchUserRole('FARMER')">
-        👨‍🌾 రైతు మోడ్
-      </button>
-      <button id="btn-role-labour" class="role-btn" onclick="switchUserRole('LABOUR')">
-        👷 కూలీ మోడ్
-      </button>
-    </div>
-  `;
-
-  // App Header తర్వాత లేదా బాడీ ప్రారంభంలో ఇన్సర్ట్ చేయడం
-  const header = document.querySelector(".header") || document.querySelector("header") || document.body.firstChild;
-  if (header && header.parentNode) {
-    header.parentNode.insertBefore(switchWrapper, header.nextSibling);
-  } else {
-    document.body.prepend(switchWrapper);
-  }
-
-  // మొదటిసారి డిఫాల్ట్‌గా రైతు మోడ్ యాక్టివేట్ చేయడం
-  switchUserRole("FARMER");
-}
-
-// Global App State
-window.AppState = window.AppState || {
-  currentRole: "FARMER",
-  autoVoice: false,
-  user: { name: "Kishore", mobile: "9876543210" }
-};
-
-// రోల్ స్విచ్ ఫంక్షన్
-window.switchUserRole = function(role) {
-  window.AppState.currentRole = role;
-
-  const farmerBtn = document.getElementById("btn-role-farmer");
-  const labourBtn = document.getElementById("btn-role-labour");
-  const farmerContainer = document.getElementById("farmer-post-container");
-  const labourContainer = document.getElementById("labour-jobs-container");
-
-  if (role === "FARMER") {
-    farmerBtn?.classList.add("active");
-    labourBtn?.classList.remove("active");
-
-    if (farmerContainer) farmerContainer.style.display = "block";
-    if (labourContainer) labourContainer.style.display = "none";
-
-    if (typeof speakTeluguText === "function") {
-      speakTeluguText("రైతు మోడ్ ఆన్ చేయబడింది. కూలీలు కావాలంటే వివరాలు చెప్పండి.");
-    }
-  } else {
-    labourBtn?.classList.add("active");
-    farmerBtn?.classList.remove("active");
-
-    if (farmerContainer) farmerContainer.style.display = "none";
-    if (labourContainer) labourContainer.style.display = "block";
-
-    if (typeof speakTeluguText === "function") {
-      speakTeluguText("కూలీ మోడ్ ఆన్ చేయబడింది. మీకు అనువైన పనుల వివరాలు ఇక్కడ ఉన్నాయి.");
-    }
-  }
-};
-
-// పేజీ లోడ్ కాగానే రన్ అవ్వడం
-if (document.readyState === "loading") {
-  window.addEventListener("DOMContentLoaded", injectRoleSwitcher);
-} else {
-  injectRoleSwitcher();
-}
-if (window.AppState && window.AppState.autoVoice && typeof speakTeluguText === "function") {
-  if (role === "LABOUR") {
-    speakTeluguText("కూలీ మోడ్ కి మారారు. అందుబాటులో ఉన్న పనులను చూడవచ్చు.");
-  } else {
-    speakTeluguText("రైతు మోడ్ కి మారారు. కూలీల కోసం పని వివరాలు చెప్పండి.");
-  }
-}
-// role.js - Smart Login and UI Visibility Control
-
-// 1. Screens ni Role batti set chese function
+// 1. రోల్స్ మరియు విడ్జెట్ల విజిబిలిటీ కంట్రోల్
 function applyUserRoleView() {
   const state = window.AppState;
-  const loginCard = document.getElementById("auth-login-card");
+  const publicCardsContainer = document.getElementById("public-user-cards-container");
   const roleSwitchBar = document.getElementById("role-switch-container");
-  const farmerContainer = document.getElementById("farmer-dashboard-container");
-  const labourContainer = document.getElementById("labour-jobs-container");
-  const mandiContainer = document.getElementById("mandi-container");
-  const weatherContainer = document.getElementById("weather-container");
-  const walletContainer = document.getElementById("wallet-container");
 
-  // Inka Login kani Public / Guest View
+  // డాష్‌బోర్డ్ సెక్షన్‌లను గుర్తించడం
+  const farmerContainer = document.getElementById("farmer-dashboard-container") || 
+                          document.querySelector(".farmer-card") || 
+                          document.querySelector(".farmer-section") ||
+                          Array.from(document.querySelectorAll("div")).find(el => el.textContent && el.textContent.includes("రైతు Dashboard"));
+
+  const labourContainer = document.getElementById("labour-jobs-container") || 
+                          document.querySelector(".labour-section") ||
+                          document.querySelector(".job-list-card");
+
+  const mandiContainer = document.getElementById("mandi-container") || 
+                         document.querySelector(".mandi-card") || 
+                         Array.from(document.querySelectorAll("div")).find(el => el.textContent && el.textContent.includes("మండి / Market"));
+
+  const walletContainer = document.getElementById("wallet-container") || 
+                          document.querySelector(".wallet-card");
+
+  // A. ఇంకా లాగిన్ కానప్పుడు (Public / Guest Landing Page)
   if (!state || !state.isLoggedIn) {
-    if (loginCard) loginCard.style.display = "block";
+    if (publicCardsContainer) publicCardsContainer.style.display = "block";
     if (roleSwitchBar) roleSwitchBar.style.display = "none";
     if (farmerContainer) farmerContainer.style.display = "none";
     if (labourContainer) labourContainer.style.display = "none";
     if (walletContainer) walletContainer.style.display = "none";
-    if (mandiContainer) mandiContainer.style.display = "block";
-    if (weatherContainer) weatherContainer.style.display = "block";
+    if (mandiContainer) mandiContainer.style.display = "block"; // మండి ధరలు పబ్లిక్‌గా కనిపిస్తాయి
     return;
   }
 
-  // Login ayyaka Login Card ni hide cheyali
-  if (loginCard) loginCard.style.display = "none";
+  // B. లాగిన్ అయిన తర్వాత ల్యాండింగ్ కార్డ్స్ దాచడం
+  if (publicCardsContainer) publicCardsContainer.style.display = "none";
 
-  // Case A: Direct Kooli Login (LABOUR_ONLY)
+  // C. డైరెక్ట్ కూలీ లాగిన్ (LABOUR_ONLY)
   if (state.userType === "LABOUR_ONLY") {
-    if (roleSwitchBar) roleSwitchBar.style.display = "none";
+    if (roleSwitchBar) roleSwitchBar.style.display = "none"; // రైతు స్విచ్ బటన్ ఉండదు
     if (farmerContainer) farmerContainer.style.display = "none";
-    if (mandiContainer) mandiContainer.style.display = "none";
-    if (weatherContainer) weatherContainer.style.display = "none";
+    if (mandiContainer) mandiContainer.style.display = "none"; // కూలీకి మండి అవసరం లేదు
 
-    if (labourContainer) labourContainer.style.display = "block";
-    if (walletContainer) walletContainer.style.display = "block";
+    if (labourContainer) labourContainer.style.display = "block"; // కూలీ పనుల లిస్ట్
+    if (walletContainer) walletContainer.style.display = "block"; // కూలీ వాలెట్ మాత్రమే
   } 
-  // Case B: Raitu Login (FARMER)
+  // D. రైతు లాగిన్ (FARMER - 2-in-1 Full Access)
   else if (state.userType === "FARMER") {
-    if (roleSwitchBar) roleSwitchBar.style.display = "flex";
+    if (roleSwitchBar) roleSwitchBar.style.display = "flex"; // స్మార్ట్ స్విచ్ బటన్ కనిపిస్తుంది
     if (mandiContainer) mandiContainer.style.display = "block";
-    if (weatherContainer) weatherContainer.style.display = "block";
     if (walletContainer) walletContainer.style.display = "block";
 
+    // రైతు ఉన్న యాక్టివ్ రోల్ బట్టి
     if (state.currentRole === "LABOUR") {
       if (farmerContainer) farmerContainer.style.display = "none";
       if (labourContainer) labourContainer.style.display = "block";
@@ -136,76 +63,100 @@ function applyUserRoleView() {
   }
 }
 
-// 2. Simple Login Action Function
-window.performSmartLogin = function() {
-  const selectedType = document.querySelector("input[name='userRoleType']:checked")?.value || "FARMER";
-  const phone = document.getElementById("login-phone")?.value.trim();
+// 2. లాగిన్ యాక్షన్ ఫంక్షన్
+window.loginAsRole = function(roleType) {
+  const inputId = roleType === "FARMER" ? "farmer-phone" : "labour-phone";
+  const phone = document.getElementById(inputId)?.value.trim();
 
   if (!phone || phone.length < 10) {
-    alert("Dayachesi saraina 10 ankela mobile number enter cheyandi.");
+    alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
     return;
   }
 
   window.AppState.isLoggedIn = true;
-  window.AppState.userType = selectedType;
-  window.AppState.currentRole = (selectedType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+  window.AppState.userType = roleType;
+  window.AppState.currentRole = (roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
 
   applyUserRoleView();
 
-  // Voice dwara welcome message
+  // లాగిన్ తర్వాత వాయిస్ వెల్‌కమ్
   if (typeof speakTeluguText === "function") {
-    if (selectedType === "LABOUR_ONLY") {
-      speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. అందుబాటులో ఉన్న పనుల వివరాలు ఇక్కడ ఉన్నాయి.");
+    if (roleType === "LABOUR_ONLY") {
+      speakTeluguText("కూలీ ఖాతాలోకి స్వాగతం. అందుబాటులో ఉన్న పనుల వివరాలు మరియు మీ వాలెట్ ఇక్కడ ఉన్నాయి.");
     } else {
-      speakTeluguText("రైతు డాష్‌బోర్డ్‌కి స్వాగతం. మీ పొలం పనులకు కూలీలను నమోదు చేయవచ్చు.");
+      speakTeluguText("రైతు ఖాతాలోకి స్వాగతం. మీ పొలం పనులకు కూలీలను నమోదు చేయవచ్చు, అవసరమైతే కూలీ మోడ్‌కు కూడా మారవచ్చు.");
     }
   }
 };
 
-// 3. Login Box ni Page Top lo Insert cheyadam
-function renderLoginCard() {
-  if (document.getElementById("auth-login-card")) return;
+// 3. హోమ్‌పేజీ యూజర్ కార్డ్స్ (రైతు కార్డ్ & కూలీ కార్డ్ UI)
+function renderPublicUserCards() {
+  if (document.getElementById("public-user-cards-container")) return;
 
-  const card = document.createElement("div");
-  card.id = "auth-login-card";
-  card.style.cssText = "background:#ffffff; border:1px solid #c8e6c9; border-radius:12px; padding:16px; margin:12px auto; max-width:420px; box-shadow:0 2px 8px rgba(0,0,0,0.08); text-align:center;";
-  
-  card.innerHTML = `
-    <h3 style="margin:0 0 10px 0; color:#2e7d32; font-size:18px;">AgriConnect Login</h3>
-    <p style="font-size:13px; color:#555; margin-bottom:12px;">Meeku thagina option ni enchukoni mobile number tho login avvandi:</p>
-    
-    <div style="display:flex; justify-content:center; gap:16px; margin-bottom:12px; font-size:14px; font-weight:bold;">
-      <label style="cursor:pointer; display:flex; align-items:center; gap:4px;">
-        <input type="radio" name="userRoleType" value="LABOUR_ONLY" style="cursor:pointer;"> 👷 నేను కూలీని
-      </label>
-      <label style="cursor:pointer; display:flex; align-items:center; gap:4px;">
-        <input type="radio" name="userRoleType" value="FARMER" checked style="cursor:pointer;"> 🌾 నేను రైతుని
-      </label>
+  const container = document.createElement("div");
+  container.id = "public-user-cards-container";
+  container.style.cssText = "max-width: 480px; margin: 12px auto; padding: 0 10px;";
+
+  container.innerHTML = `
+    <!-- 🌾 రైతు యూజర్ కార్డ్ -->
+    <div style="background:#ffffff; border:2px solid #2e7d32; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <span style="font-size:24px;">🌾</span>
+        <h3 style="margin:0; color:#2e7d32; font-size:18px;">రైతు సోదరుల కోసం (Farmer)</h3>
+      </div>
+      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 12px 0;">
+        • మీ పొలం పనులకు కూలీలను వెంటనే బుక్ చేసుకోండి.<br>
+        • ఉచిత జాబ్ పోస్టింగ్ & మార్కెట్ లైవ్ ధరల సమాచారం.<br>
+        • <b>స్మార్ట్ ఆటో-స్విచ్:</b> సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారి ఇతర పనులకు వెళ్ళే సౌలభ్యం.
+      </p>
+      <div style="display:flex; gap:8px;">
+        <input type="tel" id="farmer-phone" placeholder="మొబైల్ నంబర్ (10 అంకెలు)" maxlength="10" style="flex:1; padding:9px; border:1px solid #a5d6a7; border-radius:8px; font-size:14px; outline:none; text-align:center;">
+        <button onclick="loginAsRole('FARMER')" style="background:#2e7d32; color:#fff; border:none; padding:9px 16px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">
+          రైతుగా లాగిన్
+        </button>
+      </div>
     </div>
 
-    <input type="tel" id="login-phone" placeholder="Mobile Number (10 digits)" maxlength="10" style="width:85%; padding:9px; border:1px solid #ccc; border-radius:8px; font-size:14px; margin-bottom:10px; outline:none; text-align:center;">
-    
-    <button onclick="performSmartLogin()" style="width:90%; padding:10px; background:#2e7d32; color:#fff; border:none; border-radius:8px; font-size:15px; font-weight:bold; cursor:pointer;">
-      ప్రవేశించండి (Login)
-    </button>
+    <!-- 👷 కూలీ యూజర్ కార్డ్ -->
+    <div style="background:#ffffff; border:2px solid #f57c00; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+        <span style="font-size:24px;">👷</span>
+        <h3 style="margin:0; color:#e65100; font-size:18px;">కూలీల కోసం (Labour)</h3>
+      </div>
+      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 12px 0;">
+        • మీ ఊరిలో, సమీప పొలాల్లో రోజువారీ వ్యవసాయ పనులను వెతుక్కోండి.<br>
+        • రోజువారీ కూలీ వివరాలు, డైరెక్ట్ ఫోన్ / వాట్సాప్ కాలింగ్.<br>
+        • మీ వేతనాల లెక్కల కోసం సులభమైన <b>వ్యక్తిగత వాలెట్</b>.
+      </p>
+      <div style="display:flex; gap:8px;">
+        <input type="tel" id="labour-phone" placeholder="మొబైల్ నంబర్ (10 అంకెలు)" maxlength="10" style="flex:1; padding:9px; border:1px solid #ffcc80; border-radius:8px; font-size:14px; outline:none; text-align:center;">
+        <button onclick="loginAsRole('LABOUR_ONLY')" style="background:#f57c00; color:#fff; border:none; padding:9px 16px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">
+          కూలీగా లాగిన్
+        </button>
+      </div>
+    </div>
   `;
 
-  const container = document.getElementById("auto-voice-toggle-container") || document.body.firstChild;
-  if (container && container.parentNode) {
-    container.parentNode.insertBefore(card, container.nextSibling);
+  // ఆటో వాయిస్ టోగుల్ కింద మరియు మండి ధరల పైన కార్డ్స్‌ని అమర్చడం
+  const voiceToggle = document.getElementById("auto-voice-toggle-container");
+  const mandiContainer = document.getElementById("mandi-container") || document.querySelector(".mandi-card");
+
+  if (voiceToggle && voiceToggle.parentNode) {
+    voiceToggle.parentNode.insertBefore(container, voiceToggle.nextSibling);
+  } else if (mandiContainer && mandiContainer.parentNode) {
+    mandiContainer.parentNode.insertBefore(container, mandiContainer);
   } else {
-    document.body.prepend(card);
+    document.body.prepend(container);
   }
 }
 
-// Page load ayyaka setup cheyadam
+// పేజీ లోడ్ అయినప్పుడు ప్రారంభించడం
 if (document.readyState === "loading") {
   window.addEventListener("DOMContentLoaded", () => {
-    renderLoginCard();
+    renderPublicUserCards();
     applyUserRoleView();
   });
 } else {
-  renderLoginCard();
+  renderPublicUserCards();
   applyUserRoleView();
 }
-
