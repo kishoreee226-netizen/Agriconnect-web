@@ -48,7 +48,7 @@ function renderFarmerWidget() {
                 
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <button type="button" id="loc-btn" style="height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 8px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 3px;">
-                    📍 పొలం GPS
+                    📍 పొలం GPS Location 
                   </button>
                   <span id="loc-status" style="font-size: 8px; color: #555; text-align: center; line-height: 1; margin-top: 2px;"></span>
                 </div>
