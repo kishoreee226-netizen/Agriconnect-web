@@ -7,92 +7,84 @@ function renderFarmerWidget() {
   const jobs = window.AgriState ? window.AgriState.getJobs() : [];
   const myAcceptedJobs = jobs.filter(j => j.status === "Confirmed");
 
-  container.innerHTML = `
-    <div style="background: #ffffff; border: 1.5px solid #81c784; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
+    container.innerHTML = `
+    <div class="farmer-card">
       
       <!-- Light Green Header -->
-      <div style="background: #e8f5e9; border-bottom: 1.5px solid #c8e6c9; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0; color: #1b5e20; font-size: 14px; font-weight: 700;">
-          👨‍🌾 రైతు Dashboard (కూలీలను వెతకడం)
-        </h3>
-        <span style="font-size: 10px; background: #c8e6c9; color: #1b5e20; padding: 2px 7px; border-radius: 4px; font-weight: 700;">Live</span>
+      <div class="farmer-card-header">
+        <h3>👨‍🌾 రైతు Dashboard (కూలీలను వెతకడం)</h3>
+        <span class="badge-live">Live</span>
       </div>
 
-      <div style="padding: 12px;">
-        <form id="farmer-form" style="display: flex; flex-direction: column; gap: 8px;">
-          <div style="display: flex; gap: 6px;">
-            <input type="text" id="f-name" placeholder="మీ పేరు" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-            <input type="tel" id="f-phone" placeholder="ఫోన్ నంబర్" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+      <div class="farmer-card-body">
+        <form id="farmer-form" class="farmer-form">
+          <div class="form-row">
+            <input type="text" id="f-name" class="farmer-input" placeholder="మీ పేరు" required />
+            <input type="tel" id="f-phone" class="farmer-input" placeholder="ఫోన్ నంబర్" required />
           </div>
 
-          <div style="display: flex; gap: 6px;">
-            <input type="text" id="f-crop" placeholder="పంట" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-            <input type="text" id="f-work" placeholder="పని" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+          <div class="form-row">
+            <input type="text" id="f-crop" class="farmer-input" placeholder="పంట" required />
+            <input type="text" id="f-work" class="farmer-input" placeholder="పని" required />
           </div>
 
-          <div style="display: flex; gap: 6px; margin-top: 6px;">
-            <input type="number" id="f-count" placeholder="కూలీల సంఖ్య" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
-            <input type="number" id="f-wage" placeholder="రోజు కూలీ (₹)" required style="flex: 1; padding: 7px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 12px; outline: none;" />
+          <div class="form-row-spaced">
+            <input type="number" id="f-count" class="farmer-input" placeholder="కూలీల సంఖ్య" required />
+            <input type="number" id="f-wage" class="farmer-input" placeholder="రోజు కూలీ (₹)" required />
           </div>
 
-                    <!-- Row 4: Stable Row (GPS click chesina Village button asalu kadaladhu) -->
-          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; box-sizing: border-box; margin-top: 6px; padding: 0 4px;">
-            
-            <!-- 1. Date Input (Fixed Width) -->
+          <!-- Row 4: Stable Row (Date, GPS, Village) -->
+          <div class="form-action-row">
             <input 
               type="text" 
               id="f-date" 
+              class="input-date-fixed"
               placeholder="📅 పని తేదీ" 
               onfocus="(this.type='date'); this.showPicker && this.showPicker();" 
               onblur="if(!this.value) this.type='text';" 
               required 
-              style="width: 105px; min-width: 105px; max-width: 105px; height: 34px; padding: 0 4px; border: 1px solid #c8e6c9; border-radius: 6px; font-size: 11px; outline: none; background: #fff; box-sizing: border-box; cursor: pointer; text-align: center;" 
             />
             
-            <!-- 2. GPS Button with Absolute Float Status (Width lock chesam kabatti pakkana vatini nettedhu) -->
-            <div style="position: relative; width: 95px; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0;">
-              <button type="button" id="loc-btn" style="width: 100%; height: 34px; background: #f1f8e9; color: #2e7d32; border: 1px dashed #2e7d32; border-radius: 6px; padding: 0 4px; font-size: 10.5px; font-weight: 600; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 2px; box-sizing: border-box;">
+            <div class="gps-wrapper">
+              <button type="button" id="loc-btn" class="btn-gps">
                 📍 పొలం GPS
               </button>
-              <span id="loc-status" style="position: absolute; top: 36px; left: 50%; transform: translateX(-50%); font-size: 8px; color: #2e7d32; text-align: center; line-height: 1.1; white-space: nowrap; pointer-events: none;"></span>
+              <span id="loc-status" class="gps-status-text"></span>
             </div>
 
-            <!-- 3. Village Button (Right border margin tho fix ga untundhi) -->
-            <button type="button" id="f-village-btn" style="height: 34px; background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; border-radius: 6px; padding: 0 8px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; display: flex; align-items: center; justify-content: center; gap: 3px; box-sizing: border-box; margin-right: 4px; flex-shrink: 0;">
+            <button type="button" id="f-village-btn" class="btn-village">
               🏛️ Hyderabad
             </button>
-
           </div>
 
-
           <!-- Row 5: Compact Submit Button -->
-          <div style="margin-top: 10px; display: flex; justify-content: center;">
-            <button type="submit" style="width: auto; padding: 8px 18px; background: #2e7d32; color: #ffffff; border: none; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 5px rgba(46,125,50,0.25); white-space: nowrap;">
+          <div class="form-submit-row">
+            <button type="submit" class="btn-submit-farmer">
               📢 Submit కూలీల కోసం
             </button>
           </div>
         </form>
 
         <!-- Accepted Labours Section -->
-        <div style="margin-top: 12px; border-top: 1.5px dashed #c8e6c9; padding-top: 8px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <h4 style="margin: 0; font-size: 12px; color: #1b5e20;">👥 Confirm అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
-            ${myAcceptedJobs.length > 2 ? '<span style="font-size: 10px; color: #2e7d32; font-weight: 600;">👇 scroll చేయండి</span>' : ''}
+        <div class="accepted-section">
+          <div class="accepted-header">
+            <h4>👥 Confirm అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
+            ${myAcceptedJobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
           </div>
-          <div id="accepted-list" class="custom-scroll" style="display: flex; flex-direction: column; gap: 6px; max-height: 135px !important; overflow-y: scroll !important; -webkit-overflow-scrolling: touch; padding-right: 4px; min-height: 0;">
+          <div id="accepted-list" class="custom-scroll accepted-scroll-list">
             ${myAcceptedJobs.length === 0 ? `
-              <div style="font-size: 11px; color: #777; text-align: center; padding: 6px;">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
+              <div class="empty-labour-msg">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
             ` : myAcceptedJobs.map(j => `
-              <div style="border: 1px solid #c8e6c9; border-radius: 6px; padding: 8px; background: #f9fbf9;">
-                <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <div class="labour-card-item">
+                <div class="labour-card-header">
                   <strong>👷 ${j.labourName}</strong>
-                  <span style="color: #2e7d32; font-weight: bold;">₹${j.wage}</span>
+                  <span class="labour-wage">₹${j.wage}</span>
                 </div>
-                <div style="font-size: 11px; color: #555; margin-top: 2px;">పని: ${j.crop} (${j.workType})</div>
-                <div style="display: flex; gap: 5px; margin-top: 6px;">
-                  <a href="tel:${j.labourPhone}" style="flex: 1; text-align: center; background: #e8f5e9; color: #2e7d32; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #a5d6a7;">📞 కాల్</a>
-                  <a href="sms:${j.labourPhone}?body=నమస్తే" style="flex: 1; text-align: center; background: #fffde7; color: #f57f17; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #fff59d;">✉️ SMS</a>
-                  <a href="https://wa.me/91${j.labourPhone}" target="_blank" style="flex: 1.2; text-align: center; background: #e8f8f0; color: #075e54; text-decoration: none; border-radius: 4px; padding: 5px; font-size: 11px; font-weight: 600; border: 1px solid #25d366;">💬 వాట్సాప్</a>
+                <div class="labour-work-info">పని: ${j.crop} (${j.workType})</div>
+                <div class="labour-action-links">
+                  <a href="tel:${j.labourPhone}" class="labour-btn-link link-call">📞 కాల్</a>
+                  <a href="sms:${j.labourPhone}?body=నమస్తే" class="labour-btn-link link-sms">✉️ SMS</a>
+                  <a href="https://wa.me/91${j.labourPhone}" target="_blank" class="labour-btn-link link-whatsapp">💬 వాట్సాప్</a>
                 </div>
               </div>
             `).join('')}
@@ -102,6 +94,7 @@ function renderFarmerWidget() {
       </div>
     </div>
   `;
+
 
   // Profile data prefill cheyadam
   if (typeof prefillFarmerFormDefaults === "function") {
