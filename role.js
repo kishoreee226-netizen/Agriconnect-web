@@ -164,30 +164,27 @@ window.switchRoleMode = function(targetRole) {
   if (window.AppState.currentRole === targetRole) return;
   window.AppState.currentRole = targetRole;
 
-  // 1. Profile badge & role text update
-  const roleTextEls = document.querySelectorAll("#user-role, #profile-role, .user-role-badge, [data-role-label]");
-  roleTextEls.forEach(el => {
-    if (targetRole === "LABOUR") {
-      el.innerText = "కూలీ (Labour)";
-      el.style.backgroundColor = "#e65100";
-    } else {
-      el.innerText = "రైతు (Farmer)";
-      el.style.backgroundColor = "#2e7d32";
-    }
-  });
-
-  // Role tag/badge unna elements kosam fallback check
-  const allBadges = Array.from(document.querySelectorAll("span, b, div, p"));
-  allBadges.forEach(el => {
-    if (el.innerText && (el.innerText.trim() === "రైతు (Farmer)" || el.innerText.trim() === "రైతు" || el.innerText.trim() === "కూలీ (Labour)" || el.innerText.trim() === "కూలీ")) {
-      el.innerText = targetRole === "LABOUR" ? "కూలీ (Labour)" : "రైతు (Farmer)";
-    }
-  });
-
-  // 2. View render function call
+  // 1. View refresh cheyadam
   if (typeof applyUserRoleView === "function") {
     applyUserRoleView();
   }
+  if (typeof renderRoleSwitchBar === "function") {
+    renderRoleSwitchBar();
+  }
+
+  // 2. Profile banner lo Role text ni force ga update cheyadam
+  setTimeout(() => {
+    const banner = document.getElementById("user-profile-banner");
+    if (banner) {
+      const isLabour = (targetRole === "LABOUR");
+      // Badge / Text replace logic
+      banner.innerHTML = banner.innerHTML
+        .replace(/రైతు \(Farmer\)/g, isLabour ? "కూలీ (Labour)" : "రైతు (Farmer)")
+        .replace(/కూలీ \(Labour\)/g, isLabour ? "కూలీ (Labour)" : "రైతు (Farmer)")
+        .replace(/రైతు మోడ్/g, isLabour ? "కూలీ మోడ్" : "రైతు మోడ్")
+        .replace(/కూలీ మోడ్/g, isLabour ? "కూలీ మోడ్" : "రైతు మోడ్");
+    }
+  }, 50);
 
   // 3. Voice feedback
   if (typeof speakTeluguText === "function") {
