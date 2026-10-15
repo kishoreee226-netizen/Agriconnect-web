@@ -37,22 +37,26 @@ function renderCompanyDetails() {
     if (elAddress) elAddress.textContent = `📍 ${window.COMPANY_CONFIG.location}`;
     if (elCopyright) elCopyright.textContent = `© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.`;
 
-        // 1. Header Title, Logo & Gold Cursive Tagline Setup
+            // 1. Header Title, Logo & Gold Cursive Tagline Setup (Compact Vertical Height)
     const header = document.querySelector("header");
     if (header) {
       const headerTitle = header.querySelector("h1");
       if (headerTitle && !document.getElementById("header-tagline")) {
         const logoSrc = window.COMPANY_CONFIG.branding?.headerLogo || "logo.png";
         
-                header.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 52px; height: 52px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
-            <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;height: 52px;">
-              <h1 style="margin: 0; font-size: 23px; font-weight: 800; color: #ffffff; line-height: 1.1; letter-spacing: 0.4px;">
+        // Header పైనున్న మరియు కిందున్న ఎక్స్‌ట్రా ప్యాడింగ్ తగ్గించడం
+        header.style.padding = "6px 12px";
+        header.style.minHeight = "unset";
+
+        header.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 46px; height: 46px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
+            <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
+              <h1 style="margin: 0; font-size: 23px; font-weight: 800; color: #ffffff; line-height: 1.0; letter-spacing: 0.3px;">
                 ${window.COMPANY_CONFIG.shortName}
               </h1>
               <p id="header-tagline" style="
-                margin: 4px 0 0 0;
+                margin: 2px 0 0 0;
                 font-size: 13.5px;
                 background: linear-gradient(135deg, #FFF176 0%, #FFD700 50%, #FFA000 100%);
                 -webkit-background-clip: text;
@@ -60,18 +64,18 @@ function renderCompanyDetails() {
                 text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
                 font-style: italic;
                 font-family: 'Brush Script MT', 'Segoe Script', 'Great Vibes', cursive, sans-serif;
-                letter-spacing: 0.8px;
+                letter-spacing: 0.7px;
                 font-weight: 700;
-                line-height: 1.2;
+                line-height: 1.0;
               ">
                 ${window.COMPANY_CONFIG.tagline}
               </p>
             </div>
           </div>
         `;
-
       }
     }
+
 
     // 2. Footer ని dynamic గా create చేసి add చేయడం
     let footer = document.querySelector("footer");
