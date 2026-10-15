@@ -113,7 +113,7 @@ function renderUserProfileBanner() {
         📞 ${state.userProfile.phone} &nbsp;|&nbsp; 📍 గ్రామం: <b>${state.userProfile.village}</b>
       </div>
     </div>
-    <button onclick="logoutUser()" style="background: #f44336; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;">లాగౌట్</button>
+    <button onclick="logoutUser()" style="background: #f44336; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;">Logout</button>
   `;
 }
 
