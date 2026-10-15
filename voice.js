@@ -327,6 +327,35 @@ function handleVoiceCommand(voiceText) {
     return;
   }
 
+  // Weather Command by Voice
+  if (input.includes("వాతావరణం") || input.includes("ఎండ ఎంత") || input.includes("వర్షం") || input.includes("weather")) {
+    const tempEl = document.getElementById("weather-temp");
+    const descEl = document.getElementById("weather-desc");
+    const locEl = document.getElementById("gps-weather-res");
+
+    if (tempEl && tempEl.innerText && !tempEl.innerText.includes("--")) {
+      const temp = tempEl.innerText.replace(/[^0-9]/g, "");
+      const wind = descEl ? descEl.innerText : "";
+      
+      let locName = "మీ ప్రాంతంలో";
+      if (locEl && locEl.innerText) {
+        const cleanedLoc = locEl.innerText.replace("📍", "").replace("(Live Weather)", "").trim();
+        if (cleanedLoc) locName = cleanedLoc;
+      }
+
+      const weatherMsg = `${locName} ప్రస్తుతం ఉష్ణోగ్రత ${temp} డిగ్రీలు ఉంది. ${wind}.`;
+      speakTeluguText(weatherMsg, null, true);
+    } else {
+      speakTeluguText("వాతావరణ వివరాలు లోడ్ అవుతున్నాయి, ఒక్క క్షణం ఆగండి.", null, true);
+      if (typeof getLiveLocationWeather === "function") {
+        getLiveLocationWeather();
+      }
+    }
+
+    document.getElementById("weather-container")?.scrollIntoView({ behavior: "smooth" });
+    return;
+  }
+
   // H. Farmer Mode: Auto Fill Form
   if (!window.AppState || window.AppState.currentRole === "FARMER") {
     let crop = "";
