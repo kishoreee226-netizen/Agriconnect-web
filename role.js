@@ -163,8 +163,33 @@ function removeRoleSwitchBar() {
 window.switchRoleMode = function(targetRole) {
   if (window.AppState.currentRole === targetRole) return;
   window.AppState.currentRole = targetRole;
-  applyUserRoleView();
 
+  // 1. Profile badge & role text update
+  const roleTextEls = document.querySelectorAll("#user-role, #profile-role, .user-role-badge, [data-role-label]");
+  roleTextEls.forEach(el => {
+    if (targetRole === "LABOUR") {
+      el.innerText = "కూలీ (Labour)";
+      el.style.backgroundColor = "#e65100";
+    } else {
+      el.innerText = "రైతు (Farmer)";
+      el.style.backgroundColor = "#2e7d32";
+    }
+  });
+
+  // Role tag/badge unna elements kosam fallback check
+  const allBadges = Array.from(document.querySelectorAll("span, b, div, p"));
+  allBadges.forEach(el => {
+    if (el.innerText && (el.innerText.trim() === "రైతు (Farmer)" || el.innerText.trim() === "రైతు" || el.innerText.trim() === "కూలీ (Labour)" || el.innerText.trim() === "కూలీ")) {
+      el.innerText = targetRole === "LABOUR" ? "కూలీ (Labour)" : "రైతు (Farmer)";
+    }
+  });
+
+  // 2. View render function call
+  if (typeof applyUserRoleView === "function") {
+    applyUserRoleView();
+  }
+
+  // 3. Voice feedback
   if (typeof speakTeluguText === "function") {
     if (targetRole === "LABOUR") {
       speakTeluguText("కూలీ మోడ్‌కి మారారు. మీ చుట్టుపక్కల పనుల వివరాలు ఇక్కడ కనిపిస్తాయి.");
