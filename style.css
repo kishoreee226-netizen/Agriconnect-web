@@ -1996,3 +1996,68 @@ header h1 {
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(46, 125, 50, 0.3);
 }
+
+/* --- Live Weather Card Styles --- */
+.weather-card {
+  background: #ffffff;
+  border: 1.5px solid #81c784;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.weather-header strong {
+  color: #2e7d32;
+  font-size: 14px;
+}
+
+.btn-weather-refresh {
+  background: #2e7d32;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.weather-display-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f1f8e9;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.weather-temp-text {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1b5e20;
+}
+
+.weather-desc-text {
+  font-size: 11px;
+  color: #555;
+  margin-top: 2px;
+}
+
+.weather-icon-lg {
+  font-size: 28px;
+}
+
+.weather-status-footer {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2e7d32;
+  margin-top: 6px;
+  text-align: center;
+}
