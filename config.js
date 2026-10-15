@@ -46,8 +46,8 @@ function renderCompanyDetails() {
         
                 header.innerHTML = `
           <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
-            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 46px; height: 46px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
-            <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
+            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 52px; height: 52px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
+            <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;height: 52px;">
               <h1 style="margin: 0; font-size: 23px; font-weight: 800; color: #ffffff; line-height: 1.1; letter-spacing: 0.4px;">
                 ${window.COMPANY_CONFIG.shortName}
               </h1>
