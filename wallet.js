@@ -43,64 +43,62 @@ function renderWalletWidget() {
     .filter(item => item.status === "Locked")
     .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-  container.innerHTML = `
-    <div style="background: #ffffff; border: 1.5px solid #ffb300; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.06);">
+    container.innerHTML = `
+    <div class="wallet-card">
       
       <!-- Wallet Header -->
-      <div style="background: #fff8e1; border-bottom: 1.5px solid #ffe082; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;">
-        <h3 style="margin: 0; color: #b78103; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 5px;">
-          💰 అగ్రీ Smart Wallet (2-in-1 Escrow Lock)
-        </h3>
-        <span style="font-size: 10px; background: #ffe082; color: #b78103; padding: 2px 7px; border-radius: 4px; font-weight: 700;">100% Secured</span>
+      <div class="wallet-card-header">
+        <h3>💰 అగ్రీ Smart Wallet (2-in-1 Escrow Lock)</h3>
+        <span class="badge-wallet-secured">100% Secured</span>
       </div>
 
-      <div style="padding: 12px; display: flex; flex-direction: column; gap: 10px;">
+      <div class="wallet-body">
         
         <!-- Summary Cards: Farmer Balance vs Labour Balance -->
-        <div style="display: flex; gap: 8px;">
+        <div class="wallet-summary-row">
           <!-- Farmer Side -->
-          <div style="flex: 1; background: #f1f8e9; border: 1px solid #c8e6c9; border-radius: 8px; padding: 8px; text-align: center;">
-            <div style="font-size: 11px; color: #2e7d32; font-weight: 600;">👨‍🌾 రైతు ఖాతా balance</div>
-            <div style="font-size: 16px; font-weight: 800; color: #1b5e20; margin: 2px 0;">₹${walletData.farmerBalance}</div>
-            <div style="font-size: 10px; color: #d84315; font-weight: 600;">🔒 Lock అయినది: ₹${lockedTotal}</div>
+          <div class="balance-card balance-card-farmer">
+            <div class="balance-title-farmer">👨‍🌾 రైతు ఖాతా balance</div>
+            <div class="balance-amount-farmer">₹${walletData.farmerBalance}</div>
+            <div class="balance-locked-text">🔒 Lock అయినది: ₹${lockedTotal}</div>
           </div>
 
           <!-- Labour Side -->
-          <div style="flex: 1; background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 8px; padding: 8px; text-align: center;">
-            <div style="font-size: 11px; color: #1565c0; font-weight: 600;">👷 కూలీ main wallet</div>
-            <div style="font-size: 16px; font-weight: 800; color: #0d47a1; margin: 2px 0;">₹${walletData.labourBalance}</div>
-            <button onclick="handleWithdrawUPI()" style="background: #1976d2; color: #ffffff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 10px; font-weight: 700; cursor: pointer; margin-top: 2px;">
+          <div class="balance-card balance-card-labour">
+            <div class="balance-title-labour">👷 కూలీ main wallet</div>
+            <div class="balance-amount-labour">₹${walletData.labourBalance}</div>
+            <button onclick="handleWithdrawUPI()" class="btn-withdraw-upi">
               💸 UPI Withdraw
             </button>
           </div>
         </div>
 
         <!-- Escrow Active Transactions List -->
-        <div style="border-top: 1.5px dashed #ffe082; padding-top: 8px;">
-          <div style="font-size: 12px; font-weight: 700; color: #5d4037; margin-bottom: 6px;">
+        <div class="escrow-section">
+          <div class="escrow-title">
             🔐 Escrow లావాదేవీలు (కూలీకి garanty lock):
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto;">
+          <div class="escrow-list-container">
             ${walletData.lockedEscrow.length === 0 ? `
-              <div style="font-size: 11px; color: #888; text-align: center; padding: 8px; background: #fffde7; border-radius: 6px;">
+              <div class="escrow-empty-msg">
                 ప్రస్తుతం ఏ లావాదేవీ lock అయి లేదు.
               </div>
             ` : walletData.lockedEscrow.map(esc => {
               const isLocked = esc.status === "Locked";
               return `
-                <div style="border: 1px solid ${isLocked ? '#ffe082' : '#c8e6c9'}; background: ${isLocked ? '#fffde7' : '#f9fbf9'}; border-radius: 6px; padding: 8px;">
-                  <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                <div class="escrow-item-card ${isLocked ? 'is-locked' : ''}">
+                  <div class="escrow-item-top">
                     <span><b>${esc.jobTitle}</b> (${esc.labourName})</span>
-                    <strong style="color: ${isLocked ? '#e65100' : '#2e7d32'}; font-size: 13px;">₹${esc.amount}</strong>
+                    <strong class="escrow-amount ${isLocked ? 'is-locked' : 'is-released'}">₹${esc.amount}</strong>
                   </div>
-                  <div style="font-size: 10px; color: #555; margin-top: 2px;">
+                  <div class="escrow-status-text">
                     status: <b>${isLocked ? '🔒 lock అయింది (రైతు ఖాతాలో hold)' : '✅ Release అయింది (కూలీ ఖాతాకు చేరింది)'}</b>
                   </div>
                   
                   ${isLocked ? `
-                    <div style="display: flex; justify-content: center; margin-top: 8px;">
-                      <button onclick="handleReleasePayment('${esc.id}')" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 5px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; box-shadow: 0 1px 3px rgba(46,125,50,0.3);">
+                    <div class="escrow-action-center">
+                      <button onclick="handleReleasePayment('${esc.id}')" class="btn-release-payment">
                         🔓 పని అయింది - Release చేయండి (రైతు)
                       </button>
                     </div>
