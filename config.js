@@ -60,16 +60,26 @@ function renderCompanyDetails() {
       "max-width: 420px; margin: 20px auto 10px auto; text-align: center; border-top: 1px solid #333; padding: 14px 10px; line-height: 1.5;";
   }
 
-  // Header Tagline
-  const header = document.querySelector("header");
-  if (header && !document.getElementById("header-tagline")) {
-    const p = document.createElement("p");
-    p.id = "header-tagline";
-    p.innerText = window.COMPANY_CONFIG?.tagline || "The Voice of Smart Farming";
-    p.style.cssText = "margin: 2px 0 0 0; font-size: 11px; color: #e8f5e9; font-weight: 500; letter-spacing: 0.4px; opacity: 0.95; line-height: 1.2;";
-    header.appendChild(p);
-  }
-}
+      // Header Tagline Setup (AgriConnect kinda chinnaga kurchovadaniki)
+    const header = document.querySelector("header");
+    if (header && !document.getElementById("header-tagline")) {
+      const h1 = header.querySelector("h1");
+      if (h1) {
+        const textWrapper = document.createElement("div");
+        textWrapper.style.cssText = "display: flex; flex-direction: column; justify-content: center; line-height: 1.1;";
+
+        h1.parentNode.insertBefore(textWrapper, h1);
+        h1.style.margin = "0";
+        textWrapper.appendChild(h1);
+
+        const p = document.createElement("p");
+        p.id = "header-tagline";
+        p.innerText = window.COMPANY_CONFIG?.tagline || "The Voice of Smart Farming";
+        p.style.cssText = "margin: 2px 0 0 0; font-size: 10px; color: #e8f5e9; font-weight: 500; letter-spacing: 0.3px; opacity: 0.9;";
+        textWrapper.appendChild(p);
+      }
+    }
+
 document.addEventListener(
   "DOMContentLoaded",
   renderCompanyDetails
