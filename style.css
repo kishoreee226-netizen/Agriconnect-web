@@ -2061,3 +2061,127 @@ header h1 {
   margin-top: 6px;
   text-align: center;
 }
+
+/* --- Mandi Live Market Widget Styles --- */
+.mandi-card {
+  background: #fff0f5;
+  border: 1.5px solid #f48fb1;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(233, 30, 99, 0.08);
+}
+
+.mandi-card-header {
+  background: #fce4ec;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f8bbd0;
+}
+
+.mandi-card-header h3 {
+  margin: 0;
+  color: #880e4f;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mandi-badge {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.mandi-badge.live {
+  background: #fce4ec;
+  color: #ad1457;
+  border: 1px solid rgba(173, 20, 87, 0.2);
+}
+
+.mandi-badge.backup {
+  background: #fffde7;
+  color: #b78103;
+  border: 1px solid rgba(183, 129, 3, 0.2);
+}
+
+.mandi-body {
+  padding: 10px;
+  background: #fff5f8;
+}
+
+/* 3-Column Dropdowns Grid */
+.mandi-filters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.mandi-select {
+  width: 100%;
+  font-size: 11px;
+  padding: 6px 4px;
+  border: 1px solid #f48fb1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #4a148c;
+  outline: none;
+}
+
+/* Table Design */
+.mandi-table-wrapper {
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #f8bbd0;
+  overflow: hidden;
+}
+
+.mandi-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.mandi-table-head-row {
+  background: #fce4ec;
+  font-size: 11px;
+  color: #880e4f;
+  border-bottom: 1px solid #f8bbd0;
+}
+
+.mandi-table-head-row th {
+  padding: 7px 6px;
+}
+
+.mandi-scroll {
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.mandi-row {
+  border-bottom: 1px solid #f8bbd0;
+  font-size: 11px;
+}
+
+.mandi-col-crop {
+  padding: 7px 6px;
+  font-weight: 600;
+  color: #880e4f;
+}
+
+.mandi-col-market {
+  padding: 7px 6px;
+  color: #4a148c;
+}
+
+.mandi-col-price {
+  padding: 7px 6px;
+  font-weight: 700;
+  color: #c2185b;
+  text-align: right;
+}
