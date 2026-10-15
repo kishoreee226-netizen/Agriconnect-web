@@ -172,17 +172,32 @@ window.switchRoleMode = function(targetRole) {
     renderRoleSwitchBar();
   }
 
-  // 2. Profile banner lo Role text ni force ga update cheyadam
+    // 2. Profile banner lo Role text mariyu background colour update cheyadam
   setTimeout(() => {
     const banner = document.getElementById("user-profile-banner");
     if (banner) {
       const isLabour = (targetRole === "LABOUR");
-      // Badge / Text replace logic
+
+      // Text replace logic
       banner.innerHTML = banner.innerHTML
         .replace(/రైతు \(Farmer\)/g, isLabour ? "కూలీ (Labour)" : "రైతు (Farmer)")
         .replace(/కూలీ \(Labour\)/g, isLabour ? "కూలీ (Labour)" : "రైతు (Farmer)")
         .replace(/రైతు మోడ్/g, isLabour ? "కూలీ మోడ్" : "రైతు మోడ్")
         .replace(/కూలీ మోడ్/g, isLabour ? "కూలీ మోడ్" : "రైతు మోడ్");
+
+      // Colour update: Labour ayithe Orange (#e65100), Farmer ayithe Green (#2e7d32)
+      const targetBgColor = isLabour ? "#e65100" : "#2e7d32";
+
+      // Banner loni badges / tags colour ni change cheyadam
+      const badgeEls = banner.querySelectorAll("span, b, div, p");
+      badgeEls.forEach(el => {
+        const txt = el.innerText ? el.innerText.trim() : "";
+        if (txt === "కూలీ (Labour)" || txt === "రైతు (Farmer)" || txt === "కూలీ మోడ్" || txt === "రైతు మోడ్") {
+          el.style.backgroundColor = targetBgColor;
+          el.style.color = "#ffffff";
+          el.style.borderColor = targetBgColor;
+        }
+      });
     }
   }, 50);
 
