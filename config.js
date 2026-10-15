@@ -70,7 +70,6 @@ function renderCompanyDetails() {
     header.appendChild(p);
   }
 }
-
 document.addEventListener(
   "DOMContentLoaded",
   renderCompanyDetails
