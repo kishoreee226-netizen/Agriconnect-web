@@ -44,16 +44,16 @@ function renderCompanyDetails() {
       if (headerTitle && !document.getElementById("header-tagline")) {
         const logoSrc = window.COMPANY_CONFIG.branding?.headerLogo || "logo.png";
         
-        header.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 38px; height: 38px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
+                header.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 14px; width: 100%;">
+            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 46px; height: 46px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
             <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
-              <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #ffffff; line-height: 1.1; letter-spacing: 0.3px;">
+              <h1 style="margin: 0; font-size: 23px; font-weight: 800; color: #ffffff; line-height: 1.1; letter-spacing: 0.4px;">
                 ${window.COMPANY_CONFIG.shortName}
               </h1>
               <p id="header-tagline" style="
-                margin: 3px 0 0 0;
-                font-size: 12.5px;
+                margin: 4px 0 0 0;
+                font-size: 13.5px;
                 background: linear-gradient(135deg, #FFF176 0%, #FFD700 50%, #FFA000 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
@@ -69,6 +69,7 @@ function renderCompanyDetails() {
             </div>
           </div>
         `;
+
       }
     }
 
