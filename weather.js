@@ -4,24 +4,24 @@ function renderWeatherWidget() {
   const container = document.getElementById("weather-container");
   if (!container) return;
 
-  container.innerHTML = `
-    <div style="background: #ffffff; border: 1.5px solid #81c784; border-radius: 8px; padding: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <strong style="color: #2e7d32; font-size: 14px;">🌦️ లైవ్ వాతావరణం (Live Weather)</strong>
-        <button onclick="getLiveLocationWeather()" style="background: #2e7d32; color: #ffffff; border: none; border-radius: 4px; padding: 4px 10px; font-size: 11px; cursor: pointer; font-weight: 600;">
+    container.innerHTML = `
+    <div class="weather-card">
+      <div class="weather-header">
+        <strong>🌦️ లైవ్ వాతావరణం (Live Weather)</strong>
+        <button onclick="getLiveLocationWeather()" class="btn-weather-refresh">
           🔄 రిఫ్రెష్
         </button>
       </div>
 
-      <div style="display: flex; align-items: center; justify-content: space-between; background: #f1f8e9; padding: 10px; border-radius: 6px;">
+      <div class="weather-display-box">
         <div>
-          <div id="weather-temp" style="font-size: 24px; font-weight: 700; color: #1b5e20;">--°C</div>
-          <div id="weather-desc" style="font-size: 11px; color: #555; margin-top: 2px;">గాలి వేగం: -- km/h</div>
+          <div id="weather-temp" class="weather-temp-text">--°C</div>
+          <div id="weather-desc" class="weather-desc-text">గాలి వేగం: -- km/h</div>
         </div>
-        <div style="font-size: 28px;">🌤️</div>
+        <div class="weather-icon-lg">🌤️</div>
       </div>
 
-      <div id="gps-weather-res" style="font-size: 11px; font-weight: 600; color: #2e7d32; margin-top: 6px; text-align: center;">
+      <div id="gps-weather-res" class="weather-status-footer">
         📍 GPS లొకేషన్ తీసుకుంటోంది...
       </div>
     </div>
@@ -29,6 +29,7 @@ function renderWeatherWidget() {
 
   getLiveLocationWeather();
 }
+
 
 function getLiveLocationWeather() {
   const res = document.getElementById("gps-weather-res");
