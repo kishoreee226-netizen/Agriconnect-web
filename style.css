@@ -12,39 +12,65 @@ body {
     overflow-x: hidden;
 }
 
+/* --- Header & Branding Styles --- */
 header {
-    background-color: #1B5E20;
-    color: white;
-    padding: 0.8rem 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  background-color: #1b5e20;
+  color: white;
+  padding: 6px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
 }
 
 .header-logo {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: white;
-    padding: 2px;
-    object-fit: cover;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: white;
+  padding: 2px;
+  object-fit: contain;
+  flex-shrink: 0;
 }
 
-.header-brand h1 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: 0.3px;
+}
+
+#header-tagline {
+  margin: 2px 0 0 0;
+  font-size: 12.5px;
+  background: linear-gradient(135deg, #FFF176 0%, #FFD700 50%, #FFA000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+  font-style: italic;
+  font-family: 'Brush Script MT', 'Segoe Script', 'Great Vibes', cursive, sans-serif;
+  letter-spacing: 0.7px;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .nav-actions {
