@@ -71,10 +71,13 @@
 
 <!-- 4th: Market / Mandi Widget Container -->
 <div id="mandi-container"></div>
+<!-- 5th: Weather Widget Container -->
+<div id="weather-container"></div>
 
-    <!-- మిగిలిన 4 భాగాల కోసం ఖాళీ స్థలం (Slot 5 to 8) -->
+
+    <!-- మిగిలిన 3 భాగాల కోసం ఖాళీ స్థలం (Slot 6 to 8) -->
     <div class="future-grid-placeholder">
-      🌱 క్రింది 4 భాగాలు (పరికరాలు / విత్తనాలు / రవాణా / వాతావరణం) త్వరలో రానున్నాయి...
+      🌱 క్రింది 3 భాగాలు (పరికరాలు / విత్తనాలు / రవాణా) త్వరలో రానున్నాయి...
     </div>
   </div>
 
@@ -88,6 +91,8 @@
   <script src="farmer.js?v=301"></script>
   <script src="labour.js?v=301"></script>
   <script src="voice.js?v=301"></script>
+  <script src="weather.js?v=301"></script>
+
 
 
   <!-- అన్ని విడ్జెట్లను ప్రారంభించే లాజిక్ -->
@@ -114,6 +119,11 @@
       if (typeof renderLabourWidget === "function") {
         renderLabourWidget();
       }
+   // 5. Weather
+   if (typeof renderWeatherWidget === "function") {
+     renderWeatherWidget();
+   }
+
     });
   </script>
 <script src="config.js"></script>
