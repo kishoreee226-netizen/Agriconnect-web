@@ -21,13 +21,12 @@ function renderWeatherWidget() {
         <div style="font-size: 28px;">🌤️</div>
       </div>
 
-      <div id="gps-weather-res" style="font-size: 10px; color: #666; margin-top: 6px; text-align: center;">
-        📍 GPS బటన్ నొక్కి లైవ్ వాతావరణం పొందండి
+      <div id="gps-weather-res" style="font-size: 11px; font-weight: 600; color: #2e7d32; margin-top: 6px; text-align: center;">
+        📍 GPS లొకేషన్ తీసుకుంటోంది...
       </div>
     </div>
   `;
 
-  // Page open avvagane weather auto fetch avvadaniki
   getLiveLocationWeather();
 }
 
@@ -37,36 +36,50 @@ function getLiveLocationWeather() {
   const descEl = document.getElementById("weather-desc");
 
   if (!navigator.onLine) {
-    if (res) res.innerHTML = "⚠️ <span style='color:#d32f2f;'>Internet ledu. Weather update kaaledu.</span>";
+    if (res) res.innerHTML = "⚠️ <span style='color:#d32f2f;'>Internet లేదు. Weather అప్‌డేట్ కాలేదు.</span>";
     return;
   }
 
   if (!navigator.geolocation) {
-    if (res) res.innerText = "GPS support ledu.";
+    if (res) res.innerText = "GPS సపోర్ట్ లేదు.";
     return;
   }
 
-  if (res) res.innerText = "📍 GPS location theesukuntundi...";
+  if (res) res.innerText = "📍 GPS లొకేషన్ తీసుకుంటోంది...";
 
   navigator.geolocation.getCurrentPosition(async (pos) => {
     const lat = pos.coords.latitude;
     const lon = pos.coords.longitude;
     try {
-      const resp = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-      const data = await resp.json();
-      if (data && data.current_weather) {
-        if (tempEl) tempEl.innerText = `${Math.round(data.current_weather.temperature)}°C`;
-        if (descEl) descEl.innerText = `గాలి వేగం: ${data.current_weather.windspeed} km/h`;
-        if (res) res.innerText = `✅ Live Weather (Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)})`;
+      // 1. Weather Data (Open-Meteo)
+      const weatherPromise = fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`).then(r => r.json());
+
+      // 2. Village/City Name Reverse Geocoding (Free API)
+      const geoPromise = fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`).then(r => r.json());
+
+      const [weatherData, geoData] = await Promise.all([weatherPromise, geoPromise]);
+
+      // Weather Update
+      if (weatherData && weatherData.current_weather) {
+        if (tempEl) tempEl.innerText = `${Math.round(weatherData.current_weather.temperature)}°C`;
+        if (descEl) descEl.innerText = `గాలి వేగం: ${weatherData.current_weather.windspeed} km/h`;
+      }
+
+      // Location Name Update
+      const village = geoData.locality || geoData.city || geoData.principalSubdivision || "మీ ప్రాంతం";
+      const district = geoData.localityInfo?.administrative?.[2]?.name || "";
+      const locationText = district && district !== village ? `${village}, ${district}` : village;
+
+      if (res) {
+        res.innerHTML = `📍 <strong>${locationText}</strong> (Live Weather)`;
       }
     } catch (e) {
-      if (res) res.innerText = "Weather fetch cheyadam valla kaledu.";
+      if (res) res.innerText = `✅ Live Weather (Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)})`;
     }
   }, () => {
-    if (res) res.innerText = "GPS permission ivvaledu.";
+    if (res) res.innerText = "GPS పర్మిషన్ ఇవ్వలేదు.";
   });
 }
 
-// Global scope lo petadam
 window.renderWeatherWidget = renderWeatherWidget;
 window.getLiveLocationWeather = getLiveLocationWeather;
