@@ -65,12 +65,12 @@ function renderFilteredTable(records) {
     return;
   }
 
-  // records.slice limit theesivesi mottham records chupisthunnam
+    // records.slice limit theesivesi mottham records chupisthunnam
   tableBody.innerHTML = records.map(item => `
-    <tr style="border-bottom: 1px solid #f8bbd0; font-size: 11px;">
-      <td style="padding: 7px 6px; font-weight: 600; color: #880e4f;">${item.commodity || item.Commodity || "పంట"}</td>
-      <td style="padding: 7px 6px; color: #4a148c;">${item.market || item.Market || "National APMC"}</td>
-      <td style="padding: 7px 6px; font-weight: 700; color: #c2185b; text-align: right;">₹${item.modal_price || item.Modal_Price || item.price || "N/A"}</td>
+    <tr class="mandi-row">
+      <td class="mandi-col-crop">${item.commodity || item.Commodity || "పంట"}</td>
+      <td class="mandi-col-market">${item.market || item.Market || "National APMC"}</td>
+      <td class="mandi-col-price">₹${item.modal_price || item.Modal_Price || item.price || "N/A"}</td>
     </tr>
   `).join("");
 }
@@ -121,7 +121,7 @@ function updateCropDropdown() {
 }
 
 // ==========================================
-// 5. Main Render Function (Light Pink Theme)
+// 5. Main Render Function (Clean Template)
 // ==========================================
 window.renderMandiWidget = async function() {
   const container = document.getElementById("mandi-container");
@@ -131,71 +131,60 @@ window.renderMandiWidget = async function() {
   allMandiRecords = result.records;
 
   const isLive = result.isLive;
-  const badgeColor = isLive ? "#ad1457" : "#b78103";
-  const badgeBg = isLive ? "#fce4ec" : "#fffde7";
+  const badgeClass = isLive ? "live" : "backup";
   const badgeText = isLive ? "🟢 Live Server" : "🟡 Saved Backup";
 
   const states = [...new Set(allMandiRecords.map(item => item.state || item.State).filter(Boolean))];
   if (!states.includes("Telangana")) states.unshift("Telangana");
   if (!states.includes("Andhra Pradesh")) states.push("Andhra Pradesh");
 
-  // Mothaniki Light Pink Card Background (#fff0f5) mariyu Header (#fce4ec)
   container.innerHTML = `
-    <div style="background: #fff0f5; border: 1.5px solid #f48fb1; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(233,30,99,0.08);">
+    <div class="mandi-card">
       
-      <!-- Top Title Header Strip (Pink Background) -->
-      <div style="background: #fce4ec; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f8bbd0;">
-        <h3 style="margin: 0; color: #880e4f; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-          📈 మండి / Market live ధరలు
-        </h3>
-        <span style="font-size: 10px; background: ${badgeBg}; color: ${badgeColor}; padding: 2px 7px; border-radius: 10px; font-weight: 600; border: 1px solid ${badgeColor}33;">
-          ${badgeText}
-        </span>
+      <!-- Top Title Header Strip -->
+      <div class="mandi-card-header">
+        <h3>📈 మండి / Market live ధరలు</h3>
+        <span class="mandi-badge ${badgeClass}">${badgeText}</span>
       </div>
 
-      <div style="padding: 10px; background: #fff5f8;">
+      <div class="mandi-body">
         <!-- 3 Filter Dropdowns -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 10px;">
-          
-          <!-- 1. Category -->
+        <div class="mandi-filters-grid">
           <div>
-            <select id="mandi-category-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #f48fb1; border-radius: 6px; background: #ffffff; color: #4a148c; outline: none;">
+            <select id="mandi-category-filter" class="mandi-select">
               <option value="">పంట విభాగం (Category)</option>
               ${Object.keys(CROP_CATEGORIES).map(cat => `<option value="${cat}">${cat}</option>`).join("")}
             </select>
           </div>
 
-          <!-- 2. State -->
           <div>
-            <select id="mandi-state-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #f48fb1; border-radius: 6px; background: #ffffff; color: #4a148c; outline: none;">
+            <select id="mandi-state-filter" class="mandi-select">
               <option value="">రాష్ట్రం (State)</option>
               ${states.map(s => `<option value="${s}">${s}</option>`).join("")}
             </select>
           </div>
 
-          <!-- 3. Crop Type -->
           <div>
-            <select id="mandi-crop-filter" style="width: 100%; font-size: 11px; padding: 6px 4px; border: 1px solid #f48fb1; border-radius: 6px; background: #ffffff; color: #4a148c; outline: none;">
+            <select id="mandi-crop-filter" class="mandi-select">
               <option value="">పంట (Crop)</option>
             </select>
           </div>
-
         </div>
 
-        <!-- Scrollable Table Section (Max Height for 3-4 rows with overflow scroll) -->
-        <div style="background: #ffffff; border-radius: 6px; border: 1px solid #f8bbd0; overflow: hidden;">
-          <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <!-- Scrollable Table Section -->
+        <div class="mandi-table-wrapper">
+          <table class="mandi-table">
             <thead>
-              <tr style="background: #fce4ec; font-size: 11px; color: #880e4f; border-bottom: 1px solid #f8bbd0;">
-                <th style="padding: 7px 6px;">పంట</th>
-                <th style="padding: 7px 6px;">మార్కెట్</th>
-                <th style="padding: 7px 6px; text-align: right;">ధర (క్వింటాల్)</th>
+              <tr class="mandi-table-head-row">
+                <th>పంట</th>
+                <th>మార్కెట్</th>
+                <th style="text-align: right;">ధర (క్వింటాల్)</th>
               </tr>
             </thead>
           </table>
           
-          <div class="mandi-scroll" style="max-height: 140px; overflow-y: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <div class="mandi-scroll">
+            <table class="mandi-table">
               <tbody id="mandi-table-body">
                 <!-- Records render ikkada avuthayi -->
               </tbody>
@@ -207,6 +196,7 @@ window.renderMandiWidget = async function() {
 
     </div>
   `;
+
 
   // Event Listeners
   document.getElementById("mandi-category-filter").addEventListener("change", updateCropDropdown);
