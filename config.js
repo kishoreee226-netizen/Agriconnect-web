@@ -37,22 +37,33 @@ function renderCompanyDetails() {
     if (elAddress) elAddress.textContent = `📍 ${window.COMPANY_CONFIG.location}`;
     if (elCopyright) elCopyright.textContent = `© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.`;
 
-    // 1. Header Title, Logo & Gold Cursive Tagline Setup
+        // 1. Header Title, Logo & Gold Cursive Tagline Setup
     const header = document.querySelector("header");
     if (header) {
       const headerTitle = header.querySelector("h1");
       if (headerTitle && !document.getElementById("header-tagline")) {
         const logoSrc = window.COMPANY_CONFIG.branding?.headerLogo || "logo.png";
         
-        // Header inner layout ని లోగో + (టైటిల్ + గోల్డ్ కర్సివ్ ట్యాగ్‌లైన్) గా అమర్చడం
         header.innerHTML = `
           <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 36px; height: 36px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
+            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="app-logo" style="width: 38px; height: 38px; object-fit: contain; flex-shrink: 0;" onerror="this.style.display='none'">
             <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
-              <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #ffffff; line-height: 1.1;">
+              <h1 style="margin: 0; font-size: 20px; font-weight: 700; color: #ffffff; line-height: 1.1; letter-spacing: 0.3px;">
                 ${window.COMPANY_CONFIG.shortName}
               </h1>
-              <p id="header-tagline" style="margin: 2px 0 0 0; font-size: 11px; color: #FFD700; font-style: italic; font-family: 'Brush Script MT', 'Segoe Script', cursive, sans-serif; letter-spacing: 0.5px; font-weight: 600; line-height: 1.2;">
+              <p id="header-tagline" style="
+                margin: 3px 0 0 0;
+                font-size: 12.5px;
+                background: linear-gradient(135deg, #FFF176 0%, #FFD700 50%, #FFA000 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+                font-style: italic;
+                font-family: 'Brush Script MT', 'Segoe Script', 'Great Vibes', cursive, sans-serif;
+                letter-spacing: 0.8px;
+                font-weight: 700;
+                line-height: 1.2;
+              ">
                 ${window.COMPANY_CONFIG.tagline}
               </p>
             </div>
