@@ -3,7 +3,7 @@
 // 1. Tab Switcher Function
 window.switchFarmerTab = function(tab) {
   const panes = ['labour', 'equipment', 'seeds', 'transport'];
-  
+
   panes.forEach(t => {
     const pane = document.getElementById(`farmer-pane-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
@@ -68,8 +68,7 @@ function getAcceptedListHTML(jobs) {
   return `
     <div class="accepted-section">
       <div class="accepted-header">
-        <h4>👥 Confirm అయిన కూలీలు (${jobs.length}):</h4>
-        ${jobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
+        <h4>👥 Confirm అయిన కూలీలు (${jobs.length}):</h4>${jobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
       </div>
       <div id="accepted-list" class="custom-scroll accepted-scroll-list">
         ${jobs.length === 0 ? `
@@ -108,7 +107,7 @@ function renderFarmerWidget() {
         <span class="badge-live">Live</span>
       </div>
 
-           <!-- 4 Compact Tabs -->
+      <!-- 4 Compact Tabs -->
       <div class="eq-tabs-bar">
         <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="switchFarmerTab('labour')">👥 కూలీలు</button>
         <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="switchFarmerTab('equipment')">🚜 పరికరాలు</button>
@@ -116,22 +115,23 @@ function renderFarmerWidget() {
         <button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="switchFarmerTab('transport')">🚛 రవాణా</button>
       </div>
 
+      <div class="farmer-card-body">
+        <!-- 4 Tab Panes -->
+        <div id="farmer-pane-labour">
+          ${getLabourFormHTML()}${getAcceptedListHTML(myAcceptedJobs)}
+        </div>
+        <div id="farmer-pane-equipment" style="display: none;"></div>
+        <div id="farmer-pane-seeds" style="display: none;"></div>
+        <div id="farmer-pane-transport" style="display: none;"></div>
 
-         <div class="farmer-card-body">
-      <!-- బుకింగ్ రికార్డులు కనిపించే కంటైనర్ -->
-  <div id="farmer-booking-records"></div>
-
-      <div id="farmer-pane-labour">
-        ${getLabourFormHTML()}
-        ${getAcceptedListHTML(myAcceptedJobs)}
+        <!-- బుకింగ్ రికార్డులు కనిపించే కంటైనర్ (Tabs kindhaki shift chesam) -->
+        <div id="farmer-booking-records"></div>
       </div>
-      <div id="farmer-pane-equipment" style="display: none;"></div>
-      <div id="farmer-pane-seeds" style="display: none;"></div>
-      <div id="farmer-pane-transport" style="display: none;"></div>
-    </div>
-
     </div>
   `;
+
+  // Booking records ventane chupinchadaniki call
+  renderBookingRecords();
 
   if (typeof prefillFarmerFormDefaults === "function") {
     prefillFarmerFormDefaults();
@@ -146,7 +146,7 @@ function renderFarmerWidget() {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           farmCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          if (s) s.innerText = `✅ GPS set అయింది (${farmCoords.lat.toFixed(3)}, ${farmCoords.lng.toFixed(3)})`;
+          if (s) s.innerText = `✅ GPS set అయింది (${farmCoords.lat.toFixed(3)},${farmCoords.lng.toFixed(3)})`;
         },
         () => { 
           if (s) s.innerText = "default GPS set అయింది."; 
@@ -214,9 +214,9 @@ function renderFarmerWidget() {
 }
 
 window.renderFarmerWidget = renderFarmerWidget;
-// గ్లోబల్ బుకింగ్ పాప్-అప్ లాజిక్
+
+// 5. Global Booking Pop-up Logic
 window.openBookingModal = function(itemName, ownerName, rate, phone) {
-  // పాత మోడల్ ఉంటే తీసేయడం
   const oldModal = document.getElementById("booking-modal");
   if (oldModal) oldModal.remove();
 
@@ -250,12 +250,11 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
 
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-    document.getElementById('booking-request-form')?.addEventListener("submit", function(e) {
+  document.getElementById('booking-request-form')?.addEventListener("submit", function(e) {
     e.preventDefault();
     const dateVal = document.getElementById('book-date').value;
     const durVal = document.getElementById('book-duration').value;
 
-    // 1. కొత్త బుకింగ్ వివరాలు సిద్ధం చేయడం
     const newBooking = {
       id: "BK-" + Date.now(),
       itemName: itemName,
@@ -264,10 +263,10 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
       phone: phone,
       date: dateVal,
       duration: durVal,
-      status: "అభ్యర్థన పంపబడింది (Pending)"
+      status: "అభ్యర్థన పంపబడింది (Pending)",
+      escrowLocked: false
     };
 
-    // 2. localStorage లో సేవ్ చేయడం
     let savedBookings = [];
     try {
       savedBookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
@@ -281,22 +280,21 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
     closeBookingModal();
     alert(`✅ ${itemName} బుకింగ్ అభ్యర్థన నమోదు చేయబడింది!`);
 
-    // 3. డాష్‌బోర్డ్‌లో బుకింగ్ లిస్ట్‌ను వెంటనే రిఫ్రెష్ చేయడం
     if (typeof renderBookingRecords === "function") {
       renderBookingRecords();
     }
 
     window.open(waUrl, '_blank');
   });
-
 };
 
 window.closeBookingModal = function() {
   const modal = document.getElementById("booking-modal");
   if (modal) modal.remove();
 };
-// బుకింగ్ రికార్డ్స్ రెండరింగ్ ఫంక్షన్
-function renderBookingRecords() {
+
+// 6. Booking Records Rendering Function
+window.renderBookingRecords = function() {
   const container = document.getElementById("farmer-booking-records");
   if (!container) return;
 
@@ -306,33 +304,49 @@ function renderBookingRecords() {
   } catch (err) {}
 
   if (bookings.length === 0) {
-    container.innerHTML = ``; // బుకింగ్స్ లేకపోతే ఖాళీగా ఉంచుతుంది
+    container.innerHTML = ``;
     return;
   }
 
   container.innerHTML = `
-    <div class="booking-records-section">
-      <div class="booking-records-header">
-        <h4>📋 నా బుకింగ్‌లు (${bookings.length}):</h4>
+    <div class="booking-records-section" style="margin-top: 15px; max-height: 280px; overflow-y: auto; border: 1px solid #c8e6c9; border-radius: 10px; padding: 10px; background: #fafdfa;">
+      <div class="booking-records-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h4 style="margin:0; font-size:13px; color:#2e7d32;">📋 నా బుకింగ్‌లు (${bookings.length}):</h4>
+        <button type="button" onclick="clearFarmerBookings()" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; font-size:11px; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600;">🗑️ క్లియర్ చేయండి</button>
       </div>
-      ${bookings.map(b => `
-        <div class="booking-record-card">
-          <div class="rec-title-row">
-            <span>🚜 ${b.itemName}</span>
-            <span class="rec-status-tag">${b.status}</span>
+      ${bookings.map(b => {
+        const isLocked = b.escrowLocked || b.status.includes("Escrow");
+        return `
+          <div class="booking-record-card" style="background:#ffffff; border:1px solid #e0e0e0; border-radius:8px; padding:10px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div class="rec-title-row" style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold; color:#1b5e20;">
+              <span>🚜 ${b.itemName}</span>
+              <span class="rec-status-tag" style="background:${isLocked ? '#e8f5e9' : '#fff8e1'}; color:${isLocked ? '#2e7d32' : '#f57f17'}; font-size:11px; padding:2px 6px; border-radius:4px;">${b.status}</span>
+            </div>
+            <div class="rec-details-row" style="font-size:12px; color:#555; margin-top:4px; line-height:1.4;">
+              👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
+              📅 తేదీ: <b>${b.date}</b> \vert{} ⏱️ పరిమాణం: <b>${b.duration}</b><br>
+              💰 ధర: <b>${b.rate}</b>
+            </div>
+            ${isLocked ? `
+              <div style="margin-top:6px; font-size:11px; color:#2e7d32; font-weight:bold; text-align:center; background:#e8f5e9; padding:4px; border-radius:4px;">
+                ✅ ₹500 Escrow భద్రపరచబడింది
+              </div>
+            ` : `
+              <button type="button" class="eq-btn-link" style="background:#fff3e0; color:#e65100; border:1px solid #ffe082; margin-top:8px; width:100%; cursor:pointer; font-weight:bold; padding:6px 0; border-radius:6px; font-size:12px;" onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')">
+                🔒 ₹500 అడ్వాన్స్ Escrow లాక్ చేయండి
+              </button>
+            `}
           </div>
-          <div class="rec-details-row">
-            👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
-            📅 తేదీ: <b>${b.date}</b> | ⏱️ పరిమాణం: <b>${b.duration}</b><br>
-             💰 ధర: <b>${b.rate}</b>
-        </div>
-        <button type="button" class="eq-btn-link" style="background:#fff3e0; color:#e65100; border:1px solid #ffe082; margin-top:8px; width:100%; cursor:pointer; font-weight:bold; padding:6px 0; border-radius:6px;" onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')">
-          🔒 ₹500 అడ్వాన్స్ Escrow లాక్ చేయండి
-        </button>
-      </div>
-    `).join('')}
-
+        `;
+      }).join('')}
     </div>
   `;
-}
+};
 
+// 7. Helper: Clear All Bookings
+window.clearFarmerBookings = function() {
+  if (confirm("బుకింగ్ రికార్డులన్నింటినీ తీసివేయాలా?")) {
+    localStorage.removeItem("farmer_bookings");
+    renderBookingRecords();
+  }
+};
