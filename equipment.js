@@ -16,7 +16,7 @@ window.renderEquipmentWidget = function(targetContainerId = "farmer-pane-equipme
           <div class="eq-top-row">
             <div>
               <div class="eq-name">${eq.name}</div>
-              <div class="eq-owner-meta">యజమాని: <b>${eq.owner}</b> \vert{} 📍 ${eq.loc}</div>
+              <div class="eq-owner-meta">యజమాని: <b>${eq.owner}</b> | 📍 ${eq.loc}</div>
             </div>
             <div class="eq-price-badge">${eq.rate}</div>
           </div>
