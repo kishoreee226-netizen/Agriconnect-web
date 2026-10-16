@@ -2494,4 +2494,64 @@ header h1 {
   border: 1px solid #ffe082;
   cursor: pointer;
 }
+/* --- Booking Records Styling --- */
+.booking-records-section {
+  margin-top: 15px;
+  background: #fbfbfb;
+  border: 1px dashed #c8e6c9;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.booking-records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.booking-records-header h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #2e7d32;
+}
+
+.booking-record-card {
+  background: #ffffff;
+  border: 1px solid #e8f5e9;
+  border-left: 4px solid #2e7d32;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.booking-record-card:last-child {
+  margin-bottom: 0;
+}
+
+.rec-title-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.rec-status-tag {
+  background: #fff8e1;
+  color: #f57f17;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #ffe082;
+}
+
+.rec-details-row {
+  font-size: 12px;
+  color: #555555;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
 
