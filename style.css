@@ -2288,3 +2288,120 @@ header h1 {
   color: #075e54;
   border: 1px solid #25d366;
 }
+/* --- Farmer Dashboard & Tabs Mobile Responsive Touch-ups --- */
+
+/* 1. Tabs bar: మొబైల్‌లో స్మూత్ స్క్రోల్ అవ్వడానికి */
+.eq-tabs-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 8px 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.eq-tabs-bar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.eq-tab-btn {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid #c8e6c9;
+  background: #f1f8e9;
+  color: #2e7d32;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eq-tab-btn.active {
+  background: #2e7d32;
+  color: #ffffff;
+  border-color: #2e7d32;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.3);
+}
+
+/* 2. Item Cards (పరికరాలు, విత్తనాలు, రవాణా) క్లీన్ లుక్ */
+.eq-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.eq-item-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+}
+
+.eq-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.eq-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.eq-owner-meta {
+  font-size: 12px;
+  color: #616161;
+  margin-top: 2px;
+}
+
+.eq-price-badge {
+  background: #fff3e0;
+  color: #e65100;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* 3. Actions Row (Call & WhatsApp Buttons) */
+.eq-actions-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.eq-btn-link {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: bold;
+  display: inline-block;
+  transition: opacity 0.2s;
+}
+
+.eq-btn-call {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.eq-btn-wa {
+  background: #e0f2f1;
+  color: #00796b;
+  border: 1px solid #80cbc4;
+}
+
+.eq-btn-link:active {
+  opacity: 0.7;
+}
+
