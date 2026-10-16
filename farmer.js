@@ -117,15 +117,19 @@ function renderFarmerWidget() {
       </div>
 
 
-      <div class="farmer-card-body">
-        <div id="farmer-pane-labour">
-          ${getLabourFormHTML()}
-          ${getAcceptedListHTML(myAcceptedJobs)}
-        </div>
-        <div id="farmer-pane-equipment" style="display: none;"></div>
-        <div id="farmer-pane-seeds" style="display: none;"></div>
-        <div id="farmer-pane-transport" style="display: none;"></div>
+         <div class="farmer-card-body">
+      <!-- బుకింగ్ రికార్డులు కనిపించే కంటైనర్ -->
+      <div id="farmer-booking-records"></div>
+
+      <div id="farmer-pane-labour">
+        ${getLabourFormHTML()}
+        ${getAcceptedListHTML(myAcceptedJobs)}
       </div>
+      <div id="farmer-pane-equipment" style="display: none;"></div>
+      <div id="farmer-pane-seeds" style="display: none;"></div>
+      <div id="farmer-pane-transport" style="display: none;"></div>
+    </div>
+
     </div>
   `;
 
