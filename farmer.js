@@ -1,6 +1,6 @@
-// farmer.js - రైతు Dashboard (Light Green Header & Compact Submit + Equipment Tab)
+// farmer.js - Clean & Modular Farmer Dashboard
 
-// Global Tab Switcher Function (Labour, Equipment, Seeds)
+// 1. Tab Switcher Function
 window.switchFarmerTab = function(tab) {
   const panes = ['labour', 'equipment', 'seeds', 'transport'];
   
@@ -20,7 +20,80 @@ window.switchFarmerTab = function(tab) {
   }
 };
 
+// 2. Helper: Labour Form HTML
+function getLabourFormHTML() {
+  return `
+    <form id="farmer-form" class="farmer-form">
+      <div class="form-row">
+        <input type="text" id="f-name" class="farmer-input" placeholder="మీ పేరు" required />
+        <input type="tel" id="f-phone" class="farmer-input" placeholder="ఫోన్ నంబర్" required />
+      </div>
 
+      <div class="form-row">
+        <input type="text" id="f-crop" class="farmer-input" placeholder="పంట" required />
+        <input type="text" id="f-work" class="farmer-input" placeholder="పని" required />
+      </div>
+
+      <div class="form-row-spaced">
+        <input type="number" id="f-count" class="farmer-input" placeholder="కూలీల సంఖ్య" required />
+        <input type="number" id="f-wage" class="farmer-input" placeholder="రోజు కూలీ (₹)" required />
+      </div>
+
+      <div class="form-action-row">
+        <input 
+          type="text" 
+          id="f-date" 
+          class="input-date-fixed"
+          placeholder="📅 పని తేదీ" 
+          onfocus="(this.type='date'); this.showPicker && this.showPicker();" 
+          onblur="if(!this.value) this.type='text';" 
+          required 
+        />
+        <div class="gps-wrapper">
+          <button type="button" id="loc-btn" class="btn-gps">📍 పొలం GPS</button>
+          <span id="loc-status" class="gps-status-text"></span>
+        </div>
+        <button type="button" id="f-village-btn" class="btn-village">🏛️ Hyderabad</button>
+      </div>
+
+      <div class="form-submit-row">
+        <button type="submit" class="btn-submit-farmer">📢 Submit కూలీల కోసం</button>
+      </div>
+    </form>
+  `;
+}
+
+// 3. Helper: Accepted Labours List HTML
+function getAcceptedListHTML(jobs) {
+  return `
+    <div class="accepted-section">
+      <div class="accepted-header">
+        <h4>👥 Confirm అయిన కూలీలు (${jobs.length}):</h4>
+        ${jobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
+      </div>
+      <div id="accepted-list" class="custom-scroll accepted-scroll-list">
+        ${jobs.length === 0 ? `
+          <div class="empty-labour-msg">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
+        ` : jobs.map(j => `
+          <div class="labour-card-item">
+            <div class="labour-card-header">
+              <strong>👷 ${j.labourName}</strong>
+              <span class="labour-wage">₹${j.wage}</span>
+            </div>
+            <div class="labour-work-info">పని: ${j.crop} (${j.workType})</div>
+            <div class="labour-action-links">
+              <a href="tel:${j.labourPhone}" class="labour-btn-link link-call">📞 కాల్</a>
+              <a href="sms:${j.labourPhone}?body=నమస్తే" class="labour-btn-link link-sms">✉️ SMS</a>
+              <a href="https://wa.me/91${j.labourPhone}" target="_blank" class="labour-btn-link link-whatsapp">💬 వాట్సాప్</a>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+// 4. Main Farmer Widget Renderer
 function renderFarmerWidget() {
   const container = document.getElementById("farmer-post-container");
   if (!container) return;
@@ -30,112 +103,30 @@ function renderFarmerWidget() {
 
   container.innerHTML = `
     <div class="farmer-card">
-      
-      <!-- Light Green Header -->
       <div class="farmer-card-header">
         <h3>👨‍🌾 రైతు Dashboard</h3>
         <span class="badge-live">Live</span>
       </div>
 
-      <!-- 3 Tabs: కూలీలు & పరికరాలు (Rent) & విత్తనాలు -->
       <div class="eq-tabs-bar">
         <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="switchFarmerTab('labour')">👥 కూలీలను వెతకండి</button>
         <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="switchFarmerTab('equipment')">🚜 వ్యవసాయ పరికరాలు</button>
-<button id="tab-btn-seeds" type="button" class="eq-tab-btn" onclick="switchFarmerTab('seeds')">🌱 విత్తనాలు</button>
-<button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="switchFarmerTab('transport')">🚛 రవాణా</button>
+        <button id="tab-btn-seeds" type="button" class="eq-tab-btn" onclick="switchFarmerTab('seeds')">🌱 విత్తనాలు</button>
+        <button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="switchFarmerTab('transport')">🚛 రవాణా</button>
       </div>
 
       <div class="farmer-card-body">
-        
-        <!-- PANE 1: కూలీల ఫారం & లిస్ట్ -->
         <div id="farmer-pane-labour">
-          <form id="farmer-form" class="farmer-form">
-            <div class="form-row">
-              <input type="text" id="f-name" class="farmer-input" placeholder="మీ పేరు" required />
-              <input type="tel" id="f-phone" class="farmer-input" placeholder="ఫోన్ నంబర్" required />
-            </div>
-
-            <div class="form-row">
-              <input type="text" id="f-crop" class="farmer-input" placeholder="పంట" required />
-              <input type="text" id="f-work" class="farmer-input" placeholder="పని" required />
-            </div>
-
-            <div class="form-row-spaced">
-              <input type="number" id="f-count" class="farmer-input" placeholder="కూలీల సంఖ్య" required />
-              <input type="number" id="f-wage" class="farmer-input" placeholder="రోజు కూలీ (₹)" required />
-            </div>
-
-            <!-- Row 4: Stable Row (Date, GPS, Village) -->
-            <div class="form-action-row">
-              <input 
-                type="text" 
-                id="f-date" 
-                class="input-date-fixed"
-                placeholder="📅 పని తేదీ" 
-                onfocus="(this.type='date'); this.showPicker && this.showPicker();" 
-                onblur="if(!this.value) this.type='text';" 
-                required 
-              />
-              
-              <div class="gps-wrapper">
-                <button type="button" id="loc-btn" class="btn-gps">
-                  📍 పొలం GPS
-                </button>
-                <span id="loc-status" class="gps-status-text"></span>
-              </div>
-
-              <button type="button" id="f-village-btn" class="btn-village">
-                🏛️ Hyderabad
-              </button>
-            </div>
-
-            <!-- Row 5: Compact Submit Button -->
-            <div class="form-submit-row">
-              <button type="submit" class="btn-submit-farmer">
-                📢 Submit కూలీల కోసం
-              </button>
-            </div>
-          </form>
-
-          <!-- Accepted Labours Section -->
-          <div class="accepted-section">
-            <div class="accepted-header">
-              <h4>👥 Confirm అయిన కూలీలు (${myAcceptedJobs.length}):</h4>
-              ${myAcceptedJobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
-            </div>
-            <div id="accepted-list" class="custom-scroll accepted-scroll-list">
-              ${myAcceptedJobs.length === 0 ? `
-                <div class="empty-labour-msg">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
-              ` : myAcceptedJobs.map(j => `
-                <div class="labour-card-item">
-                  <div class="labour-card-header">
-                    <strong>👷 ${j.labourName}</strong>
-                    <span class="labour-wage">₹${j.wage}</span>
-                  </div>
-                  <div class="labour-work-info">పని: ${j.crop} (${j.workType})</div>
-                  <div class="labour-action-links">
-                    <a href="tel:${j.labourPhone}" class="labour-btn-link link-call">📞 కాల్</a>
-                    <a href="sms:${j.labourPhone}?body=నమస్తే" class="labour-btn-link link-sms">✉️ SMS</a>
-                    <a href="https://wa.me/91${j.labourPhone}" target="_blank" class="labour-btn-link link-whatsapp">💬 వాట్సాప్</a>
-                  </div>
-                </div>
-              `).join('')}
-            </div>
-          </div>
+          ${getLabourFormHTML()}
+          ${getAcceptedListHTML(myAcceptedJobs)}
         </div>
-
-        <!-- PANE 2: పరికరాల సెక్షన్ (equipment.js ద్వారా లోడ్ అవుతుంది) -->
         <div id="farmer-pane-equipment" style="display: none;"></div>
-<!-- PANE 3: విత్తనాల బాక్స్ -->
         <div id="farmer-pane-seeds" style="display: none;"></div>
         <div id="farmer-pane-transport" style="display: none;"></div>
-
-
       </div>
     </div>
   `;
 
-  // Profile data prefill cheyadam
   if (typeof prefillFarmerFormDefaults === "function") {
     prefillFarmerFormDefaults();
   }
@@ -182,7 +173,6 @@ function renderFarmerWidget() {
       labourPhone: ""
     };
 
-    // Global AgriState లేదా LocalStorage లో జాబ్ సేవ్ చేయడం
     if (window.AgriState && typeof window.AgriState.addJob === "function") {
       window.AgriState.addJob(newJob);
     } else {
@@ -194,7 +184,6 @@ function renderFarmerWidget() {
       localStorage.setItem("agri_jobs", JSON.stringify(savedJobs));
     }
 
-    // Input fields clear cheyadam (Name, Phone, Village thappinchi)
     document.getElementById("f-crop").value = "";
     document.getElementById("f-work").value = "";
     document.getElementById("f-count").value = "";
@@ -205,13 +194,11 @@ function renderFarmerWidget() {
       dateInput.type = "text";
     }
 
-    // Dashboards refresh cheyadam
     renderFarmerWidget();
     if (typeof renderLabourWidget === "function") {
       renderLabourWidget();
     }
 
-    // Voice announcement (Optional)
     if (typeof speakTeluguText === "function") {
       speakTeluguText("పని వివరాలు విజయవంతంగా పోస్ట్ చేయబడ్డాయి.");
     } else {
