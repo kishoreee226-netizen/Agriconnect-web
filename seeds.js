@@ -1,4 +1,4 @@
-// seeds.js - విత్తనాలు & ఎరువుల విడ్జెట్ (Crop Filter, Live Stock, Booking & Radius)
+// seeds.js - విత్తనాలు & ఎరువుల విడ్జెట్ (Crop Filter, Live Stock, Sowing Advice & Booking)
 
 const seedsList = [
   { 
@@ -11,7 +11,8 @@ const seedsList = [
     loc: "సమీప సొసైటీ", 
     distanceKm: 2.0, 
     stock: "అందుబాటులో ఉంది (45 బస్తాలు)", 
-    inStock: true 
+    inStock: true,
+    advice: "🌱 ఎకరానికి 20-25 కేజీలు అవసరం | జూన్-జులై నాట్లకు అనుకూలం | లోతు: 2-3 సెం.మీ"
   },
   { 
     id: "sd2", 
@@ -23,7 +24,8 @@ const seedsList = [
     loc: "హైబ్రిడ్ విత్తనాలు", 
     distanceKm: 4.5, 
     stock: "లభ్యం (12,000 మొక్కలు)", 
-    inStock: true 
+    inStock: true,
+    advice: "🌶️ ఎకరానికి 10,000-11,000 నారు మొక్కలు | వరుసల దూరం: 2.5 అడుగులు"
   },
   { 
     id: "sd3", 
@@ -35,7 +37,8 @@ const seedsList = [
     loc: "సొసైటీ గోదాము", 
     distanceKm: 3.0, 
     stock: "పరిమిత స్టాక్ (Limited)", 
-    inStock: true 
+    inStock: true,
+    advice: "🧪 మొదటి దఫా నాట్ల సమయంలో DAP, 25 రోజుల తర్వాత యూరియా వేయండి"
   },
   { 
     id: "sd4", 
@@ -47,7 +50,8 @@ const seedsList = [
     loc: "మార్కెట్ యార్డ్ ఎదురుగా", 
     distanceKm: 6.0, 
     stock: "అందుబాటులో ఉంది", 
-    inStock: true 
+    inStock: true,
+    advice: "☁️ ఎకరానికి 2 ప్యాకెట్లు | సాళ్ల మధ్య 3 అడుగులు, మొక్కల మధ్య 1 అడుగు దూరం"
   },
   { 
     id: "sd5", 
@@ -59,7 +63,8 @@ const seedsList = [
     loc: "మండల కేంద్రం", 
     distanceKm: 8.5, 
     stock: "అందుబాటులో ఉంది", 
-    inStock: true 
+    inStock: true,
+    advice: "🧪 దుక్కిలో ఎకరానికి ఒక బస్తా చొప్పున వేయడం వలన పంట దృఢంగా ఎదుగుతుంది"
   }
 ];
 
@@ -139,6 +144,11 @@ window.renderSeedsWidget = function(targetContainerId = "farmer-pane-seeds") {
               </div>
             </div>
             <div class="eq-price-badge">${seed.rate}</div>
+          </div>
+
+          <!-- గైడెన్స్ కార్డ్ (Sowing / Usage Advice) -->
+          <div style="background:#f9fbe7; border-left:3px solid #8bc34a; padding:6px 8px; margin:8px 0; border-radius:4px; font-size:11px; color:#33691e; line-height:1.4;">
+            <b>💡 సాగు సూచన:</b> ${seed.advice}
           </div>
 
           <div class="eq-actions-row">
