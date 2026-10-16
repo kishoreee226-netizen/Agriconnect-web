@@ -166,7 +166,7 @@ function renderLabourWidget() {
                 <div style="flex: 1;">
                   <strong class="job-item-title">🌾 ${j.crop} -${j.workType}</strong>
                   <div class="job-farmer-meta">
-                    రైతు: <b>${j.farmerName}</b> \vert{} కూలీలు: <b>${j.count}</b>
+                    రైతు: <b>${j.farmerName}</b> | కూలీలు: <b>${j.count}</b>
                   </div>
                   <div class="job-tags-row" style="margin-top:4px; display:flex; gap:4px; flex-wrap:wrap;">
                     <span class="badge-village">🏛️ ${villageName}</span>${workDate ? `<span class="badge-date">${workDate}</span>` : ''}
