@@ -1,23 +1,21 @@
 // farmer.js - రైతు Dashboard (Light Green Header & Compact Submit + Equipment Tab)
 
-// Global Tab Switcher Function
+// Global Tab Switcher Function (Labour, Equipment, Seeds)
 window.switchFarmerTab = function(tab) {
-  const isLabour = tab === 'labour';
+  const panes = ['labour', 'equipment', 'seeds'];
   
-  const labourPane = document.getElementById('farmer-pane-labour');
-  const eqPane = document.getElementById('farmer-pane-equipment');
-  const labourBtn = document.getElementById('tab-btn-labour');
-  const eqBtn = document.getElementById('tab-btn-equipment');
+  panes.forEach(t => {
+    const pane = document.getElementById(`farmer-pane-${t}`);
+    const btn = document.getElementById(`tab-btn-${t}`);
+    if (pane) pane.style.display = (t === tab) ? 'block' : 'none';
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
 
-  if (labourPane) labourPane.style.display = isLabour ? 'block' : 'none';
-  if (eqPane) eqPane.style.display = isLabour ? 'none' : 'block';
-
-  if (labourBtn) labourBtn.classList.toggle('active', isLabour);
-  if (eqBtn) eqBtn.classList.toggle('active', !isLabour);
-
-  // Equipment tab select chesinappudu equipment.js lonchi render cheyadam
-  if (!isLabour && typeof window.renderEquipmentWidget === 'function') {
+  // ట్యాబ్ ప్రకారం సంబంధిత విడ్జెట్‌ను లోడ్ చేయడం
+  if (tab === 'equipment' && typeof window.renderEquipmentWidget === 'function') {
     window.renderEquipmentWidget('farmer-pane-equipment');
+  } else if (tab === 'seeds' && typeof window.renderSeedsWidget === 'function') {
+    window.renderSeedsWidget('farmer-pane-seeds');
   }
 };
 
