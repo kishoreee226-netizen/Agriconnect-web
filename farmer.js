@@ -119,7 +119,7 @@ function renderFarmerWidget() {
 
          <div class="farmer-card-body">
       <!-- బుకింగ్ రికార్డులు కనిపించే కంటైనర్ -->
-      <div id="farmer-booking-records"></div>
+  <div id="farmer-booking-records"></div>
 
       <div id="farmer-pane-labour">
         ${getLabourFormHTML()}
