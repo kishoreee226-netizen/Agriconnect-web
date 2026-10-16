@@ -324,11 +324,11 @@ window.renderBookingRecords = function() {
             </div>
             <div class="rec-details-row" style="font-size:12px; color:#555; margin-top:4px; line-height:1.4;">
               👤 Yajamaani: <b>${b.ownerName}</b> (${b.phone})<br>
-              📅 Theedhi: <b>${b.date}</b> \vert{} ⏱️ Parimaanam: <b>${b.duration}</b><br>
+              📅 Theedhi: <b>${b.date}</b>  | ⏱️ Parimaanam: <b>${b.duration}</b><br>
               💰 Dhara: <b>${b.rate}</b>
             </div>
 
-            <!-- WhatsApp mariyu Call buttons -->
+  <!-- WhatsApp mariyu Call buttons -->
             <div style="display:flex; gap:6px; margin-top:8px;">
               <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
                 💬 WhatsApp
