@@ -250,7 +250,7 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
 
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-  document.getElementById('booking-request-form')?.addEventListener("submit", function(e) {
+    document.getElementById('booking-request-form')?.addEventListener("submit", function(e) {
     e.preventDefault();
     const dateVal = document.getElementById('book-date').value;
     const durVal = document.getElementById('book-duration').value;
@@ -274,18 +274,15 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
     savedBookings.unshift(newBooking);
     localStorage.setItem("farmer_bookings", JSON.stringify(savedBookings));
 
-    const bookingMsg = `నమస్తే ${ownerName} గారు, నేను (${farmerName}) మీ ${itemName} ను ${dateVal} తేదీన (${durVal}) కోసం బుక్ చేసుకోవాలనుకుంటున్నాను. వివరాలు తెలియజేయగలరు.`;
-    const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(bookingMsg)}`;
-
     closeBookingModal();
-    alert(`✅ ${itemName} బుకింగ్ అభ్యర్థన నమోదు చేయబడింది!`);
+    alert(`✅ ${itemName} బుకింగ్ అభ్యర్థన విజయవంతంగా నమోదైంది!`);
 
     if (typeof renderBookingRecords === "function") {
       renderBookingRecords();
     }
-
-    window.open(waUrl, '_blank');
+    // ఇక్కడున్న window.open(...) తీసేశాము!
   });
+
 };
 
 window.closeBookingModal = function() {
@@ -314,8 +311,12 @@ window.renderBookingRecords = function() {
         <h4 style="margin:0; font-size:13px; color:#2e7d32;">📋 నా బుకింగ్‌లు (${bookings.length}):</h4>
         <button type="button" onclick="clearFarmerBookings()" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; font-size:11px; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600;">🗑️ క్లియర్ చేయండి</button>
       </div>
+      // renderBookingRecords లోని మ్యాపింగ్ భాగం:
       ${bookings.map(b => {
-        const isLocked = b.escrowLocked || b.status.includes("Escrow");
+        const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
+        const bookingMsg = `నమస్తే ${b.ownerName} గారు, నేను మీ ${b.itemName} ను ${b.date} తేదీన (${b.duration}) కోసం బుక్ చేసుకున్నాను. దయచేసి వివరాలు నిర్ధారించండి.`;
+        const waUrl = `https://wa.me/91${b.phone}?text=${encodeURIComponent(bookingMsg)}`;
+
         return `
           <div class="booking-record-card" style="background:#ffffff; border:1px solid #e0e0e0; border-radius:8px; padding:10px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
             <div class="rec-title-row" style="display:flex; justify-content:space-between; font-size:13px; font-weight:bold; color:#1b5e20;">
@@ -324,21 +325,33 @@ window.renderBookingRecords = function() {
             </div>
             <div class="rec-details-row" style="font-size:12px; color:#555; margin-top:4px; line-height:1.4;">
               👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
-              📅 తేదీ: <b>${b.date}</b> \vert{} ⏱️ పరిమాణం: <b>${b.duration}</b><br>
+              📅 తేదీ: <b>${b.date}</b> | ⏱️ పరిమాణం: <b>${b.duration}</b><br>
               💰 ధర: <b>${b.rate}</b>
             </div>
+
+            <!-- రైతు స్వయంగా నొక్కినప్పుడు మాత్రమే వాట్సాప్ ఓపెన్ అవుతుంది -->
+            <div style="display:flex; gap:6px; margin-top:8px;">
+              <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
+                💬 వాట్సాప్
+              </a>
+              <a href="tel:${b.phone}" style="flex:1; text-align:center; background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
+                📞 కాల్
+              </a>
+            </div>
+
             ${isLocked ? `
               <div style="margin-top:6px; font-size:11px; color:#2e7d32; font-weight:bold; text-align:center; background:#e8f5e9; padding:4px; border-radius:4px;">
                 ✅ ₹500 Escrow భద్రపరచబడింది
               </div>
             ` : `
-              <button type="button" class="eq-btn-link" style="background:#fff3e0; color:#e65100; border:1px solid #ffe082; margin-top:8px; width:100%; cursor:pointer; font-weight:bold; padding:6px 0; border-radius:6px; font-size:12px;" onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')">
+              <button type="button" class="eq-btn-link" style="background:#fff3e0; color:#e65100; border:1px solid #ffe082; margin-top:6px; width:100%; cursor:pointer; font-weight:bold; padding:6px 0; border-radius:6px; font-size:12px;" onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')">
                 🔒 ₹500 అడ్వాన్స్ Escrow లాక్ చేయండి
               </button>
             `}
           </div>
         `;
       }).join('')}
+
     </div>
   `;
 };
