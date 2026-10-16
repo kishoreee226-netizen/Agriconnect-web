@@ -21,10 +21,12 @@ window.renderTransportWidget = function(targetContainerId = "farmer-pane-transpo
             </div>
             <div class="eq-price-badge">${tr.rate}</div>
           </div>
-          <div class="eq-actions-row">
-            <a href="tel:${tr.phone}" class="eq-btn-link eq-btn-call">📞 కాల్ చేయండి</a>
+                   <div class="eq-actions-row">
+            <button type="button" class="eq-btn-link eq-btn-book" onclick="openBookingModal('${tr.name}', '${tr.driver}', '${tr.rate}', '${tr.phone}')">📅 బుక్ చేయండి</button>
+            <a href="tel:${tr.phone}" class="eq-btn-link eq-btn-call">📞 కాల్</a>
             <a href="https://wa.me/91${tr.phone}" target="_blank" class="eq-btn-link eq-btn-wa">💬 వాట్సాప్</a>
           </div>
+
         </div>
       `).join('')}
     </div>
