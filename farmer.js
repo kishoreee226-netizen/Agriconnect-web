@@ -210,3 +210,59 @@ function renderFarmerWidget() {
 }
 
 window.renderFarmerWidget = renderFarmerWidget;
+// గ్లోబల్ బుకింగ్ పాప్-అప్ లాజిక్
+window.openBookingModal = function(itemName, ownerName, rate, phone) {
+  // పాత మోడల్ ఉంటే తీసేయడం
+  const oldModal = document.getElementById("booking-modal");
+  if (oldModal) oldModal.remove();
+
+  const farmerName = document.getElementById("f-name")?.value || window.AppState?.userProfile?.name || "రైతు";
+
+  const modalHtml = `
+    <div id="booking-modal" class="booking-modal-overlay">
+      <div class="booking-modal-box">
+        <div class="booking-modal-header">
+          <h4>📋 బుకింగ్ అభ్యర్థన</h4>
+          <button type="button" class="btn-modal-close" onclick="closeBookingModal()">✖</button>
+        </div>
+        <div style="font-size: 13px; margin-bottom: 12px; color: #333;">
+          <strong>వస్తువు:</strong> ${itemName} <br>
+          <strong>ధర:</strong> <span style="color:#e65100; font-weight:bold;">${rate}</span>
+        </div>
+        <form id="booking-request-form">
+          <div class="modal-form-group">
+            <label>📅 కావలసిన తేదీ:</label>
+            <input type="date" id="book-date" class="modal-input" required />
+          </div>
+          <div class="modal-form-group">
+            <label>⏱️ వ్యవధి / విస్తీర్ణం (గంటలు / ఎకరాలు / ట్రిప్పులు):</label>
+            <input type="text" id="book-duration" class="modal-input" placeholder="ఉదా: 3 గంటలు లేదా 2 ఎకరాలు" required />
+          </div>
+          <button type="submit" class="btn-confirm-booking">✅ అభ్యర్థన పంపండి</button>
+        </form>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  document.getElementById("booking-request-form")?.addEventListener("submit", function(e) {
+    e.preventDefault();
+    const dateVal = document.getElementById("book-date").value;
+    const durVal = document.getElementById("book-duration").value;
+
+    const bookingMsg = `నమస్తే ${ownerName} గారు, నేను (${farmerName}) మీ ${itemName} ను ${dateVal} తేదీన (${durVal}) కోసం బుక్ చేసుకోవాలనుకుంటున్నాను. వివరాలు తెలియజేయగలరు.`;
+
+    // WhatsApp లో మెసేజ్ సిద్ధం చేయడం
+    const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(bookingMsg)}`;
+    
+    closeBookingModal();
+    alert(`✅ ${itemName} బుకింగ్ అభ్యర్థన నమోదు చేయబడింది! యజమానికి వాట్సాప్ సందేశం పంపుతున్నాము.`);
+    window.open(waUrl, '_blank');
+  });
+};
+
+window.closeBookingModal = function() {
+  const modal = document.getElementById("booking-modal");
+  if (modal) modal.remove();
+};
