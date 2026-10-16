@@ -1,4 +1,4 @@
-// seeds.js - విత్తనాలు & ఎరువుల విడ్జెట్ (Crop Filter, Live Stock, Sowing Advice & Booking)
+// seeds.js - విత్తనాలు & ఎరువుల విడ్జెట్ (Mobile Responsive Filters, Live Stock, Sowing Advice & Booking)
 
 const seedsList = [
   { 
@@ -97,17 +97,18 @@ window.renderSeedsWidget = function(targetContainerId = "farmer-pane-seeds") {
 
   container.innerHTML = `
     <!-- విత్తనాలు & ఎరువుల లైవ్ ఫిల్టర్ బార్ -->
-    <div class="seeds-filter-bar" style="background:#f1f8e9; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #dcedc8;">
+    <div class="seeds-filter-bar" style="background:#f1f8e9; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #dcedc8; box-sizing:border-box;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
         <span style="font-size:12px; font-weight:bold; color:#2e7d32;">🌱 విత్తనాలు & ఎరువుల ఫిల్టర్:</span>
-        <span style="font-size:11px; background:#2e7d32; color:#fff; padding:3px 8px; border-radius:12px; font-weight:bold;">
+        <span style="font-size:11px; background:#2e7d32; color:#fff; padding:3px 8px; border-radius:12px; font-weight:bold; white-space:nowrap;">
           ${filteredSeeds.length} రకాలు లభ్యం
         </span>
       </div>
 
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+      <!-- రెస్పాన్సివ్ ఫ్లెక్స్ కంటైనర్ - స్క్రీన్ సైజును బట్టి పక్కపక్కనే లేదా ఒకదాని కింద ఒకటి నీట్‌గా సెట్ అవుతుంది -->
+      <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
         <!-- 1. పంట రకం డ్రాప్‌డౌన్ -->
-        <select onchange="applySeedFilter('category', this.value)" style="padding:5px 6px; border-radius:6px; border:1px solid #aed581; font-size:11px; background:#fff; font-weight:600; color:#2e7d32; outline:none;">
+        <select onchange="applySeedFilter('category', this.value)" style="width:100%; box-sizing:border-box; padding:6px 8px; border-radius:6px; border:1px solid #aed581; font-size:12px; background:#fff; font-weight:600; color:#2e7d32; outline:none;">
           <option value="all" ${activeSeedCategory === 'all' ? 'selected' : ''}>🌾 అన్ని రకాలు (All Items)</option>
           <option value="paddy" ${activeSeedCategory === 'paddy' ? 'selected' : ''}>🌾 వరి విత్తనాలు (Paddy)</option>
           <option value="cotton" ${activeSeedCategory === 'cotton' ? 'selected' : ''}>☁️ పత్తి విత్తనాలు (Cotton)</option>
@@ -116,7 +117,7 @@ window.renderSeedsWidget = function(targetContainerId = "farmer-pane-seeds") {
         </select>
 
         <!-- 2. పరిధి / దూరం డ్రాప్‌డౌన్ -->
-        <select onchange="applySeedFilter('range', this.value)" style="padding:5px 6px; border-radius:6px; border:1px solid #aed581; font-size:11px; background:#fff; font-weight:600; color:#2e7d32; outline:none;">
+        <select onchange="applySeedFilter('range', this.value)" style="width:100%; box-sizing:border-box; padding:6px 8px; border-radius:6px; border:1px solid #aed581; font-size:12px; background:#fff; font-weight:600; color:#2e7d32; outline:none;">
           <option value="all" ${activeSeedRange === 'all' ? 'selected' : ''}>📍 పరిధి (అన్ని డీలర్లు)</option>
           <option value="village" ${activeSeedRange === 'village' ? 'selected' : ''}>🏡 నా గ్రామం (2.5 కి.మీ)</option>
           <option value="5" ${activeSeedRange === '5' ? 'selected' : ''}>⚡ 5 కి.మీ లోపు</option>
