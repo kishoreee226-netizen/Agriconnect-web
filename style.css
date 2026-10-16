@@ -2185,3 +2185,106 @@ header h1 {
   color: #c2185b;
   text-align: right;
 }
+
+/* --- Equipment Widget Styles --- */
+.eq-tabs-bar {
+  display: flex;
+  background: #f1f8e9;
+  border-bottom: 1.5px solid #c8e6c9;
+  padding: 4px;
+  gap: 6px;
+}
+
+.eq-tab-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: #2e7d32;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eq-tab-btn.active {
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.eq-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.eq-item-card {
+  border: 1px solid #c8e6c9;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.eq-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.eq-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1b5e20;
+}
+
+.eq-owner-meta {
+  font-size: 11px;
+  color: #555555;
+  margin-top: 2px;
+}
+
+.eq-price-badge {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e65100;
+  background: #fff3e0;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.eq-actions-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.eq-btn-link {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  padding: 6px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.eq-btn-call {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+
+.eq-btn-wa {
+  background: #e8f8f0;
+  color: #075e54;
+  border: 1px solid #25d366;
+}
