@@ -17,7 +17,7 @@ window.renderSeedsWidget = function(targetContainerId = "farmer-pane-seeds") {
           <div class="eq-top-row">
             <div>
               <div class="eq-name">${seed.name}</div>
-              <div class="eq-owner-meta">డీలర్/సొసైటీ: <b>${seed.vendor}</b> \vert{} 📍 ${seed.loc}</div>
+              <div class="eq-owner-meta">డీలర్/సొసైటీ: <b>${seed.vendor}</b> | 📍 ${seed.loc}</div>
             </div>
             <div class="eq-price-badge">${seed.rate}</div>
           </div>
