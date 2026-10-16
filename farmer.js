@@ -108,12 +108,14 @@ function renderFarmerWidget() {
         <span class="badge-live">Live</span>
       </div>
 
+           <!-- 4 Compact Tabs -->
       <div class="eq-tabs-bar">
-        <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="switchFarmerTab('labour')">👥 కూలీలను వెతకండి</button>
-        <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="switchFarmerTab('equipment')">🚜 వ్యవసాయ పరికరాలు</button>
+        <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="switchFarmerTab('labour')">👥 కూలీలు</button>
+        <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="switchFarmerTab('equipment')">🚜 పరికరాలు</button>
         <button id="tab-btn-seeds" type="button" class="eq-tab-btn" onclick="switchFarmerTab('seeds')">🌱 విత్తనాలు</button>
         <button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="switchFarmerTab('transport')">🚛 రవాణా</button>
       </div>
+
 
       <div class="farmer-card-body">
         <div id="farmer-pane-labour">
