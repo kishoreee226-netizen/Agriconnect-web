@@ -2,7 +2,7 @@
 
 // Global Tab Switcher Function (Labour, Equipment, Seeds)
 window.switchFarmerTab = function(tab) {
-  const panes = ['labour', 'equipment', 'seeds'];
+  const panes = ['labour', 'equipment', 'seeds', 'transport'];
   
   panes.forEach(t => {
     const pane = document.getElementById(`farmer-pane-${t}`);
@@ -11,13 +11,15 @@ window.switchFarmerTab = function(tab) {
     if (btn) btn.classList.toggle('active', t === tab);
   });
 
-  // ట్యాబ్ ప్రకారం సంబంధిత విడ్జెట్‌ను లోడ్ చేయడం
   if (tab === 'equipment' && typeof window.renderEquipmentWidget === 'function') {
     window.renderEquipmentWidget('farmer-pane-equipment');
   } else if (tab === 'seeds' && typeof window.renderSeedsWidget === 'function') {
     window.renderSeedsWidget('farmer-pane-seeds');
+  } else if (tab === 'transport' && typeof window.renderTransportWidget === 'function') {
+    window.renderTransportWidget('farmer-pane-transport');
   }
 };
+
 
 function renderFarmerWidget() {
   const container = document.getElementById("farmer-post-container");
@@ -40,6 +42,7 @@ function renderFarmerWidget() {
         <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="switchFarmerTab('labour')">👥 కూలీలను వెతకండి</button>
         <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="switchFarmerTab('equipment')">🚜 వ్యవసాయ పరికరాలు</button>
 <button id="tab-btn-seeds" type="button" class="eq-tab-btn" onclick="switchFarmerTab('seeds')">🌱 విత్తనాలు</button>
+<button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="switchFarmerTab('transport')">🚛 రవాణా</button>
       </div>
 
       <div class="farmer-card-body">
@@ -125,6 +128,8 @@ function renderFarmerWidget() {
         <div id="farmer-pane-equipment" style="display: none;"></div>
 <!-- PANE 3: విత్తనాల బాక్స్ -->
         <div id="farmer-pane-seeds" style="display: none;"></div>
+        <div id="farmer-pane-transport" style="display: none;"></div>
+
 
       </div>
     </div>
