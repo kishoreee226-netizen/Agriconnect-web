@@ -246,20 +246,45 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
 
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-  document.getElementById("booking-request-form")?.addEventListener("submit", function(e) {
+    document.getElementById('booking-request-form')?.addEventListener("submit", function(e) {
     e.preventDefault();
-    const dateVal = document.getElementById("book-date").value;
-    const durVal = document.getElementById("book-duration").value;
+    const dateVal = document.getElementById('book-date').value;
+    const durVal = document.getElementById('book-duration').value;
+
+    // 1. కొత్త బుకింగ్ వివరాలు సిద్ధం చేయడం
+    const newBooking = {
+      id: "BK-" + Date.now(),
+      itemName: itemName,
+      ownerName: ownerName,
+      rate: rate,
+      phone: phone,
+      date: dateVal,
+      duration: durVal,
+      status: "అభ్యర్థన పంపబడింది (Pending)"
+    };
+
+    // 2. localStorage లో సేవ్ చేయడం
+    let savedBookings = [];
+    try {
+      savedBookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+    } catch (err) {}
+    savedBookings.unshift(newBooking);
+    localStorage.setItem("farmer_bookings", JSON.stringify(savedBookings));
 
     const bookingMsg = `నమస్తే ${ownerName} గారు, నేను (${farmerName}) మీ ${itemName} ను ${dateVal} తేదీన (${durVal}) కోసం బుక్ చేసుకోవాలనుకుంటున్నాను. వివరాలు తెలియజేయగలరు.`;
-
-    // WhatsApp లో మెసేజ్ సిద్ధం చేయడం
     const waUrl = `https://wa.me/91${phone}?text=${encodeURIComponent(bookingMsg)}`;
-    
+
     closeBookingModal();
-    alert(`✅ ${itemName} బుకింగ్ అభ్యర్థన నమోదు చేయబడింది! యజమానికి వాట్సాప్ సందేశం పంపుతున్నాము.`);
+    alert(`✅ ${itemName} బుకింగ్ అభ్యర్థన నమోదు చేయబడింది!`);
+
+    // 3. డాష్‌బోర్డ్‌లో బుకింగ్ లిస్ట్‌ను వెంటనే రిఫ్రెష్ చేయడం
+    if (typeof renderBookingRecords === "function") {
+      renderBookingRecords();
+    }
+
     window.open(waUrl, '_blank');
   });
+
 };
 
 window.closeBookingModal = function() {
