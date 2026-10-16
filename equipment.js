@@ -20,10 +20,12 @@ window.renderEquipmentWidget = function(targetContainerId = "farmer-pane-equipme
             </div>
             <div class="eq-price-badge">${eq.rate}</div>
           </div>
-          <div class="eq-actions-row">
-            <a href="tel:${eq.phone}" class="eq-btn-link eq-btn-call">📞 కాల్ చేయండి</a>
+         <div class="eq-actions-row">
+            <button type="button" class="eq-btn-link eq-btn-book" onclick="openBookingModal('${eq.name}', '${eq.owner}', '${eq.rate}', '${eq.phone}')">📅 బుక్ చేయండి</button>
+            <a href="tel:${eq.phone}" class="eq-btn-link eq-btn-call">📞 కాల్</a>
             <a href="https://wa.me/91${eq.phone}" target="_blank" class="eq-btn-link eq-btn-wa">💬 వాట్సాప్</a>
           </div>
+
         </div>
       `).join('')}
     </div>
