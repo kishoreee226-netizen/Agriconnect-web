@@ -1,4 +1,4 @@
-// labour.js - కూలీల Dashboard (Full Advanced Filters: Skill, Gang Size, Wage, Transport, Maps, SMS, WA)
+// labour.js - కూలీల Dashboard (Geo-Radius + 4 Advance Filters, Maps, SMS, WA)
 
 function getLabourJobsList() {
   if (window.AgriState && typeof window.AgriState.getJobs === "function") {
@@ -11,8 +11,9 @@ function getLabourJobsList() {
   }
 }
 
-// 4 అడ్వాన్స్ ఫిల్టర్ల గ్లోబల్ స్టేట్
+// గ్లోబల్ ఫిల్టర్ స్టేట్స్ (Geo-Radius తో సహా 5 ఫిల్టర్లు)
 let activeSkillFilter = "all";
+let activeLabourRangeFilter = "all";
 let activeGangFilter = "all";
 let activeWageFilter = "all";
 let activeTransportFilterOpt = "all";
@@ -23,7 +24,7 @@ function renderLabourWidget() {
 
   const rawJobs = getLabourJobsList();
 
-  // అడ్వాన్స్ ఫిల్టరింగ్ లాజిక్
+  // 5 ఫిల్టర్ల లాజిక్
   const jobsData = rawJobs.filter(j => {
     // 1. నైపుణ్యం (Skill)
     let skillMatch = true;
@@ -32,7 +33,18 @@ function renderLabourWidget() {
       skillMatch = fullWorkText.includes(activeSkillFilter.toLowerCase());
     }
 
-    // 2. మేస్త్రీ / బృందం సైజు (Gang Size)
+    // 2. జియో-లొకేషన్ పరిధి / దూరం (Geo-Radius)
+    let rangeMatch = true;
+    const dist = parseFloat(j.distanceKm || "2.5");
+    if (activeLabourRangeFilter === "village") {
+      rangeMatch = dist <= 2.5;
+    } else if (activeLabourRangeFilter === "5") {
+      rangeMatch = dist <= 5.0;
+    } else if (activeLabourRangeFilter === "10") {
+      rangeMatch = dist <= 10.0;
+    }
+
+    // 3. మేస్త్రీ / బృందం సైజు (Gang Size)
     let gangMatch = true;
     const count = parseInt(j.count || 1);
     if (activeGangFilter === "small") {
@@ -43,7 +55,7 @@ function renderLabourWidget() {
       gangMatch = count > 10;
     }
 
-    // 3. రోజు కూలీ పరిధి (Wage Range)
+    // 4. రోజు కూలీ పరిధి (Wage Range)
     let wageMatch = true;
     const wage = parseFloat(j.wage || 0);
     if (activeWageFilter === "low") {
@@ -54,7 +66,7 @@ function renderLabourWidget() {
       wageMatch = wage > 600;
     }
 
-    // 4. రవాణా అవసరమా / సొంత బండి (Transport)
+    // 5. రవాణా సౌలభ్యం (Transport)
     let transMatch = true;
     const hasOwnTransport = j.ownTransport === true || (j.transportNote && j.transportNote.includes("సొంత"));
     if (activeTransportFilterOpt === "own") {
@@ -63,7 +75,7 @@ function renderLabourWidget() {
       transMatch = !hasOwnTransport;
     }
 
-    return skillMatch && gangMatch && wageMatch && transMatch;
+    return skillMatch && rangeMatch && gangMatch && wageMatch && transMatch;
   });
 
   container.innerHTML = `
@@ -75,15 +87,26 @@ function renderLabourWidget() {
         <span class="badge-live-blue">Live Feed</span>
       </div>
 
-      <!-- కూలీల 4 అడ్వాన్స్ ఫిల్టర్ల బార్ -->
+      <!-- ఫిల్టర్ల బార్ (జియో పరిధి + అడ్వాన్స్ ఫిల్టర్లు) -->
       <div class="labour-filter-bar" style="background:#e1f5fe; padding:10px; border-radius:8px; margin:10px 0; border:1px solid #b3e5fc;">
+        
+        <!-- టాప్ హెడర్: జియో-లొకేషన్ పరిధి & లభ్యం బ్యాడ్జ్ -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <span style="font-size:12px; font-weight:bold; color:#0277bd;">🎯 అడ్వాన్స్ ఫిల్టర్లు:</span>
-          <span style="font-size:11px; background:#0288d1; color:#fff; padding:2px 8px; border-radius:12px; font-weight:bold;">
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:12px; font-weight:bold; color:#0277bd;">📍 నా పరిధి (Near Me):</span>
+            <select onchange="applyAdvLabourFilter('range', this.value)" style="padding:4px 8px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:bold; color:#0277bd; outline:none;">
+              <option value="all" ${activeLabourRangeFilter === 'all' ? 'selected' : ''}>అన్ని ప్రాంతాలు</option>
+              <option value="village" ${activeLabourRangeFilter === 'village' ? 'selected' : ''}>🏡 నా గ్రామం (2.5 కి.మీ)</option>
+              <option value="5" ${activeLabourRangeFilter === '5' ? 'selected' : ''}>⚡ 5 కి.మీ లోపు</option>
+              <option value="10" ${activeLabourRangeFilter === '10' ? 'selected' : ''}>🚶 10 కి.మీ లోపు</option>
+            </select>
+          </div>
+          <span style="font-size:11px; background:#0288d1; color:#fff; padding:3px 8px; border-radius:12px; font-weight:bold;">
             ${jobsData.length} లభ్యం
           </span>
         </div>
 
+        <!-- 4 అడ్వాన్స్ ఫిల్టర్లు (2x2 Grid) -->
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
           <!-- 1. పని నైపుణ్యం (Skill) -->
           <select onchange="applyAdvLabourFilter('skill', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
@@ -97,7 +120,7 @@ function renderLabourWidget() {
 
           <!-- 2. బృందం సైజు (Gang Size) -->
           <select onchange="applyAdvLabourFilter('gang', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
-            <option value="all" ${activeGangFilter === 'all' ? 'selected' : ''}>👥 బృందం సైజు (అన్నీ)</option>
+            <option value="all" ${activeGangFilter === 'all' ? 'selected' : ''}>👥 బృందం (అన్నీ)</option>
             <option value="small" ${activeGangFilter === 'small' ? 'selected' : ''}>👤 1-5 మంది కూలీలు</option>
             <option value="medium" ${activeGangFilter === 'medium' ? 'selected' : ''}>👥 6-10 మంది బృందం</option>
             <option value="large" ${activeGangFilter === 'large' ? 'selected' : ''}>👨‍👩‍👧‍👦 10+ పెద్ద గ్యాంగ్</option>
@@ -107,15 +130,15 @@ function renderLabourWidget() {
           <select onchange="applyAdvLabourFilter('wage', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
             <option value="all" ${activeWageFilter === 'all' ? 'selected' : ''}>💰 కూలీ రేటు (అన్నీ)</option>
             <option value="low" ${activeWageFilter === 'low' ? 'selected' : ''}>₹400 లోపు</option>
-            <option value="mid" ${activeWageFilter === 'mid' ? 'selected' : ''}>₹400 - ₹600 మధ్య</option>
+            <option value="mid" ${activeWageFilter === 'mid' ? 'selected' : ''}>₹400 - ₹600</option>
             <option value="high" ${activeWageFilter === 'high' ? 'selected' : ''}>₹600 పైబడి</option>
           </select>
 
           <!-- 4. రవాణా సౌలభ్యం (Transport) -->
           <select onchange="applyAdvLabourFilter('trans', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
             <option value="all" ${activeTransportFilterOpt === 'all' ? 'selected' : ''}>🛵 రవాణా (అన్నీ)</option>
-            <option value="own" ${activeTransportFilterOpt === 'own' ? 'selected' : ''}>🏍️ సొంత బండి కలవారు</option>
-            <option value="needed" ${activeTransportFilterOpt === 'needed' ? 'selected' : ''}>🛺 రవాణా ఏర్పాటు అవసరం</option>
+            <option value="own" ${activeTransportFilterOpt === 'own' ? 'selected' : ''}>🏍️ సొంత బండి</option>
+            <option value="needed" ${activeTransportFilterOpt === 'needed' ? 'selected' : ''}>🛺 రవాణా అవసరం</option>
           </select>
         </div>
       </div>
@@ -125,7 +148,7 @@ function renderLabourWidget() {
 
         ${jobsData.length === 0 ? `
           <div class="no-jobs-msg" style="text-align:center; padding:18px; color:#555; font-size:13px; background:#fff; border-radius:8px; border:1px dashed #90caf9;">
-            📢 మీరు ఎంచుకున్న ఫిల్టర్లకు సరిపడే పనులు ప్రస్తుతం లేవు.
+            📢 మీరు ఎంచుకున్న పరిధి / ఫిల్టర్లకు సరిపడే పనులు ప్రస్తుతం లేవు.
           </div>
         ` : jobsData.map(j => {
           const isConf = j.status === "Confirmed";
@@ -182,8 +205,9 @@ function renderLabourWidget() {
   `;
 }
 
-// ఫిల్టర్ ఈవెంట్ హ్యాండ్లర్
+// అన్ని ఫిల్టర్ల ఈవెంట్ హ్యాండ్లర్
 window.applyAdvLabourFilter = function(key, val) {
+  if (key === 'range') activeLabourRangeFilter = val;
   if (key === 'skill') activeSkillFilter = val;
   if (key === 'gang') activeGangFilter = val;
   if (key === 'wage') activeWageFilter = val;
