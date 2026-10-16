@@ -17,7 +17,7 @@ window.renderTransportWidget = function(targetContainerId = "farmer-pane-transpo
           <div class="eq-top-row">
             <div>
               <div class="eq-name">${tr.name}</div>
-              <div class="eq-owner-meta">డ్రైవర్/యజమాని: <b>${tr.driver}</b> \vert{} 📍 ${tr.loc}</div>
+              <div class="eq-owner-meta">డ్రైవర్/యజమాని: <b>${tr.driver}</b> | 📍 ${tr.loc}</div>
             </div>
             <div class="eq-price-badge">${tr.rate}</div>
           </div>
