@@ -324,10 +324,14 @@ function renderBookingRecords() {
           <div class="rec-details-row">
             👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
             📅 తేదీ: <b>${b.date}</b> | ⏱️ పరిమాణం: <b>${b.duration}</b><br>
-            💰 ధర: <b>${b.rate}</b>
-          </div>
+             💰 ధర: <b>${b.rate}</b>
         </div>
-      `).join('')}
+        <button type="button" class="eq-btn-link" style="background:#fff3e0; color:#e65100; border:1px solid #ffe082; margin-top:8px; width:100%; cursor:pointer; font-weight:bold; padding:6px 0; border-radius:6px;" onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')">
+          🔒 ₹500 అడ్వాన్స్ Escrow లాక్ చేయండి
+        </button>
+      </div>
+    `).join('')}
+
     </div>
   `;
 }
