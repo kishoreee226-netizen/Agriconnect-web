@@ -323,7 +323,7 @@ function renderBookingRecords() {
           </div>
           <div class="rec-details-row">
             👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
-            📅 తేదీ: <b>${b.date}</b> \vert{} ⏱️ పరిమాణం: <b>${b.duration}</b><br>
+            📅 తేదీ: <b>${b.date}</b> | ⏱️ పరిమాణం: <b>${b.duration}</b><br>
             💰 ధర: <b>${b.rate}</b>
           </div>
         </div>
