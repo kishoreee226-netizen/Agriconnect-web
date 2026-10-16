@@ -2377,16 +2377,18 @@ header h1 {
   margin-top: 10px;
 }
 
-.eq-btn-link {
-  flex: 1;
-  text-align: center;
-  padding: 8px 0;
-  border-radius: 8px;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: bold;
-  display: inline-block;
-  transition: opacity 0.2s;
+.eq-tab-btn {
+  flex: 0 0 auto;
+  padding: 6px 12px;       /* 8px 14px నుండి 6px 12px కి తగ్గించాం */
+  border-radius: 18px;
+  border: 1px solid #c8e6c9;
+  background: #f1f8e9;
+  color: #2e7d32;
+  font-size: 12px;          /* 13px నుండి 12px కి */
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
 .eq-btn-call {
