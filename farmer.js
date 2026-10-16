@@ -291,3 +291,40 @@ window.closeBookingModal = function() {
   const modal = document.getElementById("booking-modal");
   if (modal) modal.remove();
 };
+// బుకింగ్ రికార్డ్స్ రెండరింగ్ ఫంక్షన్
+function renderBookingRecords() {
+  const container = document.getElementById("farmer-booking-records");
+  if (!container) return;
+
+  let bookings = [];
+  try {
+    bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+  } catch (err) {}
+
+  if (bookings.length === 0) {
+    container.innerHTML = ``; // బుకింగ్స్ లేకపోతే ఖాళీగా ఉంచుతుంది
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="booking-records-section">
+      <div class="booking-records-header">
+        <h4>📋 నా బుకింగ్‌లు (${bookings.length}):</h4>
+      </div>
+      ${bookings.map(b => `
+        <div class="booking-record-card">
+          <div class="rec-title-row">
+            <span>🚜 ${b.itemName}</span>
+            <span class="rec-status-tag">${b.status}</span>
+          </div>
+          <div class="rec-details-row">
+            👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
+            📅 తేదీ: <b>${b.date}</b> \vert{} ⏱️ పరిమాణం: <b>${b.duration}</b><br>
+            💰 ధర: <b>${b.rate}</b>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
