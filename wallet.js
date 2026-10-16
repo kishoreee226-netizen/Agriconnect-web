@@ -206,3 +206,52 @@ window.handleWithdrawUPI = function() {
 
   alert(`✅ ₹${withdrawAmount} మీ UPI (${upiId}) కి విజయవంతంగా బదిలీ చేయబడింది!\nమిగిలిన balance: ₹${wallet.labourBalance}`);
 };
+// --- బుకింగ్ కోసం Escrow Lock ఫంక్షన్ ---
+window.lockBookingEscrow = function(bookingId, amount, itemName) {
+  const wallet = getAgriWalletData();
+  const currentBalance = Number(wallet.farmerBalance || 0);
+
+  if (currentBalance < amount) {
+    alert(`⚠️ రైతు వ్యాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు! కావలసినది: ₹${amount}, ఉన్నది: ₹${currentBalance}`);
+    return false;
+  }
+
+  // రైతు బ్యాలెన్స్ నుండి అడ్వాన్స్ కట్ చేసి ఎస్క్రో లో లాక్ చేయడం
+  wallet.farmerBalance = currentBalance - amount;
+  if (!wallet.escrows) wallet.escrows = [];
+  
+  wallet.escrows.unshift({
+    bookingId: bookingId,
+    amount: amount,
+    itemName: itemName,
+    status: "Locked",
+    date: new Date().toLocaleDateString('te-IN')
+  });
+
+  saveAgriWalletData(wallet);
+  renderWalletWidget();
+
+  if (window.AgriState) {
+    window.AgriState.wallet = wallet;
+  }
+
+  // బుకింగ్ స్టేటస్ అప్‌డేట్ చేయడం
+  try {
+    let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+    bookings = bookings.map(b => {
+      if (b.id === bookingId) {
+        b.status = `🔒 ₹${amount} Escrow లో భద్రపరచబడింది`;
+      }
+      return b;
+    });
+    localStorage.setItem("farmer_bookings", JSON.stringify(bookings));
+  } catch (err) {}
+
+  if (typeof renderBookingRecords === "function") {
+    renderBookingRecords();
+  }
+
+  alert(`🔒 ₹${amount} అడ్వాన్స్ మొత్తం Smart Wallet (Escrow) లో లాక్ చేయబడింది!`);
+  return true;
+};
+
