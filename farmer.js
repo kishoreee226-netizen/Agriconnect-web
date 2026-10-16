@@ -308,13 +308,12 @@ window.renderBookingRecords = function() {
   container.innerHTML = `
     <div class="booking-records-section" style="margin-top: 15px; max-height: 280px; overflow-y: auto; border: 1px solid #c8e6c9; border-radius: 10px; padding: 10px; background: #fafdfa;">
       <div class="booking-records-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h4 style="margin:0; font-size:13px; color:#2e7d32;">📋 నా బుకింగ్‌లు (${bookings.length}):</h4>
-        <button type="button" onclick="clearFarmerBookings()" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; font-size:11px; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600;">🗑️ క్లియర్ చేయండి</button>
+        <h4 style="margin:0; font-size:13px; color:#2e7d32;">📋 Naa Bookinglu (${bookings.length}):</h4>
+        <button type="button" onclick="clearFarmerBookings()" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; font-size:11px; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600;">🗑️ Clear Cheyandi</button>
       </div>
-      // renderBookingRecords లోని మ్యాపింగ్ భాగం:
       ${bookings.map(b => {
         const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
-        const bookingMsg = `నమస్తే ${b.ownerName} గారు, నేను మీ ${b.itemName} ను ${b.date} తేదీన (${b.duration}) కోసం బుక్ చేసుకున్నాను. దయచేసి వివరాలు నిర్ధారించండి.`;
+        const bookingMsg = `Namaste ${b.ownerName} gaaru, nenu mee${b.itemName} nu ${b.date} theedhina (${b.duration}) kosam book chesukunanu. Dayachesi vivaralu confirm cheyagalaru.`;
         const waUrl = `https://wa.me/91${b.phone}?text=${encodeURIComponent(bookingMsg)}`;
 
         return `
@@ -324,37 +323,37 @@ window.renderBookingRecords = function() {
               <span class="rec-status-tag" style="background:${isLocked ? '#e8f5e9' : '#fff8e1'}; color:${isLocked ? '#2e7d32' : '#f57f17'}; font-size:11px; padding:2px 6px; border-radius:4px;">${b.status}</span>
             </div>
             <div class="rec-details-row" style="font-size:12px; color:#555; margin-top:4px; line-height:1.4;">
-              👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
-              📅 తేదీ: <b>${b.date}</b> | ⏱️ పరిమాణం: <b>${b.duration}</b><br>
-              💰 ధర: <b>${b.rate}</b>
+              👤 Yajamaani: <b>${b.ownerName}</b> (${b.phone})<br>
+              📅 Theedhi: <b>${b.date}</b> \vert{} ⏱️ Parimaanam: <b>${b.duration}</b><br>
+              💰 Dhara: <b>${b.rate}</b>
             </div>
 
-            <!-- రైతు స్వయంగా నొక్కినప్పుడు మాత్రమే వాట్సాప్ ఓపెన్ అవుతుంది -->
+            <!-- WhatsApp mariyu Call buttons -->
             <div style="display:flex; gap:6px; margin-top:8px;">
               <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
-                💬 వాట్సాప్
+                💬 WhatsApp
               </a>
               <a href="tel:${b.phone}" style="flex:1; text-align:center; background:#e3f2fd; color:#0d47a1; border:1px solid #bbdefb; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
-                📞 కాల్
+                📞 Call
               </a>
             </div>
 
             ${isLocked ? `
               <div style="margin-top:6px; font-size:11px; color:#2e7d32; font-weight:bold; text-align:center; background:#e8f5e9; padding:4px; border-radius:4px;">
-                ✅ ₹500 Escrow భద్రపరచబడింది
+                ✅ ₹500 Escrow Bhadraparachabadindi
               </div>
             ` : `
-              <button type="button" class="eq-btn-link" style="background:#fff3e0; color:#e65100; border:1px solid #ffe082; margin-top:6px; width:100%; cursor:pointer; font-weight:bold; padding:6px 0; border-radius:6px; font-size:12px;" onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')">
-                🔒 ₹500 అడ్వాన్స్ Escrow లాక్ చేయండి
+              <button type="button" class="eq-btn-link" style="background:#fff3e0; color:#e65100; border:1px solid #ffe082; margin-top:8px; width:100%; cursor:pointer; font-weight:bold; padding:6px 0; border-radius:6px; font-size:12px;" onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')">
+                🔒 ₹500 Advance Escrow Lock Cheyandi
               </button>
             `}
           </div>
         `;
       }).join('')}
-
     </div>
   `;
 };
+
 
 // 7. Helper: Clear All Bookings
 window.clearFarmerBookings = function() {
