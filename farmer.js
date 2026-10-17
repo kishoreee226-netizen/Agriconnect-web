@@ -1,4 +1,4 @@
-// farmer.js - Complete Farmer Dashboard (All Legacy Features + Live Labour Slot Tracking & Cloud Sync)
+// farmer.js - Complete Farmer Dashboard (All Legacy Features + Live Labour Slot Tracking + Escrow Logic & Real-time Cloud Sync)
 
 // 1. Tab Switcher Function
 window.switchFarmerTab = function(tab) {
@@ -20,7 +20,7 @@ window.switchFarmerTab = function(tab) {
   }
 };
 
-// 2. Helper: Labour Form HTML (Pani Post Chese Form)
+// 2. Helper: Labour Form HTML (పని పోస్ట్ చేసే ఫారమ్)
 function getLabourFormHTML() {
   return `
     <form id="farmer-form" class="farmer-form">
@@ -63,7 +63,7 @@ function getLabourFormHTML() {
   `;
 }
 
-// 3. Helper: Live Tracking & Confirmed Labours List HTML (Slots + Legacy Format)
+// 3. Helper: Live Tracking & Confirmed Labours List HTML (Slots + Backward Compatibility)
 function getAcceptedListHTML(jobs) {
   let postedJobs = [];
   try {
@@ -75,7 +75,8 @@ function getAcceptedListHTML(jobs) {
 
   return `
     <div class="accepted-section" style="margin-top:14px;">
-      <!-- Live Slot Tracker for Posted Jobs -->
+      
+      <!-- 📋 Live Slot Tracker for Posted Jobs (రియల్-టైమ్ స్లాట్ కౌంటర్) -->
       ${postedJobs.length > 0 ? `
         <div style="background:#f1f8e9; border:1px solid #c5e1a5; border-radius:8px; padding:10px; margin-bottom:12px;">
           <h4 style="margin:0 0 8px 0; color:#2e7d32; font-size:13px;">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
@@ -96,11 +97,12 @@ function getAcceptedListHTML(jobs) {
                   📅 తేదీ: <b>${j.workDate \vert{}\vert{} j.date \vert{}\vert{} 'ఈ రోజు'}</b> \vert{} కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> \vert{} రేటు: ₹${j.wage}
                 </div>
 
+                <!-- ఒప్పుకున్న కూలీల వివరాలు, కాల్ & వాట్సాప్ -->
                 ${confirmed.length > 0 ? `
                   <div style="margin-top:6px; padding-top:6px; border-top:1px dashed #e0e0e0;">
                     <span style="font-size:10px; font-weight:bold; color:#0277bd;">చేరిన కూలీలు:</span>
                     ${confirmed.map(c => `
-                      <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:3px 6px; border-radius:4px; margin-top:3px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:4px 6px; border-radius:4px; margin-top:3px;">
                         <span style="font-size:11px; color:#333;">👷 <b>${c.name}</b> (${c.phone})</span>
                         <div style="display:flex; gap:4px;">
                           <a href="tel:${c.phone}" style="padding:2px 6px; background:#0288d1; color:#fff; border-radius:3px; font-size:10px; text-decoration:none;">📞 కాల్</a>
@@ -116,7 +118,7 @@ function getAcceptedListHTML(jobs) {
         </div>
       ` : ''}
 
-      <!-- Standard Accepted List -->
+      <!-- Standard Accepted List (పాత ఫార్మాట్ కంపాటబిలిటీ) -->
       <div class="accepted-header">
         <h4>👥 Confirm అయిన కూలీలు (${jobs.length}):</h4>${jobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
       </div>
@@ -180,6 +182,7 @@ function renderFarmerWidget() {
     </div>
   `;
 
+  // బుకింగ్ రికార్డులను రెండర్ చేయడం
   renderBookingRecords();
 
   if (typeof prefillFarmerFormDefaults === "function") {
@@ -208,7 +211,7 @@ function renderFarmerWidget() {
     e.preventDefault();
 
     const villageText = document.getElementById("f-village-btn")?.textContent?.replace(/[🏛️🏘️\s]/g, '') || 
-                        window.AppState?.userProfile?.village || "సమీప గ్రామం";
+                        window.AppState?.userProfile?.village || "హనుమకొండ";
 
     const fName = document.getElementById("f-name").value.trim();
     const fPhone = document.getElementById("f-phone").value.trim();
@@ -241,12 +244,14 @@ function renderFarmerWidget() {
       createdAt: Date.now()
     };
 
+    // 1. Firebase Firestore Real-time Cloud Save
     if (window.db) {
       window.db.collection("farmer_posted_jobs").add(newJob).catch(err => {
         console.warn("Cloud save error, fallback to local:", err);
       });
     }
 
+    // 2. Local Storage Sync
     let farmerPostedList = [];
     try {
       farmerPostedList = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
@@ -254,6 +259,7 @@ function renderFarmerWidget() {
     farmerPostedList.unshift(newJob);
     localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(farmerPostedList));
 
+    // 3. AgriState Legacy Compatibility
     if (window.AgriState && typeof window.AgriState.addJob === "function") {
       window.AgriState.addJob(newJob);
     } else {
@@ -265,6 +271,7 @@ function renderFarmerWidget() {
       localStorage.setItem("agri_jobs", JSON.stringify(savedJobs));
     }
 
+    // ఫారమ్ ఫీల్డ్స్ రీసెట్
     document.getElementById("f-crop").value = "";
     document.getElementById("f-work").value = "";
     document.getElementById("f-count").value = "";
@@ -401,6 +408,7 @@ window.renderBookingRecords = function() {
               💰 Dhara: <b>${b.rate}</b>
             </div>
 
+            <!-- WhatsApp & Call బటన్లు -->
             <div style="display:flex; gap:6px; margin-top:8px;">
               <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
                 💬 WhatsApp
@@ -410,6 +418,7 @@ window.renderBookingRecords = function() {
               </a>
             </div>
 
+            <!-- Escrow Button / Badge -->
             ${isLocked ? `
               <div style="margin-top:6px; font-size:11px; color:#2e7d32; font-weight:bold; text-align:center; background:#e8f5e9; padding:4px; border-radius:4px;">
                 ✅ ₹500 Escrow Bhadraparachabadindi
@@ -434,7 +443,47 @@ window.clearFarmerBookings = function() {
   }
 };
 
-// 8. Safe Global Visibility & Fallback Loader
+// 8. Escrow Lock Handler (ఇంతకుముందు మిస్సయిన ఫంక్షన్)
+window.lockBookingEscrow = function(bookingId, amount, itemName) {
+  let bookings = [];
+  try {
+    bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+  } catch (err) {}
+
+  const b = bookings.find(x => x.id === bookingId);
+  if (b) {
+    b.escrowLocked = true;
+    b.status = `₹${amount} Escrow Lock Aindi (Secure)`;
+    localStorage.setItem("farmer_bookings", JSON.stringify(bookings));
+    renderBookingRecords();
+    
+    // Wallet Sync (wallet.js ఉంటే అందులోని ఎస్క్రోను అప్‌డేట్ చేస్తుంది)
+    if (window.AppState && typeof window.AppState.updateEscrow === "function") {
+      window.AppState.updateEscrow(amount);
+    }
+    
+    alert(`🔒 ${itemName} కోసం ₹${amount} Escrow Wallet లో విజయవంతంగా లాక్ చేయబడింది!`);
+  }
+};
+
+// 9. Real-time Firebase Listener for Farmer Slots (కూలీ Accept చేసిన వెంటనే రైతు స్క్రీన్ ఆటో-రిఫ్రెష్)
+if (window.db) {
+  window.db.collection("farmer_posted_jobs").onSnapshot((snapshot) => {
+    let list = [];
+    snapshot.forEach(doc => {
+      list.push({ id: doc.id, ...doc.data() });
+    });
+    localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
+    
+    const acceptedSection = document.querySelector(".accepted-section");
+    if (acceptedSection && typeof renderFarmerWidget === "function") {
+      const myAcceptedJobs = (window.AgriState ? window.AgriState.getJobs() : []).filter(j => j.status === "Confirmed");
+      acceptedSection.outerHTML = getAcceptedListHTML(myAcceptedJobs);
+    }
+  });
+}
+
+// 10. Safe Global Visibility & Fallback Loader
 window.forceFarmerModeDisplay = function() {
   const fContainer = document.getElementById("farmer-post-container");
   const lContainer = document.getElementById("labour-jobs-container");
