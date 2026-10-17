@@ -148,10 +148,10 @@ function renderLabourWidget() {
                 <div>
                   <h4 style="margin:0; color:#0277bd; font-size:13px;">🌾 ${job.crop} -${job.workType}</h4>
                   <div style="font-size:11px; color:#424242; margin-top:3px;">
-                    రైతు: <b>${job.farmerName}</b> \vert{} 📍 గ్రామం: <b>${job.village || 'సమీప గ్రామం'}</b>
+                    రైతు: <b>${job.farmerName}</b> | 📍 గ్రామం: <b>${job.village || 'సమీప గ్రామం'}</b>
                   </div>
                   <div style="font-size:11px; color:#d84315; margin-top:2px; font-weight:bold;">
-                    📅 పని తేదీ: ${job.workDate \vert{}\vert{} job.date \vert{}\vert{} 'ఈ రోజు'} \vert{} 🛵 ${job.transportNote || 'రవాణా సదుపాయం కలదు'}
+                    📅 పని తేదీ: ${job.workDate || job.date || 'ఈ రోజు'} | 🛵 ${job.transportNote || 'రవాణా సదుపాయం కలదు'}
                   </div>
                   <div style="font-size:11px; color:#2e7d32; margin-top:3px;">
                     👥 కూలీల కోటా: <b>${filledCount} /${reqCount} భర్తీ అయ్యారు</b>
