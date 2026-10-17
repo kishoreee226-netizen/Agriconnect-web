@@ -3,7 +3,7 @@
 // Helper: Rhythu Dashboard Container ni safe ga theesukovatam
 function getFarmerDashboardElement() {
   let el = document.getElementById("farmer-post-container");
-  
+
   // Oka vela container dorakakapothe wallet paina create chesthundhi
   if (!el) {
     const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
@@ -101,9 +101,11 @@ function applyUserRoleView() {
         farmerContainer.style.setProperty("display", "block", "important");
       }
 
-      // Mukhyam: Rhythu Widget ni render cheyadam
+      // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
       if (typeof window.renderFarmerWidget === "function") {
         window.renderFarmerWidget();
+      } else if (typeof window.renderFarmerLabourPane === "function") {
+        window.renderFarmerLabourPane();
       }
 
       prefillFarmerFormDefaults();
@@ -209,6 +211,8 @@ window.switchRoleMode = function(targetRole) {
 
     if (typeof window.renderFarmerWidget === "function") {
       window.renderFarmerWidget();
+    } else if (typeof window.renderFarmerLabourPane === "function") {
+      window.renderFarmerLabourPane();
     }
     setTimeout(prefillFarmerFormDefaults, 60);
   } else {
@@ -452,7 +456,7 @@ function initRoleFlow() {
 }
 
 if (document.readyState === "loading") {
-  window.addEventListener("DOMContentLoaded", initRoleFlow);
+  document.addEventListener("DOMContentLoaded", initRoleFlow);
 } else {
   initRoleFlow();
 }
