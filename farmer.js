@@ -65,7 +65,6 @@ function getLabourFormHTML() {
 
 // 3. Helper: Live Tracking & Confirmed Labours List HTML (Slots + Legacy Format)
 function getAcceptedListHTML(jobs) {
-  // Cloud / Local nundi posted jobs anni read cheyadam
   let postedJobs = [];
   try {
     const stored = localStorage.getItem("agri_farmer_posted_jobs");
@@ -76,8 +75,7 @@ function getAcceptedListHTML(jobs) {
 
   return `
     <div class="accepted-section" style="margin-top:14px;">
-      
-      <!-- 📋 Live Slot Tracker for Posted Jobs -->
+      <!-- Live Slot Tracker for Posted Jobs -->
       ${postedJobs.length > 0 ? `
         <div style="background:#f1f8e9; border:1px solid #c5e1a5; border-radius:8px; padding:10px; margin-bottom:12px;">
           <h4 style="margin:0 0 8px 0; color:#2e7d32; font-size:13px;">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
@@ -95,7 +93,7 @@ function getAcceptedListHTML(jobs) {
                   </span>
                 </div>
                 <div style="font-size:11px; color:#555; margin-top:2px;">
-                  📅 తేదీ: <b>${j.workDate \vert{}\vert{} j.date}</b> \vert{} కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> \vert{} రేటు: ₹${j.wage}
+                  📅 తేదీ: <b>${j.workDate \vert{}\vert{} j.date \vert{}\vert{} 'ఈ రోజు'}</b> \vert{} కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> \vert{} రేటు: ₹${j.wage}
                 </div>
 
                 ${confirmed.length > 0 ? `
@@ -118,7 +116,7 @@ function getAcceptedListHTML(jobs) {
         </div>
       ` : ''}
 
-      <!-- Patha Standard Accepted List (Backward Compatibility) -->
+      <!-- Standard Accepted List -->
       <div class="accepted-header">
         <h4>👥 Confirm అయిన కూలీలు (${jobs.length}):</h4>${jobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
       </div>
@@ -182,7 +180,6 @@ function renderFarmerWidget() {
     </div>
   `;
 
-  // Booking records ventane chupinchadam
   renderBookingRecords();
 
   if (typeof prefillFarmerFormDefaults === "function") {
@@ -244,14 +241,12 @@ function renderFarmerWidget() {
       createdAt: Date.now()
     };
 
-    // 1. Firebase Firestore lo cloud save
     if (window.db) {
       window.db.collection("farmer_posted_jobs").add(newJob).catch(err => {
         console.warn("Cloud save error, fallback to local:", err);
       });
     }
 
-    // 2. Local Storage sync
     let farmerPostedList = [];
     try {
       farmerPostedList = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
@@ -259,7 +254,6 @@ function renderFarmerWidget() {
     farmerPostedList.unshift(newJob);
     localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(farmerPostedList));
 
-    // 3. Patha AgriState legacy compatibility
     if (window.AgriState && typeof window.AgriState.addJob === "function") {
       window.AgriState.addJob(newJob);
     } else {
@@ -271,7 +265,6 @@ function renderFarmerWidget() {
       localStorage.setItem("agri_jobs", JSON.stringify(savedJobs));
     }
 
-    // Form Reset
     document.getElementById("f-crop").value = "";
     document.getElementById("f-work").value = "";
     document.getElementById("f-count").value = "";
@@ -404,11 +397,10 @@ window.renderBookingRecords = function() {
             </div>
             <div class="rec-details-row" style="font-size:12px; color:#555; margin-top:4px; line-height:1.4;">
               👤 Yajamaani: <b>${b.ownerName}</b> (${b.phone})<br>
-              📅 Theedhi: <b>${b.date}</b>  \vert{} ⏱️ Parimaanam: <b>${b.duration}</b><br>
+              📅 Theedhi: <b>${b.date}</b> \vert{} ⏱️ Parimaanam: <b>${b.duration}</b><br>
               💰 Dhara: <b>${b.rate}</b>
             </div>
 
-            <!-- WhatsApp mariyu Call buttons -->
             <div style="display:flex; gap:6px; margin-top:8px;">
               <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
                 💬 WhatsApp
@@ -442,17 +434,7 @@ window.clearFarmerBookings = function() {
   }
 };
 
-// farmer.js చివరిలో చేర్చండి:
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
-  });
-} else {
-  if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
-}
-// --- AUTO FIX FOR FARMER DASHBOARD VISIBILITY ---
-
-// 1. Mode Switch Listener Fix
+// 8. Safe Global Visibility & Fallback Loader
 window.forceFarmerModeDisplay = function() {
   const fContainer = document.getElementById("farmer-post-container");
   const lContainer = document.getElementById("labour-jobs-container");
@@ -465,39 +447,15 @@ window.forceFarmerModeDisplay = function() {
     lContainer.style.display = "none";
   }
 
-  // Render Farmer Widget immediately
-  if (typeof renderFarmerWidget === "function") {
-    renderFarmerWidget();
+  if (typeof window.renderFarmerWidget === "function") {
+    window.renderFarmerWidget();
   }
 };
 
-// 2. Attach clicks to existing Farmer / Labour Mode buttons automatically
-function setupModeButtonFix() {
-  // Page lo unna buttons ni vetukuthundhi
-  const allButtons = document.querySelectorAll("button, div");
-  allButtons.forEach(btn => {
-    const txt = btn.textContent || "";
-    if (txt.includes("Farmer mode") || txt.includes("రైతు")) {
-      btn.addEventListener("click", () => {
-        setTimeout(window.forceFarmerModeDisplay, 50);
-      });
-    }
-  });
-
-  // Default ga user profile farmer aithe direct ga open cheyali
-  const profileRole = window.AppState?.userProfile?.role || "";
-  const isFarmerText = document.body.innerText.includes("రైతు (Farmer)");
-
-  if (profileRole === "farmer" || isFarmerText) {
-    window.forceFarmerModeDisplay();
-  }
-}
-
-// Run immediately & on DOM load
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(setupModeButtonFix, 200);
+    if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
   });
 } else {
-  setTimeout(setupModeButtonFix, 200);
+  if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
 }
