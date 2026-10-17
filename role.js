@@ -1,4 +1,4 @@
-// role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
+window.renderFarmerWidget// role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
 
 // Helper: Rhythu Dashboard Container ni safe ga theesukovatam
 function getFarmerDashboardElement() {
@@ -94,22 +94,34 @@ function applyUserRoleView() {
         }
       }
       filterLabourJobsByLocation();
-    } else {
+      } else {
       // Farmer Role Active ga unnappudu:
-      if (labourContainer) labourContainer.style.setProperty("display", "none", "important");
+      if (labourContainer)
+        labourContainer.style.setProperty("display", "none", "important");
       if (farmerContainer) {
         farmerContainer.style.setProperty("display", "block", "important");
       }
 
-      // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
-      if (typeof window.renderFarmerWidget === "function") {
-        window.renderFarmerWidget();
-      } else if (typeof window.renderFarmerLabourPane === "function") {
-        window.renderFarmerLabourPane();
+            // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
+      function triggerFarmerRender() {
+        const fBox = document.getElementById("farmer-post-container");
+        if (fBox) {
+          fBox.style.setProperty("display", "block", "important");
+        }
+        if (typeof window.renderFarmerWidget === "function") {
+          window.renderFarmerWidget();
+          if (typeof prefillFarmerFormDefaults === "function") {
+            prefillFarmerFormDefaults();
+          }
+        } else if (typeof window.renderFarmerLabourPane === "function") {
+          window.renderFarmerLabourPane();
+        }
       }
 
-      prefillFarmerFormDefaults();
-      setTimeout(prefillFarmerFormDefaults, 100);
+  // Calls function bayata:
+     triggerFarmerRender();
+     setTimeout(triggerFarmerRender, 200);
+     setTimeout(triggerFarmerRender, 800);
     }
   }
 }
