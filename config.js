@@ -37,23 +37,24 @@ function renderCompanyDetails() {
     if (elAddress) elAddress.textContent = `📍 ${window.COMPANY_CONFIG.location}`;
     if (elCopyright) elCopyright.textContent = `© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.`;
 
- // 1. Header Title, Logo & Tagline Setup
-    const header = document.querySelector("header");
-    if (header) {
-      const headerTitle = header.querySelector("h1");
-      if (headerTitle && !document.getElementById("header-tagline")) {
-        const logoSrc = window.COMPANY_CONFIG.branding?.headerLogo || "logo.png";
-        
-        header.innerHTML = `
-          <div class="header-brand">
-            <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="header-logo" onerror="this.style.display='none'">
-            <div class="brand-text">
-              <h1>${window.COMPANY_CONFIG.shortName}</h1>
-              <p id="header-tagline">${window.COMPANY_CONFIG.tagline}</p>
-            </div>
+     // 1. Header Title, Logo & Tagline Setup
+    let header = document.querySelector('header');
+    if (!header) {
+      header = document.createElement('header');
+      document.body.prepend(header);
+    }
+
+    if (!document.getElementById("header-tagline")) {
+      const logoSrc = window.COMPANY_CONFIG.branding?.headerLogo || "logo.png";
+      header.innerHTML = `
+        <div class="header-brand">
+          <img src="${logoSrc}" alt="${window.COMPANY_CONFIG.shortName}" class="header-logo" onerror="this.style.display='none'">
+          <div class="brand-text">
+            <h1>${window.COMPANY_CONFIG.shortName}</h1>
+            <p id="header-tagline">${window.COMPANY_CONFIG.tagline}</p>
           </div>
-        `;
-      }
+        </div>
+      `;
     }
 
 
