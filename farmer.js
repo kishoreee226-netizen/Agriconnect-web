@@ -450,3 +450,54 @@ if (document.readyState === "loading") {
 } else {
   if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
 }
+// --- AUTO FIX FOR FARMER DASHBOARD VISIBILITY ---
+
+// 1. Mode Switch Listener Fix
+window.forceFarmerModeDisplay = function() {
+  const fContainer = document.getElementById("farmer-post-container");
+  const lContainer = document.getElementById("labour-jobs-container");
+
+  if (fContainer) {
+    fContainer.style.display = "block";
+    fContainer.style.visibility = "visible";
+  }
+  if (lContainer) {
+    lContainer.style.display = "none";
+  }
+
+  // Render Farmer Widget immediately
+  if (typeof renderFarmerWidget === "function") {
+    renderFarmerWidget();
+  }
+};
+
+// 2. Attach clicks to existing Farmer / Labour Mode buttons automatically
+function setupModeButtonFix() {
+  // Page lo unna buttons ni vetukuthundhi
+  const allButtons = document.querySelectorAll("button, div");
+  allButtons.forEach(btn => {
+    const txt = btn.textContent || "";
+    if (txt.includes("Farmer mode") || txt.includes("రైతు")) {
+      btn.addEventListener("click", () => {
+        setTimeout(window.forceFarmerModeDisplay, 50);
+      });
+    }
+  });
+
+  // Default ga user profile farmer aithe direct ga open cheyali
+  const profileRole = window.AppState?.userProfile?.role || "";
+  const isFarmerText = document.body.innerText.includes("రైతు (Farmer)");
+
+  if (profileRole === "farmer" || isFarmerText) {
+    window.forceFarmerModeDisplay();
+  }
+}
+
+// Run immediately & on DOM load
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(setupModeButtonFix, 200);
+  });
+} else {
+  setTimeout(setupModeButtonFix, 200);
+}
