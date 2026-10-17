@@ -1,4 +1,4 @@
-// farmer.js - Clean & Modular Farmer Dashboard
+// farmer.js - Complete Farmer Dashboard (All Legacy Features + Live Labour Slot Tracking & Cloud Sync)
 
 // 1. Tab Switcher Function
 window.switchFarmerTab = function(tab) {
@@ -20,7 +20,7 @@ window.switchFarmerTab = function(tab) {
   }
 };
 
-// 2. Helper: Labour Form HTML
+// 2. Helper: Labour Form HTML (Pani Post Chese Form)
 function getLabourFormHTML() {
   return `
     <form id="farmer-form" class="farmer-form">
@@ -30,13 +30,13 @@ function getLabourFormHTML() {
       </div>
 
       <div class="form-row">
-        <input type="text" id="f-crop" class="farmer-input" placeholder="పంట" required />
-        <input type="text" id="f-work" class="farmer-input" placeholder="పని" required />
+        <input type="text" id="f-crop" class="farmer-input" placeholder="పంట (ఉదా: వరి, పత్తి)" required />
+        <input type="text" id="f-work" class="farmer-input" placeholder="పని (ఉదా: నాట్లు, కోత)" required />
       </div>
 
       <div class="form-row-spaced">
-        <input type="number" id="f-count" class="farmer-input" placeholder="కూలీల సంఖ్య" required />
-        <input type="number" id="f-wage" class="farmer-input" placeholder="రోజు కూలీ (₹)" required />
+        <input type="number" id="f-count" class="farmer-input" placeholder="కూలీల సంఖ్య" required min="1" />
+        <input type="number" id="f-wage" class="farmer-input" placeholder="రోజు కూలీ (₹)" required min="100" />
       </div>
 
       <div class="form-action-row">
@@ -53,25 +53,77 @@ function getLabourFormHTML() {
           <button type="button" id="loc-btn" class="btn-gps">📍 పొలం GPS</button>
           <span id="loc-status" class="gps-status-text"></span>
         </div>
-        <button type="button" id="f-village-btn" class="btn-village">🏛️ Hyderabad</button>
+        <button type="button" id="f-village-btn" class="btn-village">🏛️ Hanamkonda</button>
       </div>
 
       <div class="form-submit-row">
-        <button type="submit" class="btn-submit-farmer">📢 Submit కూలీల కోసం</button>
+        <button type="submit" class="btn-submit-farmer">📢 Submit కూలీల కోసం (Post Alert)</button>
       </div>
     </form>
   `;
 }
 
-// 3. Helper: Accepted Labours List HTML
+// 3. Helper: Live Tracking & Confirmed Labours List HTML (Slots + Legacy Format)
 function getAcceptedListHTML(jobs) {
+  // Cloud / Local nundi posted jobs anni read cheyadam
+  let postedJobs = [];
+  try {
+    const stored = localStorage.getItem("agri_farmer_posted_jobs");
+    postedJobs = stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    postedJobs = [];
+  }
+
   return `
-    <div class="accepted-section">
+    <div class="accepted-section" style="margin-top:14px;">
+      
+      <!-- 📋 Live Slot Tracker for Posted Jobs -->
+      ${postedJobs.length > 0 ? `
+        <div style="background:#f1f8e9; border:1px solid #c5e1a5; border-radius:8px; padding:10px; margin-bottom:12px;">
+          <h4 style="margin:0 0 8px 0; color:#2e7d32; font-size:13px;">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
+          ${postedJobs.map(j => {
+            const confirmed = j.confirmedLabours || [];
+            const reqCount = parseInt(j.totalRequired || j.count || 1);
+            const isFull = confirmed.length >= reqCount;
+
+            return `
+              <div style="background:#ffffff; border:1px solid #e0e0e0; border-left:4px solid ${isFull ? '#2e7d32' : '#f57c00'}; border-radius:6px; padding:8px; margin-bottom:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <strong style="color:#2e7d32; font-size:12px;">🌾 ${j.crop} -${j.workType}</strong>
+                  <span style="font-size:10px; padding:2px 6px; border-radius:8px; font-weight:bold; background:${isFull ? '#e8f5e9' : '#fff3e0'}; color:${isFull ? '#2e7d32' : '#e65100'};">
+                    ${isFull ? '✅ కోటా పూర్తయింది' : '⏳ కూలీల కోసం చూస్తున్నారు'}
+                  </span>
+                </div>
+                <div style="font-size:11px; color:#555; margin-top:2px;">
+                  📅 తేదీ: <b>${j.workDate \vert{}\vert{} j.date}</b> \vert{} కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> \vert{} రేటు: ₹${j.wage}
+                </div>
+
+                ${confirmed.length > 0 ? `
+                  <div style="margin-top:6px; padding-top:6px; border-top:1px dashed #e0e0e0;">
+                    <span style="font-size:10px; font-weight:bold; color:#0277bd;">చేరిన కూలీలు:</span>
+                    ${confirmed.map(c => `
+                      <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:3px 6px; border-radius:4px; margin-top:3px;">
+                        <span style="font-size:11px; color:#333;">👷 <b>${c.name}</b> (${c.phone})</span>
+                        <div style="display:flex; gap:4px;">
+                          <a href="tel:${c.phone}" style="padding:2px 6px; background:#0288d1; color:#fff; border-radius:3px; font-size:10px; text-decoration:none;">📞 కాల్</a>
+                          <a href="https://wa.me/91${c.phone}" target="_blank" style="padding:2px 6px; background:#25d366; color:#fff; border-radius:3px; font-size:10px; text-decoration:none;">💬 వాట్సాప్</a>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }).join('')}
+        </div>
+      ` : ''}
+
+      <!-- Patha Standard Accepted List (Backward Compatibility) -->
       <div class="accepted-header">
         <h4>👥 Confirm అయిన కూలీలు (${jobs.length}):</h4>${jobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
       </div>
       <div id="accepted-list" class="custom-scroll accepted-scroll-list">
-        ${jobs.length === 0 ? `
+        ${jobs.length === 0 && postedJobs.length === 0 ? `
           <div class="empty-labour-msg">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
         ` : jobs.map(j => `
           <div class="labour-card-item">
@@ -124,13 +176,13 @@ function renderFarmerWidget() {
         <div id="farmer-pane-seeds" style="display: none;"></div>
         <div id="farmer-pane-transport" style="display: none;"></div>
 
-        <!-- బుకింగ్ రికార్డులు కనిపించే కంటైనర్ (Tabs kindhaki shift chesam) -->
+        <!-- బుకింగ్ రికార్డులు కనిపించే కంటైనర్ -->
         <div id="farmer-booking-records"></div>
       </div>
     </div>
   `;
 
-  // Booking records ventane chupinchadaniki call
+  // Booking records ventane chupinchadam
   renderBookingRecords();
 
   if (typeof prefillFarmerFormDefaults === "function") {
@@ -161,24 +213,53 @@ function renderFarmerWidget() {
     const villageText = document.getElementById("f-village-btn")?.textContent?.replace(/[🏛️🏘️\s]/g, '') || 
                         window.AppState?.userProfile?.village || "సమీప గ్రామం";
 
+    const fName = document.getElementById("f-name").value.trim();
+    const fPhone = document.getElementById("f-phone").value.trim();
+    const crop = document.getElementById("f-crop").value.trim();
+    const work = document.getElementById("f-work").value.trim();
+    const count = parseInt(document.getElementById("f-count").value) || 1;
+    const wage = parseFloat(document.getElementById("f-wage").value) || 450;
+    const dateVal = document.getElementById("f-date").value;
+
     const newJob = {
       id: "JOB-" + Date.now(),
-      farmerName: document.getElementById("f-name").value,
-      farmerPhone: document.getElementById("f-phone").value,
-      crop: document.getElementById("f-crop").value,
-      workType: document.getElementById("f-work").value,
-      count: document.getElementById("f-count").value,
-      wage: document.getElementById("f-wage").value,
-      date: document.getElementById("f-date").value,
+      farmerName: fName,
+      farmerPhone: fPhone,
+      crop: crop,
+      workType: work,
+      count: count,
+      totalRequired: count,
+      confirmedLabours: [],
+      wage: wage,
+      date: dateVal,
+      workDate: dateVal,
       village: villageText,
       distanceKm: "2.5",
       lat: farmCoords.lat,
       lng: farmCoords.lng,
       status: "Open",
       labourName: "",
-      labourPhone: ""
+      labourPhone: "",
+      transportNote: "రైతు రవాణా ఏర్పాటు చేస్తారు",
+      createdAt: Date.now()
     };
 
+    // 1. Firebase Firestore lo cloud save
+    if (window.db) {
+      window.db.collection("farmer_posted_jobs").add(newJob).catch(err => {
+        console.warn("Cloud save error, fallback to local:", err);
+      });
+    }
+
+    // 2. Local Storage sync
+    let farmerPostedList = [];
+    try {
+      farmerPostedList = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
+    } catch (err) {}
+    farmerPostedList.unshift(newJob);
+    localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(farmerPostedList));
+
+    // 3. Patha AgriState legacy compatibility
     if (window.AgriState && typeof window.AgriState.addJob === "function") {
       window.AgriState.addJob(newJob);
     } else {
@@ -190,6 +271,7 @@ function renderFarmerWidget() {
       localStorage.setItem("agri_jobs", JSON.stringify(savedJobs));
     }
 
+    // Form Reset
     document.getElementById("f-crop").value = "";
     document.getElementById("f-work").value = "";
     document.getElementById("f-count").value = "";
@@ -250,7 +332,7 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
 
   document.body.insertAdjacentHTML('beforeend', modalHtml);
 
-    document.getElementById('booking-request-form')?.addEventListener("submit", function(e) {
+  document.getElementById('booking-request-form')?.addEventListener("submit", function(e) {
     e.preventDefault();
     const dateVal = document.getElementById('book-date').value;
     const durVal = document.getElementById('book-duration').value;
@@ -280,9 +362,7 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
     if (typeof renderBookingRecords === "function") {
       renderBookingRecords();
     }
-    // ఇక్కడున్న window.open(...) తీసేశాము!
   });
-
 };
 
 window.closeBookingModal = function() {
@@ -324,11 +404,11 @@ window.renderBookingRecords = function() {
             </div>
             <div class="rec-details-row" style="font-size:12px; color:#555; margin-top:4px; line-height:1.4;">
               👤 Yajamaani: <b>${b.ownerName}</b> (${b.phone})<br>
-              📅 Theedhi: <b>${b.date}</b>  | ⏱️ Parimaanam: <b>${b.duration}</b><br>
+              📅 Theedhi: <b>${b.date}</b>  \vert{} ⏱️ Parimaanam: <b>${b.duration}</b><br>
               💰 Dhara: <b>${b.rate}</b>
             </div>
 
-  <!-- WhatsApp mariyu Call buttons -->
+            <!-- WhatsApp mariyu Call buttons -->
             <div style="display:flex; gap:6px; margin-top:8px;">
               <a href="${waUrl}" target="_blank" style="flex:1; text-align:center; background:#e8f5e9; color:#1b5e20; border:1px solid #c8e6c9; padding:5px 0; border-radius:6px; font-size:12px; text-decoration:none; font-weight:bold;">
                 💬 WhatsApp
@@ -353,7 +433,6 @@ window.renderBookingRecords = function() {
     </div>
   `;
 };
-
 
 // 7. Helper: Clear All Bookings
 window.clearFarmerBookings = function() {
