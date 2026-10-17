@@ -93,11 +93,11 @@ function getAcceptedListHTML(jobs) {
                     ${isFull ? '✅ కోటా పూర్తయింది' : '⏳ కూలీల కోసం చూస్తున్నారు'}
                   </span>
                 </div>
-                <div style="font-size:11px; color:#555; margin-top:2px;">
-                  📅 తేదీ: <b>${j.workDate \vert{}\vert{} j.date \vert{}\vert{} 'ఈ రోజు'}</b> \vert{} కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> \vert{} రేటు: ₹${j.wage}
+               <div style="font-size:11px; color:#555; margin-top:2px;">
+                  📅 తేదీ: <b>${j.workDate || j.date || 'ఈ రోజు'}</b> | కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> | రేటు: ₹${j.wage}
                 </div>
 
-                <!-- ఒప్పుకున్న కూలీల వివరాలు, కాల్ & వాట్సాప్ -->
+      <!-- ఒప్పుకున్న కూలీల వివరాలు, కాల్ & వాట్సాప్ -->
                 ${confirmed.length > 0 ? `
                   <div style="margin-top:6px; padding-top:6px; border-top:1px dashed #e0e0e0;">
                     <span style="font-size:10px; font-weight:bold; color:#0277bd;">చేరిన కూలీలు:</span>
@@ -413,7 +413,7 @@ window.renderBookingRecords = function() {
             </div>
             <div class="rec-details-row" style="font-size:12px; color:#555; margin-top:4px; line-height:1.4;">
               👤 Yajamaani: <b>${b.ownerName}</b> (${b.phone})<br>
-              📅 Theedhi: <b>${b.date}</b> \vert{} ⏱️ Parimaanam: <b>${b.duration}</b><br>
+              📅 Theedhi: <b>${b.date}</b> | ⏱️ Parimaanam: <b>${b.duration}</b><br>
               💰 Dhara: <b>${b.rate}</b>
             </div>
 
