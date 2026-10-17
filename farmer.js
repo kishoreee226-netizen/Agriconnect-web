@@ -145,7 +145,7 @@ function getAcceptedListHTML(jobs) {
 }
 
 // 4. Main Farmer Widget Renderer
-function renderFarmerWidget() {
+window.renderFarmerWidget = function() {
   const container = document.getElementById("farmer-post-container");
   if (!container) return;
 
@@ -282,7 +282,7 @@ function renderFarmerWidget() {
       dateInput.type = "text";
     }
 
-    renderFarmerWidget();
+    window.renderFarmerWidget();
     if (typeof renderLabourWidget === "function") {
       renderLabourWidget();
     }
@@ -293,16 +293,15 @@ function renderFarmerWidget() {
       alert("📢 పని కూలీల Dashboard లో live గా post చేయబడింది!");
     }
   });
-}
+};
 
-window.renderFarmerWidget = renderFarmerWidget;
+// Compatibility Alias
+window.renderFarmerLabourPane = window.renderFarmerWidget;
 
 // 5. Global Booking Pop-up Logic
 window.openBookingModal = function(itemName, ownerName, rate, phone) {
   const oldModal = document.getElementById("booking-modal");
   if (oldModal) oldModal.remove();
-
-  const farmerName = document.getElementById("f-name")?.value || window.AppState?.userProfile?.name || "రైతు";
 
   const modalHtml = `
     <div id="booking-modal" class="booking-modal-overlay">
@@ -443,7 +442,7 @@ window.clearFarmerBookings = function() {
   }
 };
 
-// 8. Escrow Lock Handler (ఇంతకుముందు మిస్సయిన ఫంక్షన్)
+// 8. Escrow Lock Handler (Completed)
 window.lockBookingEscrow = function(bookingId, amount, itemName) {
   let bookings = [];
   try {
@@ -456,55 +455,56 @@ window.lockBookingEscrow = function(bookingId, amount, itemName) {
     b.status = `₹${amount} Escrow Lock Aindi (Secure)`;
     localStorage.setItem("farmer_bookings", JSON.stringify(bookings));
     renderBookingRecords();
-    
-    // Wallet Sync (wallet.js ఉంటే అందులోని ఎస్క్రోను అప్‌డేట్ చేస్తుంది)
-    if (window.AppState && typeof window.AppState.updateEscrow === "function") {
-      window.AppState.updateEscrow(amount);
+
+    // Wallet Sync
+    if (window.renderWalletWidget) {
+      window.renderWalletWidget();
     }
-    
-    alert(`🔒 ${itemName} కోసం ₹${amount} Escrow Wallet లో విజయవంతంగా లాక్ చేయబడింది!`);
+    alert(`🔒 ₹${amount} ఎస్క్రో లాక్ చేయబడింది (${itemName})! పని పూర్తయిన తర్వాత విడుదల అవుతుంది.`);
   }
 };
-
-// 9. Real-time Firebase Listener for Farmer Slots (కూలీ Accept చేసిన వెంటనే రైతు స్క్రీన్ ఆటో-రిఫ్రెష్)
-if (window.db) {
-  window.db.collection("farmer_posted_jobs").onSnapshot((snapshot) => {
-    let list = [];
-    snapshot.forEach(doc => {
-      list.push({ id: doc.id, ...doc.data() });
-    });
-    localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
-    
-    const acceptedSection = document.querySelector(".accepted-section");
-    if (acceptedSection && typeof renderFarmerWidget === "function") {
-      const myAcceptedJobs = (window.AgriState ? window.AgriState.getJobs() : []).filter(j => j.status === "Confirmed");
-      acceptedSection.outerHTML = getAcceptedListHTML(myAcceptedJobs);
-    }
-  });
-}
-
-// 10. Safe Global Visibility & Fallback Loader
-window.forceFarmerModeDisplay = function() {
+// 9. Auto-Init & DOM Ready Listener
+function initFarmerModule() {
+  // Page load అయినప్పుడు Farmer container ఉంటే Render చేయడం
   const fContainer = document.getElementById("farmer-post-container");
-  const lContainer = document.getElementById("labour-jobs-container");
-
-  if (fContainer) {
-    fContainer.style.display = "block";
-    fContainer.style.visibility = "visible";
-  }
-  if (lContainer) {
-    lContainer.style.display = "none";
-  }
-
-  if (typeof window.renderFarmerWidget === "function") {
+  if (fContainer && window.AppState?.currentRole === "FARMER") {
     window.renderFarmerWidget();
   }
-};
+}
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
-  });
+  document.addEventListener("DOMContentLoaded", initFarmerModule);
 } else {
-  if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
+  initFarmerModule();
+}
+
+// 10. Real-time Cloud Sync & Live Slot Listener (Firestore)
+if (window.db) {
+  try {
+    window.db.collection("farmer_posted_jobs").orderBy("createdAt", "desc").limit(20)
+      .onSnapshot((snapshot) => {
+        let cloudJobs = [];
+        snapshot.forEach((doc) => {
+          cloudJobs.push({ id: doc.id, ...doc.data() });
+        });
+
+        if (cloudJobs.length > 0) {
+          localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(cloudJobs));
+          
+          // Farmer Dashboard screen మీద ఉంటే లైవ్‌గా స్లాట్‌లను రీఫ్రెష్ చేయడం
+          const paneLabour = document.getElementById("farmer-pane-labour");
+          if (paneLabour && paneLabour.style.display !== "none") {
+            const acceptedSec = paneLabour.querySelector(".accepted-section");
+            if (acceptedSec) {
+              const myAccepted = cloudJobs.filter(j => j.status === "Confirmed");
+              acceptedSec.outerHTML = getAcceptedListHTML(myAccepted);
+            }
+          }
+        }
+      }, (err) => {
+        console.warn("Real-time cloud sync notice:", err);
+      });
+  } catch (err) {
+    console.warn("Firestore sync setup error:", err);
+  }
 }
