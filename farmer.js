@@ -149,11 +149,21 @@ window.renderFarmerWidget = function() {
   const container = document.getElementById("farmer-post-container");
   if (!container) return;
 
-  const jobs = window.AgriState ? window.AgriState.getJobs() : [];
-  const myAcceptedJobs = jobs.filter(j => j.status === "Confirmed");
+  let jobs = [];
+  try {
+    if (window.AgriState && typeof window.AgriState.getJobs === "function") {
+      const res = window.AgriState.getJobs();
+      jobs = Array.isArray(res) ? res : [];
+    }
+  } catch (err) {
+    jobs = [];
+  }
+
+  const myAcceptedJobs = (Array.isArray(jobs) ? jobs : []).filter(j => j && j.status === "Confirmed");
 
   container.innerHTML = `
     <div class="farmer-card">
+
       <div class="farmer-card-header">
         <h3>👨‍🌾 రైతు Dashboard</h3>
         <span class="badge-live">Live</span>
