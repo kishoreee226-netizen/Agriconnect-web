@@ -37,12 +37,16 @@ function renderCompanyDetails() {
     if (elAddress) elAddress.textContent = `📍 ${window.COMPANY_CONFIG.location}`;
     if (elCopyright) elCopyright.textContent = `© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.`;
 
-     // 1. Header Title, Logo & Tagline Setup
+ // 1. Header Title, Logo & Tagline Setup
     let header = document.querySelector('header');
-    if (!header) {
-      header = document.createElement('header');
-      document.body.prepend(header);
-    }
+if (!header) {
+  header = document.createElement('header');
+  document.body.prepend(header);
+}
+
+// Header Compact Styling
+header.style.cssText = "max-width: 480px; margin: 0 auto 10px auto; width: 100%; box-sizing: border-box;";
+
 
     if (!document.getElementById("header-tagline")) {
       const logoSrc = window.COMPANY_CONFIG.branding?.headerLogo || "logo.png";
