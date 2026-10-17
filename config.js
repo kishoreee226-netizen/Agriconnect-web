@@ -43,10 +43,8 @@ if (!header) {
   header = document.createElement('header');
   document.body.prepend(header);
 }
-
 // Header Compact Styling
 header.style.cssText = "max-width: 480px; margin: 0 auto 10px auto; width: 100%; box-sizing: border-box;";
-
 
     if (!document.getElementById("header-tagline")) {
       const logoSrc = window.COMPANY_CONFIG.branding?.headerLogo || "logo.png";
@@ -60,7 +58,6 @@ header.style.cssText = "max-width: 480px; margin: 0 auto 10px auto; width: 100%;
         </div>
       `;
     }
-
 
     // 2. Footer ని dynamic గా create చేసి add చేయడం
     let footer = document.querySelector("footer");
