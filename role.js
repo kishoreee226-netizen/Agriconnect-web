@@ -118,10 +118,10 @@ function applyUserRoleView() {
         }
       }
 
-  // Calls function bayata:
+ // Calls function bayata:
     triggerFarmerRender();
-    setTimeout(triggerFarmerRender, 200);
-    setTimeout(triggerFarmerRender, 800);
+   setTimeout(triggerFarmerRender, 200);
+   setTimeout(triggerFarmerRender, 800);
     }
   }
 }
