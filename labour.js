@@ -1,4 +1,4 @@
-// labour.js - Farmer Job Alerts, Labour Accept/Reject & Live Slot Booking
+// labour.js - Labour Mode Dashboard (Alerts & Acceptance Only)
 
 let postedFarmerJobs = [];
 let isJobsListenerActive = false;
@@ -36,10 +36,10 @@ function renderLabourWidget() {
 
   const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : { isDutyOn: true, name: "కూలీ" };
 
-  // ఓపెన్ పనులు (ఇంకా కోటా పూర్తి కానివి)
+  // ఇంకా ఖాళీలు ఉన్న పనులు (Open Alerts)
   const openJobs = postedFarmerJobs.filter(j => j.status === "Open");
 
-  // కన్ఫర్మ్ అయిన పనులు
+  // కూలీ ఒప్పుకున్న పనులు
   const myConfirmedJobs = postedFarmerJobs.filter(j => 
     j.confirmedLabours && j.confirmedLabours.some(l => l.phone === myProf.phone)
   );
@@ -47,7 +47,7 @@ function renderLabourWidget() {
   container.innerHTML = `
     <div class="labour-card">
       
-      <!-- Top Bar: Duty Switch & Farmer Post Button -->
+      <!-- కూలీ కంట్రోల్ బార్: కేవలం డ్యూటీ స్విచ్ & ప్రొఫైల్ ఎడిట్ మాత్రమే -->
       <div style="background:#e8f5e9; border:1px solid #c8e6c9; border-radius:8px; padding:10px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:12px; font-weight:bold; color:#2e7d32;">కూలీ డ్యూటీ:</span>
@@ -55,20 +55,15 @@ function renderLabourWidget() {
             ${myProf.isDutyOn ? '🟢 డ్యూటీ ON (లైవ్)' : '🔴 డ్యూటీ OFF'}
           </button>
         </div>
-        <div style="display:flex; gap:6px;">
-          <button onclick="openLabourProfileModal()" style="background:#0288d1; color:#fff; border:none; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
-            ⚙️ నా పనులు
-          </button>
-          <button onclick="openFarmerJobModal()" style="background:#2e7d32; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
-            ➕ రైతు పనిని పోస్ట్ చేయండి
-          </button>
-        </div>
+        <button onclick="openLabourProfileModal()" style="background:#0288d1; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+          ⚙️ నా పనులు మార్చుకోండి
+        </button>
       </div>
 
-      <!-- 📢 రైతు పోస్ట్ చేసిన పనుల అలర్ట్స్ (Labour Alerts View) -->
+      <!-- 📢 రైతు పోస్ట్ చేసిన పనుల అలర్ట్స్ -->
       <div style="margin-bottom:14px;">
         <div style="font-size:13px; font-weight:bold; color:#0277bd; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
-          <span>📢 అందుబాటులో ఉన్న పనులు (రైతు అలర్ట్స్):</span>
+          <span>📢 సమీప రైతుల పనుల అలర్ట్స్:</span>
           <span style="font-size:11px; background:#e1f5fe; color:#0277bd; padding:2px 8px; border-radius:10px;">${openJobs.length} పనులు</span>
         </div>
 
@@ -96,7 +91,7 @@ function renderLabourWidget() {
                     📅 పని తేదీ: ${job.workDate} \vert{} 🛵 ${job.transportNote}
                   </div>
                   <div style="font-size:11px; color:#2e7d32; margin-top:3px;">
-                    👥 అవసరమైన కూలీలు: <b>${filledCount} /${job.totalRequired} భర్తీ అయ్యారు</b>
+                    👥 కూలీల కోటా: <b>${filledCount} /${job.totalRequired} భర్తీ అయ్యారు</b>
                   </div>
                 </div>
                 <div style="text-align:right;">
@@ -115,7 +110,7 @@ function renderLabourWidget() {
                     ✅ పని Accept చేయండి
                   </button>
                   <button onclick="rejectFarmerJob('${job.id}')" style="background:#f5f5f5; color:#616161; border:1px solid #ccc; padding:7px 12px; border-radius:6px; font-size:12px; cursor:pointer;">
-                    ❌ Reject
+                    ❌ తిరస్కరించు
                   </button>
                 `}
               </div>
@@ -124,10 +119,10 @@ function renderLabourWidget() {
         }).join('')}
       </div>
 
-      <!-- 🎉 ఖరారైన పనుల జాబితా (Confirmed Work & Contacts) -->
+      <!-- ఖరారైన పనుల జాబితా (కూలీ కోసం నావిగేషన్ & కాంటాక్ట్) -->
       ${myConfirmedJobs.length > 0 ? `
         <div style="background:#f1f8e9; border:1px solid #c5e1a5; border-radius:8px; padding:10px; margin-top:10px;">
-          <h4 style="margin:0 0 8px 0; color:#33691e; font-size:12px;">🎉 మీరు అంగీకరించిన ఖరారైన పనులు:</h4>
+          <h4 style="margin:0 0 8px 0; color:#33691e; font-size:12px;">🎉 మీరు ఒప్పుకున్న ఖరారైన పనులు:</h4>
           ${myConfirmedJobs.map(c => `
             <div style="background:#fff; padding:8px; border-radius:6px; margin-bottom:6px; border:1px solid #dcedc8;">
               <div style="font-size:12px; font-weight:bold; color:#1b5e20;">${c.crop} - ${c.workType} (📅 ${c.workDate})</div>
@@ -146,18 +141,13 @@ function renderLabourWidget() {
   `;
 }
 
-// కూలీ పనిని ఒప్పుకున్నప్పుడు (Accepting Job)
 window.acceptFarmerJob = function(jobId) {
   const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : { name: "కూలీ", phone: "9876543210" };
-
   const targetJob = postedFarmerJobs.find(j => j.id === jobId);
   if (!targetJob) return;
 
   const currentList = targetJob.confirmedLabours || [];
-  if (currentList.some(l => l.phone === myProf.phone)) {
-    alert("మీరు ఇప్పటికే ఈ పనిని ఒప్పుకున్నారు.");
-    return;
-  }
+  if (currentList.some(l => l.phone === myProf.phone)) return;
 
   currentList.push({
     name: myProf.name,
@@ -172,19 +162,15 @@ window.acceptFarmerJob = function(jobId) {
   };
 
   if (window.db && !jobId.startsWith("job_")) {
-    window.db.collection("farmer_posted_jobs").doc(jobId).update(updatePayload).then(() => {
-      alert("🎉 పని ఖరారైంది! రైతు సమాచారం మరియు లొకేషన్ వివరాలు మీ స్క్రీన్‌లో యాడ్ అయ్యాయి.");
-    });
+    window.db.collection("farmer_posted_jobs").doc(jobId).update(updatePayload);
   } else {
     Object.assign(targetJob, updatePayload);
     localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(postedFarmerJobs));
     renderLabourWidget();
-    alert("🎉 పని ఖరారైంది! వివరాలు అప్‌డేట్ అయ్యాయి.");
   }
 
-  if (typeof speakTeluguText === "function") {
-    speakTeluguText("పనిని విజయవంతంగా ఒప్పుకున్నారు. రైతు కాంటాక్ట్ వివరాలు జతచేయబడ్డాయి.");
-  }
+  if (typeof renderFarmerLabourPane === "function") renderFarmerLabourPane();
+  alert("🎉 పని ఖరారైంది! రైతు వివరాలు క్రింద జతచేయబడ్డాయి.");
 };
 
 window.rejectFarmerJob = function(jobId) {
