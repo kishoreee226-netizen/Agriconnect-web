@@ -1,6 +1,5 @@
-// farmer-job-modal.js - Farmer Job Posting Modal (Bulletproof Modal Injection)
+// farmer-job-modal.js - Farmer Job Posting Modal (Auto-Prefill, Live Sync & Bulletproof Injection)
 
-// Modal HTML ను నేరుగా DOM లోకి ఇంజెక్ట్ చేసే ఫంక్షన్
 function injectFarmerJobModal() {
   if (document.getElementById("farmerJobModal")) return;
 
@@ -91,9 +90,24 @@ function injectFarmerJobModal() {
   document.body.insertAdjacentHTML("beforeend", modalHtml);
 }
 
+// Auto-fill logged in farmer details
+function prefillModalFarmerData() {
+  const prof = window.AppState?.userProfile;
+  if (!prof) return;
+
+  const nameInput = document.getElementById("fjm_name");
+  const phoneInput = document.getElementById("fjm_phone");
+  const villageInput = document.getElementById("fjm_village");
+
+  if (nameInput && !nameInput.value) nameInput.value = prof.name || "";
+  if (phoneInput && !phoneInput.value) phoneInput.value = prof.phone || "";
+  if (villageInput && !villageInput.value) villageInput.value = prof.village || "";
+}
+
 // Global Window Functions
 window.openFarmerJobModal = function() {
   injectFarmerJobModal();
+  prefillModalFarmerData();
   const modal = document.getElementById("farmerJobModal");
   if (modal) {
     modal.style.display = "flex";
@@ -125,10 +139,12 @@ window.handleFarmerJobSubmit = function(e) {
     farmerPhone,
     crop,
     workType,
+    count: totalRequired,
     totalRequired,
     confirmedLabours: [],
     wage,
     workDate,
+    date: workDate,
     village,
     transportNote: trans === "own" ? "కూలీల సొంత బండి ఉండాలి" : "రైతు రవాణా ఏర్పాటు చేస్తారు",
     status: "Open",
@@ -137,14 +153,13 @@ window.handleFarmerJobSubmit = function(e) {
 
   if (window.db) {
     window.db.collection("farmer_posted_jobs").add(newJob).then(() => {
-      window.closeFarmerJobModal();
-      alert("🎉 పని పోస్ట్ చేయబడింది! సమీప కూలీలకు అలర్ట్ పంపబడింది.");
+      saveLocalFarmerJob(newJob, true);
     }).catch(err => {
       console.warn("Firebase save error, falling back to local:", err);
-      saveLocalFarmerJob(newJob);
+      saveLocalFarmerJob(newJob, false);
     });
   } else {
-    saveLocalFarmerJob(newJob);
+    saveLocalFarmerJob(newJob, false);
   }
 
   if (typeof speakTeluguText === "function") {
@@ -152,20 +167,35 @@ window.handleFarmerJobSubmit = function(e) {
   }
 };
 
-function saveLocalFarmerJob(job) {
+function saveLocalFarmerJob(job, fromCloud = false) {
   let list = [];
   try {
     const stored = localStorage.getItem("agri_farmer_posted_jobs");
     list = stored ? JSON.parse(stored) : [];
   } catch(err) {}
+
   list.unshift({ id: "job_" + Date.now(), ...job });
   localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
+
+  // Legacy compatibility sync
+  if (window.AgriState && typeof window.AgriState.addJob === "function") {
+    window.AgriState.addJob(job);
+  }
+
+  // Reset form fields
+  const form = document.getElementById("farmerJobForm");
+  if (form) form.reset();
+
   window.closeFarmerJobModal();
+
+  // Refresh both UI widgets
+  if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
   if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
+
   alert("🎉 పని పోస్ట్ చేయబడింది! సమీప కూలీలకు అలర్ట్ వెళ్ళింది.");
 }
 
-// Page లోడ్ అవ్వగానే DOM లో ఇంజెక్ట్ చేయండి
+// Run immediately
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", injectFarmerJobModal);
 } else {
