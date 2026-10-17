@@ -2,17 +2,29 @@
 
 // Helper: Rhythu Dashboard Container ni safe ga theesukovatam
 function getFarmerDashboardElement() {
-  let el = document.getElementById("farmer-post-container") || 
-           document.getElementById("farmer-dashboard-container");
+  let el = document.getElementById("farmer-post-container");
   
+  // Oka vela container dorakakapothe wallet paina create chesthundhi
   if (!el) {
-    el = document.querySelector(".farmer-card") || 
-         document.querySelector(".farmer-section") ||
-         Array.from(document.querySelectorAll("div")).find(div => 
-           div.textContent && 
-           div.textContent.includes("రైతు Dashboard") && 
-           div.querySelector("input")
-         );
+    const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+    if (wallet && wallet.parentNode) {
+      el = document.createElement("div");
+      el.id = "farmer-post-container";
+      wallet.parentNode.insertBefore(el, wallet);
+    }
+  }
+  return el;
+}
+
+function getLabourDashboardElement() {
+  let el = document.getElementById("labour-jobs-container");
+  if (!el) {
+    const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+    if (wallet && wallet.parentNode) {
+      el = document.createElement("div");
+      el.id = "labour-jobs-container";
+      wallet.parentNode.insertBefore(el, wallet);
+    }
   }
   return el;
 }
@@ -24,9 +36,7 @@ function applyUserRoleView() {
   const roleSwitchBar = document.getElementById("role-switch-container");
 
   const farmerContainer = getFarmerDashboardElement();
-  const labourContainer = document.getElementById("labour-jobs-container") || 
-                          document.querySelector(".labour-section") || 
-                          document.querySelector(".job-list-card");
+  const labourContainer = getLabourDashboardElement();
   const mandiContainer = document.getElementById("mandi-container") || 
                          document.querySelector(".mandi-card") || 
                          Array.from(document.querySelectorAll("div")).find(el => el.textContent && el.textContent.includes("మండి / Market"));
@@ -35,19 +45,19 @@ function applyUserRoleView() {
 
   // A. Public Landing Page (Login Kaakunda Unte)
   if (!state || !state.isLoggedIn) {
-    if (publicCardsContainer) publicCardsContainer.style.display = "block";
-    if (roleSwitchBar) roleSwitchBar.style.display = "none";
-    if (farmerContainer) farmerContainer.style.display = "none";
-    if (labourContainer) labourContainer.style.display = "none";
-    if (walletContainer) walletContainer.style.display = "none";
-    if (mandiContainer) mandiContainer.style.display = "block";
+    if (publicCardsContainer) publicCardsContainer.style.setProperty("display", "block", "important");
+    if (roleSwitchBar) roleSwitchBar.style.setProperty("display", "none", "important");
+    if (farmerContainer) farmerContainer.style.setProperty("display", "none", "important");
+    if (labourContainer) labourContainer.style.setProperty("display", "none", "important");
+    if (walletContainer) walletContainer.style.setProperty("display", "none", "important");
+    if (mandiContainer) mandiContainer.style.setProperty("display", "block", "important");
     removeProfileHeader();
     removeRoleSwitchBar();
     return;
   }
 
   // B. Login Aina Taruvatha Public Cards Hide Cheyadam
-  if (publicCardsContainer) publicCardsContainer.style.display = "none";
+  if (publicCardsContainer) publicCardsContainer.style.setProperty("display", "none", "important");
 
   // User profile banner render cheyadam
   renderUserProfileBanner();
@@ -55,16 +65,16 @@ function applyUserRoleView() {
   // C. Kooli Login (LABOUR_ONLY)
   if (state.userType === "LABOUR_ONLY") {
     removeRoleSwitchBar();
-    if (farmerContainer) farmerContainer.style.display = "none";
-    if (mandiContainer) mandiContainer.style.display = "none";
+    if (farmerContainer) farmerContainer.style.setProperty("display", "none", "important");
+    if (mandiContainer) mandiContainer.style.setProperty("display", "none", "important");
 
     if (labourContainer) {
-      labourContainer.style.display = "block";
+      labourContainer.style.setProperty("display", "block", "important");
       if (typeof window.renderLabourWidget === "function") {
         window.renderLabourWidget();
       }
     }
-    if (walletContainer) walletContainer.style.display = "block";
+    if (walletContainer) walletContainer.style.setProperty("display", "block", "important");
 
     filterLabourJobsByLocation();
   } 
@@ -72,13 +82,13 @@ function applyUserRoleView() {
   else if (state.userType === "FARMER") {
     renderRoleSwitchBar();
 
-    if (mandiContainer) mandiContainer.style.display = "block";
-    if (walletContainer) walletContainer.style.display = "block";
+    if (mandiContainer) mandiContainer.style.setProperty("display", "block", "important");
+    if (walletContainer) walletContainer.style.setProperty("display", "block", "important");
 
     if (state.currentRole === "LABOUR") {
-      if (farmerContainer) farmerContainer.style.display = "none";
+      if (farmerContainer) farmerContainer.style.setProperty("display", "none", "important");
       if (labourContainer) {
-        labourContainer.style.display = "block";
+        labourContainer.style.setProperty("display", "block", "important");
         if (typeof window.renderLabourWidget === "function") {
           window.renderLabourWidget();
         }
@@ -86,18 +96,18 @@ function applyUserRoleView() {
       filterLabourJobsByLocation();
     } else {
       // Farmer Role Active ga unnappudu:
-      if (labourContainer) labourContainer.style.display = "none";
+      if (labourContainer) labourContainer.style.setProperty("display", "none", "important");
       if (farmerContainer) {
-        farmerContainer.style.display = "block";
+        farmerContainer.style.setProperty("display", "block", "important");
       }
-      
+
       // Mukhyam: Rhythu Widget ni render cheyadam
       if (typeof window.renderFarmerWidget === "function") {
         window.renderFarmerWidget();
       }
 
       prefillFarmerFormDefaults();
-      setTimeout(prefillFarmerFormDefaults, 150);
+      setTimeout(prefillFarmerFormDefaults, 100);
     }
   }
 }
@@ -155,22 +165,21 @@ function renderRoleSwitchBar() {
     switchContainer.id = "role-switch-container";
     switchContainer.style.cssText = "max-width: 480px; margin: 8px auto; padding: 4px; background: #e8f5e9; border-radius: 25px; display: flex; justify-content: space-between; border: 1px solid #c8e6c9; box-sizing: border-box;";
 
-    const voiceToggle = document.getElementById("auto-voice-toggle-container") || 
-                        document.getElementById("user-profile-banner");
-    if (voiceToggle && voiceToggle.parentNode) {
-      voiceToggle.parentNode.insertBefore(switchContainer, voiceToggle.nextSibling);
+    const userBanner = document.getElementById("user-profile-banner");
+    if (userBanner && userBanner.parentNode) {
+      userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
     } else {
       document.body.prepend(switchContainer);
     }
   }
 
-  const isFarmerRole = (state.currentRole === "FARMER");
+  const isFarmerRole = (state.currentRole !== "LABOUR");
 
   switchContainer.innerHTML = `
-    <button onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${isFarmerRole ? 'background:#2e7d32; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#2e7d32;'}">
+    <button type="button" onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${isFarmerRole ? 'background:#2e7d32; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#2e7d32;'}">
       🌾 Farmer mode (రైతు)
     </button>
-    <button onclick="switchRoleMode('LABOUR')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${!isFarmerRole ? 'background:#e65100; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#e65100;'}">
+    <button type="button" onclick="switchRoleMode('LABOUR')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${!isFarmerRole ? 'background:#e65100; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#e65100;'}">
       👷 Labour mode (కూలీ)
     </button>
   `;
@@ -181,31 +190,47 @@ function removeRoleSwitchBar() {
   if (switchContainer) switchContainer.remove();
 }
 
-// Mode Switch Handler
+// Mode Switch Handler (Force execution without block)
 window.switchRoleMode = function(targetRole) {
-  if (window.AppState.currentRole === targetRole) return;
+  if (!window.AppState) window.AppState = {};
   window.AppState.currentRole = targetRole;
 
-  // 1. Full view apply cheyadam
-  applyUserRoleView();
-  renderRoleSwitchBar();
+  const fContainer = getFarmerDashboardElement();
+  const lContainer = getLabourDashboardElement();
 
-  // 2. Farmer Widget call ensure cheyadam
   if (targetRole === "FARMER") {
+    if (fContainer) {
+      fContainer.style.setProperty("display", "block", "important");
+      fContainer.style.visibility = "visible";
+    }
+    if (lContainer) {
+      lContainer.style.setProperty("display", "none", "important");
+    }
+
     if (typeof window.renderFarmerWidget === "function") {
       window.renderFarmerWidget();
     }
-    setTimeout(prefillFarmerFormDefaults, 80);
+    setTimeout(prefillFarmerFormDefaults, 60);
   } else {
+    if (fContainer) {
+      fContainer.style.setProperty("display", "none", "important");
+    }
+    if (lContainer) {
+      lContainer.style.setProperty("display", "block", "important");
+      lContainer.style.visibility = "visible";
+    }
+
     if (typeof window.renderLabourWidget === "function") {
       window.renderLabourWidget();
     }
+    filterLabourJobsByLocation();
   }
 
-  // 3. Profile Banner refresh
+  // Refresh controls
+  renderRoleSwitchBar();
   renderUserProfileBanner();
 
-  // 4. Voice Feedback
+  // Voice feedback
   if (typeof speakTeluguText === "function") {
     if (targetRole === "LABOUR") {
       speakTeluguText("కూలీ మోడ్‌కి మారారు. మీ చుట్టుపక్కల పనుల వివరాలు ఇక్కడ కనిపిస్తాయి.");
@@ -364,7 +389,6 @@ function renderPublicUserCards() {
   container.style.cssText = "max-width: 480px; margin: 12px auto; padding: 0 10px;";
 
   container.innerHTML = `
-    <!-- 🌾 రైతు యూజర్ కార్డ్ -->
     <div style="background:#ffffff; border:2px solid #2e7d32; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <span style="font-size:24px;">🌾</span>
@@ -380,7 +404,6 @@ function renderPublicUserCards() {
       </button>
     </div>
 
-    <!-- 👷 కూలీ యూజర్ కార్డ్ -->
     <div style="background:#ffffff; border:2px solid #f57c00; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
       <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
         <span style="font-size:24px;">👷</span>
@@ -397,21 +420,11 @@ function renderPublicUserCards() {
     </div>
   `;
 
-  const voiceToggle = document.getElementById("auto-voice-toggle-container");
-  const header = document.querySelector(".header") || 
-                 document.querySelector("header") || 
-                 Array.from(document.querySelectorAll("div")).find(d => 
-                   d.textContent && 
-                   d.textContent.trim().startsWith("AgriConnect") && 
-                   !d.id.includes("card")
-                 );
-
-  if (voiceToggle && voiceToggle.parentNode) {
-    voiceToggle.parentNode.insertBefore(container, voiceToggle.nextSibling);
-  } else if (header && header.parentNode) {
+  const header = document.querySelector(".header") || document.querySelector("header") || document.body.firstChild;
+  if (header && header.parentNode) {
     header.parentNode.insertBefore(container, header.nextSibling);
   } else {
-    document.body.appendChild(container);
+    document.body.prepend(container);
   }
 }
 
@@ -425,8 +438,8 @@ function initRoleFlow() {
       const parsed = JSON.parse(savedProfile);
       window.AppState.isLoggedIn = true;
       window.AppState.userProfile = parsed;
-      window.AppState.userType = parsed.roleType;
-      window.AppState.currentRole = (parsed.roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+      window.AppState.userType = parsed.roleType || (parsed.isFarmer ? "FARMER" : "LABOUR_ONLY");
+      window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
     }
   } catch (e) {}
 
@@ -435,7 +448,7 @@ function initRoleFlow() {
   }
   renderPublicUserCards();
   applyUserRoleView();
-  setTimeout(applyUserRoleView, 200);
+  setTimeout(applyUserRoleView, 250);
 }
 
 if (document.readyState === "loading") {
