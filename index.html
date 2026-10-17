@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgriConnect - 8 Grid Super App</title>
-<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 
   <style>
   * { 
@@ -43,66 +43,63 @@
     flex-direction: column;
     gap: 12px;
   }
-      /* Widgets compact height rules */
-  .mandi-scroll, .custom-scroll, 
-.labour-scroll {
+  /* Widgets compact height rules */
+  .mandi-scroll, .custom-scroll, .labour-scroll {
     max-height: 220px !important;
     overflow-y: auto !important;
   }
-
   </style>
 </head>
 <body>
 
   <header>
-    <h1> </h1>
-    
+    <h1>🌾 AgriConnect</h1>
+    <p>The Voice of Smart Farming</p>
   </header>
 
   <div class="container">
-    <!-- 1st: Farmer Widget Container -->
-<div id="farmer-post-container"></div>
+    <!-- 1st: Farmer Widget Container (ఒక్కటే ఉండాలి) -->
+    <div id="farmer-post-container"></div>
 
-<!-- 2nd: Labour Widget Container -->
-<div id="labour-jobs-container"></div>
-<!-- Farmer mode డ్యాష్‌బోర్డ్ కనిపించే స్థలం -->
-<div id="farmer-post-container"></div>
+    <!-- 2nd: Labour Widget Container (ఒక్కటే ఉండాలి) -->
+    <div id="labour-jobs-container"></div>
 
-<!-- Labour mode డ్యాష్‌బోర్డ్ కనిపించే స్థలం -->
-<div id="labour-jobs-container"></div>
+    <!-- 3rd: Wallet Widget Container -->
+    <div id="wallet-container"></div>
 
+    <!-- 4th: Market / Mandi Widget Container -->
+    <div id="mandi-container"></div>
 
-<!-- 3rd: Wallet Widget Container -->
-<div id="wallet-container"></div>
-
-<!-- 4th: Market / Mandi Widget Container -->
-<div id="mandi-container"></div>
-<!-- 5th: Weather Widget Container -->
-<div id="weather-container"></div>
-    
+    <!-- 5th: Weather Widget Container -->
+    <div id="weather-container"></div>
   </div>
 
-  <!-- Shared State ముందుగా లోడ్ అవ్వాలి -->
+  <!-- 1. Config & Core Services -->
+  <script src="config.js"></script>
+  <script src="firebase-config.js"></script>
   <script src="state.js?v=301"></script>
-  <script src="role.js?v=301"></script>
 
-  <!-- 4 వేర్వేరు విడ్జెట్ల జావాస్క్రిప్ట్ ఫైల్స్ -->
-  <script src="mandi.js?v=301"></script>
-  <script src="wallet.js?v=301"></script>
-  <script src="farmer.js?v=301"></script>
-<script src="firebase-config.js"></script>
-<script src="labour-profile-modal.js"></script>
-<script src="farmer-job-modal.js"></script>
+  <!-- 2. Modals (ముందుగా లోడ్ అవ్వాలి) -->
+  <script src="farmer-job-modal.js"></script>
+  <script src="labour-profile-modal.js"></script>
 
-<script src="labour.js"></script>
-
+  <!-- 3. Sub-modules & Helpers -->
   <script src="voice.js?v=301"></script>
   <script src="weather.js?v=301"></script>
   <script src="equipment.js"></script>
   <script src="seeds.js"></script>
   <script src="transport.js"></script>
 
-  <!-- అన్ని విడ్జెట్లను ప్రారంభించే లాజిక్ -->
+  <!-- 4. Main Widgets -->
+  <script src="mandi.js?v=301"></script>
+  <script src="wallet.js?v=301"></script>
+  <script src="farmer.js?v=301"></script>
+  <script src="labour.js"></script>
+
+  <!-- 5. Role Controller (అన్ని విడ్జెట్లు లోడ్ అయిన తర్వాతే ఇది ఎగ్జిక్యూట్ అవ్వాలి) -->
+  <script src="role.js?v=301"></script>
+
+  <!-- Initialization Logic -->
   <script>
     window.addEventListener("DOMContentLoaded", () => {
       // 1. Mandi
@@ -126,13 +123,17 @@
       if (typeof renderLabourWidget === "function") {
         renderLabourWidget();
       }
-   // 5. Weather
-   if (typeof renderWeatherWidget === "function") {
-     renderWeatherWidget();
-   }
 
+      // 5. Weather
+      if (typeof renderWeatherWidget === "function") {
+        renderWeatherWidget();
+      }
+
+      // 6. Ensure Role View is synced
+      if (typeof applyUserRoleView === "function") {
+        applyUserRoleView();
+      }
     });
   </script>
-<script src="config.js"></script>
 </body>
 </html>
