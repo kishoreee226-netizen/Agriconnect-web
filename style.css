@@ -2634,3 +2634,10 @@ header h1 {
     cursor: pointer;
     margin-top: 4px;
 }
+.container {
+  max-width: 480px !important;
+  margin: 0 auto !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
