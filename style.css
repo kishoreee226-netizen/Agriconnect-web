@@ -2553,3 +2553,84 @@ header h1 {
   margin-top: 4px;
   line-height: 1.4;
 }
+
+/* --- AgriConnect Farmer & Labour Containers Fix --- */
+#farmer-post-container, 
+#labour-jobs-container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto 12px auto;
+}
+
+.farmer-card, .labour-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    border-top: 4px solid #2e7d32;
+    margin-bottom: 12px;
+}
+
+.eq-tabs-bar {
+    display: flex;
+    gap: 6px;
+    background: #f1f8e9;
+    padding: 4px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow-x: auto;
+}
+
+.eq-tab-btn {
+    flex: 1;
+    min-width: 70px;
+    padding: 7px 4px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #2e7d32;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.eq-tab-btn.active {
+    background: #2e7d32;
+    color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+
+.farmer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-row, .form-row-spaced {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.farmer-input, .input-date-fixed {
+    width: 100%;
+    padding: 9px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 12px;
+    box-sizing: border-box;
+}
+
+.btn-submit-farmer {
+    width: 100%;
+    padding: 10px;
+    background: #2e7d32;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 4px;
+}
