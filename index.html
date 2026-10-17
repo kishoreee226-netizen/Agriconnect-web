@@ -64,21 +64,26 @@
         renderWalletWidget();
       }
 
-      // 3. Farmer Direct Render
-      if (typeof renderFarmerWidget === "function") {
-        renderFarmerWidget();
-      } else if (typeof renderFarmerLabourPane === "function") {
-        renderFarmerLabourPane();
+            // 3. Farmer Direct Render & Container Show
+      const fBox = document.getElementById("farmer-post-container");
+      if (fBox) {
+        fBox.style.setProperty("display", "block", "important");
+      }
+
+      if (typeof window.renderFarmerWidget === "function") {
+        window.renderFarmerWidget();
+      } else if (typeof window.renderFarmerLabourPane === "function") {
+        window.renderFarmerLabourPane();
       }
 
       // 4. Labour
-      if (typeof renderLabourWidget === "function") {
-        renderLabourWidget();
+      if (typeof window.renderLabourWidget === "function") {
+        window.renderLabourWidget();
       }
 
       // 5. Weather
-      if (typeof renderWeatherWidget === "function") {
-        renderWeatherWidget();
+      if (typeof window.renderWeatherWidget === "function") {
+        window.renderWeatherWidget();
       }
 
       // 6. Role View Sync & Force Farmer Visible
@@ -87,10 +92,17 @@
       }
 
       setTimeout(() => {
-        if (typeof switchRoleMode === "function" && window.AppState && window.AppState.isLoggedIn) {
-          switchRoleMode(window.AppState.currentRole || "FARMER");
+        if (typeof switchRoleMode === "function") {
+          const role = (window.AppState && window.AppState.currentRole) ? window.AppState.currentRole : "FARMER";
+          switchRoleMode(role);
         }
-      }, 200);
+        
+        // Double check render
+        if (fBox) fBox.style.setProperty("display", "block", "important");
+        if (typeof window.renderFarmerWidget === "function") {
+          window.renderFarmerWidget();
+        }
+      }, 300);
     });
   </script>
 </body>
