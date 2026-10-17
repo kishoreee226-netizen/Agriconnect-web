@@ -441,3 +441,12 @@ window.clearFarmerBookings = function() {
     renderBookingRecords();
   }
 };
+
+// farmer.js చివరిలో చేర్చండి:
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
+  });
+} else {
+  if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
+}
