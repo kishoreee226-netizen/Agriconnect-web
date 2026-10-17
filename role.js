@@ -1,16 +1,20 @@
 // role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
 
-// Helper: రైతు డ్యాష్‌బోర్డ్ ఎలిమెంట్‌ను గుర్తించడం
+// Helper: Rhythu Dashboard Container ni safe ga theesukovatam
 function getFarmerDashboardElement() {
-  return document.getElementById("farmer-dashboard-container") || 
-         document.getElementById("farmer-post-container") || 
-         document.querySelector(".farmer-card") || 
+  let el = document.getElementById("farmer-post-container") || 
+           document.getElementById("farmer-dashboard-container");
+  
+  if (!el) {
+    el = document.querySelector(".farmer-card") || 
          document.querySelector(".farmer-section") ||
-         Array.from(document.querySelectorAll("div")).find(el => 
-           el.textContent && 
-           el.textContent.includes("రైతు Dashboard") && 
-           el.querySelector("input")
+         Array.from(document.querySelectorAll("div")).find(div => 
+           div.textContent && 
+           div.textContent.includes("రైతు Dashboard") && 
+           div.querySelector("input")
          );
+  }
+  return el;
 }
 
 // 1. Roles & Widgets Visibility + Profile Banner Setup
@@ -29,7 +33,7 @@ function applyUserRoleView() {
   const walletContainer = document.getElementById("wallet-container") || 
                           document.querySelector(".wallet-card");
 
-  // A. లాగిన్ కానప్పుడు (Public Landing Page)
+  // A. Public Landing Page (Login Kaakunda Unte)
   if (!state || !state.isLoggedIn) {
     if (publicCardsContainer) publicCardsContainer.style.display = "block";
     if (roleSwitchBar) roleSwitchBar.style.display = "none";
@@ -42,46 +46,63 @@ function applyUserRoleView() {
     return;
   }
 
-  // B. లాగిన్ అయిన తర్వాత పబ్లిక్ కార్డ్స్ దాచడం
+  // B. Login Aina Taruvatha Public Cards Hide Cheyadam
   if (publicCardsContainer) publicCardsContainer.style.display = "none";
 
-  // యూజర్ ప్రొఫైల్ బ్యానర్ చూపించడం
+  // User profile banner render cheyadam
   renderUserProfileBanner();
 
-  // C. కూలీ లాగిన్ (LABOUR_ONLY)
+  // C. Kooli Login (LABOUR_ONLY)
   if (state.userType === "LABOUR_ONLY") {
     removeRoleSwitchBar();
     if (farmerContainer) farmerContainer.style.display = "none";
     if (mandiContainer) mandiContainer.style.display = "none";
 
-    if (labourContainer) labourContainer.style.display = "block";
+    if (labourContainer) {
+      labourContainer.style.display = "block";
+      if (typeof window.renderLabourWidget === "function") {
+        window.renderLabourWidget();
+      }
+    }
     if (walletContainer) walletContainer.style.display = "block";
 
-    filterLabourJobsByLocation(); // 5-10 కి.మీ లేదా గ్రామం ఆధారంగా ఫిల్టర్
+    filterLabourJobsByLocation();
   } 
-  // D. రైతు లాగిన్ (FARMER)
+  // D. Rhythu Login (FARMER)
   else if (state.userType === "FARMER") {
-    // రైతు కోసం స్మార్ట్ స్విచ్ బార్ రెండర్ చేయడం
     renderRoleSwitchBar();
 
     if (mandiContainer) mandiContainer.style.display = "block";
     if (walletContainer) walletContainer.style.display = "block";
 
-    prefillFarmerFormDefaults(); // రైతు పేరు, ఫోన్, గ్రామం ఆటో-ఫిల్ చేయడం
-    setTimeout(prefillFarmerFormDefaults, 150); // farmer.js లోడ్ అయ్యాక మరోసారి కచ్చితంగా ఫిల్ చేస్తుంది
-
     if (state.currentRole === "LABOUR") {
       if (farmerContainer) farmerContainer.style.display = "none";
-      if (labourContainer) labourContainer.style.display = "block";
+      if (labourContainer) {
+        labourContainer.style.display = "block";
+        if (typeof window.renderLabourWidget === "function") {
+          window.renderLabourWidget();
+        }
+      }
       filterLabourJobsByLocation();
     } else {
-      if (farmerContainer) farmerContainer.style.display = "block";
+      // Farmer Role Active ga unnappudu:
       if (labourContainer) labourContainer.style.display = "none";
+      if (farmerContainer) {
+        farmerContainer.style.display = "block";
+      }
+      
+      // Mukhyam: Rhythu Widget ni render cheyadam
+      if (typeof window.renderFarmerWidget === "function") {
+        window.renderFarmerWidget();
+      }
+
+      prefillFarmerFormDefaults();
+      setTimeout(prefillFarmerFormDefaults, 150);
     }
   }
 }
 
-// 2. ప్రొఫైల్ బ్యానర్ (లాగిన్ అయిన యూజర్ పేరు, ఫోన్, ఊరు చూపిస్తుంది)
+// 2. Profile Banner
 function renderUserProfileBanner() {
   let banner = document.getElementById("user-profile-banner");
   const state = window.AppState;
@@ -98,8 +119,9 @@ function renderUserProfileBanner() {
     }
   }
 
-  const roleText = state.userType === "FARMER" ? "రైతు (Farmer)" : "కూలీ (Labour)";
-  const badgeColor = state.userType === "FARMER" ? "#2e7d32" : "#e65100";
+  const isFarmerNow = (state.currentRole === "FARMER" || (!state.currentRole && state.userType === "FARMER"));
+  const roleText = isFarmerNow ? "రైతు (Farmer)" : "కూలీ (Labour)";
+  const badgeColor = isFarmerNow ? "#2e7d32" : "#e65100";
 
   banner.style.cssText = `max-width: 480px; margin: 10px auto; padding: 12px 16px; background: #ffffff; border-left: 5px solid ${badgeColor}; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center;`;
 
@@ -122,7 +144,7 @@ function removeProfileHeader() {
   if (banner) banner.remove();
 }
 
-// 2.A రైతు ⇄ కూలీ మోడ్ స్విచ్ బార్ (Smart Mode Switcher)
+// 2.A Rhythu ⇄ Kooli Mode Switch Bar
 function renderRoleSwitchBar() {
   const state = window.AppState;
   if (!state || !state.isLoggedIn || state.userType !== "FARMER") return;
@@ -142,7 +164,7 @@ function renderRoleSwitchBar() {
     }
   }
 
-  const isFarmerRole = state.currentRole === "FARMER";
+  const isFarmerRole = (state.currentRole === "FARMER");
 
   switchContainer.innerHTML = `
     <button onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 8px 12px; border: none; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; ${isFarmerRole ? 'background:#2e7d32; color:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.2);' : 'background:transparent; color:#2e7d32;'}">
@@ -159,49 +181,31 @@ function removeRoleSwitchBar() {
   if (switchContainer) switchContainer.remove();
 }
 
-// మోడ్ మార్చడానికి గల ఫంక్షన్
+// Mode Switch Handler
 window.switchRoleMode = function(targetRole) {
   if (window.AppState.currentRole === targetRole) return;
   window.AppState.currentRole = targetRole;
 
-  // 1. View refresh cheyadam
-  if (typeof applyUserRoleView === "function") {
-    applyUserRoleView();
-  }
-  if (typeof renderRoleSwitchBar === "function") {
-    renderRoleSwitchBar();
-  }
+  // 1. Full view apply cheyadam
+  applyUserRoleView();
+  renderRoleSwitchBar();
 
-    // 2. Profile banner lo Role text mariyu background colour update cheyadam
-  setTimeout(() => {
-    const banner = document.getElementById("user-profile-banner");
-    if (banner) {
-      const isLabour = (targetRole === "LABOUR");
-
-      // Text replace logic
-      banner.innerHTML = banner.innerHTML
-        .replace(/రైతు \(Farmer\)/g, isLabour ? "కూలీ (Labour)" : "రైతు (Farmer)")
-        .replace(/కూలీ \(Labour\)/g, isLabour ? "కూలీ (Labour)" : "రైతు (Farmer)")
-        .replace(/రైతు మోడ్/g, isLabour ? "కూలీ మోడ్" : "రైతు మోడ్")
-        .replace(/కూలీ మోడ్/g, isLabour ? "కూలీ మోడ్" : "రైతు మోడ్");
-
-      // Colour update: Labour ayithe Orange (#e65100), Farmer ayithe Green (#2e7d32)
-      const targetBgColor = isLabour ? "#e65100" : "#2e7d32";
-
-      // Banner loni badges / tags colour ni change cheyadam
-      const badgeEls = banner.querySelectorAll("span, b, div, p");
-      badgeEls.forEach(el => {
-        const txt = el.innerText ? el.innerText.trim() : "";
-        if (txt === "కూలీ (Labour)" || txt === "రైతు (Farmer)" || txt === "కూలీ మోడ్" || txt === "రైతు మోడ్") {
-          el.style.backgroundColor = targetBgColor;
-          el.style.color = "#ffffff";
-          el.style.borderColor = targetBgColor;
-        }
-      });
+  // 2. Farmer Widget call ensure cheyadam
+  if (targetRole === "FARMER") {
+    if (typeof window.renderFarmerWidget === "function") {
+      window.renderFarmerWidget();
     }
-  }, 50);
+    setTimeout(prefillFarmerFormDefaults, 80);
+  } else {
+    if (typeof window.renderLabourWidget === "function") {
+      window.renderLabourWidget();
+    }
+  }
 
-  // 3. Voice feedback
+  // 3. Profile Banner refresh
+  renderUserProfileBanner();
+
+  // 4. Voice Feedback
   if (typeof speakTeluguText === "function") {
     if (targetRole === "LABOUR") {
       speakTeluguText("కూలీ మోడ్‌కి మారారు. మీ చుట్టుపక్కల పనుల వివరాలు ఇక్కడ కనిపిస్తాయి.");
@@ -221,7 +225,7 @@ window.logoutUser = function() {
   }
 };
 
-// 3. రైతు ఫారమ్‌లో పేరు, ఫోన్, గ్రామం ఆటోమేటిక్‌గా నింపడం
+// 3. Form Auto-Fill Defaults
 function prefillFarmerFormDefaults() {
   const profile = window.AppState?.userProfile;
   if (!profile) return;
@@ -230,16 +234,14 @@ function prefillFarmerFormDefaults() {
   const phoneInput = document.getElementById("f-phone");
   const villageBtn = document.getElementById("f-village-btn");
 
-  if (nameInput) {
+  if (nameInput && !nameInput.value) {
     nameInput.value = profile.name;
-    nameInput.readOnly = true;
     nameInput.style.backgroundColor = "#e8f5e9";
     nameInput.style.fontWeight = "bold";
   }
 
-  if (phoneInput) {
+  if (phoneInput && !phoneInput.value) {
     phoneInput.value = profile.phone;
-    phoneInput.readOnly = true;
     phoneInput.style.backgroundColor = "#e8f5e9";
     phoneInput.style.fontWeight = "bold";
   }
@@ -249,7 +251,7 @@ function prefillFarmerFormDefaults() {
   }
 }
 
-// 4. కూలీల కోసం 5-10 కి.మీ / సమీప గ్రామాల పోస్టులను ఫిల్టర్ చేయడం
+// 4. Filter Jobs by village
 function filterLabourJobsByLocation() {
   const profile = window.AppState?.userProfile;
   if (!profile || !profile.village) return;
@@ -257,15 +259,14 @@ function filterLabourJobsByLocation() {
   const jobCards = document.querySelectorAll(".job-card, .job-item, [data-village]");
   jobCards.forEach(card => {
     const jobVillage = card.getAttribute("data-village") || card.textContent;
-    // సమీప గ్రామం మ్యాచ్ అయితే హైలైట్ లేదా ఫిల్టర్
     if (jobVillage.toLowerCase().includes(profile.village.toLowerCase())) {
       card.style.display = "block";
-      card.style.border = "2px solid #4caf50"; // సమీప ఊరి పనికి ఆకుపచ్చ బోర్డర్
+      card.style.border = "2px solid #4caf50";
     }
   });
 }
 
-// 5. లాగిన్ మోడల్ (Popup Dialog) ఓపెన్ చేయడం
+// 5. Login Modal
 window.openLoginModal = function(roleType) {
   let modal = document.getElementById("role-login-modal");
   if (!modal) {
@@ -313,7 +314,7 @@ window.closeLoginModal = function() {
   if (modal) modal.style.display = "none";
 };
 
-// 6. రిజిస్ట్రేషన్ సబ్మిషన్ & లాగిన్ పూర్తి చేయడం
+// 6. Registration Submission
 window.submitUserRegistration = function(roleType) {
   const name = document.getElementById("reg-name")?.value.trim();
   const phone = document.getElementById("reg-phone")?.value.trim();
@@ -332,7 +333,6 @@ window.submitUserRegistration = function(roleType) {
     return;
   }
 
-  // ప్రొఫైల్ డేటాను సేవ్ చేయడం
   const profile = { name, phone, village, roleType };
   window.AppState.isLoggedIn = true;
   window.AppState.userType = roleType;
@@ -355,7 +355,7 @@ window.submitUserRegistration = function(roleType) {
   }
 };
 
-// 7. హోమ్‌పేజీ పబ్లిక్ కార్డ్స్ (ఫోన్ బాక్స్ లేకుండా, కేవలం లాగిన్ బటన్ మాత్రమే)
+// 7. Homepage Public Cards
 function renderPublicUserCards() {
   if (document.getElementById("public-user-cards-container")) return;
 
@@ -415,11 +415,10 @@ function renderPublicUserCards() {
   }
 }
 
-// 8. పేజీ లోడ్ అయినప్పుడు ప్రారంభించడం & లోకల్ స్టోరేజ్ చెక్
+// 8. Init Role Flow
 function initRoleFlow() {
   if (!window.AppState) window.AppState = {};
 
-  // గతంలో లాగిన్ అయి ఉంటే ఆటోమేటిక్‌గా ప్రొఫైల్ లోడ్ చేయడం
   try {
     const savedProfile = localStorage.getItem("agri_user_profile");
     if (savedProfile) {
@@ -436,7 +435,7 @@ function initRoleFlow() {
   }
   renderPublicUserCards();
   applyUserRoleView();
-  setTimeout(applyUserRoleView, 250);
+  setTimeout(applyUserRoleView, 200);
 }
 
 if (document.readyState === "loading") {
