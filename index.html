@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgriConnect - 8 Grid Super App</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=999">
 
   <style>
   * { 
@@ -58,10 +58,10 @@
   </header>
 
   <div class="container">
-    <!-- 1st: Farmer Widget Container (ఒక్కటే ఉండాలి) -->
+    <!-- 1st: Farmer Widget Container -->
     <div id="farmer-post-container"></div>
 
-    <!-- 2nd: Labour Widget Container (ఒక్కటే ఉండాలి) -->
+    <!-- 2nd: Labour Widget Container -->
     <div id="labour-jobs-container"></div>
 
     <!-- 3rd: Wallet Widget Container -->
@@ -75,29 +75,29 @@
   </div>
 
   <!-- 1. Config & Core Services -->
-  <script src="config.js"></script>
-  <script src="firebase-config.js"></script>
-  <script src="state.js?v=301"></script>
+  <script src="config.js?v=999"></script>
+  <script src="firebase-config.js?v=999"></script>
+  <script src="state.js?v=999"></script>
 
-  <!-- 2. Modals (ముందుగా లోడ్ అవ్వాలి) -->
-  <script src="farmer-job-modal.js"></script>
-  <script src="labour-profile-modal.js"></script>
+  <!-- 2. Modals -->
+  <script src="farmer-job-modal.js?v=999"></script>
+  <script src="labour-profile-modal.js?v=999"></script>
 
   <!-- 3. Sub-modules & Helpers -->
-  <script src="voice.js?v=301"></script>
-  <script src="weather.js?v=301"></script>
-  <script src="equipment.js"></script>
-  <script src="seeds.js"></script>
-  <script src="transport.js"></script>
+  <script src="voice.js?v=999"></script>
+  <script src="weather.js?v=999"></script>
+  <script src="equipment.js?v=999"></script>
+  <script src="seeds.js?v=999"></script>
+  <script src="transport.js?v=999"></script>
 
   <!-- 4. Main Widgets -->
-  <script src="mandi.js?v=301"></script>
-  <script src="wallet.js?v=301"></script>
-  <script src="farmer.js?v=301"></script>
-  <script src="labour.js"></script>
+  <script src="mandi.js?v=999"></script>
+  <script src="wallet.js?v=999"></script>
+  <script src="farmer.js?v=999"></script>
+  <script src="labour.js?v=999"></script>
 
-  <!-- 5. Role Controller (అన్ని విడ్జెట్లు లోడ్ అయిన తర్వాతే ఇది ఎగ్జిక్యూట్ అవ్వాలి) -->
-  <script src="role.js?v=301"></script>
+  <!-- 5. Role Controller -->
+  <script src="role.js?v=999"></script>
 
   <!-- Initialization Logic -->
   <script>
@@ -114,9 +114,11 @@
         renderWalletWidget();
       }
 
-      // 3. Farmer
+      // 3. Farmer Direct Render
       if (typeof renderFarmerWidget === "function") {
         renderFarmerWidget();
+      } else if (typeof renderFarmerLabourPane === "function") {
+        renderFarmerLabourPane();
       }
 
       // 4. Labour
@@ -129,10 +131,17 @@
         renderWeatherWidget();
       }
 
-      // 6. Ensure Role View is synced
+      // 6. Role View Sync & Force Farmer Visible
       if (typeof applyUserRoleView === "function") {
         applyUserRoleView();
       }
+
+      // Screen paina direct ga render avvadaniki direct trigger
+      setTimeout(() => {
+        if (typeof switchRoleMode === "function" && window.AppState && window.AppState.isLoggedIn) {
+          switchRoleMode(window.AppState.currentRole || "FARMER");
+        }
+      }, 200);
     });
   </script>
 </body>
