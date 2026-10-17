@@ -1,38 +1,26 @@
-// labour.js - Koolila Dashboard (Duty Switch, Live Availability, Auto-Hide & Booking)
+// labour.js - Farmer Job Alerts, Labour Accept/Reject & Live Slot Booking
 
-let cachedLabourProfiles = [];
-let isFirebaseLabourSubscribed = false;
+let postedFarmerJobs = [];
+let isJobsListenerActive = false;
 
-// Global Filters
-let activeSkillFilter = "all";
-let activeLabourRangeFilter = "all";
-let activeGangFilter = "all";
-let activeWageFilter = "all";
-let activeTransportFilterOpt = "all";
-
-function initLabourDataListener() {
-  if (isFirebaseLabourSubscribed) return;
+function initJobsListener() {
+  if (isJobsListenerActive) return;
 
   if (window.db) {
-    isFirebaseLabourSubscribed = true;
-    window.db.collection("labour_profiles")
-      .onSnapshot((snapshot) => {
-        const list = [];
-        snapshot.forEach(doc => {
-          list.push({ id: doc.id, ...doc.data() });
-        });
-        cachedLabourProfiles = list;
-        renderLabourWidget();
-      }, (err) => {
-        console.warn("Firestore error:", err);
-        renderLabourWidget();
+    isJobsListenerActive = true;
+    window.db.collection("farmer_posted_jobs").onSnapshot(snapshot => {
+      const list = [];
+      snapshot.forEach(doc => {
+        list.push({ id: doc.id, ...doc.data() });
       });
+      postedFarmerJobs = list;
+      renderLabourWidget();
+    });
   } else {
-    // Local fallback
-    const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : null;
-    if (myProf) {
-      cachedLabourProfiles = [{ id: "my_profile", ...myProf, status: myProf.isDutyOn ? "Available" : "Offline" }];
-    }
+    try {
+      const stored = localStorage.getItem("agri_farmer_posted_jobs");
+      postedFarmerJobs = stored ? JSON.parse(stored) : [];
+    } catch (e) {}
     renderLabourWidget();
   }
 }
@@ -41,195 +29,167 @@ function renderLabourWidget() {
   const container = document.getElementById("labour-jobs-container");
   if (!container) return;
 
-  if (!isFirebaseLabourSubscribed && window.db) {
-    initLabourDataListener();
+  if (!isJobsListenerActive && window.db) {
+    initJobsListener();
     return;
   }
 
-  const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : { isDutyOn: true };
+  const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : { isDutyOn: true, name: "కూలీ" };
 
-  // Rhythu ki kevalam Duty ON lo undi, status "Available" ga unna vallu mathrame kanipistharu!
-  const availableLabours = cachedLabourProfiles.filter(l => {
-    if (!l.isDutyOn || l.status !== "Available") return false;
+  // ఓపెన్ పనులు (ఇంకా కోటా పూర్తి కానివి)
+  const openJobs = postedFarmerJobs.filter(j => j.status === "Open");
 
-    // Filters Matching
-    let skillMatch = true;
-    if (activeSkillFilter !== "all") {
-      const skillsArr = l.skills || [];
-      skillMatch = skillsArr.some(s => s.includes(activeSkillFilter));
-    }
-
-    let rangeMatch = true;
-    const dist = parseFloat(l.distanceKm || "2.0");
-    if (activeLabourRangeFilter === "village") rangeMatch = dist <= 2.5;
-    else if (activeLabourRangeFilter === "5") rangeMatch = dist <= 5.0;
-    else if (activeLabourRangeFilter === "10") rangeMatch = dist <= 10.0;
-
-    let gangMatch = true;
-    const count = parseInt(l.gangCount || 1);
-    if (activeGangFilter === "small") gangMatch = count <= 5;
-    else if (activeGangFilter === "medium") gangMatch = count >= 6 && count <= 10;
-    else if (activeGangFilter === "large") gangMatch = count > 10;
-
-    let wageMatch = true;
-    const wage = parseFloat(l.wage || 450);
-    if (activeWageFilter === "low") wageMatch = wage <= 400;
-    else if (activeWageFilter === "mid") wageMatch = wage > 400 && wage <= 600;
-    else if (activeWageFilter === "high") wageMatch = wage > 600;
-
-    let transMatch = true;
-    if (activeTransportFilterOpt === "own") transMatch = l.ownTransport === true;
-    else if (activeTransportFilterOpt === "needed") transMatch = l.ownTransport !== true;
-
-    return skillMatch && rangeMatch && gangMatch && wageMatch && transMatch;
-  });
+  // కన్ఫర్మ్ అయిన పనులు
+  const myConfirmedJobs = postedFarmerJobs.filter(j => 
+    j.confirmedLabours && j.confirmedLabours.some(l => l.phone === myProf.phone)
+  );
 
   container.innerHTML = `
     <div class="labour-card">
       
-      <!-- Top Control Bar: Duty Switch & Profile Edit Button -->
+      <!-- Top Bar: Duty Switch & Farmer Post Button -->
       <div style="background:#e8f5e9; border:1px solid #c8e6c9; border-radius:8px; padding:10px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <div>
-          <span style="font-size:12px; font-weight:bold; color:#2e7d32;">నా డ్యూటీ స్టేటస్:</span>
-          <button onclick="toggleLabourDutyStatus()" style="margin-left:6px; padding:4px 10px; border-radius:14px; border:none; font-size:11px; font-weight:bold; cursor:pointer; background:${myProf.isDutyOn ? '#2e7d32' : '#c62828'}; color:#fff;">
-            ${myProf.isDutyOn ? '🟢 డ్యూటీ ON (లైవ్)' : '🔴 డ్యూటీ OFF (విశ్రాంతి)'}
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:12px; font-weight:bold; color:#2e7d32;">కూలీ డ్యూటీ:</span>
+          <button onclick="toggleLabourDutyStatus()" style="padding:4px 10px; border-radius:14px; border:none; font-size:11px; font-weight:bold; cursor:pointer; background:${myProf.isDutyOn ? '#2e7d32' : '#c62828'}; color:#fff;">
+            ${myProf.isDutyOn ? '🟢 డ్యూటీ ON (లైవ్)' : '🔴 డ్యూటీ OFF'}
           </button>
         </div>
-        <button onclick="openLabourProfileModal()" style="background:#0288d1; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
-          ⚙️ పనులు / ప్రొఫైల్ మార్చుకోండి
-        </button>
-      </div>
-
-      <!-- Filters Section -->
-      <div class="labour-filter-bar" style="background:#e1f5fe; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #b3e5fc;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:8px;">
-          <span style="font-size:12px; font-weight:bold; color:#0277bd; white-space:nowrap;">🎯 కూలీల ఫిల్టర్లు:</span>
-          
-          <div style="display:flex; align-items:center; gap:6px;">
-            <select onchange="applyAdvLabourFilter('range', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none; max-width:140px;">
-              <option value="all" ${activeLabourRangeFilter === 'all' ? 'selected' : ''}>📍 పరిధి (అన్నీ)</option>
-              <option value="village" ${activeLabourRangeFilter === 'village' ? 'selected' : ''}>🏡 నా గ్రామం (2.5km)</option>
-              <option value="5" ${activeLabourRangeFilter === '5' ? 'selected' : ''}>⚡ 5 కి.మీ లోపు</option>
-              <option value="10" ${activeLabourRangeFilter === '10' ? 'selected' : ''}>🚶 10 కి.మీ లోపు</option>
-            </select>
-
-            <span style="font-size:11px; background:#0288d1; color:#fff; padding:3px 8px; border-radius:12px; font-weight:bold; white-space:nowrap;">
-              ${availableLabours.length} బృందాలు లభ్యం
-            </span>
-          </div>
-        </div>
-
-        <!-- 4 Advance Filters (2x2 Grid) -->
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-          <select onchange="applyAdvLabourFilter('skill', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
-            <option value="all" ${activeSkillFilter === 'all' ? 'selected' : ''}>🛠️ అన్ని పనులు</option>
-            <option value="నాట్లు" ${activeSkillFilter === 'నాట్లు' ? 'selected' : ''}>🌱 నాట్లు వేయడం</option>
-            <option value="కలుపు" ${activeSkillFilter === 'కలుపు' ? 'selected' : ''}>🌿 కలుపు తీత</option>
-            <option value="కోత" ${activeSkillFilter === 'కోత' ? 'selected' : ''}>🌾 పంట కోత</option>
-            <option value="స్ప్రే" ${activeSkillFilter === 'స్ప్రే' ? 'selected' : ''}>🚜 స్ప్రేయింగ్/మందు</option>
-            <option value="పత్తి" ${activeSkillFilter === 'పత్తి' ? 'selected' : ''}>☁️ పత్తి ఏరడం</option>
-          </select>
-
-          <select onchange="applyAdvLabourFilter('gang', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
-            <option value="all" ${activeGangFilter === 'all' ? 'selected' : ''}>👥 బృందం (అన్నీ)</option>
-            <option value="small" ${activeGangFilter === 'small' ? 'selected' : ''}>👤 1-5 మంది కూలీలు</option>
-            <option value="medium" ${activeGangFilter === 'medium' ? 'selected' : ''}>👥 6-10 మంది బృందం</option>
-            <option value="large" ${activeGangFilter === 'large' ? 'selected' : ''}>👨‍👩‍👧‍👦 10+ పెద్ద గ్యాంగ్</option>
-          </select>
-
-          <select onchange="applyAdvLabourFilter('wage', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
-            <option value="all" ${activeWageFilter === 'all' ? 'selected' : ''}>💰 కూలీ రేటు (అన్నీ)</option>
-            <option value="low" ${activeWageFilter === 'low' ? 'selected' : ''}>₹400 లోపు</option>
-            <option value="mid" ${activeWageFilter === 'mid' ? 'selected' : ''}>₹400 - ₹600</option>
-            <option value="high" ${activeWageFilter === 'high' ? 'selected' : ''}>₹600 పైబడి</option>
-          </select>
-
-          <select onchange="applyAdvLabourFilter('trans', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none;">
-            <option value="all" ${activeTransportFilterOpt === 'all' ? 'selected' : ''}>🛵 రవాణా (అన్నీ)</option>
-            <option value="own" ${activeTransportFilterOpt === 'own' ? 'selected' : ''}>🏍️ సొంత బండి</option>
-            <option value="needed" ${activeTransportFilterOpt === 'needed' ? 'selected' : ''}>🛺 రవాణా అవసరం</option>
-          </select>
+        <div style="display:flex; gap:6px;">
+          <button onclick="openLabourProfileModal()" style="background:#0288d1; color:#fff; border:none; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+            ⚙️ నా పనులు
+          </button>
+          <button onclick="openFarmerJobModal()" style="background:#2e7d32; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+            ➕ రైతు పనిని పోస్ట్ చేయండి
+          </button>
         </div>
       </div>
 
-      <!-- Live Available Labour Cards List -->
-      <div class="labour-scroll labour-scroll-container">
-        ${availableLabours.length === 0 ? `
-          <div style="text-align:center; padding:18px; color:#555; font-size:13px; background:#fff; border-radius:8px; border:1px dashed #90caf9;">
-            📢 ప్రస్తుతం ఈ ఫిల్టర్లలో కూలీలు ఎవరూ అందుబాటులో (డ్యూటీ ఆన్ చేసి) లేరు.
+      <!-- 📢 రైతు పోస్ట్ చేసిన పనుల అలర్ట్స్ (Labour Alerts View) -->
+      <div style="margin-bottom:14px;">
+        <div style="font-size:13px; font-weight:bold; color:#0277bd; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+          <span>📢 అందుబాటులో ఉన్న పనులు (రైతు అలర్ట్స్):</span>
+          <span style="font-size:11px; background:#e1f5fe; color:#0277bd; padding:2px 8px; border-radius:10px;">${openJobs.length} పనులు</span>
+        </div>
+
+        ${!myProf.isDutyOn ? `
+          <div style="background:#ffebee; border:1px dashed #ef5350; border-radius:8px; padding:12px; text-align:center; font-size:12px; color:#c62828;">
+            🛑 మీ డ్యూటీ <b>OFF</b> లో ఉంది. పనుల అలర్ట్స్ అందుకోవడానికి పైన డ్యూటీ <b>ON</b> చేసుకోండి.
           </div>
-        ` : availableLabours.map(lab => {
-          const skillsListText = (lab.skills || ["వ్యవసాయ పనులు"]).join(", ");
+        ` : openJobs.length === 0 ? `
+          <div style="background:#fff; border:1px dashed #b0bec5; border-radius:8px; padding:12px; text-align:center; font-size:12px; color:#607d8b;">
+            ప్రస్తుతం మీ ప్రాంతంలో కొత్త పనుల అలర్ట్స్ ఏవీ లేవు.
+          </div>
+        ` : openJobs.map(job => {
+          const filledCount = job.confirmedLabours ? job.confirmedLabours.length : 0;
+          const isAlreadyAccepted = job.confirmedLabours && job.confirmedLabours.some(l => l.phone === myProf.phone);
+
           return `
-            <div class="job-card job-item-card" style="margin-bottom:10px;">
-              <div class="job-item-top">
-                <div style="flex: 1;">
-                  <strong class="job-item-title" style="color:#0277bd;">👷 ${lab.name} (బృందం: ${lab.gangCount || 1} మంది)</strong>
-                  <div class="job-farmer-meta" style="margin-top:2px;">
-                    📍 గ్రామం: <b>${lab.village}</b> \vert{} 🛵 <b>${lab.ownTransport ? 'సొంత బండి ఉంది' : 'రవాణా కావాలి'}</b>
+            <div class="job-card" style="background:#fff; border:1px solid #e0e0e0; border-left:4px solid #0288d1; border-radius:8px; padding:10px; margin-bottom:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                  <h4 style="margin:0; color:#0277bd; font-size:13px;">🌾 ${job.crop} -${job.workType}</h4>
+                  <div style="font-size:11px; color:#424242; margin-top:2px;">
+                    రైతు: <b>${job.farmerName}</b> \vert{} 📍 గ్రామం: <b>${job.village}</b>
                   </div>
-                  <div style="font-size:11px; color:#37474f; margin-top:4px;">
-                    🛠️ <b>చేసే పనులు:</b> <span style="color:#00796b;">${skillsListText}</span>
+                  <div style="font-size:11px; color:#d84315; margin-top:2px; font-weight:bold;">
+                    📅 పని తేదీ: ${job.workDate} \vert{} 🛵 ${job.transportNote}
+                  </div>
+                  <div style="font-size:11px; color:#2e7d32; margin-top:3px;">
+                    👥 అవసరమైన కూలీలు: <b>${filledCount} /${job.totalRequired} భర్తీ అయ్యారు</b>
                   </div>
                 </div>
-                <div class="job-item-pricing">
-                  <span class="job-wage-amount">₹${lab.wage || 450}/రోజు</span>
-                  <div class="job-distance-tag">🟢 లభ్యం (Live)</div>
+                <div style="text-align:right;">
+                  <span style="font-size:13px; font-weight:bold; color:#e65100;">₹${job.wage}/రోజు</span>
                 </div>
               </div>
 
-              <!-- Action: Farmer Request Button -->
-              <div style="margin-top:8px; display:flex; gap:6px;">
-                <button onclick="requestLabour('${lab.id}', '${lab.name}', '${lab.phone}')" style="flex:1; background:#2e7d32; color:#fff; border:none; padding:7px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">
-                  📩 పనికి పిలవండి (Request)
-                </button>
+              <!-- Accept / Reject Actions -->
+              <div style="margin-top:10px; display:flex; gap:8px;">
+                ${isAlreadyAccepted ? `
+                  <button disabled style="flex:1; background:#c8e6c9; color:#2e7d32; border:none; padding:7px; border-radius:6px; font-size:12px; font-weight:bold;">
+                    ✅ మీరు ఇప్పటికే అంగీకరించారు
+                  </button>
+                ` : `
+                  <button onclick="acceptFarmerJob('${job.id}')" style="flex:1; background:#2e7d32; color:#fff; border:none; padding:7px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">
+                    ✅ పని Accept చేయండి
+                  </button>
+                  <button onclick="rejectFarmerJob('${job.id}')" style="background:#f5f5f5; color:#616161; border:1px solid #ccc; padding:7px 12px; border-radius:6px; font-size:12px; cursor:pointer;">
+                    ❌ Reject
+                  </button>
+                `}
               </div>
             </div>
           `;
         }).join('')}
       </div>
 
+      <!-- 🎉 ఖరారైన పనుల జాబితా (Confirmed Work & Contacts) -->
+      ${myConfirmedJobs.length > 0 ? `
+        <div style="background:#f1f8e9; border:1px solid #c5e1a5; border-radius:8px; padding:10px; margin-top:10px;">
+          <h4 style="margin:0 0 8px 0; color:#33691e; font-size:12px;">🎉 మీరు అంగీకరించిన ఖరారైన పనులు:</h4>
+          ${myConfirmedJobs.map(c => `
+            <div style="background:#fff; padding:8px; border-radius:6px; margin-bottom:6px; border:1px solid #dcedc8;">
+              <div style="font-size:12px; font-weight:bold; color:#1b5e20;">${c.crop} - ${c.workType} (📅 ${c.workDate})</div>
+              <div style="font-size:11px; color:#555;">రైతు: ${c.farmerName} (${c.village}) | వేతనం: ₹${c.wage}/రోజు</div>
+              <div style="display:flex; gap:6px; margin-top:6px;">
+                <a href="tel:${c.farmerPhone}" style="flex:1; text-align:center; background:#0288d1; color:#fff; padding:5px; border-radius:4px; font-size:11px; text-decoration:none; font-weight:bold;">📞 రైతుకు కాల్</a>
+                <a href="https://wa.me/91${c.farmerPhone}" target="_blank" style="flex:1; text-align:center; background:#25d366; color:#fff; padding:5px; border-radius:4px; font-size:11px; text-decoration:none; font-weight:bold;">💬 వాట్సాప్</a>
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(c.village)}" target="_blank" style="flex:1; text-align:center; background:#f57c00; color:#fff; padding:5px; border-radius:4px; font-size:11px; text-decoration:none; font-weight:bold;">🗺️ రూట్ Map</a>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
     </div>
   `;
 }
 
-// Rhythu Request Cheyagane Kooli Book avvadam & Hide avvadam
-window.requestLabour = function(labourId, labourName, labourPhone) {
-  const farmerName = (window.AppState && window.AppState.userProfile) ? window.AppState.userProfile.name : "రైతు";
-  
-  if (!confirm(`${labourName} బృందాన్ని పనికి పిలవాలనుకుంటున్నారా?`)) return;
+// కూలీ పనిని ఒప్పుకున్నప్పుడు (Accepting Job)
+window.acceptFarmerJob = function(jobId) {
+  const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : { name: "కూలీ", phone: "9876543210" };
 
-  if (window.db && labourId && !labourId.startsWith("my_")) {
-    window.db.collection("labour_profiles").doc(labourId).update({
-      status: "Booked",
-      bookedBy: farmerName,
-      bookedAt: Date.now()
-    }).then(() => {
-      alert(`🎉 ${labourName} కి సమాచారం అందింది! వారు పనికి ఒప్పుకున్నారు. ఇతర రైతులకు ఈ వివరాలు తాత్కాలికంగా దాచబడతాయి.`);
+  const targetJob = postedFarmerJobs.find(j => j.id === jobId);
+  if (!targetJob) return;
+
+  const currentList = targetJob.confirmedLabours || [];
+  if (currentList.some(l => l.phone === myProf.phone)) {
+    alert("మీరు ఇప్పటికే ఈ పనిని ఒప్పుకున్నారు.");
+    return;
+  }
+
+  currentList.push({
+    name: myProf.name,
+    phone: myProf.phone,
+    acceptedAt: Date.now()
+  });
+
+  const isFull = currentList.length >= targetJob.totalRequired;
+  const updatePayload = {
+    confirmedLabours: currentList,
+    status: isFull ? "Filled" : "Open"
+  };
+
+  if (window.db && !jobId.startsWith("job_")) {
+    window.db.collection("farmer_posted_jobs").doc(jobId).update(updatePayload).then(() => {
+      alert("🎉 పని ఖరారైంది! రైతు సమాచారం మరియు లొకేషన్ వివరాలు మీ స్క్రీన్‌లో యాడ్ అయ్యాయి.");
     });
   } else {
-    const l = cachedLabourProfiles.find(x => x.id === labourId);
-    if (l) {
-      l.status = "Booked";
-      l.bookedBy = farmerName;
-      renderLabourWidget();
-      alert(`🎉 ${labourName} పనికి ఒప్పుకున్నారు! వివరాలు సేవ్ అయ్యాయి.`);
-    }
+    Object.assign(targetJob, updatePayload);
+    localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(postedFarmerJobs));
+    renderLabourWidget();
+    alert("🎉 పని ఖరారైంది! వివరాలు అప్‌డేట్ అయ్యాయి.");
   }
 
   if (typeof speakTeluguText === "function") {
-    speakTeluguText(`${labourName} పనికి ఖరారయ్యారు.`);
+    speakTeluguText("పనిని విజయవంతంగా ఒప్పుకున్నారు. రైతు కాంటాక్ట్ వివరాలు జతచేయబడ్డాయి.");
   }
 };
 
-window.applyAdvLabourFilter = function(key, val) {
-  if (key === 'range') activeLabourRangeFilter = val;
-  if (key === 'skill') activeSkillFilter = val;
-  if (key === 'gang') activeGangFilter = val;
-  if (key === 'wage') activeWageFilter = val;
-  if (key === 'trans') activeTransportFilterOpt = val;
-  renderLabourWidget();
+window.rejectFarmerJob = function(jobId) {
+  alert("ఈ పని రిజెక్ట్ చేయబడింది.");
 };
 
-initLabourDataListener();
+initJobsListener();
 window.renderLabourWidget = renderLabourWidget;
