@@ -1,43 +1,9 @@
-// labour.js - Koolila Dashboard (Filters, List View & Escrow Actions)
+// labour.js - Koolila Dashboard (Duty Switch, Live Availability, Auto-Hide & Booking)
 
-const defaultLabourJobs = [
-  {
-    id: "job_def_1",
-    crop: "వరి (Paddy)",
-    workType: "కోత",
-    farmerName: "కిషోర్",
-    farmerPhone: "9876543210",
-    count: 2,
-    wage: 450,
-    distanceKm: 2.4,
-    village: "Wrafj",
-    date: "రేపు",
-    ownTransport: false,
-    transportNote: "రవాణా అవసరం",
-    status: "Confirmed",
-    labourName: "రాము (టెస్ట్ కూలీ)"
-  },
-  {
-    id: "job_def_2",
-    crop: "పత్తి (Cotton)",
-    workType: "ఏరడం",
-    farmerName: "రమేష్",
-    farmerPhone: "9876543211",
-    count: 5,
-    wage: 500,
-    distanceKm: 4.2,
-    village: "వరంగల్",
-    date: "ఎల్లుండి",
-    ownTransport: true,
-    transportNote: "సొంత బండి ఉంది",
-    status: "Open"
-  }
-];
-
-let cachedLabourJobs = [];
+let cachedLabourProfiles = [];
 let isFirebaseLabourSubscribed = false;
 
-// Global Filter States
+// Global Filters
 let activeSkillFilter = "all";
 let activeLabourRangeFilter = "all";
 let activeGangFilter = "all";
@@ -47,37 +13,26 @@ let activeTransportFilterOpt = "all";
 function initLabourDataListener() {
   if (isFirebaseLabourSubscribed) return;
 
-  try {
-    const local = localStorage.getItem("agri_jobs");
-    cachedLabourJobs = local ? JSON.parse(local) : defaultLabourJobs;
-  } catch (e) {
-    cachedLabourJobs = defaultLabourJobs;
-  }
-
   if (window.db) {
     isFirebaseLabourSubscribed = true;
-    window.db.collection("labour_jobs")
+    window.db.collection("labour_profiles")
       .onSnapshot((snapshot) => {
-        if (!snapshot.empty) {
-          const cloudJobs = [];
-          snapshot.forEach(doc => {
-            cloudJobs.push({ id: doc.id, ...doc.data() });
-          });
-          cachedLabourJobs = cloudJobs;
-          localStorage.setItem("agri_jobs", JSON.stringify(cloudJobs));
-        } else {
-          defaultLabourJobs.forEach(job => {
-            const { id, ...data } = job;
-            window.db.collection("labour_jobs").doc(id).set(data);
-          });
-          cachedLabourJobs = defaultLabourJobs;
-        }
+        const list = [];
+        snapshot.forEach(doc => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        cachedLabourProfiles = list;
         renderLabourWidget();
       }, (err) => {
-        console.warn("Firestore error, local fallback active:", err);
+        console.warn("Firestore error:", err);
         renderLabourWidget();
       });
   } else {
+    // Local fallback
+    const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : null;
+    if (myProf) {
+      cachedLabourProfiles = [{ id: "my_profile", ...myProf, status: myProf.isDutyOn ? "Available" : "Offline" }];
+    }
     renderLabourWidget();
   }
 }
@@ -91,50 +46,40 @@ function renderLabourWidget() {
     return;
   }
 
-  const jobsData = cachedLabourJobs.filter(j => {
+  const myProf = (typeof getLabourProfile === "function") ? getLabourProfile() : { isDutyOn: true };
+
+  // Rhythu ki kevalam Duty ON lo undi, status "Available" ga unna vallu mathrame kanipistharu!
+  const availableLabours = cachedLabourProfiles.filter(l => {
+    if (!l.isDutyOn || l.status !== "Available") return false;
+
+    // Filters Matching
     let skillMatch = true;
     if (activeSkillFilter !== "all") {
-      const fullWorkText = `${j.crop || ''} ${j.workType || ''}`.toLowerCase();
-      skillMatch = fullWorkText.includes(activeSkillFilter.toLowerCase());
+      const skillsArr = l.skills || [];
+      skillMatch = skillsArr.some(s => s.includes(activeSkillFilter));
     }
 
     let rangeMatch = true;
-    const dist = parseFloat(j.distanceKm || "2.5");
-    if (activeLabourRangeFilter === "village") {
-      rangeMatch = dist <= 2.5;
-    } else if (activeLabourRangeFilter === "5") {
-      rangeMatch = dist <= 5.0;
-    } else if (activeLabourRangeFilter === "10") {
-      rangeMatch = dist <= 10.0;
-    }
+    const dist = parseFloat(l.distanceKm || "2.0");
+    if (activeLabourRangeFilter === "village") rangeMatch = dist <= 2.5;
+    else if (activeLabourRangeFilter === "5") rangeMatch = dist <= 5.0;
+    else if (activeLabourRangeFilter === "10") rangeMatch = dist <= 10.0;
 
     let gangMatch = true;
-    const count = parseInt(j.count || 1);
-    if (activeGangFilter === "small") {
-      gangMatch = count <= 5;
-    } else if (activeGangFilter === "medium") {
-      gangMatch = count >= 6 && count <= 10;
-    } else if (activeGangFilter === "large") {
-      gangMatch = count > 10;
-    }
+    const count = parseInt(l.gangCount || 1);
+    if (activeGangFilter === "small") gangMatch = count <= 5;
+    else if (activeGangFilter === "medium") gangMatch = count >= 6 && count <= 10;
+    else if (activeGangFilter === "large") gangMatch = count > 10;
 
     let wageMatch = true;
-    const wage = parseFloat(j.wage || 0);
-    if (activeWageFilter === "low") {
-      wageMatch = wage <= 400;
-    } else if (activeWageFilter === "mid") {
-      wageMatch = wage > 400 && wage <= 600;
-    } else if (activeWageFilter === "high") {
-      wageMatch = wage > 600;
-    }
+    const wage = parseFloat(l.wage || 450);
+    if (activeWageFilter === "low") wageMatch = wage <= 400;
+    else if (activeWageFilter === "mid") wageMatch = wage > 400 && wage <= 600;
+    else if (activeWageFilter === "high") wageMatch = wage > 600;
 
     let transMatch = true;
-    const hasOwnTransport = j.ownTransport === true || (j.transportNote && j.transportNote.includes("సొంత"));
-    if (activeTransportFilterOpt === "own") {
-      transMatch = hasOwnTransport;
-    } else if (activeTransportFilterOpt === "needed") {
-      transMatch = !hasOwnTransport;
-    }
+    if (activeTransportFilterOpt === "own") transMatch = l.ownTransport === true;
+    else if (activeTransportFilterOpt === "needed") transMatch = l.ownTransport !== true;
 
     return skillMatch && rangeMatch && gangMatch && wageMatch && transMatch;
   });
@@ -142,22 +87,23 @@ function renderLabourWidget() {
   container.innerHTML = `
     <div class="labour-card">
       
-      <!-- Top Header with Post Button -->
-      <div class="labour-card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-        <div style="display:flex; align-items:center; gap:6px;">
-          <h3 style="margin:0;">👷 కూలీల Dashboard (Live Jobs)</h3>
-          <span class="badge-live-blue">Live Feed</span>
+      <!-- Top Control Bar: Duty Switch & Profile Edit Button -->
+      <div style="background:#e8f5e9; border:1px solid #c8e6c9; border-radius:8px; padding:10px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+        <div>
+          <span style="font-size:12px; font-weight:bold; color:#2e7d32;">నా డ్యూటీ స్టేటస్:</span>
+          <button onclick="toggleLabourDutyStatus()" style="margin-left:6px; padding:4px 10px; border-radius:14px; border:none; font-size:11px; font-weight:bold; cursor:pointer; background:${myProf.isDutyOn ? '#2e7d32' : '#c62828'}; color:#fff;">
+            ${myProf.isDutyOn ? '🟢 డ్యూటీ ON (లైవ్)' : '🔴 డ్యూటీ OFF (విశ్రాంతి)'}
+          </button>
         </div>
-        <button onclick="openLabourPostModal()" style="background:#0288d1; color:#fff; border:none; padding:6px 12px; border-radius:20px; font-size:12px; font-weight:bold; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.15);">
-          ➕ పనిని పోస్ట్ చేయండి
+        <button onclick="openLabourProfileModal()" style="background:#0288d1; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+          ⚙️ పనులు / ప్రొఫైల్ మార్చుకోండి
         </button>
       </div>
 
-      <!-- Filters Section Container -->
-      <div class="labour-filter-bar" style="background:#e1f5fe; padding:10px; border-radius:8px; margin:10px 0; border:1px solid #b3e5fc;">
-        
+      <!-- Filters Section -->
+      <div class="labour-filter-bar" style="background:#e1f5fe; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #b3e5fc;">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:8px;">
-          <span style="font-size:12px; font-weight:bold; color:#0277bd; white-space:nowrap;">🎯 అడ్వాన్స్ ఫిల్టర్లు:</span>
+          <span style="font-size:12px; font-weight:bold; color:#0277bd; white-space:nowrap;">🎯 కూలీల ఫిల్టర్లు:</span>
           
           <div style="display:flex; align-items:center; gap:6px;">
             <select onchange="applyAdvLabourFilter('range', this.value)" style="padding:4px 6px; border-radius:6px; border:1px solid #81d4fa; font-size:11px; background:#fff; font-weight:600; color:#0277bd; outline:none; max-width:140px;">
@@ -168,7 +114,7 @@ function renderLabourWidget() {
             </select>
 
             <span style="font-size:11px; background:#0288d1; color:#fff; padding:3px 8px; border-radius:12px; font-weight:bold; white-space:nowrap;">
-              ${jobsData.length} లభ్యం
+              ${availableLabours.length} బృందాలు లభ్యం
             </span>
           </div>
         </div>
@@ -206,60 +152,38 @@ function renderLabourWidget() {
         </div>
       </div>
 
-      <!-- Jobs List -->
+      <!-- Live Available Labour Cards List -->
       <div class="labour-scroll labour-scroll-container">
-        ${jobsData.length > 2 ? '<div class="scroll-hint-blue">👇 మరిన్ని పనుల కోసం scroll చేయండి</div>' : ''}
-
-        ${jobsData.length === 0 ? `
-          <div class="no-jobs-msg" style="text-align:center; padding:18px; color:#555; font-size:13px; background:#fff; border-radius:8px; border:1px dashed #90caf9;">
-            📢 మీరు ఎంచుకున్న పరిధి / ఫిల్టర్లకు సరిపడే పనులు ప్రస్తుతం లేవు.
+        ${availableLabours.length === 0 ? `
+          <div style="text-align:center; padding:18px; color:#555; font-size:13px; background:#fff; border-radius:8px; border:1px dashed #90caf9;">
+            📢 ప్రస్తుతం ఈ ఫిల్టర్లలో కూలీలు ఎవరూ అందుబాటులో (డ్యూటీ ఆన్ చేసి) లేరు.
           </div>
-        ` : jobsData.map(j => {
-          const isConf = j.status === "Confirmed";
-          const lat = typeof j.lat === 'number' ? j.lat : 17.9784;
-          const lng = typeof j.lng === 'number' ? j.lng : 79.5941;
-          const villageName = j.village || "గ్రామం";
-          const workDate = j.date ? `📅 ${j.date}` : "";
-          const hasOwn = j.ownTransport === true || (j.transportNote && j.transportNote.includes("సొంత"));
-
+        ` : availableLabours.map(lab => {
+          const skillsListText = (lab.skills || ["వ్యవసాయ పనులు"]).join(", ");
           return `
-            <div class="job-card job-item-card ${isConf ? 'is-confirmed' : ''}" data-village="${villageName}">
+            <div class="job-card job-item-card" style="margin-bottom:10px;">
               <div class="job-item-top">
                 <div style="flex: 1;">
-                  <strong class="job-item-title">🌾 ${j.crop} -${j.workType}</strong>
-                  <div class="job-farmer-meta">
-                    రైతు/యజమాని: <b>${j.farmerName}</b> \vert{} కూలీలు: <b>${j.count}</b>
+                  <strong class="job-item-title" style="color:#0277bd;">👷 ${lab.name} (బృందం: ${lab.gangCount || 1} మంది)</strong>
+                  <div class="job-farmer-meta" style="margin-top:2px;">
+                    📍 గ్రామం: <b>${lab.village}</b> \vert{} 🛵 <b>${lab.ownTransport ? 'సొంత బండి ఉంది' : 'రవాణా కావాలి'}</b>
                   </div>
-                  <div class="job-tags-row" style="margin-top:4px; display:flex; gap:4px; flex-wrap:wrap;">
-                    <span class="badge-village">🏛️ ${villageName}</span>${workDate ? `<span class="badge-date">${workDate}</span>` : ''}
-                    <span style="font-size:10px; background:#e0f2f1; color:#00695c; padding:2px 5px; border-radius:4px;">${hasOwn ? '🛵 సొంత బండి' : '🛺 రవాణా అవసరం'}</span>
+                  <div style="font-size:11px; color:#37474f; margin-top:4px;">
+                    🛠️ <b>చేసే పనులు:</b> <span style="color:#00796b;">${skillsListText}</span>
                   </div>
                 </div>
                 <div class="job-item-pricing">
-                  <span class="job-wage-amount">₹${j.wage}/రోజు</span>
-                  <div class="job-distance-tag">📍 ${j.distanceKm || '2.5'} కి.మీ</div>
+                  <span class="job-wage-amount">₹${lab.wage || 450}/రోజు</span>
+                  <div class="job-distance-tag">🟢 లభ్యం (Live)</div>
                 </div>
               </div>
 
-              ${!isConf ? `
-                <button onclick="acceptJob('${j.id}')" class="btn-accept-job">
-                  ✅ పని Accept చేయండి
+              <!-- Action: Farmer Request Button -->
+              <div style="margin-top:8px; display:flex; gap:6px;">
+                <button onclick="requestLabour('${lab.id}', '${lab.name}', '${lab.phone}')" style="flex:1; background:#2e7d32; color:#fff; border:none; padding:7px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">
+                  📩 పనికి పిలవండి (Request)
                 </button>
-              ` : `
-                <div class="confirmed-job-details">
-                  <div class="confirmed-title-text">🎉 పని ఖరారైంది (${j.labourName || 'కూలీ'})! మాట్లాడండి:</div>
-                  <div class="job-action-buttons">
-                    <a href="tel:${j.farmerPhone}" class="btn-job-action btn-call-farmer">📞 కాల్</a>
-                    <a href="sms:${j.farmerPhone}?body=నమస్తే" class="btn-job-action btn-sms-farmer">✉️ SMS</a>
-                    <a href="https://wa.me/91${j.farmerPhone}" target="_blank" class="btn-job-action btn-whatsapp-farmer">💬 వాట్సాప్</a>
-                    <button onclick="toggleMap('${j.id}')" id="mb-${j.id}" class="btn-job-action btn-map-toggle">🗺️ దారి Map (ON)</button>
-                  </div>
-                  <div id="m-${j.id}" class="job-map-container" style="display:none; margin-top:8px; padding:8px; background:#e8eaf6; border-radius:6px;">
-                    <div class="map-coords-text">📍 Location: (${lat.toFixed(3)}, ${lng.toFixed(3)})</div>
-                    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" class="btn-google-maps">🚀 Google Maps లో దారి చూడండి</a>
-                  </div>
-                </div>
-              `}
+              </div>
             </div>
           `;
         }).join('')}
@@ -269,7 +193,35 @@ function renderLabourWidget() {
   `;
 }
 
-// Filter Event Handler
+// Rhythu Request Cheyagane Kooli Book avvadam & Hide avvadam
+window.requestLabour = function(labourId, labourName, labourPhone) {
+  const farmerName = (window.AppState && window.AppState.userProfile) ? window.AppState.userProfile.name : "రైతు";
+  
+  if (!confirm(`${labourName} బృందాన్ని పనికి పిలవాలనుకుంటున్నారా?`)) return;
+
+  if (window.db && labourId && !labourId.startsWith("my_")) {
+    window.db.collection("labour_profiles").doc(labourId).update({
+      status: "Booked",
+      bookedBy: farmerName,
+      bookedAt: Date.now()
+    }).then(() => {
+      alert(`🎉 ${labourName} కి సమాచారం అందింది! వారు పనికి ఒప్పుకున్నారు. ఇతర రైతులకు ఈ వివరాలు తాత్కాలికంగా దాచబడతాయి.`);
+    });
+  } else {
+    const l = cachedLabourProfiles.find(x => x.id === labourId);
+    if (l) {
+      l.status = "Booked";
+      l.bookedBy = farmerName;
+      renderLabourWidget();
+      alert(`🎉 ${labourName} పనికి ఒప్పుకున్నారు! వివరాలు సేవ్ అయ్యాయి.`);
+    }
+  }
+
+  if (typeof speakTeluguText === "function") {
+    speakTeluguText(`${labourName} పనికి ఖరారయ్యారు.`);
+  }
+};
+
 window.applyAdvLabourFilter = function(key, val) {
   if (key === 'range') activeLabourRangeFilter = val;
   if (key === 'skill') activeSkillFilter = val;
@@ -277,68 +229,6 @@ window.applyAdvLabourFilter = function(key, val) {
   if (key === 'wage') activeWageFilter = val;
   if (key === 'trans') activeTransportFilterOpt = val;
   renderLabourWidget();
-};
-
-// Accept Job -> Cloud Update
-window.acceptJob = function(id) {
-  let name = "";
-  let phone = "";
-
-  if (window.AppState && window.AppState.userProfile) {
-    name = window.AppState.userProfile.name;
-    phone = window.AppState.userProfile.phone;
-  }
-
-  if (!name || !phone) {
-    name = prompt("మీ పేరు:", "రాము");
-    if (!name) return;
-    phone = prompt("ఫోన్ నంబర్:", "9876543211");
-    if (!phone) return;
-  }
-
-  const jobObj = cachedLabourJobs.find(x => x.id === id);
-
-  if (window.db && id && !id.startsWith("job_def_")) {
-    window.db.collection("labour_jobs").doc(id).update({
-      status: "Confirmed",
-      labourName: name,
-      labourPhone: phone
-    });
-  } else {
-    if (jobObj) {
-      jobObj.status = "Confirmed";
-      jobObj.labourName = name;
-      jobObj.labourPhone = phone;
-      localStorage.setItem("agri_jobs", JSON.stringify(cachedLabourJobs));
-      renderLabourWidget();
-    }
-  }
-
-  if (jobObj && typeof window.lockJobToEscrow === "function") {
-    window.lockJobToEscrow(jobObj, name);
-  }
-
-  if (typeof renderFarmerWidget === "function") renderFarmerWidget();
-  if (typeof renderWalletWidget === "function") renderWalletWidget();
-
-  if (typeof speakTeluguText === "function") {
-    speakTeluguText("పని ఖరారైంది. వివరాలు క్లౌడ్‌లో అప్‌డేట్ అయ్యాయి.");
-  }
-};
-
-window.toggleMap = function(id) {
-  const b = document.getElementById("m-" + id);
-  const btn = document.getElementById("mb-" + id);
-  if (!b || !btn) return;
-  if (b.style.display === "none" || b.style.display === "") {
-    b.style.display = "block";
-    btn.innerText = "✖️ Map (OFF)";
-    btn.style.background = "#ffebee";
-  } else {
-    b.style.display = "none";
-    btn.innerText = "🗺️ దారి Map (ON)";
-    btn.style.background = "#fff3e0";
-  }
 };
 
 initLabourDataListener();
