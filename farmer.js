@@ -118,28 +118,53 @@ function getAcceptedListHTML(jobs) {
         </div>
       ` : ''}
 
-      <!-- Standard Accepted List (పాత ఫార్మాట్ కంపాటబిలిటీ) -->
+          <!-- Standard Accepted List (పాత ఫార్మాట్ + కొత్తగా చేరిన కూలీలు) -->
       <div class="accepted-header">
-        <h4>👥 Confirm అయిన కూలీలు (${jobs.length}):</h4>${jobs.length > 2 ? '<span class="scroll-hint">👇 scroll చేయండి</span>' : ''}
+        <h4>👥 Confirm అయిన కూలీలు:</h4>
       </div>
       <div id="accepted-list" class="custom-scroll accepted-scroll-list">
-        ${jobs.length === 0 && postedJobs.length === 0 ? `
-          <div class="empty-labour-msg">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>
-        ` : jobs.map(j => `
-          <div class="labour-card-item">
-            <div class="labour-card-header">
-              <strong>👷 ${j.labourName}</strong>
-              <span class="labour-wage">₹${j.wage}</span>
+        ${(() => {
+          let allConfirmed = [];
+
+          postedJobs.forEach(pj => {
+            if (pj.confirmedLabours && Array.isArray(pj.confirmedLabours)) {
+              pj.confirmedLabours.forEach(c => {
+                allConfirmed.push({
+                  labourName: c.name || "కూలీ",
+                  labourPhone: c.phone || "",
+                  crop: pj.crop,
+                  workType: pj.workType,
+                  wage: pj.wage
+                });
+              });
+            }
+          });
+
+          jobs.forEach(j => {
+            allConfirmed.push(j);
+          });
+
+          if (allConfirmed.length === 0) {
+            return '<div class="empty-labour-msg">కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.</div>';
+          }
+
+          return allConfirmed.map(j => `
+            <div class="labour-card-item">
+              <div class="labour-card-header">
+                <strong>👷 ${j.labourName}</strong>
+                <span class="labour-wage">₹${j.wage}</span>
+              </div>
+              <div class="labour-work-info">పని: ${j.crop} (${j.workType})</div>
+              <div class="labour-action-links">
+                <a href="tel:${j.labourPhone}" class="labour-btn-link link-call">📞 కాల్</a>
+                <a href="sms:${j.labourPhone}?body=నమస్తే" class="labour-btn-link link-sms">✉️ SMS</a>
+                <a href="https://wa.me/91${j.labourPhone}" target="_blank" class="labour-btn-link link-whatsapp">💬 వాట్సాప్</a>
+              </div>
             </div>
-            <div class="labour-work-info">పని: ${j.crop} (${j.workType})</div>
-            <div class="labour-action-links">
-              <a href="tel:${j.labourPhone}" class="labour-btn-link link-call">📞 కాల్</a>
-              <a href="sms:${j.labourPhone}?body=నమస్తే" class="labour-btn-link link-sms">✉️ SMS</a>
-              <a href="https://wa.me/91${j.labourPhone}" target="_blank" class="labour-btn-link link-whatsapp">💬 వాట్సాప్</a>
-            </div>
-          </div>
-        `).join('')}
+          `).join('');
+        })()}
       </div>
+
     </div>
   `;
 }
