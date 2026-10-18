@@ -29,65 +29,65 @@ function getLabourDashboardElement() {
   return el;
 }
 
-// 1. Roles & Widgets Visibility + Profile Banner Setup
+// Roles & Widgets Visibility Controller
 function applyUserRoleView() {
   const state = window.AppState;
-  const publicCardsContainer = document.getElementById('public-user-cards-container');
   const roleSwitchBar = document.getElementById('role-switch-container');
 
-  const farmerContainer = getFarmerDashboardElement();
-  const labourContainer = getLabourDashboardElement();
+  const farmerContainer = document.getElementById('farmer-post-container');
+  const labourContainer = document.getElementById('labour-jobs-container');
+  const walletContainer = document.getElementById('wallet-container');
   const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
-  const walletContainer = document.getElementById('wallet-container') || document.querySelector('.wallet-card');
   const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
 
-  // Weather & Mandi eppudu kanipinchaali
-  if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
-  if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
-
-  // ==========================================
-  // A. Public Landing Page (Login Kaani View)
-  // ==========================================
+  // ===================================================
+  // 1. Landing Page (User Login Kaani Samayam Lo)
+  // ===================================================
   if (!state || !state.isLoggedIn) {
-    if (publicCardsContainer) publicCardsContainer.style.setProperty('display', 'block', 'important');
     if (roleSwitchBar) roleSwitchBar.style.setProperty('display', 'none', 'important');
 
+    // Dashboards & Wallet hide cheyali
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
     if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
 
-    removeProfileHeader();
-    removeRoleSwitchBar();
+    // Mandi and Weather landing page lo kanipinchali
+    if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
+    if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+
+    // Rithu & Kooli Login cards create chese function
+    if (typeof renderRoleCards === 'function') {
+      renderRoleCards();
+    } else if (typeof renderRoleSelectionCards === 'function') {
+      renderRoleSelectionCards();
+    }
+
+    if (typeof removeProfileHeader === 'function') removeProfileHeader();
+    if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
     return;
   }
 
-  // ==========================================
-  // B. User Login Ayyinappudu
-  // ==========================================
-  if (publicCardsContainer) {
-    publicCardsContainer.style.setProperty('display', 'none', 'important');
-  }
-
-  // Profile Header (Name, Village, Logout)
+  // ===================================================
+  // 2. User Login Ayyinappudu
+  // ===================================================
+  // Profile Header (Name, Phone, Village, Logout)
   if (typeof renderUserProfileBanner === 'function') {
     renderUserProfileBanner();
   }
 
-  //   // ==========================================
-  // C. కూలీ లాగిన్ (LABOUR ONLY)
-  // ==========================================
+  // A. Kevalam Kooli Login (LABOUR ONLY)
   if (state.userType === "LABOURONLY") {
-    removeRoleSwitchBar();
+    if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
 
-    // రైతు డాష్‌బోర్డ్, మండి, వెదర్ దాచిపెట్టాలి
+    // Rithu dashboard, Mandi, Weather kooli ki hide avvali
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
     if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
     if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
 
-    // కేవలం కూలీ డాష్‌బోర్డ్ & వాలెట్ మాత్రమే కనిపించాలి
+    // Kooli Dashboard mariyu Wallet matrame kanipinchali
     if (labourContainer) {
       labourContainer.style.setProperty('display', 'block', 'important');
-      if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
+      if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
     }
     if (walletContainer) {
       walletContainer.style.setProperty('display', 'block', 'important');
@@ -96,13 +96,11 @@ function applyUserRoleView() {
     if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
   } 
 
-  // ==========================================
-  // D. రైతు లాగిన్ (రైతు కూలీ మోడ్‌లోకి మారినప్పుడు కూడా)
-  // ==========================================
+  // B. Rithu Login (FARMER)
   else if (state.userType === "FARMER") {
     if (typeof renderRoleSwitchBar === 'function') renderRoleSwitchBar();
 
-    // 1. రైతు "కూలీ మోడ్" లోకి స్విచ్ అయినప్పుడు
+    // Rithu "Kooli Mode" loki switch ayithe:
     if (state.currentRole === 'LABOUR') {
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
@@ -110,24 +108,26 @@ function applyUserRoleView() {
 
       if (labourContainer) {
         labourContainer.style.setProperty('display', 'block', 'important');
-        if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
+        if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
         if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
       }
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     } 
-    // 2. అసలైన రైతు మోడ్‌లో ఉన్నప్పుడు (మండి, వెదర్ రెండూ కనిపిస్తాయి)
+    // Rithu "Rithu Mode" lo unnapudu:
     else {
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-      
+
       if (farmerContainer) {
         farmerContainer.style.setProperty('display', 'block', 'important');
-        if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
+        if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
       }
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
   }
+}
+
 
             // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
       function triggerFarmerRender() {
