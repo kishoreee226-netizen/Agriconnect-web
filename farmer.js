@@ -514,10 +514,16 @@ window.lockBookingEscrow = function(bookingId, amount, itemName) {
 };
 // 9. Auto-Init & DOM Ready Listener
 function initFarmerModule() {
-  // Page load అయినప్పుడు Farmer container ఉంటే Render చేయడం
   const fContainer = document.getElementById("farmer-post-container");
-  if (fContainer && window.AppState?.currentRole === "FARMER") {
+  
+  // Login ayyi, alage currentRole FARMER ga unte mathrame render avvali
+  if (fContainer && window.AppState?.isLoggedIn && window.AppState?.currentRole === "FARMER") {
+    fContainer.style.display = "block";
     window.renderFarmerWidget();
+  } else if (fContainer && !window.AppState?.isLoggedIn) {
+    // Login avvakapothe compulsory hide cheyali
+    fContainer.style.display = "none";
+    fContainer.innerHTML = "";
   }
 }
 
