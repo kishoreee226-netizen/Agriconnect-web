@@ -240,6 +240,8 @@ window.switchRoleMode = function(targetRole) {
 
   const fContainer = getFarmerDashboardElement();
   const lContainer = getLabourDashboardElement();
+  const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
+  const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
 
   if (targetRole === "FARMER") {
     if (fContainer) {
@@ -249,6 +251,9 @@ window.switchRoleMode = function(targetRole) {
     if (lContainer) {
       lContainer.style.setProperty("display", "none", "important");
     }
+    // Farmer mode lo Mandi mariyu Weather chupinchali
+    if (mandiContainer) mandiContainer.style.setProperty("display", "block", "important");
+    if (weatherContainer) weatherContainer.style.setProperty("display", "block", "important");
 
     if (typeof window.renderFarmerWidget === "function") {
       window.renderFarmerWidget();
@@ -264,6 +269,9 @@ window.switchRoleMode = function(targetRole) {
       lContainer.style.setProperty("display", "block", "important");
       lContainer.style.visibility = "visible";
     }
+    // Labour mode lo Mandi mariyu Weather hide cheyali
+    if (mandiContainer) mandiContainer.style.setProperty("display", "none", "important");
+    if (weatherContainer) weatherContainer.style.setProperty("display", "none", "important");
 
     if (typeof window.renderLabourWidget === "function") {
       window.renderLabourWidget();
