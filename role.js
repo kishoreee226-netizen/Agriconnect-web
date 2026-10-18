@@ -73,51 +73,61 @@ function applyUserRoleView() {
     renderUserProfileBanner();
   }
 
-  // ==========================================
-  // C. Kooli Login (LABOUR ONLY)
+  //   // ==========================================
+  // C. కూలీ లాగిన్ (LABOUR ONLY)
   // ==========================================
   if (state.userType === "LABOURONLY") {
     removeRoleSwitchBar();
+
+    // రైతు డాష్‌బోర్డ్, మండి, వెదర్ దాచిపెట్టాలి
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-    
+    if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+    if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
+
+    // కేవలం కూలీ డాష్‌బోర్డ్ & వాలెట్ మాత్రమే కనిపించాలి
     if (labourContainer) {
       labourContainer.style.setProperty('display', 'block', 'important');
       if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
     }
-    if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+    if (walletContainer) {
+      walletContainer.style.setProperty('display', 'block', 'important');
+    }
+
     if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
   } 
 
   // ==========================================
-  // D. Rithu Login (FARMER)
+  // D. రైతు లాగిన్ (రైతు కూలీ మోడ్‌లోకి మారినప్పుడు కూడా)
   // ==========================================
   else if (state.userType === "FARMER") {
-    // Switch Bar (Farmer Mode / Labour Mode)
-    if (typeof renderRoleSwitchBar === 'function') {
-      renderRoleSwitchBar();
-    }
+    if (typeof renderRoleSwitchBar === 'function') renderRoleSwitchBar();
 
-    if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
-
-    // 1. Rithu Labour Mode loki switch ainappudu
+    // 1. రైతు "కూలీ మోడ్" లోకి స్విచ్ అయినప్పుడు
     if (state.currentRole === 'LABOUR') {
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+      if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+      if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
+
       if (labourContainer) {
         labourContainer.style.setProperty('display', 'block', 'important');
         if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
         if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
       }
+      if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     } 
-    // 2. Rithu Mode active ga unnapudu
+    // 2. అసలైన రైతు మోడ్‌లో ఉన్నప్పుడు (మండి, వెదర్ రెండూ కనిపిస్తాయి)
     else {
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      
       if (farmerContainer) {
         farmerContainer.style.setProperty('display', 'block', 'important');
         if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
       }
+      if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
+      if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+      if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
   }
-}
 
             // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
       function triggerFarmerRender() {
