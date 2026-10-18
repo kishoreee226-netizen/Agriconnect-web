@@ -56,9 +56,12 @@ function getLabourFormHTML() {
         <button type="button" id="f-village-btn" class="btn-village">🏛️ Hanamkonda</button>
       </div>
 
-      <div class="form-submit-row">
-        <button type="submit" class="btn-submit-farmer">📢 Submit కూలీల కోసం (Post Alert)</button>
-      </div>
+              <div class="form-submit-row" style="display: flex; justify-content: center; width: 100%; margin: 12px 0;">
+          <button type="submit" class="btn-submit-farmer" style="width: auto; max-width: fit-content; padding: 10px 22px; font-size: 13px; font-weight: bold; border-radius: 24px; border: none; background: #2e7d32; color: #ffffff; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 6px rgba(46,125,50,0.3);">
+            📢 Submit కూలీల కోసం (Post Alert)
+          </button>
+        </div>
+
     </form>
   `;
 }
