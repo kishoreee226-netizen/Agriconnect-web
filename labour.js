@@ -263,6 +263,10 @@ window.rejectFarmerJob = function(jobId) {
   alert("ఈ పని జాబితా నుండి తొలగించబడింది.");
 };
 
-// Initialize
-initJobsListener();
+// // Initialize
 window.renderLabourWidget = renderLabourWidget;
+
+// Kevalam user login ayyi, Kooli role lo unnapudu matrame listener run avvali
+if (window.AppState?.isLoggedIn && (window.AppState?.currentRole === "LABOUR" || window.AppState?.userType === "LABOURONLY")) {
+  initJobsListener();
+}
