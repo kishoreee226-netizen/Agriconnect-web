@@ -196,13 +196,22 @@ window.renderFarmerWidget = function() {
         <span class="badge-live">Live</span>
       </div>
 
-      <!-- 4 Compact Tabs -->
-      <div class="eq-tabs-bar">
-        <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="switchFarmerTab('labour')">👥 కూలీలు</button>
-        <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="switchFarmerTab('equipment')">🚜 పరికరాలు</button>
-        <button id="tab-btn-seeds" type="button" class="eq-tab-btn" onclick="switchFarmerTab('seeds')">🌱 విత్తనాలు</button>
-        <button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="switchFarmerTab('transport')">🚛 రవాణా</button>
-      </div>
+              <!-- 4 Compact Tabs (Colourful Buttons) -->
+        <div class="eq-tabs-bar" style="display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; margin-bottom: 10px;">
+          <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="switchFarmerTab('labour')" style="flex: 1; min-width: 72px; padding: 7px 4px; font-size: 11px; font-weight: bold; border-radius: 18px; border: 1.5px solid #0288d1; background: #0288d1; color: #ffffff; cursor: pointer;">
+            👥 కూలీలు
+          </button>
+          <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="switchFarmerTab('equipment')" style="flex: 1; min-width: 72px; padding: 7px 4px; font-size: 11px; font-weight: bold; border-radius: 18px; border: 1.5px solid #f57c00; background: #fff3e0; color: #e65100; cursor: pointer;">
+            🚜 పరికరాలు
+          </button>
+          <button id="tab-btn-seeds" type="button" class="eq-tab-btn" onclick="switchFarmerTab('seeds')" style="flex: 1; min-width: 72px; padding: 7px 4px; font-size: 11px; font-weight: bold; border-radius: 18px; border: 1.5px solid #2e7d32; background: #e8f5e9; color: #1b5e20; cursor: pointer;">
+            🌱 విత్తనాలు
+          </button>
+          <button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="switchFarmerTab('transport')" style="flex: 1; min-width: 72px; padding: 7px 4px; font-size: 11px; font-weight: bold; border-radius: 18px; border: 1.5px solid #7b1fa2; background: #f3e5f5; color: #4a148c; cursor: pointer;">
+            🚚 రవాణా
+          </button>
+        </div>
+
 
       <div class="farmer-card-body">
         <!-- 4 Tab Panes -->
