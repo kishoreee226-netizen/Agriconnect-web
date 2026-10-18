@@ -76,53 +76,55 @@ function getAcceptedListHTML(jobs) {
   return `
     <div class="accepted-section" style="margin-top:14px;">
       
-      <!-- 📋 Live Slot Tracker for Posted Jobs (రియల్-టైమ్ స్లాట్ కౌంటర్) -->
+      <!-- 📋 Live Slot Tracker for Posted Jobs (స్క్రోలర్‌తో కూడిన బాక్స్) -->
       ${postedJobs.length > 0 ? `
         <div style="background:#f1f8e9; border:1px solid #c5e1a5; border-radius:8px; padding:10px; margin-bottom:12px;">
           <h4 style="margin:0 0 8px 0; color:#2e7d32; font-size:13px;">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
-          ${postedJobs.map(j => {
-            const confirmed = j.confirmedLabours || [];
-            const reqCount = parseInt(j.totalRequired || j.count || 1);
-            const isFull = confirmed.length >= reqCount;
+          <div style="max-height: 220px; overflow-y: auto; padding-right: 4px;">
+            ${postedJobs.map(j => {
+              const confirmed = j.confirmedLabours || [];
+              const reqCount = parseInt(j.totalRequired || j.count || 1);
+              const isFull = confirmed.length >= reqCount;
 
-            return `
-              <div style="background:#ffffff; border:1px solid #e0e0e0; border-left:4px solid ${isFull ? '#2e7d32' : '#f57c00'}; border-radius:6px; padding:8px; margin-bottom:8px;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <strong style="color:#2e7d32; font-size:12px;">🌾 ${j.crop} -${j.workType}</strong>
-                  <span style="font-size:10px; padding:2px 6px; border-radius:8px; font-weight:bold; background:${isFull ? '#e8f5e9' : '#fff3e0'}; color:${isFull ? '#2e7d32' : '#e65100'};">
-                    ${isFull ? '✅ కోటా పూర్తయింది' : '⏳ కూలీల కోసం చూస్తున్నారు'}
-                  </span>
-                </div>
-               <div style="font-size:11px; color:#555; margin-top:2px;">
-                  📅 తేదీ: <b>${j.workDate || j.date || 'ఈ రోజు'}</b> | కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> | రేటు: ₹${j.wage}
-                </div>
-
-      <!-- ఒప్పుకున్న కూలీల వివరాలు, కాల్ & వాట్సాప్ -->
-                ${confirmed.length > 0 ? `
-                  <div style="margin-top:6px; padding-top:6px; border-top:1px dashed #e0e0e0;">
-                    <span style="font-size:10px; font-weight:bold; color:#0277bd;">చేరిన కూలీలు:</span>
-                    ${confirmed.map(c => `
-                      <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:4px 6px; border-radius:4px; margin-top:3px;">
-                        <span style="font-size:11px; color:#333;">👷 <b>${c.name}</b> (${c.phone})</span>
-                        <div style="display:flex; gap:4px;">
-                          <a href="tel:${c.phone}" style="padding:2px 6px; background:#0288d1; color:#fff; border-radius:3px; font-size:10px; text-decoration:none;">📞 కాల్</a>
-                          <a href="https://wa.me/91${c.phone}" target="_blank" style="padding:2px 6px; background:#25d366; color:#fff; border-radius:3px; font-size:10px; text-decoration:none;">💬 వాట్సాప్</a>
-                        </div>
-                      </div>
-                    `).join('')}
+              return `
+                <div style="background:#ffffff; border:1px solid #e0e0e0; border-left:4px solid ${isFull ? '#2e7d32' : '#f57c00'}; border-radius:6px; padding:8px; margin-bottom:8px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="color:#2e7d32; font-size:12px;">🌾 ${j.crop} - ${j.workType}</strong>
+                    <span style="font-size:10px; padding:2px 6px; border-radius:8px; font-weight:bold; background:${isFull ? '#e8f5e9' : '#fff3e0'}; color:${isFull ? '#2e7d32' : '#e65100'};">
+                      ${isFull ? '✅ కోటా పూర్తయింది' : '⏳ కూలీల కోసం చూస్తున్నారు'}
+                    </span>
                   </div>
-                ` : ''}
-              </div>
-            `;
-          }).join('')}
+                  <div style="font-size:11px; color:#555; margin-top:2px;">
+                    📅 తేదీ: <b>${j.workDate || j.date || 'ఈ రోజు'}</b> | కోటా: <b>${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు</b> | రేటు: ₹${j.wage}
+                  </div>
+
+                  <!-- ఒప్పుకున్న కూలీల వివరాలు, కాల్ & వాట్సాప్ -->
+                  ${confirmed.length > 0 ? `
+                    <div style="margin-top:6px; padding-top:6px; border-top:1px dashed #e0e0e0;">
+                      <span style="font-size:10px; font-weight:bold; color:#0277bd;">చేరిన కూలీలు:</span>
+                      ${confirmed.map(c => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:#f9f9f9; padding:4px 6px; border-radius:4px; margin-top:3px;">
+                          <span style="font-size:11px; color:#333;">👷 <b>${c.name}</b> (${c.phone})</span>
+                          <div style="display:flex; gap:4px;">
+                            <a href="tel:${c.phone}" style="padding:2px 6px; background:#0288d1; color:#fff; border-radius:3px; font-size:10px; text-decoration:none;">📞 కాల్</a>
+                            <a href="https://wa.me/91${c.phone}" target="_blank" style="padding:2px 6px; background:#25d366; color:#fff; border-radius:3px; font-size:10px; text-decoration:none;">💬 వాట్సాప్</a>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
         </div>
       ` : ''}
 
-          <!-- Standard Accepted List (పాత ఫార్మాట్ + కొత్తగా చేరిన కూలీలు) -->
+      <!-- Standard Accepted List -->
       <div class="accepted-header">
         <h4>👥 Confirm అయిన కూలీలు:</h4>
       </div>
-      <div id="accepted-list" class="custom-scroll accepted-scroll-list">
+      <div id="accepted-list" class="custom-scroll accepted-scroll-list" style="max-height: 180px; overflow-y: auto;">
         ${(() => {
           let allConfirmed = [];
 
