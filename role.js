@@ -32,87 +32,92 @@ function getLabourDashboardElement() {
 // 1. Roles & Widgets Visibility + Profile Banner Setup
 function applyUserRoleView() {
   const state = window.AppState;
-  const publicCardsContainer = document.getElementById("public-user-cards-container");
-  const roleSwitchBar = document.getElementById("role-switch-container");
+  const publicCardsContainer = document.getElementById('public-user-cards-container');
+  const roleSwitchBar = document.getElementById('role-switch-container');
 
   const farmerContainer = getFarmerDashboardElement();
   const labourContainer = getLabourDashboardElement();
-  const mandiContainer = document.getElementById("mandi-container") || 
-                         document.querySelector(".mandi-card") || 
-                         Array.from(document.querySelectorAll("div")).find(el => el.textContent && el.textContent.includes("మండి / Market"));
-  const walletContainer = document.getElementById("wallet-container") || 
-                          document.querySelector(".wallet-card");
+  const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
+  const walletContainer = document.getElementById('wallet-container') || document.querySelector('.wallet-card');
+  const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
 
-  // A. Public Landing Page (Login Kaakunda Unte)
+  // Weather & Mandi eppudu kanipinchaali
+  if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
+  if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+
+  // ==========================================
+  // A. Public Landing Page (Login Kaani View)
+  // ==========================================
   if (!state || !state.isLoggedIn) {
-    if (publicCardsContainer) publicCardsContainer.style.setProperty("display", "block", "important");
-    if (roleSwitchBar) roleSwitchBar.style.setProperty("display", "none", "important");
-    if (farmerContainer) farmerContainer.style.setProperty("display", "none", "important");
-    if (labourContainer) labourContainer.style.setProperty("display", "none", "important");
-    if (walletContainer) walletContainer.style.setProperty("display", "none", "important");
-    if (mandiContainer) mandiContainer.style.setProperty("display", "block", "important");
+    if (publicCardsContainer) publicCardsContainer.style.setProperty('display', 'block', 'important');
+    if (roleSwitchBar) roleSwitchBar.style.setProperty('display', 'none', 'important');
+
+    if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+    if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+    if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
+
     removeProfileHeader();
     removeRoleSwitchBar();
     return;
   }
 
-  // B. Login Aina Taruvatha Public Cards Hide Cheyadam
-  if (publicCardsContainer) publicCardsContainer.style.setProperty("display", "none", "important");
+  // ==========================================
+  // B. User Login Ayyinappudu
+  // ==========================================
+  if (publicCardsContainer) {
+    publicCardsContainer.style.setProperty('display', 'none', 'important');
+  }
 
-  // User profile banner render cheyadam
-  renderUserProfileBanner();
+  // Profile Header (Name, Village, Logout)
+  if (typeof renderUserProfileBanner === 'function') {
+    renderUserProfileBanner();
+  }
 
-  // C. Kooli Login (LABOUR_ONLY)
-  if (state.userType === "LABOUR_ONLY") {
+  // ==========================================
+  // C. Kooli Login (LABOUR ONLY)
+  // ==========================================
+  if (state.userType === "LABOURONLY") {
     removeRoleSwitchBar();
-    if (farmerContainer) farmerContainer.style.setProperty("display", "none", "important");
-    if (mandiContainer) mandiContainer.style.setProperty("display", "none", "important");
-
+    if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+    
     if (labourContainer) {
-      labourContainer.style.setProperty("display", "block", "important");
-      if (typeof window.renderLabourWidget === "function") {
-        window.renderLabourWidget();
-      }
+      labourContainer.style.setProperty('display', 'block', 'important');
+      if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
     }
-    if (walletContainer) walletContainer.style.setProperty("display", "block", "important");
-
-    filterLabourJobsByLocation();
+    if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+    if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
   } 
-      // D. రైతు లాగిన్ (FARMER)
-    else if (state.userType === "FARMER") {
+
+  // ==========================================
+  // D. Rithu Login (FARMER)
+  // ==========================================
+  else if (state.userType === "FARMER") {
+    // Switch Bar (Farmer Mode / Labour Mode)
+    if (typeof renderRoleSwitchBar === 'function') {
       renderRoleSwitchBar();
-
-      // మండి మరియు వాలెట్ రెండూ రైతుకు స్పష్టంగా కనిపించాలి
-      if (mandiContainer) {
-        mandiContainer.style.setProperty('display', 'block', 'important');
-      }
-      if (walletContainer) {
-        walletContainer.style.setProperty('display', 'block', 'important');
-      }
-
-      if (state.currentRole === 'LABOUR') {
-        if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-        if (labourContainer) {
-          labourContainer.style.setProperty('display', 'block', 'important');
-          if (typeof window.renderLabourWidget === "function") {
-            window.renderLabourWidget();
-          }
-          filterLabourJobsByLocation();
-        }
-      } else {
-        // Farmer Role Active గా ఉన్నప్పుడు
-        if (labourContainer) {
-          labourContainer.style.setProperty('display', 'none', 'important');
-        }
-        if (farmerContainer) {
-          farmerContainer.style.setProperty('display', 'block', 'important');
-          if (typeof window.renderFarmerWidget === "function") {
-            window.renderFarmerWidget();
-          }
-        }
-      }
     }
 
+    if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+
+    // 1. Rithu Labour Mode loki switch ainappudu
+    if (state.currentRole === 'LABOUR') {
+      if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+      if (labourContainer) {
+        labourContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
+        if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
+      }
+    } 
+    // 2. Rithu Mode active ga unnapudu
+    else {
+      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      if (farmerContainer) {
+        farmerContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
+      }
+    }
+  }
+}
 
             // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
       function triggerFarmerRender() {
