@@ -78,29 +78,41 @@ function applyUserRoleView() {
 
     filterLabourJobsByLocation();
   } 
-  // D. Rhythu Login (FARMER)
-  else if (state.userType === "FARMER") {
-    renderRoleSwitchBar();
+      // D. రైతు లాగిన్ (FARMER)
+    else if (state.userType === "FARMER") {
+      renderRoleSwitchBar();
 
-    if (mandiContainer) mandiContainer.style.setProperty("display", "block", "important");
-    if (walletContainer) walletContainer.style.setProperty("display", "block", "important");
+      // మండి మరియు వాలెట్ రెండూ రైతుకు స్పష్టంగా కనిపించాలి
+      if (mandiContainer) {
+        mandiContainer.style.setProperty('display', 'block', 'important');
+      }
+      if (walletContainer) {
+        walletContainer.style.setProperty('display', 'block', 'important');
+      }
 
-    if (state.currentRole === "LABOUR") {
-      if (farmerContainer) farmerContainer.style.setProperty("display", "none", "important");
-      if (labourContainer) {
-        labourContainer.style.setProperty("display", "block", "important");
-        if (typeof window.renderLabourWidget === "function") {
-          window.renderLabourWidget();
+      if (state.currentRole === 'LABOUR') {
+        if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+        if (labourContainer) {
+          labourContainer.style.setProperty('display', 'block', 'important');
+          if (typeof window.renderLabourWidget === "function") {
+            window.renderLabourWidget();
+          }
+          filterLabourJobsByLocation();
+        }
+      } else {
+        // Farmer Role Active గా ఉన్నప్పుడు
+        if (labourContainer) {
+          labourContainer.style.setProperty('display', 'none', 'important');
+        }
+        if (farmerContainer) {
+          farmerContainer.style.setProperty('display', 'block', 'important');
+          if (typeof window.renderFarmerWidget === "function") {
+            window.renderFarmerWidget();
+          }
         }
       }
-      filterLabourJobsByLocation();
-      } else {
-      // Farmer Role Active ga unnappudu:
-      if (labourContainer)
-        labourContainer.style.setProperty("display", "none", "important");
-      if (farmerContainer) {
-        farmerContainer.style.setProperty("display", "block", "important");
-      }
+    }
+
 
             // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
       function triggerFarmerRender() {
