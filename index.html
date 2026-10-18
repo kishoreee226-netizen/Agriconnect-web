@@ -65,46 +65,16 @@
         renderWalletWidget();
       }
 
-            // 3. Farmer Direct Render & Container Show
-      const fBox = document.getElementById("farmer-post-container");
-      if (fBox) {
-        fBox.style.setProperty("display", "block", "important");
-      }
+                // 3. Weather
+    if (typeof window.renderWeatherWidget === "function") {
+      window.renderWeatherWidget();
+    }
 
-      if (typeof window.renderFarmerWidget === "function") {
-        window.renderFarmerWidget();
-      } else if (typeof window.renderFarmerLabourPane === "function") {
-        window.renderFarmerLabourPane();
-      }
+    // 4. Role View Controller (దీని ద్వారానే లాగిన్ చెక్ జరగాలి)
+    if (typeof applyUserRoleView === "function") {
+      applyUserRoleView();
+    }
 
-      // 4. Labour
-      if (typeof window.renderLabourWidget === "function") {
-        window.renderLabourWidget();
-      }
-
-      // 5. Weather
-      if (typeof window.renderWeatherWidget === "function") {
-        window.renderWeatherWidget();
-      }
-
-      // 6. Role View Sync & Force Farmer Visible
-      if (typeof applyUserRoleView === "function") {
-        applyUserRoleView();
-      }
-
-      setTimeout(() => {
-        if (typeof switchRoleMode === "function") {
-          const role = (window.AppState && window.AppState.currentRole) ? window.AppState.currentRole : "FARMER";
-          switchRoleMode(role);
-        }
-        
-        // Double check render
-        if (fBox) fBox.style.setProperty("display", "block", "important");
-        if (typeof window.renderFarmerWidget === "function") {
-          window.renderFarmerWidget();
-        }
-      }, 300);
-    });
   </script>
 </body>
 </html>
