@@ -1,10 +1,8 @@
-window.renderFarmerWidget// role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
+// role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
 
-// Helper: Rhythu Dashboard Container ni safe ga theesukovatam
+// Helper: Rhythu Dashboard Container
 function getFarmerDashboardElement() {
   let el = document.getElementById("farmer-post-container");
-
-  // Oka vela container dorakakapothe wallet paina create chesthundhi
   if (!el) {
     const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
     if (wallet && wallet.parentNode) {
@@ -16,6 +14,7 @@ function getFarmerDashboardElement() {
   return el;
 }
 
+// Helper: Kooli Dashboard Container
 function getLabourDashboardElement() {
   let el = document.getElementById("labour-jobs-container");
   if (!el) {
