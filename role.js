@@ -44,39 +44,67 @@ function applyUserRoleView() {
   // ===================================================
   if (!state || !state.isLoggedIn) {
     if (roleSwitchBar) roleSwitchBar.style.setProperty('display', 'none', 'important');
-
-    // Dashboards & Wallet hide cheyali
-    if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-    if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
 
-    // Mandi and Weather landing page lo kanipinchali
+    // Mandi mariyu Weather landing page lo kanipinchali
     if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
     if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
 
-    // Rithu & Kooli Login cards create chese function
-    if (typeof renderRoleCards === 'function') {
-      renderRoleCards();
-    } else if (typeof renderRoleSelectionCards === 'function') {
-      renderRoleSelectionCards();
+    // 1. Rithu Login Card
+    if (farmerContainer) {
+      farmerContainer.style.setProperty('display', 'block', 'important');
+      farmerContainer.innerHTML = `
+        <div class="farmer-card" style="background:#fff; border:2px solid #2e7d32; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <span style="font-size:24px;">🌾</span>
+            <strong style="font-size:16px; color:#2e7d32;">రైతు సోదరుల కోసం (Farmer)</strong>
+          </div>
+          <ul style="font-size:12px; color:#444; line-height:1.6; margin:0 0 12px 18px; padding:0;">
+            <li>మీ పొలం పనులకు కూలీలను వెంటనే బుక్ చేసుకోండి.</li>
+            <li>ఉచిత జాబ్ పోస్టింగ్ & మార్కెట్ లైవ్ ధరల సమాచారం.</li>
+            <li>స్మార్ట్ ఆటో-స్విచ్: సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారే సదుపాయం.</li>
+          </ul>
+          <button onclick="openLoginModal('FARMER')" style="width:100%; background:#2e7d32; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+            రైతుగా Login / నమోదు అవ్వండి ➔
+          </button>
+        </div>
+      `;
     }
 
-    if (typeof removeProfileHeader === 'function') removeProfileHeader();
-    if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
+    // 2. Kooli Login Card
+    if (labourContainer) {
+      labourContainer.style.setProperty('display', 'block', 'important');
+      labourContainer.innerHTML = `
+        <div class="labour-card" style="background:#fff; border:2px solid #f57c00; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <span style="font-size:24px;">👷</span>
+            <strong style="font-size:16px; color:#e65100;">కూలీల కోసం (Labour)</strong>
+          </div>
+          <ul style="font-size:12px; color:#444; line-height:1.6; margin:0 0 12px 18px; padding:0;">
+            <li>మీ గ్రామం మరియు 5-10 కి.మీ పరిధిలోని రోజువారీ పనులను వెతుక్కోండి.</li>
+            <li>రోజువారీ కూలీ వివరాలు, డైరెక్ట్ ఫోన్ / వాట్సాప్ కాలింగ్.</li>
+            <li>మీ వేతనాల లెక్కల కోసం సులభమైన వ్యక్తిగత వాలెట్.</li>
+          </ul>
+          <button onclick="openLoginModal('LABOUR_ONLY')" style="width:100%; background:#f57c00; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+            కూలీగా Login / నమోదు అవ్వండి ➔
+          </button>
+        </div>
+      `;
+    }
+
+    removeProfileHeader();
+    removeRoleSwitchBar();
     return;
   }
 
   // ===================================================
   // 2. User Login Ayyinappudu
   // ===================================================
-  // Profile Header (Name, Phone, Village, Logout)
-  if (typeof renderUserProfileBanner === 'function') {
-    renderUserProfileBanner();
-  }
+  renderUserProfileBanner();
 
   // A. Kevalam Kooli Login (LABOUR ONLY)
-  if (state.userType === "LABOURONLY") {
-    if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
+  if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
+    removeRoleSwitchBar();
 
     // Rithu dashboard, Mandi, Weather kooli ki hide avvali
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
@@ -92,12 +120,12 @@ function applyUserRoleView() {
       walletContainer.style.setProperty('display', 'block', 'important');
     }
 
-    if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
+    filterLabourJobsByLocation();
   } 
 
   // B. Rithu Login (FARMER)
   else if (state.userType === "FARMER") {
-    if (typeof renderRoleSwitchBar === 'function') renderRoleSwitchBar();
+    renderRoleSwitchBar();
 
     // Rithu "Kooli Mode" loki switch ayithe:
     if (state.currentRole === 'LABOUR') {
@@ -108,7 +136,7 @@ function applyUserRoleView() {
       if (labourContainer) {
         labourContainer.style.setProperty('display', 'block', 'important');
         if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
-        if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
+        filterLabourJobsByLocation();
       }
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     } 
@@ -123,31 +151,6 @@ function applyUserRoleView() {
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
-    }
-  }
-}
-
-
-            // Mukhyam: Rhythu Widget ni render cheyadam (Direct + Fallback sync)
-      function triggerFarmerRender() {
-        const fBox = document.getElementById("farmer-post-container");
-        if (fBox) {
-          fBox.style.setProperty("display", "block", "important");
-        }
-        if (typeof window.renderFarmerWidget === "function") {
-          window.renderFarmerWidget();
-          if (typeof prefillFarmerFormDefaults === "function") {
-            prefillFarmerFormDefaults();
-          }
-        } else if (typeof window.renderFarmerLabourPane === "function") {
-          window.renderFarmerLabourPane();
-        }
-      }
-
- // Calls function bayata:
-    triggerFarmerRender();
-   setTimeout(triggerFarmerRender, 200);
-   setTimeout(triggerFarmerRender, 800);
     }
   }
 }
@@ -215,14 +218,14 @@ function renderRoleSwitchBar() {
 
   const isFarmerRole = (state.currentRole !== "LABOUR");
 
-      switchContainer.innerHTML = `
-      <button type="button" onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 9px 8px; border-radius: 22px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1.5px solid #2e7d32; ${isFarmerRole ? 'background: #2e7d32; color: #ffffff; box-shadow: 0 2px 5px rgba(46,125,50,0.3);' : 'background: #e8f5e9; color: #1b5e20;'}">
-        🌾 Farmer mode (రైతు)
-      </button>
-      <button type="button" onclick="switchRoleMode('LABOUR')" style="flex: 1; padding: 9px 8px; border-radius: 22px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1.5px solid #f57c00; ${!isFarmerRole ? 'background: #e65100; color: #ffffff; box-shadow: 0 2px 5px rgba(230,81,0,0.3);' : 'background: #fff3e0; color: #e65100;'}">
-        👷 Labour mode (కూలీ)
-      </button>
-    `;
+  switchContainer.innerHTML = `
+    <button type="button" onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 9px 8px; border-radius: 22px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1.5px solid #2e7d32; ${isFarmerRole ? 'background: #2e7d32; color: #ffffff; box-shadow: 0 2px 5px rgba(46,125,50,0.3);' : 'background: #e8f5e9; color: #1b5e20;'}">
+      🌾 Farmer mode (రైతు)
+    </button>
+    <button type="button" onclick="switchRoleMode('LABOUR')" style="flex: 1; padding: 9px 8px; border-radius: 22px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1.5px solid #f57c00; ${!isFarmerRole ? 'background: #e65100; color: #ffffff; box-shadow: 0 2px 5px rgba(230,81,0,0.3);' : 'background: #fff3e0; color: #e65100;'}">
+      👷 Labour mode (కూలీ)
+    </button>
+  `;
 }
 
 function removeRoleSwitchBar() {
@@ -230,7 +233,7 @@ function removeRoleSwitchBar() {
   if (switchContainer) switchContainer.remove();
 }
 
-// Mode Switch Handler (Force execution without block)
+// Mode Switch Handler
 window.switchRoleMode = function(targetRole) {
   if (!window.AppState) window.AppState = {};
   window.AppState.currentRole = targetRole;
@@ -268,11 +271,9 @@ window.switchRoleMode = function(targetRole) {
     filterLabourJobsByLocation();
   }
 
-  // Refresh controls
   renderRoleSwitchBar();
   renderUserProfileBanner();
 
-  // Voice feedback
   if (typeof speakTeluguText === "function") {
     if (targetRole === "LABOUR") {
       speakTeluguText("కూలీ మోడ్‌కి మారారు. మీ చుట్టుపక్కల పనుల వివరాలు ఇక్కడ కనిపిస్తాయి.");
@@ -421,80 +422,3 @@ window.submitUserRegistration = function(roleType) {
     }
   }
 };
-
-// 7. Homepage Public Cards
-function renderPublicUserCards() {
-  if (document.getElementById("public-user-cards-container")) return;
-
-  const container = document.createElement("div");
-  container.id = "public-user-cards-container";
-  container.style.cssText = "max-width: 480px; margin: 12px auto; padding: 0 10px;";
-
-  container.innerHTML = `
-    <div style="background:#ffffff; border:2px solid #2e7d32; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-        <span style="font-size:24px;">🌾</span>
-        <h3 style="margin:0; color:#2e7d32; font-size:18px;">రైతు సోదరుల కోసం (Farmer)</h3>
-      </div>
-      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 14px 0;">
-        • మీ పొలం పనులకు కూలీలను వెంటనే బుక్ చేసుకోండి.<br>
-        • ఉచిత జాబ్ పోస్టింగ్ & మార్కెట్ లైవ్ ధరల సమాచారం.<br>
-        • <b>స్మార్ట్ ఆటో-స్విచ్:</b> సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారే సదుపాయం.
-      </p>
-      <button onclick="openLoginModal('FARMER')" style="width:100%; background:#2e7d32; color:#fff; border:none; padding:11px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 2px 6px rgba(46,125,50,0.3);">
-        రైతుగా Login / నమోదు అవ్వండి ➔
-      </button>
-    </div>
-
-    <div style="background:#ffffff; border:2px solid #f57c00; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08);">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
-        <span style="font-size:24px;">👷</span>
-        <h3 style="margin:0; color:#e65100; font-size:18px;">కూలీల కోసం (Labour)</h3>
-      </div>
-      <p style="font-size:13px; color:#444; line-height:1.5; margin:6px 0 14px 0;">
-        • మీ గ్రామం మరియు 5-10 కి.మీ పరిధిలోని రోజువారీ పనులను వెతుక్కోండి.<br>
-        • రోజువారీ కూలీ వివరాలు, డైరెక్ట్ ఫోన్ / వాట్సాప్ కాలింగ్.<br>
-        • మీ వేతనాల లెక్కల కోసం సులభమైన <b>వ్యక్తిగత వాలెట్</b>.
-      </p>
-      <button onclick="openLoginModal('LABOUR_ONLY')" style="width:100%; background:#f57c00; color:#fff; border:none; padding:11px; border-radius:8px; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 2px 6px rgba(245,124,0,0.3);">
-        కూలీగా Login / నమోదు అవ్వండి ➔
-      </button>
-    </div>
-  `;
-
-  const header = document.querySelector(".header") || document.querySelector("header") || document.body.firstChild;
-  if (header && header.parentNode) {
-    header.parentNode.insertBefore(container, header.nextSibling);
-  } else {
-    document.body.prepend(container);
-  }
-}
-
-// 8. Init Role Flow
-function initRoleFlow() {
-  if (!window.AppState) window.AppState = {};
-
-  try {
-    const savedProfile = localStorage.getItem("agri_user_profile");
-    if (savedProfile) {
-      const parsed = JSON.parse(savedProfile);
-      window.AppState.isLoggedIn = true;
-      window.AppState.userProfile = parsed;
-      window.AppState.userType = parsed.roleType || (parsed.isFarmer ? "FARMER" : "LABOUR_ONLY");
-      window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
-    }
-  } catch (e) {}
-
-  if (typeof renderAutoVoiceToggle === "function") {
-    renderAutoVoiceToggle();
-  }
-  renderPublicUserCards();
-  applyUserRoleView();
-  setTimeout(applyUserRoleView, 250);
-}
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initRoleFlow);
-} else {
-  initRoleFlow();
-}
