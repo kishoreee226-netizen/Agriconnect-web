@@ -2640,4 +2640,70 @@ header h1 {
   width: 100% !important;
   box-sizing: border-box !important;
 }
+/* --- Farmer Tabs Dedicated Colors --- */
+.eq-tabs-bar {
+  display: flex !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  padding: 4px 0 !important;
+  margin-bottom: 10px !important;
+}
 
+.eq-tab-btn {
+  flex: 1 !important;
+  min-width: 72px !important;
+  padding: 7px 4px !important;
+  font-size: 11px !important;
+  font-weight: bold !important;
+  border-radius: 18px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+/* 1. Koolilu (Blue) */
+#tab-btn-labour {
+  border: 1.5px solid #0288d1 !important;
+  background: #e1f5fe !important;
+  color: #0288d1 !important;
+}
+#tab-btn-labour.active {
+  background: #0288d1 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(2, 136, 209, 0.3) !important;
+}
+
+/* 2. Parikaralu (Orange) */
+#tab-btn-equipment {
+  border: 1.5px solid #f57c00 !important;
+  background: #fff3e0 !important;
+  color: #e65100 !important;
+}
+#tab-btn-equipment.active {
+  background: #f57c00 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(245, 124, 0, 0.3) !important;
+}
+
+/* 3. Vithanalu (Green) */
+#tab-btn-seeds {
+  border: 1.5px solid #2e7d32 !important;
+  background: #e8f5e9 !important;
+  color: #1b5e20 !important;
+}
+#tab-btn-seeds.active {
+  background: #2e7d32 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.3) !important;
+}
+
+/* 4. Ravana (Purple) */
+#tab-btn-transport {
+  border: 1.5px solid #7b1fa2 !important;
+  background: #f3e5f5 !important;
+  color: #4a148c !important;
+}
+#tab-btn-transport.active {
+  background: #7b1fa2 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 6px rgba(123, 31, 162, 0.3) !important;
+}
