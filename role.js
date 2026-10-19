@@ -475,3 +475,127 @@ window.submitUserRegistration = function(roleType) {
     }
   }
 };
+// ===================================================
+// 7. Provider Modal: 3 Pill Tabs & Login Controller
+// ===================================================
+let selectedProviderType = 'equipment';
+
+window.openProviderModal = function() {
+  let modal = document.getElementById('provider-auth-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'provider-auth-modal';
+    modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; padding:14px; box-sizing:border-box;';
+    
+    modal.innerHTML = `
+      <div style="background:#fff; border-radius:16px; width:100%; max-width:380px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative;">
+        <button onclick="closeProviderModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer; color:#777;">✕</button>
+        
+        <div style="text-align:center; margin-bottom:14px;">
+          <h3 style="margin:0; font-size:17px; color:#4a148c;">🤝 యజమానుల సేవా కేంద్రం</h3>
+          <p style="margin:4px 0 0 0; font-size:12px; color:#666;">మీ కేటగిరీని ఎంచుకొని వివరాలు నమోదు చేయండి</p>
+        </div>
+
+        <!-- 3 Pill Tabs -->
+        <div style="display:flex; gap:6px; margin-bottom:16px;">
+          <button id="p-tab-equipment" type="button" onclick="selectProviderTab('equipment')" style="flex:1; padding:8px 4px; font-size:11px; font-weight:bold; border-radius:18px; border:1.5px solid #f57c00; background:#f57c00; color:#fff; cursor:pointer;">
+            🚜 పరికరాలు
+          </button>
+          <button id="p-tab-transport" type="button" onclick="selectProviderTab('transport')" style="flex:1; padding:8px 4px; font-size:11px; font-weight:bold; border-radius:18px; border:1.5px solid #7b1fa2; background:#f3e5f5; color:#7b1fa2; cursor:pointer;">
+            🚚 రవాణా
+          </button>
+          <button id="p-tab-seeds" type="button" onclick="selectProviderTab('seeds')" style="flex:1; padding:8px 4px; font-size:11px; font-weight:bold; border-radius:18px; border:1.5px solid #2e7d32; background:#e8f5e9; color:#2e7d32; cursor:pointer;">
+            🌱 విత్తనాలు
+          </button>
+        </div>
+
+        <!-- Provider Login Form -->
+        <form onsubmit="handleProviderLogin(event)">
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">యజమాని / డీలర్ పేరు:</label>
+            <input type="text" id="prov-name" placeholder="ఉదా: రామయ్య / బాలాజీ ఫెర్టిలైజర్స్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+          </div>
+
+          <div style="margin-bottom:10px;">
+            <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">మొబైల్ నంబర్:</label>
+            <input type="tel" id="prov-phone" pattern="[0-9]{10}" placeholder="10 అంకెల ఫోన్ నంబర్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">గ్రామం / పట్టణం:</label>
+            <input type="text" id="prov-village" placeholder="ఉదా: పరకాల, వరంగల్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+          </div>
+
+          <button id="prov-submit-btn" type="submit" style="width:100%; background:#f57c00; color:#fff; border:none; border-radius:8px; padding:11px; font-size:14px; font-weight:bold; cursor:pointer;">
+            🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔
+          </button>
+        </form>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+  selectedProviderType = 'equipment';
+  selectProviderTab('equipment');
+  modal.style.display = 'flex';
+};
+
+window.closeProviderModal = function() {
+  const modal = document.getElementById('provider-auth-modal');
+  if (modal) modal.style.display = 'none';
+};
+
+window.selectProviderTab = function(type) {
+  selectedProviderType = type;
+  const eqBtn = document.getElementById('p-tab-equipment');
+  const trBtn = document.getElementById('p-tab-transport');
+  const sdBtn = document.getElementById('p-tab-seeds');
+  const submitBtn = document.getElementById('prov-submit-btn');
+
+  if (eqBtn) { eqBtn.style.background = '#fff3e0'; eqBtn.style.color = '#e65100'; }
+  if (trBtn) { trBtn.style.background = '#f3e5f5'; trBtn.style.color = '#7b1fa2'; }
+  if (sdBtn) { sdBtn.style.background = '#e8f5e9'; sdBtn.style.color = '#2e7d32'; }
+
+  if (type === 'equipment') {
+    if (eqBtn) { eqBtn.style.background = '#f57c00'; eqBtn.style.color = '#ffffff'; }
+    if (submitBtn) { submitBtn.style.background = '#f57c00'; submitBtn.innerHTML = '🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔'; }
+  } else if (type === 'transport') {
+    if (trBtn) { trBtn.style.background = '#7b1fa2'; trBtn.style.color = '#ffffff'; }
+    if (submitBtn) { submitBtn.style.background = '#7b1fa2'; submitBtn.innerHTML = '🚚 రవాణా ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔'; }
+  } else if (type === 'seeds') {
+    if (sdBtn) { sdBtn.style.background = '#2e7d32'; sdBtn.style.color = '#ffffff'; }
+    if (submitBtn) { submitBtn.style.background = '#2e7d32'; submitBtn.innerHTML = '🌱 విత్తనాల డీలర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔'; }
+  }
+};
+
+window.handleProviderLogin = function(e) {
+  e.preventDefault();
+  const name = document.getElementById('prov-name').value.trim();
+  const phone = document.getElementById('prov-phone').value.trim();
+  const village = document.getElementById('prov-village').value.trim();
+
+  if (!name || !phone || !village) return;
+
+  const providerUser = {
+    name: name,
+    phone: phone,
+    village: village,
+    userType: 'PROVIDER',
+    providerType: selectedProviderType,
+    isLoggedIn: true
+  };
+
+  localStorage.setItem('agri_user_profile', JSON.stringify(providerUser));
+  if (window.AppState) {
+    window.AppState.userProfile = providerUser;
+    window.AppState.userType = 'PROVIDER';
+    window.AppState.providerType = selectedProviderType;
+    window.AppState.isLoggedIn = true;
+  }
+
+  closeProviderModal();
+  
+  if (typeof applyUserRoleView === 'function') {
+    applyUserRoleView();
+  }
+};
+
