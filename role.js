@@ -208,8 +208,8 @@ function applyUserRoleView() {
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
     
     // Mandi & Weather unchali
-    if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
-    if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+    if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+    if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
 
     if (providerContainer) {
       providerContainer.style.setProperty('display', 'block', 'important');
