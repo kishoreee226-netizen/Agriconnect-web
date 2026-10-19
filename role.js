@@ -617,4 +617,25 @@ window.handleProviderLogin = function(e) {
     applyUserRoleView();
   }
 };
+// Provider Logged In Dashboard View
+function renderProviderDashboardView(container, type) {
+  const titles = {
+    equipment: { name: '🚜 పరికరాల నిర్వహణ డ్యాష్‌బోర్డ్', color: '#f57c00', desc: 'మీ ట్రాక్టర్లు, హార్వెస్టర్లు మొదలైన పరికరాలను జోడించండి' },
+    transport: { name: '🚚 రవాణా వాహనాల డ్యాష్‌బోర్డ్', color: '#7b1fa2', desc: 'మీ రవాణా వాహనాలు, ట్రాలీలు, ఆటోలను అద్దెకు చేర్చండి' },
+    seeds: { name: '🌱 విత్తనాలు & ఎరువుల డీలర్ డ్యాష్‌బోర్డ్', color: '#2e7d32', desc: 'మీ వద్ద ఉన్న స్టాక్ మరియు ధరల వివరాలను నమోదు చేయండి' }
+  };
+  const current = titles[type] || titles.equipment;
+
+  container.innerHTML = `
+    <div style="background:#fff; border:2px solid ${current.color}; border-radius:14px; padding:16px; margin:14px auto; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
+      <h3 style="margin:0 0 6px 0; color:${current.color}; font-size:16px;">${current.name}</h3>
+      <p style="font-size:12px; color:#555; margin:0 0 14px 0;">${current.desc}</p>
+      <div style="background:#f9f9f9; padding:16px; border-radius:10px; border:2px dashed ${current.color}; text-align:center;">
+        <span style="font-size:14px; font-weight:bold; color:${current.color};">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
+        <p style="font-size:12px; color:#777; margin:6px 0 0 0;">మీ వద్ద ఉన్న పరికరాలు / వాహనాలు / విత్తనాల వివరాలను ఇక్కడ లిస్ట్ చేయవచ్చు.</p>
+      </div>
+    </div>
+  `;
+}
+
 
