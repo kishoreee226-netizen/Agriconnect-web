@@ -28,13 +28,34 @@ function getLabourDashboardElement() {
   return el;
 }
 
+// Helper: Yajamanula Seva Kendram Dashboard Container
+function getProviderDashboardElement() {
+  let el = document.getElementById("provider-hub-container");
+  if (!el) {
+    const labour = document.getElementById("labour-jobs-container");
+    const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+    const parent = (labour && labour.parentNode) || (wallet && wallet.parentNode);
+    if (parent) {
+      el = document.createElement("div");
+      el.id = "provider-hub-container";
+      if (labour && labour.nextSibling) {
+        parent.insertBefore(el, labour.nextSibling);
+      } else {
+        parent.appendChild(el);
+      }
+    }
+  }
+  return el;
+}
+
 // Roles & Widgets Visibility Controller
 function applyUserRoleView() {
   const state = window.AppState;
   const roleSwitchBar = document.getElementById('role-switch-container');
 
-  const farmerContainer = document.getElementById('farmer-post-container');
-  const labourContainer = document.getElementById('labour-jobs-container');
+  const farmerContainer = getFarmerDashboardElement();
+  const labourContainer = getLabourDashboardElement();
+  const providerContainer = getProviderDashboardElement();
   const walletContainer = document.getElementById('wallet-container');
   const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
   const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
@@ -87,6 +108,30 @@ function applyUserRoleView() {
           </ul>
           <button onclick="openLoginModal('LABOUR_ONLY')" style="width:100%; background:#f57c00; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
             కూలీగా Login / నమోదు అవ్వండి ➔
+          </button>
+        </div>
+      `;
+    }
+
+    // 3. Yajamanula Seva Kendram Card
+    if (providerContainer) {
+      providerContainer.style.setProperty('display', 'block', 'important');
+      providerContainer.innerHTML = `
+        <div class="provider-card" style="background:#fff; border:2px solid #7b1fa2; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+            <span style="font-size:24px;">🤝</span>
+            <strong style="font-size:16px; color:#7b1fa2;">పరికరాలు, రవాణా & విత్తనాల యజమానుల సేవా కేంద్రం</strong>
+          </div>
+          <p style="font-size:12px; color:#555; line-height:1.5; margin:0 0 10px 0;">
+            ట్రాక్టర్లు, హార్వెస్టర్లు, రవాణా వాహనాలు లేదా విత్తనాలు/ఎరువుల యజమానులు తమ సేవలను అద్దెకు/అమ్మకానికి ఇక్కడ సులభంగా జోడించవచ్చు.
+          </p>
+          <ul style="font-size:12px; color:#444; line-height:1.6; margin:0 0 12px 18px; padding:0;">
+            <li>రైతుల నుండి నేరుగా బుకింగ్‌లు & ఆర్డర్‌లు పొందండి.</li>
+            <li>మీ పరికరాలు, రవాణా రేట్లు మీరే నిర్ణయించుకోండి.</li>
+            <li>కమీషన్ లేకుండా నేరుగా కస్టమర్‌తో ఫోన్ / వాట్సాప్ సంప్రదింపులు.</li>
+          </ul>
+          <button onclick="openProviderModal()" style="width:100%; background:#7b1fa2; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+            యజమానిగా Login / సేవలను జోడించండి ➔
           </button>
         </div>
       `;
