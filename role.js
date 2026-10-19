@@ -198,6 +198,25 @@ function applyUserRoleView() {
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
   }
+  // C. Yajamani Login (PROVIDER: Equipment / Transport / Seeds)
+  else if (state.userType === "PROVIDER") {
+    removeRoleSwitchBar();
+
+    // Landing cards mariyu wallet ni hide cheyali
+    if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+    if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+    if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
+    
+    // Mandi & Weather unchali
+    if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
+    if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+
+    if (providerContainer) {
+      providerContainer.style.setProperty('display', 'block', 'important');
+      renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
+    }
+  }
+
 }
 
 // 2. Profile Banner
