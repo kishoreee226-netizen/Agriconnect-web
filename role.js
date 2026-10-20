@@ -1154,7 +1154,7 @@ window.renderFarmerWidgetWithLiveProviders = function() {
     return;
   }
 
-  liveList.innerHTML = `
+    liveList.innerHTML = `
     <h4 style="font-size:14px; color:#2e7d32; margin:12px 0 8px 0;">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
     <div style="display:flex; flex-direction:column; gap:10px;">
       ${savedItems.map(item => `
@@ -1185,6 +1185,3 @@ window.renderFarmerWidgetWithLiveProviders = function() {
     </div>
   `;
 };
-
-
-
