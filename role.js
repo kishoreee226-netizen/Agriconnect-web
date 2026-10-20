@@ -145,15 +145,22 @@ function applyUserRoleView() {
   // ===================================================
   // 2. User Login Ayyinappudu
   // ===================================================
-  // లాగిన్ కానప్పుడు - 3 కార్డులు మాత్రమే కనిపించాలి, వాలెట్ దాచాలి
+    // లాగిన్ కానప్పుడు (Logged Out) - ల్యాండింగ్ పేజ్ 3 కార్డులు తప్పక కనిపించాలి
   if (!state || !state.isLoggedIn) {
     if (typeof removeUserProfileBanner === 'function') removeUserProfileBanner();
     if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
 
-    if (farmerContainer) farmerContainer.style.setProperty('display', 'block', 'important');
-    if (labourContainer) labourContainer.style.setProperty('display', 'block', 'important');
-    if (providerContainer) providerContainer.style.setProperty('display', 'block', 'important');
+    // 1. అన్ని మెయిన్ రోల్ కార్డులను ఫోర్స్ గా చూపించు
+    const allRoleCards = document.querySelectorAll('.role-card, #role-selection-section, #landing-roles, #role-container');
+    allRoleCards.forEach(el => el.style.setProperty('display', 'block', 'important'));
+
+    // 2. డ్యాష్ బోర్డులు & వాలెట్ దాచిపెట్టు
+    if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+    if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+    if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
+
+    // 3. మండి & వెదర్ ల్యాండింగ్ లో కనిపించాలి
     if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
     if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
     return;
