@@ -193,6 +193,10 @@ function applyUserRoleView() {
         farmerContainer.style.setProperty('display', 'block', 'important');
         if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
       }
+        if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
+          window.renderFarmerWidgetWithLiveProviders();
+        }
+
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
