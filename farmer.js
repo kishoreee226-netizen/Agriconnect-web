@@ -433,12 +433,15 @@ window.renderBookingRecords = function() {
   }
 
   container.innerHTML = `
-    <div class="booking-records-section" style="margin-top: 15px; max-height: 280px; overflow-y: auto; border: 1px solid #c8e6c9; border-radius: 10px; padding: 10px; background: #fafdfa;">
+    <div class="booking-records-section" style="margin-top: 15px; border: 1px solid #c8e6c9; border-radius: 10px; padding: 10px; background: #fafdfa;">
+
       <div class="booking-records-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <h4 style="margin:0; font-size:13px; color:#2e7d32;">📋 Naa Bookinglu (${bookings.length}):</h4>
         <button type="button" onclick="clearFarmerBookings()" style="background:#ffebee; color:#c62828; border:1px solid #ffcdd2; font-size:11px; padding:3px 8px; border-radius:4px; cursor:pointer; font-weight:600;">🗑️ Clear Cheyandi</button>
-      </div>
-      ${bookings.map(b => {
+              </div>
+        <div style="max-height: 280px; overflow-y: auto; padding-right: 4px; display: flex; flex-direction: column; gap: 8px;">
+        ${bookings.map(b => {
+
         const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
         const bookingMsg = `Namaste ${b.ownerName} gaaru, nenu mee${b.itemName} nu ${b.date} theedhina (${b.duration}) kosam book chesukunanu. Dayachesi vivaralu confirm cheyagalaru.`;
         const waUrl = `https://wa.me/91${b.phone}?text=${encodeURIComponent(bookingMsg)}`;
@@ -479,6 +482,7 @@ window.renderBookingRecords = function() {
         `;
       }).join('')}
     </div>
+</div>
   `;
 };
 
