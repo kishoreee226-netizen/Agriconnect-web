@@ -657,6 +657,8 @@ function renderProviderDashboardView(container, type) {
 
       <!-- Provider Added Items List -->
       <div id="provider-items-list" style="margin-top:16px;"></div>
+<div id="provider-incoming-requests"></div>
+
     </div>
   `;
 
