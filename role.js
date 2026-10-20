@@ -204,8 +204,8 @@ function applyUserRoleView() {
         window.renderFarmerWidgetWithLiveProviders();
       }
 
-      if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
-      if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+      if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+      if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
   }
@@ -340,8 +340,8 @@ window.switchRoleMode = function(targetRole) {
     if (lContainer) {
       lContainer.style.setProperty("display", "none", "important");
     }
-    if (mandiContainer) mandiContainer.style.setProperty("display", "block", "important");
-    if (weatherContainer) weatherContainer.style.setProperty("display", "block", "important");
+    if (mandiContainer) mandiContainer.style.setProperty("display", "none", "important");
+    if (weatherContainer) weatherContainer.style.setProperty("display", "none", "important");
 
     if (typeof window.renderFarmerWidget === "function") {
       window.renderFarmerWidget();
