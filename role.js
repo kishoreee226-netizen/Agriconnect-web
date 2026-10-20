@@ -158,6 +158,9 @@ function applyUserRoleView() {
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
     if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
     if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+    const provCard = document.getElementById('provider-landing-card');
+    if (provCard) provCard.style.setProperty('display', 'block', 'important');
+
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
 
     // 3. మండి & వెదర్ ల్యాండింగ్ లో కనిపించాలి
@@ -167,6 +170,10 @@ function applyUserRoleView() {
   }
 
   renderUserProfileBanner();
+    // ఎవరైనా లాగిన్ అయితే ల్యాండింగ్ 3వ కార్డును దాచు
+    const provCard = document.getElementById('provider-landing-card');
+    if (provCard) provCard.style.setProperty('display', 'none', 'important');
+
 
   // A. Kevalam Kooli Login (LABOUR ONLY)
   if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
