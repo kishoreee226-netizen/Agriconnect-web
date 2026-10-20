@@ -145,6 +145,20 @@ function applyUserRoleView() {
   // ===================================================
   // 2. User Login Ayyinappudu
   // ===================================================
+  // లాగిన్ కానప్పుడు - 3 కార్డులు మాత్రమే కనిపించాలి, వాలెట్ దాచాలి
+  if (!state || !state.isLoggedIn) {
+    if (typeof removeUserProfileBanner === 'function') removeUserProfileBanner();
+    if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
+
+    if (farmerContainer) farmerContainer.style.setProperty('display', 'block', 'important');
+    if (labourContainer) labourContainer.style.setProperty('display', 'block', 'important');
+    if (providerContainer) providerContainer.style.setProperty('display', 'block', 'important');
+    if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
+    if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
+    if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+    return;
+  }
+
   renderUserProfileBanner();
 
   // A. Kevalam Kooli Login (LABOUR ONLY)
