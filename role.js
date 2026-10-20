@@ -663,6 +663,8 @@ function renderProviderDashboardView(container, type) {
   `;
 
   renderProviderItemsList(type);
+renderIncomingBookingsForProvider('provider-incoming-requests');
+
 }
 
 // ===================================================
