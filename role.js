@@ -1114,7 +1114,8 @@ window.renderFarmerWidgetWithLiveProviders = function() {
     liveList = document.createElement("div");
     liveList.id = "farmer-live-provider-items";
     // Fixed height + Scrolling add chesam
-    liveList.style.cssText = "margin-top: 14px; max-height: 380px; overflow-y: auto; padding-right: 4px;";
+    liveList.style.marginTop = "14px";
+
     farmerContainer.appendChild(liveList);
   } else {
     liveList.style.maxHeight = "380px";
@@ -1158,9 +1159,10 @@ window.renderFarmerWidgetWithLiveProviders = function() {
 
   liveList.innerHTML = `
     <h4 style="font-size:14px; color:#2e7d32; margin:12px 0 8px 0;">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
-    <div style="display:flex; flex-direction:column;">
-      ${itemsHtml}
-    </div>
+    <div style="max-height: 380px; overflow-y: auto; padding-right: 4px; display:flex; flex-direction:column;">
+  ${itemsHtml}
+</div>
+
   `;
 };
 
