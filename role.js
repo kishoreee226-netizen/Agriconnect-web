@@ -1,10 +1,14 @@
 // role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
 
+// ===================================================
+// Helper Functions: Containers for Dashboards
+// ===================================================
+
 // Helper: Rhythu Dashboard Container
 function getFarmerDashboardElement() {
   let el = document.getElementById("farmer-post-container");
   if (!el) {
-    const wallet =b document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+    const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
     if (wallet && wallet.parentNode) {
       el = document.createElement("div");
       el.id = "farmer-post-container";
@@ -48,7 +52,9 @@ function getProviderDashboardElement() {
   return el;
 }
 
+// ===================================================
 // Roles & Widgets Visibility Controller
+// ===================================================
 function applyUserRoleView() {
   const state = window.AppState;
   const roleSwitchBar = document.getElementById('role-switch-container');
@@ -60,11 +66,14 @@ function applyUserRoleView() {
   const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
   const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
 
-  // ===================================================
+  // ---------------------------------------------------
   // 1. Landing Page (User Login Kaani Samayam Lo)
-  // ===================================================
+  // ---------------------------------------------------
   if (!state || !state.isLoggedIn) {
-    if (roleSwitchBar) roleSwitchBar.style.setProperty('display', 'none', 'important');
+    if (typeof removeProfileHeader === 'function') removeProfileHeader();
+    if (typeof removeUserProfileBanner === 'function') removeUserProfileBanner();
+    if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
+
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
 
     // Mandi mariyu Weather landing page lo kanipinchali
@@ -136,62 +145,23 @@ function applyUserRoleView() {
         </div>
       `;
     }
-
-    removeProfileHeader();
-    removeRoleSwitchBar();
     return;
   }
 
-  // ===================================================
+  // ---------------------------------------------------
   // 2. User Login Ayyinappudu
-  // ===================================================
-    // లాగిన్ కానప్పుడు (Logged Out) - ల్యాండింగ్ పేజ్ 3 కార్డులు తప్పక కనిపించాలి
-  if (!state || !state.isLoggedIn) {
-    if (typeof removeUserProfileBanner === 'function') removeUserProfileBanner();
-    if (typeof removeRoleSwitchBar === 'function') removeRoleSwitchBar();
-
-    // 1. అన్ని మెయిన్ రోల్ కార్డులను ఫోర్స్ గా చూపించు
-    const allRoleCards = document.querySelectorAll('.role-card, #role-selection-section, #landing-roles, #role-container');
-    allRoleCards.forEach(el => el.style.setProperty('display', 'block', 'important'));
-
-    // 2. డ్యాష్ బోర్డులు & వాలెట్ దాచిపెట్టు
-        if (farmerContainer)
-farmerContainer.style.setProperty('display', 'block', 'important');
-
-    if (labourContainer)
-labourContainer.style.setProperty('display', 'block', 'important');
-
-    if (providerContainer)
-providerContainer.style.setProperty('display', 'block', 'important');
-
-    const provCard = document.getElementById('provider-landing-card');
-    if (provCard) provCard.style.setProperty('display', 'block', 'important');
-
-
-    if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
-
-    // 3. మండి & వెదర్ ల్యాండింగ్ లో కనిపించాలి
-    if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
-    if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
-    return;
-  }
-
+  // ---------------------------------------------------
   renderUserProfileBanner();
-    // ఎవరైనా లాగిన్ అయితే ల్యాండింగ్ 3వ కార్డును దాచు
-    const provCard = document.getElementById('provider-landing-card');
-    if (provCard) provCard.style.setProperty('display', 'none', 'important');
-
 
   // A. Kevalam Kooli Login (LABOUR ONLY)
   if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
     removeRoleSwitchBar();
 
-    // Rithu dashboard, Mandi, Weather kooli ki hide avvali
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+    if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
     if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
     if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
 
-    // Kooli Dashboard mariyu Wallet matrame kanipinchali
     if (labourContainer) {
       labourContainer.style.setProperty('display', 'block', 'important');
       if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
@@ -200,7 +170,7 @@ providerContainer.style.setProperty('display', 'block', 'important');
       walletContainer.style.setProperty('display', 'block', 'important');
     }
 
-    filterLabourJobsByLocation();
+    if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
   } 
 
   // B. Rithu Login (FARMER)
@@ -210,27 +180,29 @@ providerContainer.style.setProperty('display', 'block', 'important');
     // Rithu "Kooli Mode" loki switch ayithe:
     if (state.currentRole === 'LABOUR') {
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
 
       if (labourContainer) {
         labourContainer.style.setProperty('display', 'block', 'important');
         if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
-        filterLabourJobsByLocation();
+        if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
       }
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     } 
     // Rithu "Rithu Mode" lo unnapudu:
     else {
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
 
       if (farmerContainer) {
         farmerContainer.style.setProperty('display', 'block', 'important');
         if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
       }
-        if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
-          window.renderFarmerWidgetWithLiveProviders();
-        }
+      if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
+        window.renderFarmerWidgetWithLiveProviders();
+      }
 
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
@@ -241,12 +213,10 @@ providerContainer.style.setProperty('display', 'block', 'important');
   else if (state.userType === "PROVIDER") {
     removeRoleSwitchBar();
 
-    // Landing cards mariyu wallet ni hide cheyali
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
     if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
-    
-    // Mandi & Weather unchali
+
     if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
     if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
 
@@ -255,10 +225,11 @@ providerContainer.style.setProperty('display', 'block', 'important');
       renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
     }
   }
-
 }
 
-// 2. Profile Banner
+// ===================================================
+// Profile Banner & Role Switch Bar
+// ===================================================
 function renderUserProfileBanner() {
   let banner = document.getElementById("user-profile-banner");
   const state = window.AppState;
@@ -279,7 +250,6 @@ function renderUserProfileBanner() {
   let roleText = "రైతు (Farmer)";
   let badgeColor = "#2e7d32";
 
-  // Role & Badge Logic
   if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.currentRole === "LABOUR") {
     roleText = "కూలీ (Labour)";
     badgeColor = "#e65100";
@@ -318,7 +288,6 @@ function removeProfileHeader() {
   if (banner) banner.remove();
 }
 
-// 2.A Rhythu ⇄ Kooli Mode Switch Bar
 function renderRoleSwitchBar() {
   const state = window.AppState;
   if (!state || !state.isLoggedIn || state.userType !== "FARMER") return;
@@ -354,7 +323,6 @@ function removeRoleSwitchBar() {
   if (switchContainer) switchContainer.remove();
 }
 
-// Mode Switch Handler
 window.switchRoleMode = function(targetRole) {
   if (!window.AppState) window.AppState = {};
   window.AppState.currentRole = targetRole;
@@ -372,7 +340,6 @@ window.switchRoleMode = function(targetRole) {
     if (lContainer) {
       lContainer.style.setProperty("display", "none", "important");
     }
-    // Farmer mode lo Mandi mariyu Weather chupinchali
     if (mandiContainer) mandiContainer.style.setProperty("display", "block", "important");
     if (weatherContainer) weatherContainer.style.setProperty("display", "block", "important");
 
@@ -390,14 +357,13 @@ window.switchRoleMode = function(targetRole) {
       lContainer.style.setProperty("display", "block", "important");
       lContainer.style.visibility = "visible";
     }
-    // Labour mode lo Mandi mariyu Weather hide cheyali
     if (mandiContainer) mandiContainer.style.setProperty("display", "none", "important");
     if (weatherContainer) weatherContainer.style.setProperty("display", "none", "important");
 
     if (typeof window.renderLabourWidget === "function") {
       window.renderLabourWidget();
     }
-    filterLabourJobsByLocation();
+    if (typeof filterLabourJobsByLocation === 'function') filterLabourJobsByLocation();
   }
 
   renderRoleSwitchBar();
@@ -422,7 +388,6 @@ window.logoutUser = function() {
   }
 };
 
-// 3. Form Auto-Fill Defaults
 function prefillFarmerFormDefaults() {
   const profile = window.AppState?.userProfile;
   if (!profile) return;
@@ -448,7 +413,9 @@ function prefillFarmerFormDefaults() {
   }
 }
 
-// 4. Filter Jobs by village
+// ===================================================
+// Filter Jobs & Role Login Modal
+// ===================================================
 function filterLabourJobsByLocation() {
   const profile = window.AppState?.userProfile;
   if (!profile || !profile.village) return;
@@ -463,7 +430,6 @@ function filterLabourJobsByLocation() {
   });
 }
 
-// 5. Login Modal
 window.openLoginModal = function(roleType) {
   let modal = document.getElementById("role-login-modal");
   if (!modal) {
@@ -511,7 +477,6 @@ window.closeLoginModal = function() {
   if (modal) modal.style.display = "none";
 };
 
-// 6. Registration Submission
 window.submitUserRegistration = function(roleType) {
   const name = document.getElementById("reg-name")?.value.trim();
   const phone = document.getElementById("reg-phone")?.value.trim();
@@ -551,8 +516,9 @@ window.submitUserRegistration = function(roleType) {
     }
   }
 };
+
 // ===================================================
-// 7. Provider Modal: 3 Pill Tabs & Login Controller
+// Provider Modal: 3 Pill Tabs & Login Controller
 // ===================================================
 let selectedProviderType = 'equipment';
 
@@ -562,7 +528,7 @@ window.openProviderModal = function() {
     modal = document.createElement('div');
     modal.id = 'provider-auth-modal';
     modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; padding:14px; box-sizing:border-box;';
-    
+
     modal.innerHTML = `
       <div style="background:#fff; border-radius:16px; width:100%; max-width:380px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative;">
         <button onclick="closeProviderModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer; color:#777;">✕</button>
@@ -572,7 +538,6 @@ window.openProviderModal = function() {
           <p style="margin:4px 0 0 0; font-size:12px; color:#666;">మీ కేటగిరీని ఎంచుకొని వివరాలు నమోదు చేయండి</p>
         </div>
 
-        <!-- 3 Pill Tabs -->
         <div style="display:flex; gap:6px; margin-bottom:16px;">
           <button id="p-tab-equipment" type="button" onclick="selectProviderTab('equipment')" style="flex:1; padding:8px 4px; font-size:11px; font-weight:bold; border-radius:18px; border:1.5px solid #f57c00; background:#f57c00; color:#fff; cursor:pointer;">
             🚜 పరికరాలు
@@ -585,7 +550,6 @@ window.openProviderModal = function() {
           </button>
         </div>
 
-        <!-- Provider Login Form -->
         <form onsubmit="handleProviderLogin(event)">
           <div style="margin-bottom:10px;">
             <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">యజమాని / డీలర్ పేరు:</label>
@@ -669,12 +633,12 @@ window.handleProviderLogin = function(e) {
   }
 
   closeProviderModal();
-  
+
   if (typeof applyUserRoleView === 'function') {
     applyUserRoleView();
   }
 };
-// Provider Logged In Dashboard View
+
 function renderProviderDashboardView(container, type) {
   const titles = {
     equipment: { name: '🚜 పరికరాల నిర్వహణ డ్యాష్‌బోర్డ్', color: '#f57c00', desc: 'మీ ట్రాక్టర్లు, హార్వెస్టర్లు మొదలైన పరికరాలను జోడించండి' },
@@ -688,22 +652,18 @@ function renderProviderDashboardView(container, type) {
       <h3 style="margin:0 0 6px 0; color:${current.color}; font-size:16px;">${current.name}</h3>
       <p style="font-size:12px; color:#555; margin:0 0 14px 0;">${current.desc}</p>
       
-      <!-- Add Service Button Box -->
       <div onclick="openAddServiceModal('${type}')" style="background:#fcfcfc; padding:16px; border-radius:10px; border:2px dashed ${current.color}; text-align:center; cursor:pointer;">
         <span style="font-size:14px; font-weight:bold; color:${current.color};">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
         <p style="font-size:12px; color:#777; margin:6px 0 0 0;">వివరాలు నమోదు చేయడానికి ఇక్కడ నొక్కండి</p>
       </div>
 
-      <!-- Provider Added Items List -->
       <div id="provider-items-list" style="margin-top:16px;"></div>
-<div id="provider-incoming-requests"></div>
-
+      <div id="provider-incoming-requests"></div>
     </div>
   `;
 
   renderProviderItemsList(type);
-renderIncomingBookingsForProvider('provider-incoming-requests');
-
+  renderIncomingBookingsForProvider('provider-incoming-requests');
 }
 
 // ===================================================
@@ -778,7 +738,7 @@ window.openAddServiceModal = function(type) {
   modal = document.createElement('div');
   modal.id = 'provider-item-modal';
   modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; padding:14px; box-sizing:border-box;';
-  
+
   modal.innerHTML = `
     <div style="background:#fff; border-radius:16px; width:100%; max-width:380px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative;">
       <button onclick="closeAddServiceModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer; color:#777;">✕</button>
@@ -809,12 +769,17 @@ window.handleSaveProviderItem = function(e, type) {
 
   if (!val1 || !val2 || !val3) return;
 
+  const profile = window.AppState?.userProfile || JSON.parse(localStorage.getItem('agri_user_profile') || '{}');
+
   const newItem = {
     id: Date.now(),
     type: type,
     name: val1,
     rate: val2,
-    extra: val3
+    extra: val3,
+    providerName: profile.name || 'యజమాని',
+    providerPhone: profile.phone || '',
+    village: profile.village || ''
   };
 
   let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
@@ -858,10 +823,11 @@ window.deleteProviderItem = function(id, type) {
   localStorage.setItem('agri_provider_items', JSON.stringify(items));
   renderProviderItemsList(type);
 };
+
 // ===================================================
 // Rhythu Smart Vehicle Booking: Spot vs Advance
 // ===================================================
-let bookingMode = 'SPOT'; // 'SPOT' or 'ADVANCE'
+let bookingMode = 'SPOT';
 let userLiveCoords = null;
 
 window.openFarmerVehicleBookingModal = function() {
@@ -881,7 +847,6 @@ window.openFarmerVehicleBookingModal = function() {
         <p style="margin:4px 0 0 0; font-size:12px; color:#666;">మీ పొలం వద్దకే నేరుగా వాహనాన్ని రప్పించుకోండి</p>
       </div>
 
-      <!-- Mode Selector: Spot vs Advance -->
       <div style="display:flex; gap:8px; margin-bottom:14px; background:#f1f8e9; padding:4px; border-radius:24px;">
         <button id="btn-mode-spot" type="button" onclick="setBookingMode('SPOT')" style="flex:1; padding:8px 6px; font-size:12px; font-weight:bold; border:none; border-radius:20px; background:#2e7d32; color:#fff; cursor:pointer;">
           ⚡ వెంటనే కావాలి (Spot)
@@ -891,14 +856,12 @@ window.openFarmerVehicleBookingModal = function() {
         </button>
       </div>
 
-      <!-- Live GPS Location Indicator -->
       <div id="gps-status-box" style="background:#e8f5e9; border:1px solid #a5d6a7; border-radius:8px; padding:10px; margin-bottom:12px; font-size:12px; color:#2e7d32; display:flex; align-items:center; justify-content:space-between;">
         <span>📍 లైవ్ లొకేషన్: <b id="gps-text">గుర్తిస్తోంది...</b></span>
         <button type="button" onclick="fetchRhythuLiveGPS()" style="background:#2e7d32; color:#fff; border:none; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer;">రీఫ్రెష్</button>
       </div>
 
       <form onsubmit="handleConfirmBookingRequest(event)">
-        <!-- Vehicle Type Selection -->
         <div style="margin-bottom:10px;">
           <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">వాహనం / పరికరం ఎంచుకోండి:</label>
           <select id="book-veh-type" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;">
@@ -911,13 +874,11 @@ window.openFarmerVehicleBookingModal = function() {
           </select>
         </div>
 
-        <!-- Work Volume -->
         <div style="margin-bottom:10px;">
           <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పని పరిమాణం (ఎకరాలు / ట్రిప్పులు / బస్తాలు):</label>
           <input type="text" id="book-work-size" placeholder="ఉదా: 2 ఎకరాలు దుక్కి లేదా 50 బస్తాల లోడ్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
         </div>
 
-        <!-- Advance Booking Date & Time Container -->
         <div id="advance-fields-container" style="display:none; margin-bottom:10px; background:#fff8e1; border:1px solid #ffe082; padding:10px; border-radius:8px;">
           <div style="margin-bottom:8px;">
             <label style="display:block; font-size:12px; font-weight:bold; color:#b78103; margin-bottom:4px;">ఏ రోజున కావాలి (తేదీ):</label>
@@ -944,7 +905,6 @@ window.closeFarmerBookingModal = function() {
   if (modal) modal.remove();
 };
 
-// Switch Between Spot & Advance
 window.setBookingMode = function(mode) {
   bookingMode = mode;
   const spotBtn = document.getElementById('btn-mode-spot');
@@ -953,23 +913,18 @@ window.setBookingMode = function(mode) {
   const submitBtn = document.getElementById('book-submit-btn');
 
   if (mode === 'SPOT') {
-    spotBtn.style.background = '#2e7d32';
-    spotBtn.style.color = '#fff';
-    advBtn.style.background = 'transparent';
-    advBtn.style.color = '#2e7d32';
-    advFields.style.display = 'none';
-    submitBtn.innerHTML = '⚡ వెంటనే దగ్గరలోని వాహనాలకు రిక్వెస్ట్ పంపండి ➔';
+    if (spotBtn) { spotBtn.style.background = '#2e7d32'; spotBtn.style.color = '#fff'; }
+    if (advBtn) { advBtn.style.background = 'transparent'; advBtn.style.color = '#2e7d32'; }
+    if (advFields) advFields.style.display = 'none';
+    if (submitBtn) submitBtn.innerHTML = '⚡ వెంటనే దగ్గరలోని వాహనాలకు రిక్వెస్ట్ పంపండి ➔';
   } else {
-    advBtn.style.background = '#2e7d32';
-    advBtn.style.color = '#fff';
-    spotBtn.style.background = 'transparent';
-    spotBtn.style.color = '#2e7d32';
-    advFields.style.display = 'block';
-    submitBtn.innerHTML = '📅 అడ్వాన్స్ బుకింగ్ కన్ఫర్మ్ చేయండి ➔';
+    if (advBtn) { advBtn.style.background = '#2e7d32'; advBtn.style.color = '#fff'; }
+    if (spotBtn) { spotBtn.style.background = 'transparent'; spotBtn.style.color = '#2e7d32'; }
+    if (advFields) advFields.style.display = 'block';
+    if (submitBtn) submitBtn.innerHTML = '📅 అడ్వాన్స్ బుకింగ్ కన్ఫర్మ్ చేయండి ➔';
   }
 };
 
-// Fetch Device Geolocation
 window.fetchRhythuLiveGPS = function() {
   const txt = document.getElementById('gps-text');
   if (!navigator.geolocation) {
@@ -993,7 +948,9 @@ window.fetchRhythuLiveGPS = function() {
   );
 };
 
-// Submit Request & Save in System
+// ===================================================
+// Booking Request Submission & Provider Inbox Controller
+// ===================================================
 window.handleConfirmBookingRequest = function(e) {
   e.preventDefault();
   const vehType = document.getElementById('book-veh-type').value;
@@ -1011,7 +968,7 @@ window.handleConfirmBookingRequest = function(e) {
 
   const newBooking = {
     id: 'REQ_' + Date.now(),
-    type: bookingMode, // 'SPOT' or 'ADVANCE'
+    type: bookingMode,
     vehicleType: vehType,
     workSize: workSize,
     schedule: bookingMode === 'SPOT' ? 'తక్షణమే (Spot)' : `${dateVal} సమయం: ${timeVal}`,
@@ -1019,7 +976,7 @@ window.handleConfirmBookingRequest = function(e) {
     farmerPhone: farmerPhone,
     village: village,
     mapLink: mapLink,
-    status: 'PENDING', // PENDING, ACCEPTED
+    status: 'PENDING',
     acceptedBy: null,
     createdAt: new Date().toLocaleTimeString()
   };
@@ -1030,7 +987,6 @@ window.handleConfirmBookingRequest = function(e) {
 
   closeFarmerBookingModal();
 
-  // Automatic WhatsApp/SMS Dispatch Trigger
   const timingText = bookingMode === 'SPOT' ? '⚡ తక్షణమే (Emergency Spot Booking)' : `📅 తేది: ${dateVal} సమయం: ${timeVal}`;
   const alertMsg = `🌾 *AgriConnect రైతు వాహన రిక్వెస్ట్:*\n` +
     `👤 రైతు పేరు: ${farmerName} (${village})\n` +
@@ -1045,14 +1001,11 @@ window.handleConfirmBookingRequest = function(e) {
   window.open(waShare, '_blank');
 
   alert('మీ రిక్వెస్ట్ నమోదు చేయబడింది! దగ్గరలోని యజమానుల డ్యాష్‌బోర్డ్‌కు పంపబడింది.');
-  if (typeof renderFarmerServicesDirectory === 'function') {
-    const sDir = document.getElementById('farmer-services-dir');
-    if (sDir) renderFarmerServicesDirectory(sDir);
+  if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
+    window.renderFarmerWidgetWithLiveProviders();
   }
 };
-// ===================================================
-// Step 2: Provider Dashboard lo Incoming Requests Display & Map Route
-// ===================================================
+
 window.renderIncomingBookingsForProvider = function(containerId) {
   const box = document.getElementById(containerId);
   if (!box) return;
@@ -1077,10 +1030,9 @@ window.renderIncomingBookingsForProvider = function(containerId) {
           </div>
 
           <div style="font-size:14px; font-weight:bold; color:#222;">${b.vehicleType}</div>
-          <div style="font-size:12px; color:#444; margin:3px 0;">పని: <b>${b.workSize}</b> \vert{} సమయం: <b>${b.schedule}</b></div>
+          <div style="font-size:12px; color:#444; margin:3px 0;">పని: <b>${b.workSize}</b> &nbsp;\vert{}&nbsp; సమయం: <b>${b.schedule}</b></div>
           <div style="font-size:12px; color:#555;">రైతు: <b>${b.farmerName}</b>, గ్రామం: <b>${b.village}</b></div>
 
-          <!-- Action Buttons: Call, Map, Accept -->
           <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
             <a href="tel:${b.farmerPhone}" style="flex:1; text-align:center; background:#2e7d32; color:#fff; text-decoration:none; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold;">📞 రైతుకు కాల్</a>
             
@@ -1102,7 +1054,6 @@ window.renderIncomingBookingsForProvider = function(containerId) {
   `;
 };
 
-// Accept Logic & Confirmation back to Farmer
 window.acceptBookingOrder = function(bookingId) {
   let bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
   const state = window.AppState;
@@ -1128,16 +1079,15 @@ window.acceptBookingOrder = function(bookingId) {
     renderIncomingBookingsForProvider('provider-incoming-requests');
   }
 };
+
 // ===================================================
 // Sync Provider Items into Farmer Dashboard & Live Requests
 // ===================================================
-
-// Rithu Dashboard lo Yajamanula Live Items mariyu Request Button chupinche function
 window.renderFarmerWidgetWithLiveProviders = function() {
-  const farmerContainer = document.getElementById("farmer-container") || document.getElementById("farmer-dashboard");
+  const farmerContainer = document.getElementById("farmer-post-container") || document.getElementById("farmer-container") || document.getElementById("farmer-dashboard");
   if (!farmerContainer) return;
 
-  // 1. Check & Inject "Request Vehicle (Spot / Advance)" Banner
+  // 1. Check & Inject Quick Request Banner
   let reqBanner = document.getElementById("farmer-quick-req-banner");
   if (!reqBanner) {
     reqBanner = document.createElement("div");
@@ -1150,15 +1100,14 @@ window.renderFarmerWidgetWithLiveProviders = function() {
         ⚡ వాహనం కోసం రిక్వెస్ట్ పెట్టండి ➔
       </button>
     `;
-        if (farmerContainer.firstChild) {
+    if (farmerContainer.firstChild) {
       farmerContainer.insertBefore(reqBanner, farmerContainer.firstChild);
     } else {
       farmerContainer.appendChild(reqBanner);
     }
-
   }
 
-    // 2. Real Items List from localStorage
+  // 2. Real Items List from localStorage
   const savedItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
   let liveList = document.getElementById("farmer-live-provider-items");
   if (!liveList) {
@@ -1210,7 +1159,15 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   `;
 };
 
-// ఆటోమేటిక్ వ్యూ చెక్
+// ===================================================
+// Initialization
+// ===================================================
+document.addEventListener("DOMContentLoaded", function() {
+  if (typeof applyUserRoleView === "function") {
+    applyUserRoleView();
+  }
+});
+
 if (typeof applyUserRoleView === "function") {
   applyUserRoleView();
 }
