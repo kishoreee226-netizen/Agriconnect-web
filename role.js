@@ -1081,13 +1081,13 @@ window.acceptBookingOrder = function(bookingId) {
 };
 
 // ===================================================
-// Sync Provider Items into Farmer Dashboard & Live Requests
+// Sync Provider Items into Farmer Dashboard & Live Requests (With Scroll & Font Fix)
 // ===================================================
 window.renderFarmerWidgetWithLiveProviders = function() {
   const farmerContainer = document.getElementById("farmer-post-container") || document.getElementById("farmer-container") || document.getElementById("farmer-dashboard");
   if (!farmerContainer) return;
 
-  // 1. Check & Inject Quick Request Banner
+  // 1. Quick Request Banner
   let reqBanner = document.getElementById("farmer-quick-req-banner");
   if (!reqBanner) {
     reqBanner = document.createElement("div");
@@ -1107,14 +1107,19 @@ window.renderFarmerWidgetWithLiveProviders = function() {
     }
   }
 
-  // 2. Real Items List from localStorage
+  // 2. Real Items List from localStorage (Scrollable Box)
   const savedItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
   let liveList = document.getElementById("farmer-live-provider-items");
   if (!liveList) {
     liveList = document.createElement("div");
     liveList.id = "farmer-live-provider-items";
-    liveList.style.marginTop = "14px";
+    // Fixed height + Scrolling add chesam
+    liveList.style.cssText = "margin-top: 14px; max-height: 380px; overflow-y: auto; padding-right: 4px;";
     farmerContainer.appendChild(liveList);
+  } else {
+    liveList.style.maxHeight = "380px";
+    liveList.style.overflowY = "auto";
+    liveList.style.paddingRight = "4px";
   }
 
   if (savedItems.length === 0) {
@@ -1125,17 +1130,17 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   let itemsHtml = '';
   for (let i = 0; i < savedItems.length; i++) {
     const item = savedItems[i];
-    const pName = item.providerName || 'యజమాని';
-    const vName = item.village ? ('(గ్రామం: ' + item.village + ')') : '';
-    const phone = item.providerPhone || '';
+    const pName = item.providerName || item.ownerName || 'యజమాని';
+    const vName = (item.village || item.location) ? `(గ్రామం: ${item.village || item.location})` : '';
+    const phone = item.providerPhone || item.phone || '';
 
     itemsHtml += `
       <div style="background:#ffffff; border:1.5px solid #a5d6a7; border-radius:12px; padding:12px; margin-bottom:10px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start;">
           <div>
             <div style="font-size:15px; font-weight:bold; color:#1b5e20;">${item.name}</div>
-            <div style="font-size:12px; color:#555; margin-top:2px;">ధర / అద్దె: <b style="color:#e65100; font-size:13px;">₹${item.rate}</b> &nbsp;|&nbsp; ${item.extra}</div>
-            <div style="font-size:11px; color:#777; margin-top:4px;">యజమాని: <b>${pName}</b> ${vName}</div>
+            <div style="font-size:12px; color:#555; margin-top:2px;">ధర / అద్దె: <b style="color:#e65100; font-size:13px;">₹${item.rate}</b> &nbsp;|&nbsp; ${item.extra || 'అందుబాటులో ఉంది'}</div>
+            <div style="font-size:11px; color:#666; margin-top:4px;">యజమాని: <b>${pName}</b> ${vName}</div>
           </div>
           <span style="font-size:11px; background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-weight:bold;">లభ్యం</span>
         </div>
