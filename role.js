@@ -223,7 +223,8 @@ function applyUserRoleView() {
 function renderUserProfileBanner() {
   let banner = document.getElementById("user-profile-banner");
   const state = window.AppState;
-  if (!state || !state.userProfile) return;
+  const user = state ? (state.userProfile || state.user) : null;
+  if (!user) return;
 
   if (!banner) {
     banner = document.createElement("div");
@@ -236,20 +237,37 @@ function renderUserProfileBanner() {
     }
   }
 
-  const isFarmerNow = (state.currentRole === "FARMER" || (!state.currentRole && state.userType === "FARMER"));
-  const roleText = isFarmerNow ? "రైతు (Farmer)" : "కూలీ (Labour)";
-  const badgeColor = isFarmerNow ? "#2e7d32" : "#e65100";
+  let roleText = "రైతు (Farmer)";
+  let badgeColor = "#2e7d32";
+
+  // Role & Badge Logic
+  if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.currentRole === "LABOUR") {
+    roleText = "కూలీ (Labour)";
+    badgeColor = "#e65100";
+  } else if (state.userType === "PROVIDER") {
+    const pType = state.providerType || (user && user.providerType) || 'equipment';
+    if (pType === 'transport') {
+      roleText = "🚚 రవాణా యజమాని";
+      badgeColor = "#7b1fa2";
+    } else if (pType === 'seeds') {
+      roleText = "🌱 విత్తనాల డీలర్";
+      badgeColor = "#2e7d32";
+    } else {
+      roleText = "🚜 పరికరాల యజమాని";
+      badgeColor = "#f57c00";
+    }
+  }
 
   banner.style.cssText = `max-width: 480px; margin: 10px auto; padding: 12px 16px; background: #ffffff; border-left: 5px solid ${badgeColor}; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center;`;
 
   banner.innerHTML = `
     <div>
       <div style="font-size: 15px; font-weight: bold; color: #333;">
-        👤 ${state.userProfile.name} 
-        <span style="font-size: 11px; background: ${badgeColor}20; color: ${badgeColor}; padding: 2px 8px; border-radius: 12px; margin-left: 6px;">${roleText}</span>
+        👤 ${user.name} 
+        <span style="font-size: 11px; background: ${badgeColor}20; color: ${badgeColor}; padding: 2px 8px; border-radius: 12px; margin-left: 6px; font-weight:bold;">${roleText}</span>
       </div>
       <div style="font-size: 13px; color: #666; margin-top: 3px;">
-        📞 ${state.userProfile.phone} &nbsp;|&nbsp; 📍 గ్రామం: <b>${state.userProfile.village}</b>
+        📞 ${user.phone} &nbsp;|&nbsp; 📍 గ్రామం: <b>${user.village}</b>
       </div>
     </div>
     <button onclick="logoutUser()" style="background: #f44336; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: bold;">Logout</button>
