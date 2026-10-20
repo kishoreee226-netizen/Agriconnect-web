@@ -1030,7 +1030,7 @@ window.renderIncomingBookingsForProvider = function(containerId) {
           </div>
 
           <div style="font-size:14px; font-weight:bold; color:#222;">${b.vehicleType}</div>
-          <div style="font-size:12px; color:#444; margin:3px 0;">పని: <b>${b.workSize}</b> &nbsp;\vert{}&nbsp; సమయం: <b>${b.schedule}</b></div>
+          <div style="font-size:12px; color:#444; margin:3px 0;">పని: <b>${b.workSize}</b> &nbsp;|&nbsp; సమయం: <b>${b.schedule}</b></div>
           <div style="font-size:12px; color:#555;">రైతు: <b>${b.farmerName}</b>, గ్రామం: <b>${b.village}</b></div>
 
           <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
