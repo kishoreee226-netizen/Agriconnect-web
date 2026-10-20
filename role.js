@@ -1129,7 +1129,12 @@ window.renderFarmerWidgetWithLiveProviders = function() {
         ⚡ వాహనం కోసం రిక్వెస్ట్ పెట్టండి ➔
       </button>
     `;
-    farmerContainer.prepend(reqBanner);
+        if (farmerContainer.firstChild) {
+      farmerContainer.insertBefore(reqBanner, farmerContainer.firstChild);
+    } else {
+      farmerContainer.appendChild(reqBanner);
+    }
+
   }
 
   // 2. Load Real Items from localStorage
