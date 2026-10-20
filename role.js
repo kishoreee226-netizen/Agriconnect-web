@@ -1007,6 +1007,84 @@ window.handleConfirmBookingRequest = function(e) {
     if (sDir) renderFarmerServicesDirectory(sDir);
   }
 };
+// ===================================================
+// Step 2: Provider Dashboard lo Incoming Requests Display & Map Route
+// ===================================================
+window.renderIncomingBookingsForProvider = function(containerId) {
+  const box = document.getElementById(containerId);
+  if (!box) return;
+
+  const bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
+
+  if (bookings.length === 0) {
+    box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; margin:10px 0;">ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.</p>`;
+    return;
+  }
+
+  box.innerHTML = `
+    <h4 style="font-size:13px; color:#e65100; margin:14px 0 8px 0;">🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు (${bookings.length}):</h4>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      ${bookings.map(b => `
+        <div style="background:#fff; border:1.5px solid ${b.status === 'ACCEPTED' ? '#2e7d32' : '#f57c00'}; border-radius:10px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:11px; background:${b.type === 'SPOT' ? '#ffebee' : '#fff8e1'}; color:${b.type === 'SPOT' ? '#c62828' : '#b78103'}; padding:3px 8px; border-radius:12px; font-weight:bold;">
+              ${b.type === 'SPOT' ? '⚡ SPOT (వెంటనే కావాలి)' : '📅 ADVANCE బుకింగ్'}
+            </span>
+            <span style="font-size:11px; color:#777;">${b.createdAt}</span>
+          </div>
+
+          <div style="font-size:14px; font-weight:bold; color:#222;">${b.vehicleType}</div>
+          <div style="font-size:12px; color:#444; margin:3px 0;">పని: <b>${b.workSize}</b> \vert{} సమయం: <b>${b.schedule}</b></div>
+          <div style="font-size:12px; color:#555;">రైతు: <b>${b.farmerName}</b>, గ్రామం: <b>${b.village}</b></div>
+
+          <!-- Action Buttons: Call, Map, Accept -->
+          <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+            <a href="tel:${b.farmerPhone}" style="flex:1; text-align:center; background:#2e7d32; color:#fff; text-decoration:none; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold;">📞 రైతుకు కాల్</a>
+            
+            ${b.mapLink ? `
+              <a href="${b.mapLink}" target="_blank" style="flex:1; text-align:center; background:#1976d2; color:#fff; text-decoration:none; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold;">🗺️ పొలం మ్యాప్ రూట్</a>
+            ` : ''}
+
+            ${b.status !== 'ACCEPTED' ? `
+              <button onclick="acceptBookingOrder('${b.id}')" style="flex:1; background:#f57c00; color:#fff; border:none; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">
+                ✅ ఒప్పుకోండి (Accept)
+              </button>
+            ` : `
+              <span style="flex:1; text-align:center; background:#e8f5e9; color:#2e7d32; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold;">ఆర్డర్ స్వీకరించబడింది</span>
+            `}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+};
+
+// Accept Logic & Confirmation back to Farmer
+window.acceptBookingOrder = function(bookingId) {
+  let bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
+  const state = window.AppState;
+  const user = state ? (state.userProfile || state.user) : null;
+  const providerName = (user && user.name) || 'యజమాని';
+  const providerPhone = (user && user.phone) || '';
+
+  const index = bookings.findIndex(b => b.id === bookingId);
+  if (index !== -1) {
+    bookings[index].status = 'ACCEPTED';
+    bookings[index].acceptedBy = `${providerName} (${providerPhone})`;
+    localStorage.setItem('agri_active_bookings', JSON.stringify(bookings));
+
+    const b = bookings[index];
+    const confirmMsg = `✅ *ఆర్డర్ కన్ఫర్మ్ చేయబడింది (AgriConnect):*\n` +
+      `నమస్తే ${b.farmerName} గారు, మీ ${b.vehicleType} బుకింగ్ ను యజమాని *${providerName}* స్వీకరించారు.\n` +
+      `📞 యజమాని ఫోన్: ${providerPhone}\n` +
+      `మీ లొకేషన్ ఆధారంగా బయలుదేరుతున్నాము.`;
+
+    const waFarmer = `https://wa.me/91${b.farmerPhone}?text=${encodeURIComponent(confirmMsg)}`;
+    window.open(waFarmer, '_blank');
+
+    renderIncomingBookingsForProvider('provider-incoming-requests');
+  }
+};
 
 
 
