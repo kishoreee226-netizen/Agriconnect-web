@@ -1089,6 +1089,79 @@ window.acceptBookingOrder = function(bookingId) {
     renderIncomingBookingsForProvider('provider-incoming-requests');
   }
 };
+// ===================================================
+// Sync Provider Items into Farmer Dashboard & Live Requests
+// ===================================================
+
+// Rithu Dashboard lo Yajamanula Live Items mariyu Request Button chupinche function
+window.renderFarmerWidgetWithLiveProviders = function() {
+  const farmerContainer = document.getElementById("farmer-container") || document.getElementById("farmer-dashboard");
+  if (!farmerContainer) return;
+
+  // 1. Check & Inject "Request Vehicle (Spot / Advance)" Banner
+  let reqBanner = document.getElementById("farmer-quick-req-banner");
+  if (!reqBanner) {
+    reqBanner = document.createElement("div");
+    reqBanner.id = "farmer-quick-req-banner";
+    reqBanner.style.cssText = "background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; padding: 14px; border-radius: 12px; margin: 10px 0 16px 0; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);";
+    reqBanner.innerHTML = `
+      <div style="font-size:15px; font-weight:bold; margin-bottom:4px;">🚜 అత్యవసరంగా వాహనం / యంత్రం కావాలా?</div>
+      <div style="font-size:12px; opacity:0.9; margin-bottom:10px;">స్పాట్ లో లేదా అడ్వాన్స్ గా బుక్ చేసుకోండి (లైవ్ GPS నావిగేషన్)</div>
+      <button onclick="openFarmerVehicleBookingModal()" style="background:#fff; color:#1b5e20; border:none; padding:9px 18px; border-radius:20px; font-size:13px; font-weight:bold; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+        ⚡ వాహనం కోసం రిక్వెస్ట్ పెట్టండి ➔
+      </button>
+    `;
+    farmerContainer.prepend(reqBanner);
+  }
+
+  // 2. Load Real Items from localStorage
+  const savedItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+  
+  // Find where cards are placed or append live container
+  let liveList = document.getElementById("farmer-live-provider-items");
+  if (!liveList) {
+    liveList = document.createElement("div");
+    liveList.id = "farmer-live-provider-items";
+    liveList.style.marginTop = "14px";
+    farmerContainer.appendChild(liveList);
+  }
+
+  if (savedItems.length === 0) {
+    liveList.innerHTML = `<div style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #ccc; text-align:center; font-size:12px; color:#777;">యజమానులు ఇంకా కొత్త వాహనాలు జోడించలేదు.</div>`;
+    return;
+  }
+
+  liveList.innerHTML = `
+    <h4 style="font-size:14px; color:#2e7d32; margin:12px 0 8px 0;">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      ${savedItems.map(item => `
+        <div style="background:#ffffff; border:1.5px solid #a5d6a7; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="font-size:15px; font-weight:bold; color:#1b5e20;">${item.name}</div>
+              <div style="font-size:12px; color:#555; margin-top:2px;">
+                ధర / అద్దె: <b style="color:#e65100; font-size:13px;">₹${item.rate}</b> &nbsp;\vert{}&nbsp; ${item.extra}
+              </div>
+              <div style="font-size:11px; color:#777; margin-top:4px;">
+                యజమాని: <b>${item.providerName \vert{}\vert{} 'యజమాని'}</b> ${item.village ? `(గ్రామం: ${item.village})` : ''}
+              </div>
+            </div>
+            <span style="font-size:11px; background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-weight:bold;">లభ్యం</span>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-top:10px;">
+            ${item.providerPhone ? `
+              <a href="tel:${item.providerPhone}" style="flex:1; text-align:center; background:#2e7d32; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">📞 కాల్</a>
+              <a href="https://wa.me/91${item.providerPhone}?text=${encodeURIComponent(`నమస్తే ${item.providerName \vert{}\vert{} ''} గారు, AgriConnect లో మీ ${item.name} చూసి సంప్రదిస్తున్నాను.`)}" target="_blank" style="flex:1; text-align:center; background:#25d366; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">వాట్సాప్</a>
+            ` : `
+              <button onclick="openFarmerVehicleBookingModal()" style="flex:1; background:#2e7d32; color:#fff; border:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">బుక్ చేసుకోండి</button>
+            `}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+};
 
 
 
