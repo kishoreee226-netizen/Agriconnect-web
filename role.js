@@ -155,11 +155,18 @@ function applyUserRoleView() {
     allRoleCards.forEach(el => el.style.setProperty('display', 'block', 'important'));
 
     // 2. డ్యాష్ బోర్డులు & వాలెట్ దాచిపెట్టు
-    if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-    if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-    if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+        if (farmerContainer)
+farmerContainer.style.setProperty('display', 'block', 'important');
+
+    if (labourContainer)
+labourContainer.style.setProperty('display', 'block', 'important');
+
+    if (providerContainer)
+providerContainer.style.setProperty('display', 'block', 'important');
+
     const provCard = document.getElementById('provider-landing-card');
     if (provCard) provCard.style.setProperty('display', 'block', 'important');
+
 
     if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
 
