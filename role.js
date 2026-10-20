@@ -4,7 +4,7 @@
 function getFarmerDashboardElement() {
   let el = document.getElementById("farmer-post-container");
   if (!el) {
-    const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+    const wallet =b document.getElementById("wallet-container") || document.querySelector(".wallet-card");
     if (wallet && wallet.parentNode) {
       el = document.createElement("div");
       el.id = "farmer-post-container";
@@ -1137,10 +1137,8 @@ window.renderFarmerWidgetWithLiveProviders = function() {
 
   }
 
-  // 2. Load Real Items from localStorage
+    // 2. Real Items List from localStorage
   const savedItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
-  
-  // Find where cards are placed or append live container
   let liveList = document.getElementById("farmer-live-provider-items");
   if (!liveList) {
     liveList = document.createElement("div");
@@ -1150,38 +1148,48 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   }
 
   if (savedItems.length === 0) {
-    liveList.innerHTML = `<div style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #ccc; text-align:center; font-size:12px; color:#777;">యజమానులు ఇంకా కొత్త వాహనాలు జోడించలేదు.</div>`;
+    liveList.innerHTML = '<div style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #ccc; text-align:center; font-size:12px; color:#777;">యజమానులు ఇంకా కొత్త వాహనాలు జోడించలేదు.</div>';
     return;
   }
 
-    liveList.innerHTML = `
-    <h4 style="font-size:14px; color:#2e7d32; margin:12px 0 8px 0;">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      ${savedItems.map(item => `
-        <div style="background:#ffffff; border:1.5px solid #a5d6a7; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-              <div style="font-size:15px; font-weight:bold; color:#1b5e20;">${item.name}</div>
-              <div style="font-size:12px; color:#555; margin-top:2px;">
-                ధర / అద్దె: <b style="color:#e65100; font-size:13px;">₹${item.rate}</b> &nbsp;\vert{}&nbsp; ${item.extra}
-              </div>
-              <div style="font-size:11px; color:#777; margin-top:4px;">
-                యజమాని: <b>${item.providerName \vert{}\vert{} 'యజమాని'}</b> ${item.village ? `(గ్రామం: ${item.village})` : ''}
-              </div>
-            </div>
-            <span style="font-size:11px; background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-weight:bold;">లభ్యం</span>
-          </div>
+  let itemsHtml = '';
+  for (let i = 0; i < savedItems.length; i++) {
+    const item = savedItems[i];
+    const pName = item.providerName || 'యజమాని';
+    const vName = item.village ? ('(గ్రామం: ' + item.village + ')') : '';
+    const phone = item.providerPhone || '';
 
-          <div style="display:flex; gap:8px; margin-top:10px;">
-            ${item.providerPhone ? `
-              <a href="tel:${item.providerPhone}" style="flex:1; text-align:center; background:#2e7d32; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">📞 కాల్</a>
-              <a href="https://wa.me/91${item.providerPhone}?text=${encodeURIComponent(`నమస్తే ${item.providerName \vert{}\vert{} ''} గారు, AgriConnect లో మీ ${item.name} చూసి సంప్రదిస్తున్నాను.`)}" target="_blank" style="flex:1; text-align:center; background:#25d366; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">వాట్సాప్</a>
-            ` : `
-              <button onclick="openFarmerVehicleBookingModal()" style="flex:1; background:#2e7d32; color:#fff; border:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">బుక్ చేసుకోండి</button>
-            `}
+    itemsHtml += `
+      <div style="background:#ffffff; border:1.5px solid #a5d6a7; border-radius:12px; padding:12px; margin-bottom:10px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <div style="font-size:15px; font-weight:bold; color:#1b5e20;">${item.name}</div>
+            <div style="font-size:12px; color:#555; margin-top:2px;">ధర / అద్దె: <b style="color:#e65100; font-size:13px;">₹${item.rate}</b> &nbsp;|&nbsp; ${item.extra}</div>
+            <div style="font-size:11px; color:#777; margin-top:4px;">యజమాని: <b>${pName}</b> ${vName}</div>
           </div>
+          <span style="font-size:11px; background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-weight:bold;">లభ్యం</span>
         </div>
-      `).join('')}
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          ${phone ? `
+            <a href="tel:${phone}" style="flex:1; text-align:center; background:#2e7d32; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">📞 కాల్</a>
+            <a href="https://wa.me/91${phone}" target="_blank" style="flex:1; text-align:center; background:#25d366; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">వాట్సాప్</a>
+          ` : `
+            <button onclick="openFarmerVehicleBookingModal()" style="flex:1; background:#2e7d32; color:#fff; border:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">బుక్ చేసుకోండి</button>
+          `}
+        </div>
+      </div>
+    `;
+  }
+
+  liveList.innerHTML = `
+    <h4 style="font-size:14px; color:#2e7d32; margin:12px 0 8px 0;">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
+    <div style="display:flex; flex-direction:column;">
+      ${itemsHtml}
     </div>
   `;
 };
+
+// ఆటోమేటిక్ వ్యూ చెక్
+if (typeof applyUserRoleView === "function") {
+  applyUserRoleView();
+}
