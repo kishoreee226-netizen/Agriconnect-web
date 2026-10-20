@@ -645,15 +645,175 @@ function renderProviderDashboardView(container, type) {
   const current = titles[type] || titles.equipment;
 
   container.innerHTML = `
-    <div style="background:#fff; border:2px solid ${current.color}; border-radius:14px; padding:16px; margin:14px auto; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
+    <div style="background:#fff; border:2px solid ${current.color}; border-radius:14px; padding:16px; margin:14px auto; max-width:480px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
       <h3 style="margin:0 0 6px 0; color:${current.color}; font-size:16px;">${current.name}</h3>
       <p style="font-size:12px; color:#555; margin:0 0 14px 0;">${current.desc}</p>
-      <div style="background:#f9f9f9; padding:16px; border-radius:10px; border:2px dashed ${current.color}; text-align:center;">
+      
+      <!-- Add Service Button Box -->
+      <div onclick="openAddServiceModal('${type}')" style="background:#fcfcfc; padding:16px; border-radius:10px; border:2px dashed ${current.color}; text-align:center; cursor:pointer;">
         <span style="font-size:14px; font-weight:bold; color:${current.color};">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
-        <p style="font-size:12px; color:#777; margin:6px 0 0 0;">మీ వద్ద ఉన్న పరికరాలు / వాహనాలు / విత్తనాల వివరాలను ఇక్కడ లిస్ట్ చేయవచ్చు.</p>
+        <p style="font-size:12px; color:#777; margin:6px 0 0 0;">వివరాలు నమోదు చేయడానికి ఇక్కడ నొక్కండి</p>
       </div>
+
+      <!-- Provider Added Items List -->
+      <div id="provider-items-list" style="margin-top:16px;"></div>
     </div>
   `;
+
+  renderProviderItemsList(type);
 }
+
+// ===================================================
+// Provider Add Service Modal & Storage Controller
+// ===================================================
+window.openAddServiceModal = function(type) {
+  let modal = document.getElementById('provider-item-modal');
+  if (modal) modal.remove();
+
+  const configs = {
+    equipment: {
+      title: '🚜 పరికరం వివరాలు జోడించండి',
+      color: '#f57c00',
+      fields: `
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పరికరం రకం / మోడల్:</label>
+          <input type="text" id="item-field-1" placeholder="ఉదా: మహీంద్రా 575 ట్రాక్టర్ / రోటవేటర్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">అద్దె ధర (గంటకు ₹):</label>
+          <input type="number" id="item-field-2" placeholder="ఉదా: 900" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పని స్థితి (Availability):</label>
+          <select id="item-field-3" style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;">
+            <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
+            <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
+          </select>
+        </div>
+      `
+    },
+    transport: {
+      title: '🚚 రవాణా వాహనం వివరాలు జోడించండి',
+      color: '#7b1fa2',
+      fields: `
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">వాహనం రకం:</label>
+          <input type="text" id="item-field-1" placeholder="ఉదా: బొలెరో పికప్ / 407 DCM / ట్రాక్టర్ ట్రాలీ" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">ఛార్జీ (కి.మీ / ట్రిప్ ₹):</label>
+          <input type="text" id="item-field-2" placeholder="ఉదా: ₹35 / కి.మీ లేదా ₹1200 / ట్రిప్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">మోసే బరువు సామర్థ్యం:</label>
+          <input type="text" id="item-field-3" placeholder="ఉదా: 2 టన్నులు / 50 బస్తాలు" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+      `
+    },
+    seeds: {
+      title: '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి',
+      color: '#2e7d32',
+      fields: `
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పంట రకం & బ్రాండ్:</label>
+          <input type="text" id="item-field-1" placeholder="ఉదా: వరి BPT 5204 / కాటన్ సీడ్స్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:10px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">ధర (బ్యాగ్ / ప్యాకెట్ ₹):</label>
+          <input type="number" id="item-field-2" placeholder="ఉదా: 850" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+        <div style="margin-bottom:14px;">
+          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">స్టాక్ లభ్యత:</label>
+          <input type="text" id="item-field-3" placeholder="ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        </div>
+      `
+    }
+  };
+
+  const conf = configs[type] || configs.equipment;
+
+  modal = document.createElement('div');
+  modal.id = 'provider-item-modal';
+  modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; padding:14px; box-sizing:border-box;';
+  
+  modal.innerHTML = `
+    <div style="background:#fff; border-radius:16px; width:100%; max-width:380px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative;">
+      <button onclick="closeAddServiceModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer; color:#777;">✕</button>
+      
+      <h3 style="margin:0 0 14px 0; font-size:16px; color:${conf.color}; text-align:center;">${conf.title}</h3>
+
+      <form onsubmit="handleSaveProviderItem(event, '${type}')">
+        ${conf.fields}
+        <button type="submit" style="width:100%; background:${conf.color}; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+          లిస్టింగ్‌ను సేవ్ చేయండి ➔
+        </button>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+};
+
+window.closeAddServiceModal = function() {
+  const modal = document.getElementById('provider-item-modal');
+  if (modal) modal.remove();
+};
+
+window.handleSaveProviderItem = function(e, type) {
+  e.preventDefault();
+  const val1 = document.getElementById('item-field-1').value.trim();
+  const val2 = document.getElementById('item-field-2').value.trim();
+  const val3 = document.getElementById('item-field-3').value.trim();
+
+  if (!val1 || !val2 || !val3) return;
+
+  const newItem = {
+    id: Date.now(),
+    type: type,
+    name: val1,
+    rate: val2,
+    extra: val3
+  };
+
+  let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+  items.unshift(newItem);
+  localStorage.setItem('agri_provider_items', JSON.stringify(items));
+
+  closeAddServiceModal();
+  renderProviderItemsList(type);
+};
+
+window.renderProviderItemsList = function(type) {
+  const container = document.getElementById('provider-items-list');
+  if (!container) return;
+
+  const items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]').filter(item => item.type === type);
+
+  if (items.length === 0) {
+    container.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; margin:8px 0;">ఇంకా ఏవీ జోడించబడలేదు.</p>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <h4 style="font-size:13px; color:#333; margin:0 0 8px 0;">మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):</h4>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      ${items.map(item => `
+        <div style="background:#f9f9f9; border:1px solid #e0e0e0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:13px; font-weight:bold; color:#333;">${item.name}</div>
+            <div style="font-size:12px; color:#555;">ధర / అద్దె: <b>${item.rate}</b> &nbsp;\vert{}&nbsp; ${item.extra}</div>
+          </div>
+          <button onclick="deleteProviderItem(${item.id}, '${type}')" style="background:#ffebee; border:none; color:#c62828; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">తీసివేయి</button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+};
+
+window.deleteProviderItem = function(id, type) {
+  let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+  items = items.filter(item => item.id !== id);
+  localStorage.setItem('agri_provider_items', JSON.stringify(items));
+  renderProviderItemsList(type);
+};
 
 
