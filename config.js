@@ -5,7 +5,7 @@
     shortName: "AgriConnect",
     tagline: "The Voice of Smart Farming",
     udyamRegNo: "UDYAM-TS-31-0063048",
-    location: "Maruthi Colony, Gopalpur, Hanamkonda, Telangana - 506370",
+    location: "Hanamkonda, Warangal, Telangana, INDIA",
     copyrightYear: new Date().getFullYear(),
     appVersion: "v3.0.0",
     // బ్రాండింగ్ & లోగో వివరాలు
