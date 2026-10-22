@@ -107,3 +107,79 @@ function openSoilTest() {
       if (details) details.innerHTML = "❌ Soil test report load kaledu.";
     });
 }
+// ==========================================
+// CENTRAL AGRI DATABASE SERVICE (CENTRAL STORAGE)
+// ==========================================
+
+window.AgriDB = {
+  // 1. User Profile Save (Login / Registration)
+  async saveUser(userProfile) {
+    if (!window.db) return console.error("Database not ready!");
+    const phone = userProfile.phone;
+    if (!phone) return;
+
+    return window.db.collection('users').doc(phone).set({
+      ...userProfile,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  },
+
+  // 2. Provider Service / Equipment Add (Tamper-Proof)
+  async addProviderItem(itemData) {
+    if (!window.db) throw new Error("Database not ready!");
+    return window.db.collection('provider_items').add({
+      ...itemData,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  },
+
+  // 3. Provider Items Live Sync (Farmer Equipment Dashboard)
+  listenToProviderItems(callback) {
+    if (!window.db) return;
+    return window.db.collection('provider_items')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(snapshot => {
+        const items = [];
+        snapshot.forEach(doc => {
+          items.push({ docId: doc.id, ...doc.data() });
+        });
+        callback(items);
+      }, error => {
+        console.error("Provider items sync error:", error);
+      });
+  },
+
+  // 4. Bookings Save (Farmer Bookings with Freeze Logic)
+  async createBooking(bookingData) {
+    if (!window.db) throw new Error("Database not ready!");
+    return window.db.collection('bookings').add({
+      ...bookingData,
+      status: 'PENDING',
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  },
+
+  // 5. Bookings Live Sync (Incoming Requests)
+  listenToBookings(filterPhone, callback) {
+    if (!window.db) return;
+    let query = window.db.collection('bookings');
+    
+    if (filterPhone) {
+      query = query.where('phone', '==', filterPhone);
+    }
+
+    return query.onSnapshot(snapshot => {
+      const bookings = [];
+      snapshot.forEach(doc => {
+        bookings.push({ docId: doc.id, ...doc.data() });
+      });
+      callback(bookings);
+    }, error => {
+      console.error("Bookings sync error:", error);
+    });
+  }
+};
+
+// Freeze AgriDB to prevent tampering from console
+Object.freeze(window.AgriDB);
+console.log("⚡ Central AgriDB Engine loaded into firebase-db.js!");
