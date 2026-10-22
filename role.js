@@ -761,34 +761,53 @@ window.closeAddServiceModal = function() {
   if (modal) modal.remove();
 };
 
-window.handleSaveProviderItem = function(e, type) {
-  e.preventDefault();
-  const val1 = document.getElementById('item-field-1').value.trim();
-  const val2 = document.getElementById('item-field-2').value.trim();
-  const val3 = document.getElementById('item-field-3').value.trim();
+window.handleSaveProviderItem = async function(e, type) {
+    e.preventDefault();
+    const val1 = document.getElementById('item-field-1').value.trim();
+    const val2 = document.getElementById('item-field-2').value.trim();
+    const val3 = document.getElementById('item-field-3').value.trim();
 
-  if (!val1 || !val2 || !val3) return;
+    if (!val1 || !val2 || !val3) {
+        alert("దయచేసి అన్ని వివరాలు నమోదు చేయండి.");
+        return;
+    }
 
-  const profile = window.AppState?.userProfile || JSON.parse(localStorage.getItem('agri_user_profile') || '{}');
+    const profile = window.AppState?.userProfile || JSON.parse(localStorage.getItem('agri_user_profile') || '{}');
 
-  const newItem = {
-    id: Date.now(),
-    type: type,
-    name: val1,
-    rate: val2,
-    extra: val3,
-    providerName: profile.name || 'యజమాని',
-    providerPhone: profile.phone || '',
-    village: profile.village || ''
-  };
+    // 1. Live Data Object
+    const newItem = {
+        name: val1,
+        rate: "₹" + val2 + " / గంట",
+        rawRate: val2,
+        category: type || "equipment",
+        status: val3,
+        owner: profile.name || 'యజమాని',
+        phone: profile.phone || '9876543210',
+        village: profile.village || 'గ్రామం',
+        loc: (profile.village || 'గ్రామం') + ' పరిధి',
+        distanceKm: 2.5
+    };
 
-  let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
-  items.unshift(newItem);
-  localStorage.setItem('agri_provider_items', JSON.stringify(items));
+    // 2. Central AgriDB ద్వారా Live Firestore లో సేవ్ చేయడం
+    if (window.AgriDB) {
+        try {
+            await window.AgriDB.addProviderItem(newItem);
+            alert("🎉 " + val1 + " విజయవంతంగా లైవ్ డేటాబేస్‌లో చేర్చబడింది!");
+        } catch (error) {
+            console.error("Save error:", error);
+            alert("డేటాబేస్ లోపం: " + error.message);
+        }
+    }
 
-  closeAddServiceModal();
-  renderProviderItemsList(type);
+    // 3. Local fallback & UI Refresh
+    let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+    items.unshift(newItem);
+    localStorage.setItem('agri_provider_items', JSON.stringify(items));
+
+    closeAddServiceModal();
+    renderProviderItemsList(type);
 };
+
 
 window.renderProviderItemsList = function(type) {
   const container = document.getElementById('provider-items-list');
