@@ -898,12 +898,40 @@ window.renderProviderItemsList = async function(type) {
     }
 };
 
-window.deleteProviderItem = function(id, type) {
-  let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
-  items = items.filter(item => item.id !== id);
-  localStorage.setItem('agri_provider_items', JSON.stringify(items));
-  renderProviderItemsList(type);
+window.deleteProviderItem = async function(id, type) {
+    if (!id) return;
+
+    const confirmDelete = confirm("ఈ పరికరాన్ని / సేవను ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?");
+    if (!confirmDelete) return;
+
+    try {
+        // 1. Firebase Firestore నుండి తొలగించడం
+        if (typeof db !== 'undefined' && db.collection) {
+            await db.collection("provider_items").doc(id).delete();
+        }
+
+        // 2. LocalStorage బ్యాకప్ లో ఉంటే అక్కడ కూడా తొలగించడం
+        try {
+            let localItems = JSON.parse(localStorage.getItem('agri_provider_items')) || [];
+            localItems = localItems.filter(item => item.id !== id);
+            localStorage.setItem('agri_provider_items', JSON.stringify(localItems));
+        } catch (e) {
+            console.warn("LocalStorage delete error:", e);
+        }
+
+        alert("విజయవంతంగా తొలగించబడింది!");
+
+        // 3. UI లిస్ట్‌ను వెంటనే రీఫ్రెష్ చేయడం
+        if (typeof window.renderProviderItemsList === 'function') {
+            window.renderProviderItemsList(type);
+        }
+
+    } catch (error) {
+        console.error("Delete error:", error);
+        alert("తొలగించడంలో లోపం వచ్చింది: " + error.message);
+    }
 };
+
 
 // ===================================================
 // Rhythu Smart Vehicle Booking: Spot vs Advance
