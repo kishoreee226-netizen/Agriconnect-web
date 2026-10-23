@@ -1127,42 +1127,69 @@ window.renderIncomingBookingsForProvider = function(containerId) {
     return;
   }
 
-  box.innerHTML = `
-    <h4 style="font-size:13px; color:#e65100; margin:14px 0 8px 0;">🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు (${bookings.length}):</h4>
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      ${bookings.map(b => `
-        <div style="background:#fff; border:1.5px solid ${b.status === 'ACCEPTED' ? '#2e7d32' : '#f57c00'}; border-radius:10px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <span style="font-size:11px; background:${b.type === 'SPOT' ? '#ffebee' : '#fff8e1'}; color:${b.type === 'SPOT' ? '#c62828' : '#b78103'}; padding:3px 8px; border-radius:12px; font-weight:bold;">
-              ${b.type === 'SPOT' ? '⚡ SPOT (వెంటనే కావాలి)' : '📅 ADVANCE బుకింగ్'}
+  // Requests Outer Box & Scrollable Container
+requestsContainer.innerHTML = `
+    <!-- Premium Green Theme Outer Box with Elevation Shadow -->
+    <div style="background:#ffffff; border:1.5px solid #16a34a; border-radius:16px; overflow:hidden; margin-top:20px; box-shadow:0 8px 24px rgba(22, 163, 74, 0.12);">
+        
+        <!-- Premium Fixed Header (Scroll avvadhu) -->
+        <div style="background:linear-gradient(135deg, #16a34a, #15803d); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <div style="font-size:14px; color:#ffffff; font-weight:700; display:flex; align-items:center; gap:6px;">
+                🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు <span style="background:rgba(255,255,255,0.25); padding:2px 8px; border-radius:10px; font-size:12px;">${requests.length}</span>
+            </div>
+            <!-- Live Active Badge -->
+            <span style="font-size:11px; background:#ffffff; color:#16a34a; padding:3px 10px; border-radius:20px; font-weight:700; display:flex; align-items:center; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                <span style="width:7px; height:7px; background:#16a34a; border-radius:50%; display:inline-block;"></span> LIVE
             </span>
-            <span style="font-size:11px; color:#777;">${b.createdAt}</span>
-          </div>
-
-          <div style="font-size:14px; font-weight:bold; color:#222;">${b.vehicleType}</div>
-          <div style="font-size:12px; color:#444; margin:3px 0;">పని: <b>${b.workSize}</b> &nbsp;|&nbsp; సమయం: <b>${b.schedule}</b></div>
-          <div style="font-size:12px; color:#555;">రైతు: <b>${b.farmerName}</b>, గ్రామం: <b>${b.village}</b></div>
-
-          <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
-            <a href="tel:${b.farmerPhone}" style="flex:1; text-align:center; background:#2e7d32; color:#fff; text-decoration:none; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold;">📞 రైతుకు కాల్</a>
-            
-            ${b.mapLink ? `
-              <a href="${b.mapLink}" target="_blank" style="flex:1; text-align:center; background:#1976d2; color:#fff; text-decoration:none; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold;">🗺️ పొలం మ్యాప్ రూట్</a>
-            ` : ''}
-
-            ${b.status !== 'ACCEPTED' ? `
-              <button onclick="acceptBookingOrder('${b.id}')" style="flex:1; background:#f57c00; color:#fff; border:none; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">
-                ✅ ఒప్పుకోండి (Accept)
-              </button>
-            ` : `
-              <span style="flex:1; text-align:center; background:#e8f5e9; color:#2e7d32; padding:8px 6px; border-radius:6px; font-size:12px; font-weight:bold;">ఆర్డర్ స్వీకరించబడింది</span>
-            `}
-          </div>
         </div>
-      `).join('')}
+
+   <!-- Scrollable Requests Container -->
+        <div style="padding:12px; display:flex; flex-direction:column; gap:12px; max-height:280px; overflow-y:auto; box-sizing:border-box;">
+            ${requests.map(req => `
+                <!-- Each Request Card -->
+                <div style="background:#f8fbf8; border:1.5px solid #bbf7d0; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                    
+              <!-- Top Tag & Time -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="background:#fee2e2; color:#b91c1c; font-size:11px; font-weight:bold; padding:3px 8px; border-radius:6px; border:1px solid #fecaca;">
+                   ⚡ SPOT (వెంటనే కావాలి)
+                        </span>
+                        <span style="font-size:11px; color:#6b7280; font-weight:500;">
+              ${req.time || '19:13:17'}
+                        </span>
+                    </div>
+
+       <!-- Vehicle / Equipment Title -->
+                    <div style="font-size:14px; font-weight:bold; color:#1f2937; margin-bottom:4px;">
+                        ${req.vehicleType || req.itemName || 'బొలేరో / DCM రవాణా వాహనం'}
+                    </div>
+
+                    <!-- Details -->
+                    <div style="font-size:12px; color:#4b5563; line-height:1.6; margin-bottom:10px;">
+                        <div>పని: <b>${req.work || req.crop || '59'}</b> | సమయం: <b>${req.timing || 'తక్షణమే (Spot)'}</b></div>
+                        <div>రైతు: <b>${req.farmerName || 'Kishor'}</b>, గ్రామం: <b>${req.farmerVillage || 'Hanamkonda'}</b></div>
+                    </div>
+
+              <!-- Action Buttons -->
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <a href="tel:${req.farmerPhone || ''}" style="flex:1; background:#15803d; color:#ffffff; text-decoration:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; text-align:center; display:flex; justify-content:center; align-items:center; gap:4px;">
+                            📞 రైతుకు కాల్
+                        </a>
+                        <button onclick="openFieldRoute('${req.id || ''}')" style="flex:1.2; background:#0284c7; color:#ffffff; border:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer; display:flex; justify-content:center; align-items:center; gap:4px;">
+                            🗺️ పొలం మ్యాప్ రూట్
+                        </button>
+                        <div style="flex:1.3; background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; text-align:center;">
+                            ఆర్డర్ స్వీకరించబడింది
+                        </div>
+                    </div>
+
+                </div>
+            `).join('')}
+        </div>
+
     </div>
-  `;
-};
+`;
+
 
 window.acceptBookingOrder = async function(bookingId) {
     if (!bookingId) return;
