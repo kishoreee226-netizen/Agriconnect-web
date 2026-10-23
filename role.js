@@ -831,11 +831,18 @@ window.renderProviderItemList = function(type) {
                     JSON.parse(localStorage.getItem('agri_profile')) || {};
     const currentUserPhone = profile.phone || profile.mobile;
 
-    // 2. Type mariyu Login User Phone tho filter cheyadam
+        // 2. Type mariyu Login User Phone tho filter cheyadam
     const allItems = JSON.parse(localStorage.getItem('agri_provider_items')) || [];
     const items = allItems.filter(item => {
-        const typeMatch = (item.type === type || item.category === type);
-        const userMatch = currentUserPhone ? (item.phone === currentUserPhone) : true;
+        // type pass avvakapothe default ga 'equipment' theesukuntundhi
+        const currentType = type || 'equipment';
+        const typeMatch = (item.type === currentType || item.category === currentType);
+        
+        // Strict phone check (rendu unte match avvali, lekapothe direct ga allow chesthundhi)
+        const itemPhone = String(item.phone || '').trim();
+        const userPhone = String(currentUserPhone || '').trim();
+        const userMatch = (itemPhone && userPhone) ? (itemPhone === userPhone) : true;
+        
         return typeMatch && userMatch;
     });
 
