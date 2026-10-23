@@ -608,32 +608,30 @@ window.selectProviderTab = function(type) {
 };
 
 window.handleProviderLogin = function(e) {
-  e.preventDefault();
-  const name = document.getElementById('prov-name').value.trim();
-  const phone = document.getElementById('prov-phone').value.trim();
-  const village = document.getElementById('prov-village').value.trim();
+    if (e && e.preventDefault) e.preventDefault();
+    const name = document.getElementById('prov-name').value.trim();
+    const phone = document.getElementById('prov-phone').value.trim();
+    const village = document.getElementById('prov-village').value.trim();
 
-      if (!name || !phone || !village) {
+    if (!name || !phone || !village) {
         alert("దయచేసి అన్ని వివరాలను నమోదు చేయండి!");
         return;
     }
 
-    // 10 Digits Phone Number Validation
-    const cleanPhone = phone.replace(/\D/g, ''); // అంకెలు మాత్రమే తీసుకుంటుంది
-    if (cleanPhone.length !== 10) {
+    // Direct Strict 10 Digits Check (Spaces unna, 10 kante theda unna block chesthundhi)
+    if (!/^[0-9]{10}$/.test(phone)) {
         alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి!");
         return;
     }
 
-  const providerUser = {
-    name: name,
-    phone: cleanphone,
-    village: village,
-    userType: 'PROVIDER',
-    providerType: selectedProviderType,
-    isLoggedIn: true
-  };
-
+    const providerUser = {
+        name: name,
+        phone: phone,
+        village: village,
+        userType: 'PROVIDER',
+        providerType: selectedProviderType,
+        isLoggedIn: true
+    };
   localStorage.setItem('agri_user_profile', JSON.stringify(providerUser));
   if (window.AppState) {
     window.AppState.userProfile = providerUser;
