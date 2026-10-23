@@ -857,31 +857,32 @@ window.renderProviderItemsList = async function(type) {
         }
 
         // వస్తువులు ఉంటే స్క్రోల్ అయ్యే లిస్ట్ చూపించడం
-                                container.innerHTML = `
-            <!-- Parikarala Orange Theme Outer Box -->
-            <div style="background:#ffffff; border:2px solid #f57c00; border-radius:14px; overflow:hidden; margin-top:16px; box-shadow:0 3px 10px rgba(245, 124, 0, 0.12);">
+                                        container.innerHTML = `
+            <!-- Premium Orange Theme Outer Box with Soft Shadow -->
+            <div style="background:#ffffff; border:1.5px solid #f97316; border-radius:16px; overflow:hidden; margin-top:16px; box-shadow:0 8px 24px rgba(249, 115, 22, 0.12);">
                 
-                <!-- Fixed Heading (Scroll avvadhu) -->
-                <div style="background:linear-gradient(135deg, #f57c00, #ff9800); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                    <div style="font-size:13px; color:#ffffff; font-weight:bold; display:flex; align-items:center; gap:4px; flex-shrink:0;">
-                        🚜 మీరు జోడించినవి (${items.length}):
+                <!-- Premium Fixed Header -->
+                <div style="background:linear-gradient(135deg, #f97316, #ea580c); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                    <div style="font-size:14px; color:#ffffff; font-weight:700; display:flex; align-items:center; gap:6px;">
+                        🚜 మీరు జోడించిన వస్తువులు <span style="background:rgba(255,255,255,0.25); padding:2px 7px; border-radius:10px; font-size:12px;">${items.length}</span>
                     </div>
-                    <span style="font-size:10px; background:rgba(255,255,255,0.25); color:#ffffff; padding:2px 8px; border-radius:12px; font-weight:600; white-space:nowrap;">
-                        స్క్రోల్ చేయండి ↕
+                    <!-- Live Status Badge -->
+                    <span style="font-size:11px; background:#ffffff; color:#16a34a; padding:3px 10px; border-radius:20px; font-weight:700; display:flex; align-items:center; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                        <span style="width:7px; height:7px; background:#16a34a; border-radius:50%; display:inline-block;"></span> LIVE
                     </span>
                 </div>
 
-                <!-- Items Scroll Container (Padding tho modati item cut avvadhu) -->
-                <div style="padding:10px; display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto; box-sizing:border-box;">
+                <!-- Scrollable Cards Container with Light Tint & Smooth Scroll -->
+                <div style="padding:12px; display:flex; flex-direction:column; gap:10px; max-height:245px; overflow-y:auto; box-sizing:border-box;">
                     ${items.map(item => `
-                        <div style="background:#ffffff; border:1px solid #e0e0e0; border-radius:8px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 2px rgba(0,0,0,0.04);">
+                        <div style="background:#fffaf3; border:1px solid #fed7aa; border-radius:10px; padding:11px 14px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 4px rgba(249, 115, 22, 0.05);">
                             <div>
-                                <div style="font-size:13px; font-weight:bold; color:#222;">${item.name || item.title || 'పేరు లేదు'}</div>
-                                <div style="font-size:12px; color:#666; margin-top:2px;">
-                                    ధర / అద్దె: <b style="color:#d9531e;">${item.rate || item.price || 'N/A'}</b> | ${item.extra || item.status || 'అందుబాటులో ఉంది'}
+                                <div style="font-size:13.5px; font-weight:bold; color:#1c1917;">${item.name || item.title || 'పేరు లేదు'}</div>
+                                <div style="font-size:12px; color:#78350f; margin-top:3px;">
+                                    ధర / అద్దె: <b style="color:#c2410c;">${item.rate || item.price || 'N/A'}</b> | <span style="color:#15803d; font-weight:600;">${item.extra || item.status || 'అందుబాటులో ఉంది'}</span>
                                 </div>
                             </div>
-                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold; flex-shrink:0; margin-left:8px;">
+                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; padding:6px 12px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:700; flex-shrink:0; margin-left:8px; transition:0.2s;">
                                 తీసివేయి
                             </button>
                         </div>
