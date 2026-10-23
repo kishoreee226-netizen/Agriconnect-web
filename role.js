@@ -821,7 +821,7 @@ window.handleSaveProviderItem = async function(e, type) {
 };
 
 
-window.renderProviderItemList = async function(type) {
+window.renderProviderItemsList = async function(type) {
     const container = document.getElementById('provider-items-list');
     if (!container) return;
 
