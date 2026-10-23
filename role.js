@@ -1223,14 +1223,27 @@ window.renderFarmerWidgetWithLiveProviders = function() {
 };
 
 // ===================================================
-// Initialization
+// Initialization & Auto Session Restore on Refresh
 // ===================================================
 document.addEventListener("DOMContentLoaded", function() {
+  const savedData = localStorage.getItem("agri_user_profile");
+  if (savedData) {
+    try {
+      const user = JSON.parse(savedData);
+      if (user && user.phone) {
+        if (!window.AppState) window.AppState = {};
+        window.AppState.isLoggedIn = true;
+        window.AppState.userProfile = user;
+        window.AppState.userType = user.userType || user.roleType || "PROVIDER";
+        window.AppState.providerType = user.providerType || "equipment";
+        window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+      }
+    } catch (e) {
+      console.error("Session restore error:", e);
+    }
+  }
+
   if (typeof applyUserRoleView === "function") {
     applyUserRoleView();
   }
 });
-
-if (typeof applyUserRoleView === "function") {
-  applyUserRoleView();
-}
