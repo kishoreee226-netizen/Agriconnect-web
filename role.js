@@ -857,30 +857,43 @@ window.renderProviderItemsList = async function(type) {
         }
 
         // వస్తువులు ఉంటే స్క్రోల్ అయ్యే లిస్ట్ చూపించడం
-        container.innerHTML = `
-            <h4 style="font-size:13px; color:#333; margin:12px 0 8px 0; font-weight:bold;">
-                మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):
-            </h4>
-            <div style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px;">
-                ${items.map(item => `
-                    <div style="background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
-                        <div>
-                            <div style="font-size:13px; font-weight:bold; color:#333;">${item.name || item.title || 'పేరు లేదు'}</div>
-                            <div style="font-size:12px; color:#666;">ధర / అద్దె: ${item.rate || item.price || 'N/A'} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
+                container.innerHTML = `
+            <!-- Outer Box: Heading fixed ga untundi -->
+            <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-radius:12px; padding:12px; margin-top:15px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                
+                <!-- Fixed Heading (Scroll avvadhu) -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #edf2f7; padding-bottom:8px;">
+                    <h4 style="font-size:13px; color:#1e293b; margin:0; font-weight:bold;">
+                        మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):
+                    </h4>
+                    <span style="font-size:11px; color:#64748b; font-weight:500;">
+                        స్క్రోల్ చేయండి ↕
+                    </span>
+                </div>
+
+                <!-- Only Ee Items List Matrame Scroll Avthundi -->
+                <div style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; padding-right:4px;">
+                    ${items.map(item => `
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <div style="font-size:13px; font-weight:bold; color:#0f172a;">${item.name || item.title || 'పేరు లేదు'}</div>
+                                <div style="font-size:12px; color:#64748b;">ధర / అద్దె: ${item.rate || item.price || 'N/A'} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
+                            </div>
+                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
+                                తీసివేయి
+                            </button>
                         </div>
-                        <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
-                            తీసివేయి
-                        </button>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
+
             </div>
         `;
+
     } catch (err) {
         console.error("Firestore Error:", err);
         container.innerHTML = `<p style="font-size:12px; color:red; text-align:center;">డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.</p>`;
     }
 };
-
 
 window.deleteProviderItem = function(id, type) {
   let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
