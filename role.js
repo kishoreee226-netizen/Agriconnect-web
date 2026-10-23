@@ -831,7 +831,8 @@ window.renderProviderItemsList = function(type) {
         <div style="background:#f9f9f9; border:1px solid #e0e0e0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
           <div>
             <div style="font-size:13px; font-weight:bold; color:#333;">${item.name}</div>
-            <div style="font-size:12px; color:#555;">ధర / అద్దె: <b>${item.rate}</b> &nbsp;|&nbsp; ${item.extra}</div>
+            <div style="font-size:12px; color:#555;">ధర / అద్దె: ${item.rate} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
+
           </div>
           <button onclick="deleteProviderItem(${item.id}, '${type}')" style="background:#ffebee; border:none; color:#c62828; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">తీసివేయి</button>
         </div>
