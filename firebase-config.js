@@ -13,19 +13,22 @@ if (typeof firebase !== 'undefined' && !firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
 
-// 3. Database Instance
-const dbInstance = (typeof firebase !== 'undefined') ? firebase.firestore() : null;
-
-// 4. Global window.db Tamper-Proof & Freeze Lock
-// Deeni valla inspect element/console nunchi evaru db ni overwrite cheyaleru
+// 3 & 4. Global window.db Tamper-Proof & Freeze Lock (Root Fix)
 try {
-  Object.defineProperty(window, 'db', {
-    value: dbInstance,
-    writable: false,      // Evaru window.db = null leda vere database petti marchaleru
-    configurable: false   // Evaru ee property ni delete cheyaleru
-  });
+    Object.defineProperty(window, 'db', {
+        get: function() {
+            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+                return firebase.firestore();
+            }
+            return null;
+        },
+        set: function() {
+            console.warn("⚠️ భద్రత దృష్ట్యా window.db ని మార్చడం నిషేధించబడింది!");
+        },
+        configurable: false
+    });
 } catch (e) {
-  window.db = dbInstance;
+    console.error("Freeze lock init error:", e);
 }
 
 console.log("🔒 Firebase initialized with Tamper-Proof & Freeze Protection!");
