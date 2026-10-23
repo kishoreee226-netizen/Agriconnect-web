@@ -1164,30 +1164,44 @@ window.renderIncomingBookingsForProvider = function(containerId) {
   `;
 };
 
-window.acceptBookingOrder = function(bookingId) {
-  let bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
-  const state = window.AppState;
-  const user = state ? (state.userProfile || state.user) : null;
-  const providerName = (user && user.name) || 'యజమాని';
-  const providerPhone = (user && user.phone) || '';
+window.acceptBookingOrder = async function(bookingId) {
+    if (!bookingId) return;
 
-  const index = bookings.findIndex(b => b.id === bookingId);
-  if (index !== -1) {
-    bookings[index].status = 'ACCEPTED';
-    bookings[index].acceptedBy = `${providerName} (${providerPhone})`;
-    localStorage.setItem('agri_active_bookings', JSON.stringify(bookings));
+    const state = window.AppState;
+    const user = state ? (state.userProfile || state.user) : null;
+    const providerName = (user && user.name) || 'యజమాని';
+    const providerPhone = (user && user.phone) || '';
 
-    const b = bookings[index];
-    const confirmMsg = `✅ *ఆర్డర్ కన్ఫర్మ్ చేయబడింది (AgriConnect):*\n` +
-      `నమస్తే ${b.farmerName} గారు, మీ ${b.vehicleType} బుకింగ్ ను యజమాని *${providerName}* స్వీకరించారు.\n` +
-      `📞 యజమాని ఫోన్: ${providerPhone}\n` +
-      `మీ లొకేషన్ ఆధారంగా బయలుదేరుతున్నాము.`;
+    try {
+        // 1. Firebase Firestore లో ఆర్డర్ స్టేటస్‌ను 'ACCEPTED' గా అప్‌డేట్ చేయడం
+        if (typeof db !== 'undefined' && db.collection) {
+            await db.collection("bookings").doc(bookingId).update({
+                status: 'ACCEPTED',
+                acceptedBy: `${providerName} (${providerPhone})`,
+                acceptedAt: new Date().toISOString()
+            });
+        }
 
-    const waFarmer = `https://wa.me/91${b.farmerPhone}?text=${encodeURIComponent(confirmMsg)}`;
-    window.open(waFarmer, '_blank');
+        // 2. LocalStorage బ్యాకప్ లో కూడా స్టేటస్ అప్‌డేట్ చేయడం
+        let bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
+        const index = bookings.findIndex(b => b.id === bookingId);
+        if (index !== -1) {
+            bookings[index].status = 'ACCEPTED';
+            bookings[index].acceptedBy = `${providerName} (${providerPhone})`;
+            localStorage.setItem('agri_active_bookings', JSON.stringify(bookings));
+        }
 
-    renderIncomingBookingsForProvider('provider-incoming-requests');
-  }
+        alert("ఆర్డర్ విజయవంతంగా స్వీకరించబడింది (Confirmed)!");
+
+        // 3. వాట్సాప్ ఓపెన్ చేయకుండా నేరుగా డాష్‌బోర్డ్ లిస్ట్‌ను రీఫ్రెష్ చేయడం
+        if (typeof renderIncomingBookingsForProvider === 'function') {
+            renderIncomingBookingsForProvider('provider-incoming-requests');
+        }
+
+    } catch (error) {
+        console.error("Booking Accept Error:", error);
+        alert("ఆర్డర్ స్వీకరించడంలో సమస్య వచ్చింది: " + error.message);
+    }
 };
 
 // ===================================================
