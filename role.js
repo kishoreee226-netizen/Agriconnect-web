@@ -857,31 +857,31 @@ window.renderProviderItemsList = async function(type) {
         }
 
         // వస్తువులు ఉంటే స్క్రోల్ అయ్యే లిస్ట్ చూపించడం
-                        container.innerHTML = `
+                                container.innerHTML = `
             <!-- Parikarala Orange Theme Outer Box -->
             <div style="background:#ffffff; border:2px solid #f57c00; border-radius:14px; overflow:hidden; margin-top:16px; box-shadow:0 3px 10px rgba(245, 124, 0, 0.12);">
                 
-                <!-- Fixed Heading with Theme Background (Scroll avvadhu) -->
-                <div style="background:linear-gradient(135deg, #f57c00, #ff9800); padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
-                    <h4 style="font-size:13px; color:#ffffff; margin:0; font-weight:bold; letter-spacing:0.3px;">
-                        🚜 మీరు జోడించిన సేవలు / వస్తువులు (${items.length})
-                    </h4>
-                    <span style="font-size:11px; background:rgba(255,255,255,0.25); color:#ffffff; padding:3px 8px; border-radius:12px; font-weight:600;">
+                <!-- Fixed Heading (Scroll avvadhu) -->
+                <div style="background:linear-gradient(135deg, #f57c00, #ff9800); padding:10px 12px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                    <div style="font-size:13px; color:#ffffff; font-weight:bold; display:flex; align-items:center; gap:4px; flex-shrink:0;">
+                        🚜 మీరు జోడించినవి (${items.length}):
+                    </div>
+                    <span style="font-size:10px; background:rgba(255,255,255,0.25); color:#ffffff; padding:2px 8px; border-radius:12px; font-weight:600; white-space:nowrap;">
                         స్క్రోల్ చేయండి ↕
                     </span>
                 </div>
 
-                <!-- Only Ee Items List Matrame Lopaliki Scroll Avthundi -->
-                <div style="padding:12px; display:flex; flex-direction:column; gap:9px; max-height:230px; overflow-y:auto;">
+                <!-- Items Scroll Container (Padding tho modati item cut avvadhu) -->
+                <div style="padding:10px; display:flex; flex-direction:column; gap:8px; max-height:240px; overflow-y:auto; box-sizing:border-box;">
                     ${items.map(item => `
-                        <div style="background:#fffaf5; border:1px solid #ffe0b2; border-radius:9px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="background:#ffffff; border:1px solid #e0e0e0; border-radius:8px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 2px rgba(0,0,0,0.04);">
                             <div>
                                 <div style="font-size:13px; font-weight:bold; color:#222;">${item.name || item.title || 'పేరు లేదు'}</div>
                                 <div style="font-size:12px; color:#666; margin-top:2px;">
-                                    ధర: <b style="color:#d9531e;">${item.rate || item.price || 'N/A'}</b> | ${item.extra || item.status || 'అందుబాటులో ఉంది'}
+                                    ధర / అద్దె: <b style="color:#d9531e;">${item.rate || item.price || 'N/A'}</b> | ${item.extra || item.status || 'అందుబాటులో ఉంది'}
                                 </div>
                             </div>
-                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 11px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
+                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold; flex-shrink:0; margin-left:8px;">
                                 తీసివేయి
                             </button>
                         </div>
