@@ -613,7 +613,17 @@ window.handleProviderLogin = function(e) {
   const phone = document.getElementById('prov-phone').value.trim();
   const village = document.getElementById('prov-village').value.trim();
 
-  if (!name || !phone || !village) return;
+      if (!name || !phone || !village) {
+        alert("దయచేసి అన్ని వివరాలను నమోదు చేయండి!");
+        return;
+    }
+
+    // 10 Digits Phone Number Validation
+    const cleanPhone = phone.replace(/\D/g, ''); // అంకెలు మాత్రమే తీసుకుంటుంది
+    if (cleanPhone.length !== 10) {
+        alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి!");
+        return;
+    }
 
   const providerUser = {
     name: name,
