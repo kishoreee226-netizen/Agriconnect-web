@@ -821,57 +821,66 @@ window.handleSaveProviderItem = async function(e, type) {
 };
 
 
-window.renderProviderItemList = function(type) {
+window.renderProviderItemList = async function(type) {
     const container = document.getElementById('provider-items-list');
     if (!container) return;
 
-    // 1. Current Login Profile theesukodam
-    const profile = window.AppState?.userProfile || 
-                    JSON.parse(localStorage.getItem('agri_user_profile')) || 
-                    JSON.parse(localStorage.getItem('agri_profile')) || {};
-    const currentUserPhone = String(profile.phone || profile.mobile || '').trim();
+    // లాగిన్ ప్రొఫైల్ నుంచి 10 అంకెల మొబైల్ నంబర్ తీసుకోవడం
+    const profile = window.AppState?.userProfile || JSON.parse(localStorage.getItem('agri_user_profile')) || {};
+    const currentUserPhone = String(profile.phone || '').trim();
+    const currentType = type || profile.providerType || 'equipment';
 
-    // 2. Active Type (type lekapothe profile nundi leda default 'equipment')
-    const currentType = type || profile.providerType || window.AppState?.providerType || 'equipment';
+    container.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; margin:10px 0;">వివరాలు లోడ్ అవుతున్నాయి...</p>`;
 
-    // 3. Items Filter (Direct & Safe)
-    const allItems = JSON.parse(localStorage.getItem('agri_provider_items')) || [];
-    const items = allItems.filter(item => {
-        const itemType = (item.type || item.category || 'equipment').toLowerCase();
-        const targetType = currentType.toLowerCase();
-        const typeMatch = (itemType === targetType);
+    try {
+        let items = [];
 
-        const itemPhone = String(item.phone || '').trim();
-        // Phone unte user phone tho match avvali, lekapothe direct ga chupisthundhi
-        const userMatch = (itemPhone && currentUserPhone) ? (itemPhone === currentUserPhone) : true;
+        // Firestore లోని provider_items కలెక్షన్ నుండి యూజర్ ఫోన్ నంబర్‌తో ఫిల్టర్ చేయడం
+        if (typeof db !== 'undefined' && db.collection) {
+            const snapshot = await db.collection("provider_items")
+                .where("phone", "==", currentUserPhone)
+                .get();
 
-        return typeMatch && userMatch;
-    });
+            snapshot.forEach(doc => {
+                items.push({ id: doc.id, ...doc.data() });
+            });
+        }
 
-    // 4. Items emi lekapothe message chupinchali
-    if (items.length === 0) {
-        container.innerHTML = `
-            <p style="font-size:12px; color:#888; text-align:center; margin:12px 0; background:#f4f4f4; padding:10px; border-radius:6px;">ఇంకా ఏమీ జోడించలేదు.</p>
-        `;
-        return;
-    }
-
-    // 5. Scrollable Cards Container
-    container.innerHTML = `
-        <h4 style="font-size:13px; color:#333; margin:0 0 8px 0;">మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):</h4>
-        <div style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; padding-right:4px;">
-            ${items.map(item => `
-                <div style="background:#f9f9f9; border:1px solid #e0e0e0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
-                    <div>
-                        <div style="font-size:13px; font-weight:bold; color:#333;">${item.name}</div>
-                        <div style="font-size:12px; color:#555;">ధర / అద్దె: ${item.rate} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
-                    </div>
-                    <button onclick="deleteProviderItem(${item.id || `'${item.name}'`}, '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">తీసివేయి</button>
+        // ఒకవేళ ఏ వస్తువులూ లేకపోతే
+        if (items.length === 0) {
+            container.innerHTML = `
+                <div style="background:#f9f9f9; border:1px dashed #ccc; border-radius:8px; padding:12px; text-align:center; color:#777; font-size:12px; margin-top:10px;">
+                    ఈ నంబర్ (${currentUserPhone}) పై ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.
                 </div>
-            `).join('')}
-        </div>
-    `;
+            `;
+            return;
+        }
+
+        // వస్తువులు ఉంటే స్క్రోల్ అయ్యే లిస్ట్ చూపించడం
+        container.innerHTML = `
+            <h4 style="font-size:13px; color:#333; margin:12px 0 8px 0; font-weight:bold;">
+                మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):
+            </h4>
+            <div style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px;">
+                ${items.map(item => `
+                    <div style="background:#fff; border:1px solid #e0e0e0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+                        <div>
+                            <div style="font-size:13px; font-weight:bold; color:#333;">${item.name || item.title || 'పేరు లేదు'}</div>
+                            <div style="font-size:12px; color:#666;">ధర / అద్దె: ${item.rate || item.price || 'N/A'} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
+                        </div>
+                        <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
+                            తీసివేయి
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } catch (err) {
+        console.error("Firestore Error:", err);
+        container.innerHTML = `<p style="font-size:12px; color:red; text-align:center;">డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.</p>`;
+    }
 };
+
 
 window.deleteProviderItem = function(id, type) {
   let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
