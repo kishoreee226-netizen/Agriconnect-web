@@ -772,21 +772,25 @@ window.handleSaveProviderItem = async function(e, type) {
         return;
     }
 
-    const profile = window.AppState?.userProfile || JSON.parse(localStorage.getItem('agri_user_profile') || '{}');
+            const profile = window.AppState?.userProfile || 
+                        JSON.parse(localStorage.getItem('agri_user_profile')) || 
+                        JSON.parse(localStorage.getItem('agri_profile')) || {};
 
-    // 1. Live Data Object
-    const newItem = {
-        name: val1,
-        rate: "₹" + val2 + " / గంట",
-        rawRate: val2,
-        category: type || "equipment",
-        status: val3,
-        owner: profile.name || 'యజమాని',
-        phone: profile.phone || '9876543210',
-        village: profile.village || 'గ్రామం',
-        loc: (profile.village || 'గ్రామం') + ' పరిధి',
-        distanceKm: 2.5
-    };
+        // 1. Live Data Object
+        const newItem = {
+            name: val1,
+            rate: '₹' + val2 + ' / గంట',
+            rawRate: val2,
+            type: type || 'equipment',
+            category: type || 'equipment',
+            status: val3,
+            owner: profile.name || profile.ownerName || profile.userName || 'Kishor',
+            phone: profile.phone || profile.mobile || '1234564890',
+            village: profile.village || 'Warangal',
+            loc: (profile.village || 'Warangal') + ' పరిధి',
+            distanceKm: 2.5
+        };
+
 
     // 2. Central AgriDB ద్వారా Live Firestore లో సేవ్ చేయడం
     if (window.AgriDB) {
