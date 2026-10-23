@@ -627,7 +627,7 @@ window.handleProviderLogin = function(e) {
 
   const providerUser = {
     name: name,
-    phone: phone,
+    phone: cleanphone,
     village: village,
     userType: 'PROVIDER',
     providerType: selectedProviderType,
