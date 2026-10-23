@@ -813,32 +813,46 @@ window.handleSaveProviderItem = async function(e, type) {
 };
 
 
-window.renderProviderItemsList = function(type) {
-  const container = document.getElementById('provider-items-list');
-  if (!container) return;
+window.renderProviderItemList = function(type) {
+    const container = document.getElementById('provider-items-list');
+    if (!container) return;
 
-  const items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]').filter(item => item.type === type);
+    // 1. Current Login Profile theesukodam
+    const profile = window.AppState?.userProfile || 
+                    JSON.parse(localStorage.getItem('agri_user_profile')) || 
+                    JSON.parse(localStorage.getItem('agri_profile')) || {};
+    const currentUserPhone = profile.phone || profile.mobile;
 
-  if (items.length === 0) {
-    container.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; margin:8px 0;">ఇంకా ఏవీ జోడించబడలేదు.</p>`;
-    return;
-  }
+    // 2. Type mariyu Login User Phone tho filter cheyadam
+    const allItems = JSON.parse(localStorage.getItem('agri_provider_items')) || [];
+    const items = allItems.filter(item => {
+        const typeMatch = (item.type === type || item.category === type);
+        const userMatch = currentUserPhone ? (item.phone === currentUserPhone) : true;
+        return typeMatch && userMatch;
+    });
 
-  container.innerHTML = `
-    <h4 style="font-size:13px; color:#333; margin:0 0 8px 0;">మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):</h4>
-    <div style="display:flex; flex-direction:column; gap:8px;">
-      ${items.map(item => `
-        <div style="background:#f9f9f9; border:1px solid #e0e0e0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div style="font-size:13px; font-weight:bold; color:#333;">${item.name}</div>
-            <div style="font-size:12px; color:#555;">ధర / అద్దె: ${item.rate} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
+    if (items.length === 0) {
+        container.innerHTML = `
+            <p style="font-size:12px; color:#888; text-align:center; margin:8px 0;">ఇంకా ఏమీ జోడించలేదు.</p>
+        `;
+        return;
+    }
 
-          </div>
-          <button onclick="deleteProviderItem(${item.id}, '${type}')" style="background:#ffebee; border:none; color:#c62828; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">తీసివేయి</button>
+    // 3. Scrolling container (max-height & overflow-y)
+    container.innerHTML = `
+        <h4 style="font-size:13px; color:#333; margin:0 0 8px 0;">మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):</h4>
+        <div style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; padding-right:4px;">
+            ${items.map(item => `
+                <div style="background:#f9f9f9; border:1px solid #e0e0e0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:13px; font-weight:bold; color:#333;">${item.name}</div>
+                        <div style="font-size:12px; color:#555;">ధర / అద్దె: ${item.rate} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
+                    </div>
+                    <button onclick="deleteProviderItem(${item.id || `'${item.name}'`}, '${type}')" style="background:#ffebee; border:none; color:#c62828; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">తీసివేయి</button>
+                </div>
+            `).join('')}
         </div>
-      `).join('')}
-    </div>
-  `;
+    `;
 };
 
 window.deleteProviderItem = function(id, type) {
