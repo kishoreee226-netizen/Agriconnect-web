@@ -829,31 +829,34 @@ window.renderProviderItemList = function(type) {
     const profile = window.AppState?.userProfile || 
                     JSON.parse(localStorage.getItem('agri_user_profile')) || 
                     JSON.parse(localStorage.getItem('agri_profile')) || {};
-    const currentUserPhone = profile.phone || profile.mobile;
+    const currentUserPhone = String(profile.phone || profile.mobile || '').trim();
 
-        // 2. Type mariyu Login User Phone tho filter cheyadam
+    // 2. Active Type (type lekapothe profile nundi leda default 'equipment')
+    const currentType = type || profile.providerType || window.AppState?.providerType || 'equipment';
+
+    // 3. Items Filter (Direct & Safe)
     const allItems = JSON.parse(localStorage.getItem('agri_provider_items')) || [];
     const items = allItems.filter(item => {
-        // type pass avvakapothe default ga 'equipment' theesukuntundhi
-        const currentType = type || 'equipment';
-        const typeMatch = (item.type === currentType || item.category === currentType);
-        
-        // Strict phone check (rendu unte match avvali, lekapothe direct ga allow chesthundhi)
+        const itemType = (item.type || item.category || 'equipment').toLowerCase();
+        const targetType = currentType.toLowerCase();
+        const typeMatch = (itemType === targetType);
+
         const itemPhone = String(item.phone || '').trim();
-        const userPhone = String(currentUserPhone || '').trim();
-        const userMatch = (itemPhone && userPhone) ? (itemPhone === userPhone) : true;
-        
+        // Phone unte user phone tho match avvali, lekapothe direct ga chupisthundhi
+        const userMatch = (itemPhone && currentUserPhone) ? (itemPhone === currentUserPhone) : true;
+
         return typeMatch && userMatch;
     });
 
+    // 4. Items emi lekapothe message chupinchali
     if (items.length === 0) {
         container.innerHTML = `
-            <p style="font-size:12px; color:#888; text-align:center; margin:8px 0;">ఇంకా ఏమీ జోడించలేదు.</p>
+            <p style="font-size:12px; color:#888; text-align:center; margin:12px 0; background:#f4f4f4; padding:10px; border-radius:6px;">ఇంకా ఏమీ జోడించలేదు.</p>
         `;
         return;
     }
 
-    // 3. Scrolling container (max-height & overflow-y)
+    // 5. Scrollable Cards Container
     container.innerHTML = `
         <h4 style="font-size:13px; color:#333; margin:0 0 8px 0;">మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):</h4>
         <div style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; padding-right:4px;">
@@ -863,7 +866,7 @@ window.renderProviderItemList = function(type) {
                         <div style="font-size:13px; font-weight:bold; color:#333;">${item.name}</div>
                         <div style="font-size:12px; color:#555;">ధర / అద్దె: ${item.rate} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
                     </div>
-                    <button onclick="deleteProviderItem(${item.id || `'${item.name}'`}, '${type}')" style="background:#ffebee; border:none; color:#c62828; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">తీసివేయి</button>
+                    <button onclick="deleteProviderItem(${item.id || `'${item.name}'`}, '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:5px 8px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">తీసివేయి</button>
                 </div>
             `).join('')}
         </div>
