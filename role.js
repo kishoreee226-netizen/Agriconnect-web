@@ -857,29 +857,31 @@ window.renderProviderItemsList = async function(type) {
         }
 
         // వస్తువులు ఉంటే స్క్రోల్ అయ్యే లిస్ట్ చూపించడం
-                container.innerHTML = `
-            <!-- Outer Box: Heading fixed ga untundi -->
-            <div style="background:#ffffff; border:1.5px solid #e2e8f0; border-radius:12px; padding:12px; margin-top:15px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                        container.innerHTML = `
+            <!-- Parikarala Orange Theme Outer Box -->
+            <div style="background:#ffffff; border:2px solid #f57c00; border-radius:14px; overflow:hidden; margin-top:16px; box-shadow:0 3px 10px rgba(245, 124, 0, 0.12);">
                 
-                <!-- Fixed Heading (Scroll avvadhu) -->
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #edf2f7; padding-bottom:8px;">
-                    <h4 style="font-size:13px; color:#1e293b; margin:0; font-weight:bold;">
-                        మీరు జోడించిన సేవలు / వస్తువులు (${items.length}):
+                <!-- Fixed Heading with Theme Background (Scroll avvadhu) -->
+                <div style="background:linear-gradient(135deg, #f57c00, #ff9800); padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                    <h4 style="font-size:13px; color:#ffffff; margin:0; font-weight:bold; letter-spacing:0.3px;">
+                        🚜 మీరు జోడించిన సేవలు / వస్తువులు (${items.length})
                     </h4>
-                    <span style="font-size:11px; color:#64748b; font-weight:500;">
+                    <span style="font-size:11px; background:rgba(255,255,255,0.25); color:#ffffff; padding:3px 8px; border-radius:12px; font-weight:600;">
                         స్క్రోల్ చేయండి ↕
                     </span>
                 </div>
 
-                <!-- Only Ee Items List Matrame Scroll Avthundi -->
-                <div style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto; padding-right:4px;">
+                <!-- Only Ee Items List Matrame Lopaliki Scroll Avthundi -->
+                <div style="padding:12px; display:flex; flex-direction:column; gap:9px; max-height:230px; overflow-y:auto;">
                     ${items.map(item => `
-                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+                        <div style="background:#fffaf5; border:1px solid #ffe0b2; border-radius:9px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
                             <div>
-                                <div style="font-size:13px; font-weight:bold; color:#0f172a;">${item.name || item.title || 'పేరు లేదు'}</div>
-                                <div style="font-size:12px; color:#64748b;">ధర / అద్దె: ${item.rate || item.price || 'N/A'} | ${item.extra || item.status || 'అందుబాటులో ఉంది'}</div>
+                                <div style="font-size:13px; font-weight:bold; color:#222;">${item.name || item.title || 'పేరు లేదు'}</div>
+                                <div style="font-size:12px; color:#666; margin-top:2px;">
+                                    ధర: <b style="color:#d9531e;">${item.rate || item.price || 'N/A'}</b> | ${item.extra || item.status || 'అందుబాటులో ఉంది'}
+                                </div>
                             </div>
-                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 10px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
+                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#ffebee; border:none; color:#c62828; padding:6px 11px; border-radius:6px; font-size:11px; cursor:pointer; font-weight:bold;">
                                 తీసివేయి
                             </button>
                         </div>
@@ -888,6 +890,7 @@ window.renderProviderItemsList = async function(type) {
 
             </div>
         `;
+
 
     } catch (err) {
         console.error("Firestore Error:", err);
