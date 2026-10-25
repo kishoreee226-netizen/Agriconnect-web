@@ -19,6 +19,144 @@ window.switchFarmerTab = function(tab) {
     window.renderTransportWidget('farmer-pane-transport');
   }
 };
+// 2. Category Live Fetchers for Farmer Dashboard
+
+// --- A. పరికరాలు (Equipment) Widget ---
+window.renderEquipmentWidget = function(containerId) {
+    const box = document.getElementById(containerId || 'farmer-pane-equipment');
+    if (!box) return;
+
+    box.innerHTML = `<p style="font-size:12px; color:#16a34a; text-align:center; padding:12px;">🔄 పరికరాల వివరాలు లోడ్ అవుతున్నాయి...</p>`;
+
+    if (!window.db) {
+        box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:12px;">డేటాబేస్ అందుబాటులో లేదు.</p>`;
+        return;
+    }
+
+    // Equipment live listener
+    window.db.collection("services")
+        .where("category", "in", ["equipment", "machinery", "పరికరాలు"])
+        .onSnapshot((snapshot) => {
+            if (snapshot.empty) {
+                // ఒకవేళ category ఫీల్డ్ లేని పాత రికార్డులు ఉంటే fallback
+                window.db.collection("services").limit(10).get().then(snap => {
+                    renderEquipmentList(box, snap);
+                });
+                return;
+            }
+            renderEquipmentList(box, snapshot);
+        }, (err) => {
+            console.error("Equipment error:", err);
+            box.innerHTML = `<p style="font-size:12px; color:#e11d48; text-align:center; padding:12px;">పరికరాలు లోడ్ చేయడంలో సమస్య వచ్చింది.</p>`;
+        });
+};
+
+function renderEquipmentList(box, snapshot) {
+    if (snapshot.empty) {
+        box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:15px;">ప్రస్తుతం అందుబాటులో ఉన్న పరికరాలు లేవు.</p>`;
+        return;
+    }
+
+    let html = `<div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">`;
+    snapshot.forEach(doc => {
+        const item = doc.data();
+        html += `
+            <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-size:14px; font-weight:700; color:#1f2937;">🚜 ${item.name || item.vehicleType || 'పరికరము'}</div>
+                    <span style="font-size:11px; font-weight:700; color:#15803d; background:#dcfce7; padding:2px 8px; border-radius:12px;">అందుబాటులో ఉంది</span>
+                </div>
+                <div style="font-size:12px; color:#4b5563; margin:6px 0;">
+                    ధర / అద్దె: <b>₹${item.price || item.rate || '0'} / గంట</b><br>
+                    యజమాని: <b>${item.ownerName || item.providerName || 'యజమాని'}</b> | ఊరు: <b>${item.village || '-'}</b>
+                </div>
+                <div style="display:flex; gap:6px; margin-top:8px;">
+                    <a href="tel:${item.phone || item.ownerPhone || ''}" style="flex:1; text-align:center; background:#15803d; color:#fff; text-decoration:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold;">📞 కాల్ చేయండి</a>
+                </div>
+            </div>
+        `;
+    });
+    html += `</div>`;
+    box.innerHTML = html;
+}
+
+// --- B. విత్తనాలు & ఎరువులు (Seeds) Widget ---
+window.renderSeedsWidget = function(containerId) {
+    const box = document.getElementById(containerId || 'farmer-pane-seeds');
+    if (!box) return;
+
+    box.innerHTML = `<p style="font-size:12px; color:#16a34a; text-align:center; padding:12px;">🔄 విత్తనాల సమాచారం లోడ్ అవుతోంది...</p>`;
+
+    if (!window.db) {
+        box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:12px;">డేటాబేస్ అందుబాటులో లేదు.</p>`;
+        return;
+    }
+
+    window.db.collection("seeds")
+        .onSnapshot((snapshot) => {
+            if (snapshot.empty) {
+                box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:15px;">ప్రస్తుతం కొత్త విత్తనాల స్టాక్ అందుబాటులో లేదు.</p>`;
+                return;
+            }
+            let html = `<div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">`;
+            snapshot.forEach(doc => {
+                const s = doc.data();
+                html += `
+                    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                        <div style="font-size:14px; font-weight:700; color:#1f2937;">🌱 ${s.seedName || s.name || 'విత్తనాలు'}</div>
+                        <div style="font-size:12px; color:#4b5563; margin:4px 0;">రకం: <b>${s.variety || '-'}</b> | ధర: <b>₹${s.price || '0'}</b></div>
+                        <div style="font-size:12px; color:#6b7280;">డీలర్: ${s.dealerName || '-'}, ఫోన్: ${s.phone || '-'}</div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            box.innerHTML = html;
+        }, () => {
+            box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:12px;">విత్తనాల సమాచారం లేదు.</p>`;
+        });
+};
+
+// --- C. రవాణా (Transport) Widget ---
+window.renderTransportWidget = function(containerId) {
+    const box = document.getElementById(containerId || 'farmer-pane-transport');
+    if (!box) return;
+
+    box.innerHTML = `<p style="font-size:12px; color:#16a34a; text-align:center; padding:12px;">🔄 రవాణా వాహనాల వివరాలు లోడ్ అవుతున్నాయి...</p>`;
+
+    if (!window.db) {
+        box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:12px;">డేటాబేస్ అందుబాటులో లేదు.</p>`;
+        return;
+    }
+
+    window.db.collection("transport")
+        .onSnapshot((snapshot) => {
+            if (snapshot.empty) {
+                box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:15px;">ప్రస్తుతం అందుబాటులో ఉన్న రవాణా వాహనాలు లేవు.</p>`;
+                return;
+            }
+            let html = `<div style="display:flex; flex-direction:column; gap:10px; margin-top:8px;">`;
+            snapshot.forEach(doc => {
+                const t = doc.data();
+                html += `
+                    <div style="background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div style="font-size:14px; font-weight:700; color:#1f2937;">🚚 ${t.vehicleType || 'వాహనం'}</div>
+                            <span style="font-size:11px; font-weight:700; color:#0284c7; background:#e0f2fe; padding:2px 8px; border-radius:12px;">రవాణా</span>
+                        </div>
+                        <div style="font-size:12px; color:#4b5563; margin:6px 0;">
+                            కెపాసిటీ: <b>${t.capacity || '-'}</b> | ఛార్జ్: <b>₹${t.fare || '-'}</b><br>
+                            డ్రైవర్: <b>${t.driverName || '-'}</b> | ఊరు: <b>${t.village || '-'}</b>
+                        </div>
+                        <a href="tel:${t.phone || ''}" style="display:block; text-align:center; background:#0284c7; color:#fff; text-decoration:none; padding:6px; border-radius:6px; font-size:11px; font-weight:bold; margin-top:8px;">📞 డ్రైవర్‌కు కాల్</a>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            box.innerHTML = html;
+        }, () => {
+            box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; padding:12px;">రవాణా వివరాలు లేవు.</p>`;
+        });
+};
 
 // 2. Helper: Labour Form HTML (పని పోస్ట్ చేసే ఫారమ్)
 function getLabourFormHTML() {
