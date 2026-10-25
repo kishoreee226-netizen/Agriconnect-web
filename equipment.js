@@ -1,20 +1,52 @@
-// Equipment Dummy Data with Distance & Village Coordinates
-const equipmentList = [
-  { id: "eq1", name: "ట్రాక్టర్ (Mahindra 575)", owner: "రామయ్య", rate: "₹800 / గంట", phone: "9876543210", loc: "గ్రామం సమీపం", distanceKm: 1.5, village: "same" },
-  { id: "eq2", name: "వరి కోత మిషన్ (Harvester)", owner: "వెంకటేష్", rate: "₹2,200 / గంట", phone: "9876543211", loc: "4.5 కి.మీ పరిధి", distanceKm: 4.5, village: "near" },
-  { id: "eq3", name: "డ్రోన్ స్ప్రేయర్ (పురుగు మందులు)", owner: "కిరణ్ అగ్రిటెక్", rate: "₹450 / ఎకరా", phone: "9876543212", loc: "8 కి.మీ పరిధి", distanceKm: 8.0, village: "near" },
-  { id: "eq4", name: "రోటావేటర్ (Rotavator)", owner: "శ్రీనివాస్", rate: "₹900 / గంట", phone: "9876543214", loc: "12 కి.మీ పరిధి", distanceKm: 12.0, village: "far" }
-];
-
-// గ్లోబల్ ఫిల్టర్ స్టేట్
+// Central DB నుండి డేటా తీసుకునే గ్లోబల్ లిస్ట్
+let equipmentList = [];
+let isEquipmentListening = false;
 let activeEquipmentFilter = "all";
+
+function startCentralEquipmentSync() {
+  if (isEquipmentListening) return;
+
+  // firebase-db.js లోని సెంట్రల్ లిజనర్‌ను కాల్ చేయడం
+  if (window.AgriDB && typeof window.AgriDB.listenToProviderItems === 'function') {
+    isEquipmentListening = true;
+    window.AgriDB.listenToProviderItems((items) => {
+      equipmentList = items.map(item => ({
+        id: item.docId || item.id,
+        name: item.vehicleType || item.name || "పరికరము",
+        owner: item.ownerName || item.owner || "యజమాని",
+        rate: item.price ? `₹${item.price} / గంట` : (item.rate || "ధర లేదు"),
+        phone: item.ownerPhone || item.phone || "",
+        loc: item.village || item.loc || "గ్రామం",
+        distanceKm: item.distanceKm || 1.0,
+        village: item.villageMatch || "same",
+        category: item.category || "equipment",
+        ...item
+      }));
+
+      // స్క్రీన్ రీ-రెండర్
+      if (typeof window.renderEquipmentWidget === 'function') {
+        window.renderEquipmentWidget("farmer-pane-equipment");
+      }
+    });
+  }
+}
 
 window.renderEquipmentWidget = function(targetContainerId = "farmer-pane-equipment") {
   const container = document.getElementById(targetContainerId);
   if (!container) return;
 
-  // ఎంచుకున్న ఫిల్టర్ ప్రకారం లిస్ట్ ఫిల్టర్ చేయడం
+  // మొదటిసారి కాల్ అయినప్పుడు సెంట్రల్ లిజనర్ స్టార్ట్ అవుతుంది
+  if (!isEquipmentListening) {
+    startCentralEquipmentSync();
+  }
+
+  // ఫిల్టర్ లాజిక్ (కేటగిరీ 'equipment' మరియు దూరం ఆధారంగా)
   const filteredList = equipmentList.filter(eq => {
+    // కేటగిరీ పరికరాలు అయ్యుండాలి (ఒకవేళ category ఫీల్డ్ లేకపోతే అన్నీ చూపిస్తుంది)
+    if (eq.category && eq.category !== "equipment" && eq.category !== "machinery") {
+      return false;
+    }
+
     if (activeEquipmentFilter === "village") {
       return eq.village === "same" || eq.distanceKm <= 2;
     } else if (activeEquipmentFilter === "5") {
@@ -22,7 +54,7 @@ window.renderEquipmentWidget = function(targetContainerId = "farmer-pane-equipme
     } else if (activeEquipmentFilter === "10") {
       return eq.distanceKm <= 10;
     }
-    return true; // 'all' అయితే అన్నీ చూపిస్తుంది
+    return true;
   });
 
   container.innerHTML = `
