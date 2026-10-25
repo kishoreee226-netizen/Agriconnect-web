@@ -1,18 +1,59 @@
-// transport.js - Ravanaa (Vehicles & Auto/Trolley/Lorry) Widget with Distance & Radius Filter
+// transport.js - Ravanaa (Vehicles & Auto/Trolley/Lorry) Widget with Central AgriDB Live Sync
 
-const transportList = [
-  { id: "tr1", name: "ట్రాక్టర్ ట్రాలీ (ధాన్యం రవాణా)", driver: "శంకర్", rate: "₹1,200 / ట్రిప్పు", phone: "9876543221", loc: "మార్కెట్ యార్డ్ రూట్", distanceKm: 2.0, village: "same" },
-  { id: "tr2", name: "Tata Ace (Chota Hathi)", driver: "రమేష్", rate: "₹18 / కి.మీ", phone: "9876543220", loc: "మండలం పరిధి", distanceKm: 4.0, village: "near" },
-  { id: "tr3", name: "బోలెరో పికప్ (Bolero Pickup)", driver: "సురేష్", rate: "₹22 / కి.మీ", phone: "9876543223", loc: "8 కి.మీ పరిధి", distanceKm: 8.0, village: "near" },
-  { id: "tr4", name: "10-టైర్ లారీ (భారీ సరుకు)", driver: "బాలాజీ ట్రాన్స్‌పోర్ట్", rate: "దూరాన్ని బట్టి రేటు", phone: "9876543222", loc: "రాష్ట్రవ్యాప్తంగా", distanceKm: 18.0, village: "far" }
-];
+// Central AgriDB నుండి వచ్చే లైవ్ వాహనాల లిస్ట్
+let transportList = [];
+let isTransportListening = false;
 
 // గ్లోబల్ ట్రాన్స్‌పోర్ట్ ఫిల్టర్ స్టేట్
 let activeTransportFilter = "all";
 
+// Central AgriDB / Firestore లైవ్ లిజనర్
+function startCentralTransportSync() {
+  if (isTransportListening) return;
+
+  if (window.AgriDB && typeof window.AgriDB.listenToServices === 'function') {
+    isTransportListening = true;
+    window.AgriDB.listenToServices("transport", (items) => {
+      formatAndSetTransport(items);
+    });
+  } else if (window.db) {
+    isTransportListening = true;
+    window.db.collection("transport").onSnapshot((snapshot) => {
+      const items = [];
+      snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+      formatAndSetTransport(items);
+    }, (err) => {
+      console.error("Transport live sync error:", err);
+    });
+  }
+}
+
+function formatAndSetTransport(rawItems) {
+  transportList = rawItems.map(tr => ({
+    id: tr.docId || tr.id,
+    name: tr.vehicleType || tr.name || "రవాణా వాహనం",
+    driver: tr.driverName || tr.driver || tr.ownerName || "డ్రైవర్",
+    rate: tr.rate || (tr.price ? `₹${tr.price}` : "రేటు అందుబాటులో లేదు"),
+    phone: tr.phone || tr.driverPhone || "",
+    loc: tr.village || tr.loc || "గ్రామం",
+    distanceKm: Number(tr.distanceKm || 2.0),
+    village: tr.villageMatch || "same",
+    ...tr
+  }));
+
+  if (typeof window.renderTransportWidget === 'function') {
+    window.renderTransportWidget("farmer-pane-transport");
+  }
+}
+
 window.renderTransportWidget = function(targetContainerId = "farmer-pane-transport") {
   const container = document.getElementById(targetContainerId);
   if (!container) return;
+
+  // మొదటిసారి విడ్జెట్ తెరిచినప్పుడు లైవ్ లిజనర్ ఆన్ అవుతుంది
+  if (!isTransportListening) {
+    startCentralTransportSync();
+  }
 
   // ఫిల్టర్ ఆధారంగా వాహనాల జాబితా ఎంపిక
   const filteredList = transportList.filter(tr => {
