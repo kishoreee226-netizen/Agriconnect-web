@@ -614,43 +614,26 @@ window.handleProviderLogin = function(e) {
   const phone = document.getElementById('prov-phone')?.value.trim() || "";
   const village = document.getElementById('prov-village')?.value.trim() || "";
 
-  if (!name || !phone || !village) {
-    alert("దయచేసి అన్ని వివరాలను నమోదు చేయండి!");
-    return;
-  }
-
-  // 10 అంకెల మొబైల్ నంబర్ ధృవీకరణ
+  // 10 digits strict check
   if (!/^[0-9]{10}$/.test(phone)) {
-    alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి!");
+    alert("Dayachesi saraina 10 ankela mobile number namodu cheyandi!");
     return;
   }
 
-  const providerUser = {
-    name: name,
-    phone: phone,
-    village: village,
-    roleType: 'PROVIDER',
-    userType: 'PROVIDER',
-    providerType: selectedProviderType,
-    isLoggedIn: true
-  };
-
-  // 1. సెంట్రల్ AppState & LocalStorage అప్‌డేట్
-  if (window.AppState) {
-    window.AppState.userProfile = providerUser;
-    window.AppState.userType = 'PROVIDER';
-    window.AppState.providerType = selectedProviderType;
-    window.AppState.isLoggedIn = true;
-    window.AppState.currentRole = 'PROVIDER';
+  // auth.js register helper call
+  if (typeof window.registerUniversalUser === 'function') {
+    const isSuccess = window.registerUniversalUser({
+      name: name,
+      phone: phone,
+      village: village,
+      roleType: 'PROVIDER'
+    });
+    if (!isSuccess) return;
   }
 
-  try {
-    localStorage.setItem('agri_user_profile', JSON.stringify(providerUser));
-  } catch (err) {}
-
-  // 2. సెంట్రల్ AgriDB క్లౌడ్ ప్రొఫైల్ సింక్ (Cloud Database Save)
-  if (window.AgriDB && typeof window.AgriDB.saveUser === 'function') {
-    window.AgriDB.saveUser(providerUser);
+  // Provider specific properties update
+  if (window.AppState) {
+    window.AppState.providerType = selectedProviderType;
   }
 
   closeProviderModal();
