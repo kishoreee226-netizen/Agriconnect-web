@@ -77,9 +77,10 @@ window.registerUniversalUser = function(profileData) {
   window.AppState.currentRole = (profile.roleType === 'LABOUR_ONLY') ? 'LABOUR' : profile.roleType;
   window.AppState.userProfile = profile;
 
-  // Local Storage Save
+    // Local Storage Save
   try {
-    localStorage.setItem("agri_user_profile", JSON.stringify(profile));
+    localStorage.setItem('agri_user_profile', JSON.stringify(profile));
+    localStorage.setItem('agri_last_user', JSON.stringify(profile));
   } catch (e) {}
 
   // Central Cloud Sync (AgriDB -> Firestore)
