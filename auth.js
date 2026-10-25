@@ -154,6 +154,15 @@ window.logoutUser = function() {
   window.AppState.isLoggedIn = false;
   window.AppState.userProfile = null;
   window.AppState.currentRole = null;
+  
+  // కేవలం యాక్టివ్ స్టేటస్ తీసేస్తుంది, ఫాస్ట్ పిన్ లాగిన్ కోసం లాస్ట్ యూజర్ డేటా సేవ్ అయి ఉంటుంది
+  try {
+    const saved = localStorage.getItem("agri_user_profile");
+    if (saved) {
+      localStorage.setItem("agri_last_user", saved);
+    }
+  } catch (e) {}
+  
   localStorage.removeItem("agri_user_profile");
   location.reload();
 };
