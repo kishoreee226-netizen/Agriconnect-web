@@ -535,8 +535,8 @@ window.submitDirectPinLogin = async function(roleType) {
   }
 
   let savedPhone = "";
-  try {
-    const saved = localStorage.getItem("agri_user_profile");
+    try {
+    const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
     if (saved) savedPhone = JSON.parse(saved).phone;
   } catch (e) {}
 
