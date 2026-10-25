@@ -177,7 +177,22 @@ window.AgriDB = {
     }, error => {
       console.error("Bookings sync error:", error);
     });
-  }
+  },
+// 6. Labour Jobs Live Sync
+listenToLabourJobs(callback) {
+  if (!window.db) return;
+  return window.db.collection("farmer_posted_jobs")
+    .onSnapshot(snapshot => {
+      const list = [];
+      snapshot.forEach(doc => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      callback(list);
+    }, error => {
+      console.error("Labour jobs sync error:", error);
+    });
+}
+
 };
 
 // Freeze AgriDB to prevent tampering from console
