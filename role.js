@@ -478,41 +478,42 @@ window.closeLoginModal = function() {
 };
 
 window.submitUserRegistration = function(roleType) {
-  const name = document.getElementById("reg-name")?.value.trim();
-  const phone = document.getElementById("reg-phone")?.value.trim();
-  const village = document.getElementById("reg-village")?.value.trim();
+  const name = document.getElementById("reg-name")?.value || "";
+  const phone = document.getElementById("reg-phone")?.value || "";
+  const village = document.getElementById("reg-village")?.value || "";
 
-  if (!name) {
-    alert("దయచేసి మీ పేరు నమోదు చేయండి.");
-    return;
+  // 1. Central auth.js ఇంజిన్ ద్వారా యూజర్ రిజిస్ట్రేషన్ & క్లౌడ్ సేవ్
+  if (typeof window.registerUniversalUser === 'function') {
+    const isSuccess = window.registerUniversalUser({ name, phone, village, roleType });
+    if (!isSuccess) return;
+  } else {
+    // auth.js లోడ్ కాకపోతే ఫాల్‌బ్యాక్ సేవ్
+    if (!name.trim()) return alert("దయచేసి మీ పేరు నమోదు చేయండి.");
+    if (!phone || phone.trim().length !== 10) return alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
+    if (!village.trim()) return alert("దయచేసి మీ గ్రామం పేరు నమోదు చేయండి.");
+
+    const profile = { name: name.trim(), phone: phone.trim(), village: village.trim(), roleType };
+    window.AppState.isLoggedIn = true;
+    window.AppState.userType = roleType;
+    window.AppState.currentRole = (roleType === 'LABOUR_ONLY') ? 'LABOUR' : 'FARMER';
+    window.AppState.userProfile = profile;
+    try {
+      localStorage.setItem("agri_user_profile", JSON.stringify(profile));
+    } catch (e) {}
   }
-  if (!phone || phone.length < 10) {
-    alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
-    return;
-  }
-  if (!village) {
-    alert("దయచేసి మీ గ్రామం పేరు నమోదు చేయండి.");
-    return;
-  }
 
-  const profile = { name, phone, village, roleType };
-  window.AppState.isLoggedIn = true;
-  window.AppState.userType = roleType;
-  window.AppState.currentRole = (roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
-  window.AppState.userProfile = profile;
-
-  try {
-    localStorage.setItem("agri_user_profile", JSON.stringify(profile));
-  } catch (e) {}
-
+  // 2. మోడల్ క్లోజ్ చేసి వ్యూ ని అప్‌డేట్ చేయడం
   closeLoginModal();
-  applyUserRoleView();
+  if (typeof applyUserRoleView === 'function') {
+    applyUserRoleView();
+  }
 
-  if (typeof speakTeluguText === "function") {
-    if (roleType === "LABOUR_ONLY") {
-      speakTeluguText(`${name} గారు, కూలీ ఖాతాలోకి స్వాగతం. మీ గ్రామం ${village} మరియు చుట్టుపక్కల 5 నుండి 10 కిలోమీటర్ల పరిధిలోని పనుల వివరాలు ఇక్కడ ఉన్నాయి.`);
+  // 3. స్వాగత వాయిస్ ప్రకటన
+  if (typeof speakTeluguText === 'function') {
+    if (roleType === 'LABOUR_ONLY') {
+      speakTeluguText(`${name} గారు, కూలీ ఖాతాలోకి స్వాగతం.`);
     } else {
-      speakTeluguText(`${name} గారు, రైతు ఖాతాలోకి స్వాగతం. మీ వివరాలు నమోదు చేయబడ్డాయి. పంట, కూలీల సంఖ్య, తేదీ వివరాలతో పనిని సులభంగా పోస్ట్ చేయవచ్చు.`);
+      speakTeluguText(`${name} గారు, రైతు ఖాతాలోకి స్వాగతం.`);
     }
   }
 };
