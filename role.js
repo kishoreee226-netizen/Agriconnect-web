@@ -591,9 +591,11 @@ window.submitUserRegistration = function(roleType) {
     window.AppState.userType = roleType;
     window.AppState.currentRole = (roleType === 'LABOUR_ONLY') ? 'LABOUR' : 'FARMER';
     window.AppState.userProfile = profile;
-    try {
+        try {
       localStorage.setItem("agri_user_profile", JSON.stringify(profile));
+      localStorage.setItem("agri_last_user", JSON.stringify(profile));
     } catch (e) {}
+
   }
 
   // 2. మోడల్ క్లోజ్ చేసి వ్యూ ని అప్‌డేట్ చేయడం
