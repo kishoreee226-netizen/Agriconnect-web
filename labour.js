@@ -60,11 +60,21 @@ window.toggleLabourDutyStatus = function() {
   renderLabourWidget();
 };
 
-// 3. Real-time Firebase Listener
+// 3. Real-time Central AgriDB Listener
 function initJobsListener() {
   if (isJobsListenerActive) return;
 
-  if (window.db) {
+  // 1. సెంట్రల్ AgriDB ద్వారా సింక్ చేయడం
+  if (window.AgriDB && typeof window.AgriDB.listenToLabourJobs === 'function') {
+    isJobsListenerActive = true;
+    window.AgriDB.listenToLabourJobs((list) => {
+      postedFarmerJobs = list;
+      localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
+      renderLabourWidget();
+    });
+  } 
+  // 2. ఒకవేళ AgriDB లోడ్ అవ్వకపోతే డైరెక్ట్ ఫైర్‌స్టోర్ ఫాల్‌బ్యాక్
+  else if (window.db) {
     isJobsListenerActive = true;
     window.db.collection("farmer_posted_jobs").onSnapshot(snapshot => {
       const list = [];
@@ -75,12 +85,14 @@ function initJobsListener() {
       localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
       renderLabourWidget();
     });
-  } else {
+  } 
+  // 3. ఆఫ్‌లైన్ లోకల్ స్టోరేజ్
+  else {
     try {
       const stored = localStorage.getItem("agri_farmer_posted_jobs");
       postedFarmerJobs = stored ? JSON.parse(stored) : [];
+      renderLabourWidget();
     } catch (e) {}
-    renderLabourWidget();
   }
 }
 
