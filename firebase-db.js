@@ -192,7 +192,6 @@ listenToLabourJobs(callback) {
       console.error("Labour jobs sync error:", error);
     });
 }
-
 };
 
 // Freeze AgriDB to prevent tampering from console
