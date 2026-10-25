@@ -609,36 +609,48 @@ window.selectProviderTab = function(type) {
 };
 
 window.handleProviderLogin = function(e) {
-    if (e && e.preventDefault) e.preventDefault();
-    const name = document.getElementById('prov-name').value.trim();
-    const phone = document.getElementById('prov-phone').value.trim();
-    const village = document.getElementById('prov-village').value.trim();
+  if (e && e.preventDefault) e.preventDefault();
+  const name = document.getElementById('prov-name')?.value.trim() || "";
+  const phone = document.getElementById('prov-phone')?.value.trim() || "";
+  const village = document.getElementById('prov-village')?.value.trim() || "";
 
-    if (!name || !phone || !village) {
-        alert("దయచేసి అన్ని వివరాలను నమోదు చేయండి!");
-        return;
-    }
+  if (!name || !phone || !village) {
+    alert("దయచేసి అన్ని వివరాలను నమోదు చేయండి!");
+    return;
+  }
 
-    // Direct Strict 10 Digits Check (Spaces unna, 10 kante theda unna block chesthundhi)
-    if (!/^[0-9]{10}$/.test(phone)) {
-        alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి!");
-        return;
-    }
+  // 10 అంకెల మొబైల్ నంబర్ ధృవీకరణ
+  if (!/^[0-9]{10}$/.test(phone)) {
+    alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్‌ను నమోదు చేయండి!");
+    return;
+  }
 
-    const providerUser = {
-        name: name,
-        phone: phone,
-        village: village,
-        userType: 'PROVIDER',
-        providerType: selectedProviderType,
-        isLoggedIn: true
-    };
-  localStorage.setItem('agri_user_profile', JSON.stringify(providerUser));
+  const providerUser = {
+    name: name,
+    phone: phone,
+    village: village,
+    roleType: 'PROVIDER',
+    userType: 'PROVIDER',
+    providerType: selectedProviderType,
+    isLoggedIn: true
+  };
+
+  // 1. సెంట్రల్ AppState & LocalStorage అప్‌డేట్
   if (window.AppState) {
     window.AppState.userProfile = providerUser;
     window.AppState.userType = 'PROVIDER';
     window.AppState.providerType = selectedProviderType;
     window.AppState.isLoggedIn = true;
+    window.AppState.currentRole = 'PROVIDER';
+  }
+
+  try {
+    localStorage.setItem('agri_user_profile', JSON.stringify(providerUser));
+  } catch (err) {}
+
+  // 2. సెంట్రల్ AgriDB క్లౌడ్ ప్రొఫైల్ సింక్ (Cloud Database Save)
+  if (window.AgriDB && typeof window.AgriDB.saveUser === 'function') {
+    window.AgriDB.saveUser(providerUser);
   }
 
   closeProviderModal();
