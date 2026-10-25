@@ -1112,87 +1112,114 @@ window.handleConfirmBookingRequest = function(e) {
   }
 };
 
+// ===================================================
+// Provider Incoming Bookings with Phone Isolation & Cloud Sync
+// ===================================================
 window.renderIncomingBookingsForProvider = function(containerId) {
   const box = document.getElementById(containerId);
   if (!box) return;
 
-  const bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
+  // 1. లాగిన్ అయిన ప్రొవైడర్ ఫోన్ నంబర్ పొందడం
+  const currentProviderPhone = (typeof window.getActiveUserPhone === 'function')
+    ? window.getActiveUserPhone()
+    : (window.AppState?.userProfile?.phone || "");
 
-  if (bookings.length === 0) {
-    box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; margin:10px 0;">ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.</p>`;
-    return;
+  // UI రెండరింగ్ అంతర్గత హెల్పర్ ఫంక్షన్
+  function renderUI(rawBookings) {
+    // ఫోన్ ఐసోలేషన్ ఫిల్టర్: కేవలం లాగిన్ అయిన ప్రొవైడర్ ఫోన్ నంబర్ ఉన్న ఆర్డర్లు మాత్రమే
+    const bookings = (rawBookings || []).filter(b => {
+      const bPhone = String(b.providerPhone || b.targetPhone || b.ownerPhone || "").trim();
+      // ఒకవేళ బుకింగ్ లో providerPhone ఉంటే ఖచ్చితంగా మ్యాచ్ అవ్వాలి, లేకపోతే జనరల్ ఓపెన్ రిక్వెస్ట్ అయి ఉండాలి
+      return !bPhone || (currentProviderPhone && bPhone === currentProviderPhone);
+    });
+
+    if (bookings.length === 0) {
+      box.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; margin:10px 0;">ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.</p>`;
+      return;
+    }
+
+    box.innerHTML = `
+      <!-- Premium Green Theme Outer Box with Elevation Shadow -->
+      <div style="background:#ffffff; border:1.5px solid #16a34a; border-radius:16px; overflow:hidden; margin-top:20px; box-shadow:0 8px 24px rgba(22, 163, 74, 0.12);">
+          
+          <!-- Premium Fixed Header -->
+          <div style="background:linear-gradient(135deg, #16a34a, #15803d); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size:14px; color:#ffffff; font-weight:700; display:flex; align-items:center; gap:6px;">
+                  🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు <span style="background:rgba(255,255,255,0.25); padding:2px 8px; border-radius:10px; font-size:12px;">${bookings.length}</span>
+              </div>
+              <!-- Live Active Badge -->
+              <span style="font-size:11px; background:#ffffff; color:#16a34a; padding:3px 10px; border-radius:20px; font-weight:700; display:flex; align-items:center; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                  <span style="width:7px; height:7px; background:#16a34a; border-radius:50%; display:inline-block;"></span> LIVE
+              </span>
+          </div>
+
+          <!-- Scrollable Requests Container -->
+          <div style="padding:12px; display:flex; flex-direction:column; gap:12px; max-height:280px; overflow-y:auto; box-sizing:border-box;">
+              ${bookings.map(b => `
+                  <div style="background:#f8fbf8; border:1.5px solid ${b.status === 'ACCEPTED' ? '#86efac' : '#fed7aa'}; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+                      
+                      <!-- Top Tag & Time -->
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                          <span style="font-size:11px; font-weight:bold; padding:3px 8px; border-radius:6px; background:${b.type === 'SPOT' ? '#fee2e2' : '#fef3c7'}; color:${b.type === 'SPOT' ? '#c62828' : '#b45309'}; border:1px solid ${b.type === 'SPOT' ? '#fecaca' : '#fde68a'};">
+                              ${b.type === 'SPOT' ? '⚡ SPOT (వెంటనే కావాలి)' : '📅 ADVANCE బుకింగ్'}
+                          </span>
+                          <span style="font-size:11px; color:#6b7280; font-weight:500;">
+                              ${b.createdAt || ''}
+                          </span>
+                      </div>
+
+                      <!-- Vehicle / Equipment Name -->
+                      <div style="font-size:14px; font-weight:bold; color:#1f2937; margin-bottom:4px;">
+                          ${b.vehicleType || b.itemName || ''}
+                      </div>
+
+                      <!-- Work Details -->
+                      <div style="font-size:12px; color:#4b5563; line-height:1.6; margin-bottom:10px;">
+                          <div>పని: <b>${b.workSize || ''}</b> &nbsp;|&nbsp; సమయం: <b>${b.schedule || ''}</b></div>
+                          <div>రైతు: <b>${b.farmerName || ''}</b>, గ్రామం: <b>${b.village || ''}</b></div>
+                      </div>
+
+                      <!-- Action Buttons -->
+                      <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                          <a href="tel:${b.farmerPhone || ''}" style="flex:1; min-width:85px; text-align:center; background:#15803d; color:#fff; text-decoration:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:4px;">
+                              📞 రైతుకు కాల్
+                          </a>
+
+                          ${b.mapLink ? `
+                              <a href="${b.mapLink}" target="_blank" style="flex:1; min-width:95px; text-align:center; background:#0284c7; color:#fff; text-decoration:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:4px;">
+                                  🗺️ పొలం మ్యాప్ రూట్
+                              </a>
+                          ` : ''}
+
+                          ${b.status !== 'ACCEPTED' ? `
+                              <button onclick="acceptBookingOrder('${b.id}')" style="flex:1; min-width:90px; background:#f97316; color:#fff; border:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer;">
+                                  ✅ ఒప్పుకోండి (Accept)
+                              </button>
+                          ` : `
+                              <span style="flex:1; min-width:110px; text-align:center; background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold;">
+                                  ఆర్డర్ స్వీకరించబడింది
+                              </span>
+                          `}
+                      </div>
+
+                  </div>
+              `).join('')}
+          </div>
+
+      </div>
+    `;
   }
 
-  box.innerHTML = `
-    <!-- Premium Green Theme Outer Box with Elevation Shadow -->
-    <div style="background:#ffffff; border:1.5px solid #16a34a; border-radius:16px; overflow:hidden; margin-top:20px; box-shadow:0 8px 24px rgba(22, 163, 74, 0.12);">
-        
-        <!-- Premium Fixed Header -->
-        <div style="background:linear-gradient(135deg, #16a34a, #15803d); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-            <div style="font-size:14px; color:#ffffff; font-weight:700; display:flex; align-items:center; gap:6px;">
-                🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు <span style="background:rgba(255,255,255,0.25); padding:2px 8px; border-radius:10px; font-size:12px;">${bookings.length}</span>
-            </div>
-            <!-- Live Active Badge -->
-            <span style="font-size:11px; background:#ffffff; color:#16a34a; padding:3px 10px; border-radius:20px; font-weight:700; display:flex; align-items:center; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                <span style="width:7px; height:7px; background:#16a34a; border-radius:50%; display:inline-block;"></span> LIVE
-            </span>
-        </div>
-
-        <!-- Scrollable Requests Container -->
-        <div style="padding:12px; display:flex; flex-direction:column; gap:12px; max-height:280px; overflow-y:auto; box-sizing:border-box;">
-            ${bookings.map(b => `
-                <div style="background:#f8fbf8; border:1.5px solid ${b.status === 'ACCEPTED' ? '#86efac' : '#fed7aa'}; border-radius:12px; padding:12px; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
-                    
-                    <!-- Top Tag & Time -->
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                        <span style="font-size:11px; font-weight:bold; padding:3px 8px; border-radius:6px; background:${b.type === 'SPOT' ? '#fee2e2' : '#fef3c7'}; color:${b.type === 'SPOT' ? '#c62828' : '#b45309'}; border:1px solid ${b.type === 'SPOT' ? '#fecaca' : '#fde68a'};">
-                            ${b.type === 'SPOT' ? '⚡ SPOT (వెంటనే కావాలి)' : '📅 ADVANCE బుకింగ్'}
-                        </span>
-                        <span style="font-size:11px; color:#6b7280; font-weight:500;">
-                            ${b.createdAt || ''}
-                        </span>
-                    </div>
-
-                    <!-- Vehicle / Equipment Name -->
-                    <div style="font-size:14px; font-weight:bold; color:#1f2937; margin-bottom:4px;">
-                        ${b.vehicleType || ''}
-                    </div>
-
-                    <!-- Work Details -->
-                    <div style="font-size:12px; color:#4b5563; line-height:1.6; margin-bottom:10px;">
-                        <div>పని: <b>${b.workSize || ''}</b> &nbsp;|&nbsp; సమయం: <b>${b.schedule || ''}</b></div>
-                        <div>రైతు: <b>${b.farmerName || ''}</b>, గ్రామం: <b>${b.village || ''}</b></div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-                        <a href="tel:${b.farmerPhone || ''}" style="flex:1; min-width:85px; text-align:center; background:#15803d; color:#fff; text-decoration:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:4px;">
-                            📞 రైతుకు కాల్
-                        </a>
-
-                        ${b.mapLink ? `
-                            <a href="${b.mapLink}" target="_blank" style="flex:1; min-width:95px; text-align:center; background:#0284c7; color:#fff; text-decoration:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; display:flex; justify-content:center; align-items:center; gap:4px;">
-                                🗺️ పొలం మ్యాప్ రూట్
-                            </a>
-                        ` : ''}
-
-                        ${b.status !== 'ACCEPTED' ? `
-                            <button onclick="acceptBookingOrder('${b.id}')" style="flex:1; min-width:90px; background:#f97316; color:#fff; border:none; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold; cursor:pointer;">
-                                ✅ ఒప్పుకోండి (Accept)
-                            </button>
-                        ` : `
-                            <span style="flex:1; min-width:110px; text-align:center; background:#dcfce7; color:#15803d; border:1px solid #86efac; padding:8px 4px; border-radius:8px; font-size:11px; font-weight:bold;">
-                                ఆర్డర్ స్వీకరించబడింది
-                            </span>
-                        `}
-                    </div>
-
-                </div>
-            `).join('')}
-        </div>
-
-    </div>
-  `;
+  // 2. సెంట్రల్ క్లౌడ్ AgriDB లిజనర్ (Live Firestore Sync)
+  if (window.AgriDB && typeof window.AgriDB.listenToBookings === 'function') {
+    window.AgriDB.listenToBookings((liveBookings) => {
+      renderUI(liveBookings);
+    });
+  } else {
+    // AgriDB లేకపోతే లోకల్ స్టోరేజ్ ఫాల్‌బ్యాక్
+    const localBookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
+    renderUI(localBookings);
+  }
 };
 
 window.acceptBookingOrder = async function(bookingId) {
@@ -1201,7 +1228,7 @@ window.acceptBookingOrder = async function(bookingId) {
     const state = window.AppState;
     const user = state ? (state.userProfile || state.user) : null;
     const providerName = (user && user.name) || 'యజమాని';
-    const providerPhone = (user && user.phone) || '';
+    const providerPhone = (user && user.phone) || (typeof window.getActiveUserPhone === 'function' ? window.getActiveUserPhone() : '');
 
     try {
         // 1. Firebase Firestore లో ఆర్డర్ స్టేటస్‌ను 'ACCEPTED' గా అప్‌డేట్ చేయడం
@@ -1224,7 +1251,7 @@ window.acceptBookingOrder = async function(bookingId) {
 
         alert("ఆర్డర్ విజయవంతంగా స్వీకరించబడింది (Confirmed)!");
 
-        // 3. వాట్సాప్ ఓపెన్ చేయకుండా నేరుగా డాష్‌బోర్డ్ లిస్ట్‌ను రీఫ్రెష్ చేయడం
+        // 3. డాష్‌బోర్డ్ లిస్ట్‌ను రీఫ్రెష్ చేయడం
         if (typeof renderIncomingBookingsForProvider === 'function') {
             renderIncomingBookingsForProvider('provider-incoming-requests');
         }
@@ -1268,9 +1295,7 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   if (!liveList) {
     liveList = document.createElement("div");
     liveList.id = "farmer-live-provider-items";
-    // Fixed height + Scrolling add chesam
     liveList.style.marginTop = "14px";
-
     farmerContainer.appendChild(liveList);
   } else {
     liveList.style.maxHeight = "380px";
@@ -1315,9 +1340,8 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   liveList.innerHTML = `
     <h4 style="font-size:14px; color:#2e7d32; margin:12px 0 8px 0;">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
     <div style="max-height: 380px; overflow-y: auto; padding-right: 4px; display:flex; flex-direction:column;">
-  ${itemsHtml}
-</div>
-
+      ${itemsHtml}
+    </div>
   `;
 };
 
