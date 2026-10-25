@@ -445,7 +445,8 @@ window.openLoginModal = function(roleType) {
   // గతంలో రిజిస్టర్ అయిన యూజర్ డేటా ఉందో లేదో తనిఖీ
   let savedUser = null;
   try {
-    const saved = localStorage.getItem("agri_user_profile");
+    const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
+
     if (saved) savedUser = JSON.parse(saved);
   } catch (e) {}
 
