@@ -1,82 +1,8 @@
-// seeds.js - విత్తనాలు & ఎరువుల విడ్జెట్ (4 Advance Filters + Dedicated Live Crop Advisory Board)
+// seeds.js - విత్తనాలు & ఎరువుల విడ్జెట్ (AgriDB Live Sync + 4 Advance Filters + Dedicated Live Crop Advisory Board)
 
-const seedsList = [
-  { 
-    id: "sd1", 
-    name: "BPT 5204 (సాంబ మసూరి)", 
-    category: "paddy", 
-    vendorType: "govt",
-    vendor: "రైతు భరోసా కేంద్రం", 
-    rate: "₹950 / 25 కేజీలు", 
-    priceNum: 950,
-    phone: "9876543213", 
-    loc: "సమీప సొసైటీ", 
-    distanceKm: 2.0, 
-    stock: "అందుబాటులో ఉంది (45 బస్తాలు)", 
-    inStock: true,
-    advice: "🌱 ఎకరానికి 20-25 కేజీలు అవసరం | జూన్-జులై నాట్లకు అనుకూలం | లోతు: 2-3 సెం.మీ"
-  },
-  { 
-    id: "sd2", 
-    name: "మిర్చి నారు (తేజ రకం)", 
-    category: "chilli", 
-    vendorType: "pvt",
-    vendor: "శ్రీనివాస నర్సరీ", 
-    rate: "₹1.20 / మొక్క", 
-    priceNum: 300,
-    phone: "9876543214", 
-    loc: "హైబ్రిడ్ విత్తనాలు", 
-    distanceKm: 4.5, 
-    stock: "లభ్యం (12,000 మొక్కలు)", 
-    inStock: true,
-    advice: "🌶️ ఎకరానికి 10,000-11,000 నారు మొక్కలు | వరుసల దూరం: 2.5 అడుగులు"
-  },
-  { 
-    id: "sd3", 
-    name: "యూరియా & DAP ఎరువులు", 
-    category: "fertilizer", 
-    vendorType: "govt",
-    vendor: "PAC సొసైటీ", 
-    rate: "₹1,350 / బస్తా", 
-    priceNum: 1350,
-    phone: "9876543215", 
-    loc: "సొసైటీ గోదాము", 
-    distanceKm: 3.0, 
-    stock: "పరిమిత స్టాక్ (Limited)", 
-    inStock: true,
-    advice: "🧪 మొదటి దఫా నాట్ల సమయంలో DAP, 25 రోజుల తర్వాత యూరియా వేయండి"
-  },
-  { 
-    id: "sd4", 
-    name: "రాశి 659 పత్తి విత్తనాలు (BG-II)", 
-    category: "cotton", 
-    vendorType: "pvt",
-    vendor: "లక్ష్మి ఆగ్రో ఏజెన్సీస్", 
-    rate: "₹864 / ప్యాకెట్", 
-    priceNum: 864,
-    phone: "9876543216", 
-    loc: "మార్కెట్ యార్డ్ ఎదురుగా", 
-    distanceKm: 6.0, 
-    stock: "అందుబాటులో ఉంది", 
-    inStock: true,
-    advice: "☁️ ఎకరానికి 2 ప్యాకెట్లు | సాళ్ల మధ్య 3 అడుగులు, మొక్కల మధ్య 1 అడుగు దూరం"
-  },
-  { 
-    id: "sd5", 
-    name: "పొటాష్ & 20:20:0:13 ఎరువులు", 
-    category: "fertilizer", 
-    vendorType: "govt",
-    vendor: "రైతు సేవా కేంద్రం", 
-    rate: "₹1,200 / బస్తా", 
-    priceNum: 1200,
-    phone: "9876543217", 
-    loc: "మండల కేంద్రం", 
-    distanceKm: 8.5, 
-    stock: "అందుబాటులో ఉంది", 
-    inStock: true,
-    advice: "🧪 దుక్కిలో ఎకరానికి ఒక బస్తా చొప్పున వేయడం వలన పంట దృఢంగా ఎదుగుతుంది"
-  }
-];
+// Central AgriDB నుండి వచ్చే లైవ్ విత్తనాల లిస్ట్
+let seedsList = [];
+let isSeedsListening = false;
 
 // పంటల వారీగా ప్రత్యేక సాగు సలహా డేటా (Sowing & Crop Advisory Data)
 const cropAdvisoryGuide = {
@@ -124,9 +50,58 @@ let activeSeedVendor = "all";
 let activeSeedPrice = "all";
 let activeSeedRange = "all";
 
+// సెంట్రల్ AgriDB లైవ్ లిజనర్ ప్రారంభం
+function startCentralSeedsSync() {
+  if (isSeedsListening) return;
+
+  // 1. window.AgriDB ద్వారానైనా లేదా నేరుగా ఫైర్‌స్టోర్ seeds కలెక్షన్ ద్వారానైనా డేటా సింక్ అవుతుంది
+  if (window.AgriDB && typeof window.AgriDB.listenToServices === 'function') {
+    isSeedsListening = true;
+    window.AgriDB.listenToServices("seeds", (items) => {
+      formatAndSetSeeds(items);
+    });
+  } else if (window.db) {
+    isSeedsListening = true;
+    window.db.collection("seeds").onSnapshot((snapshot) => {
+      const items = [];
+      snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
+      formatAndSetSeeds(items);
+    }, (err) => {
+      console.error("Seeds live sync error:", err);
+    });
+  }
+}
+
+function formatAndSetSeeds(rawItems) {
+  seedsList = rawItems.map(item => ({
+    id: item.docId || item.id,
+    name: item.seedName || item.name || "విత్తనాలు / ఎరువులు",
+    category: item.category || "paddy",
+    vendorType: item.vendorType || "govt",
+    vendor: item.vendor || item.dealerName || "సమీప డీలర్",
+    rate: item.rate || (item.price ? `₹${item.price}` : "ధర అందుబాటులో లేదు"),
+    priceNum: Number(item.priceNum || item.price || 0),
+    phone: item.phone || item.dealerPhone || "",
+    loc: item.village || item.loc || "సమీప కేంద్రం",
+    distanceKm: Number(item.distanceKm || 2.0),
+    stock: item.stock || "అందుబాటులో ఉంది",
+    inStock: item.inStock !== undefined ? item.inStock : true,
+    advice: item.advice || ""
+  }));
+
+  if (typeof window.renderSeedsWidget === 'function') {
+    window.renderSeedsWidget("farmer-pane-seeds");
+  }
+}
+
 window.renderSeedsWidget = function(targetContainerId = "farmer-pane-seeds") {
   const container = document.getElementById(targetContainerId);
   if (!container) return;
+
+  // మొదటిసారి విడ్జెట్ ఓపెన్ అయినప్పుడు లైవ్ లిజనర్ ఆన్ అవుతుంది
+  if (!isSeedsListening) {
+    startCentralSeedsSync();
+  }
 
   // అడ్వాన్స్ ఫిల్టరింగ్ లాజిక్
   const filteredSeeds = seedsList.filter(item => {
