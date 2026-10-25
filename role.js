@@ -414,7 +414,7 @@ function prefillFarmerFormDefaults() {
 }
 
 // ===================================================
-// Filter Jobs & Role Login Modal
+// Filter Jobs & Role Login Modal with Direct 4-Digit PIN
 // ===================================================
 function filterLabourJobsByLocation() {
   const profile = window.AppState?.userProfile;
@@ -440,36 +440,114 @@ window.openLoginModal = function(roleType) {
   }
 
   const isFarmer = roleType === "FARMER";
-  const title = isFarmer ? "🌾 రైతు ప్రొఫైల్ వివరాలు" : "👷 కూలీ ప్రొఫైల్ వివరాలు";
   const themeColor = isFarmer ? "#2e7d32" : "#e65100";
+  
+  // గతంలో రిజిస్టర్ అయిన యూజర్ డేటా ఉందో లేదో తనిఖీ
+  let savedUser = null;
+  try {
+    const saved = localStorage.getItem("agri_user_profile");
+    if (saved) savedUser = JSON.parse(saved);
+  } catch (e) {}
+
+  // 1. ఇప్పటికే యూజర్ ఉంటే: డైరెక్ట్ 4-Digit PIN స్క్రీన్
+  if (savedUser && savedUser.phone) {
+    modal.innerHTML = `
+      <div style="background:#fff; width:100%; max-width:360px; border-radius:14px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.2); text-align:center;">
+        <div style="font-size:36px; margin-bottom:6px;">🔒</div>
+        <h3 style="margin:0 0 6px 0; color:${themeColor}; font-size:18px;">స్వాగతం, ${savedUser.name || 'రైతు'} గారు!</h3>
+        <p style="font-size:12px; color:#666; margin:0 0 16px 0;">మొబైల్: <b>${savedUser.phone}</b></p>
+
+        <div style="margin-bottom:18px;">
+          <label style="font-size:13px; font-weight:bold; color:#333; display:block; margin-bottom:8px;">మీ 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి:</label>
+          <input type="password" id="fast-login-pin" maxlength="4" placeholder="••••" inputmode="numeric" style="width:140px; text-align:center; padding:10px; font-size:22px; letter-spacing:8px; border:2px solid ${themeColor}; border-radius:10px; outline:none; box-sizing:border-box;">
+        </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:14px;">
+          <button onclick="closeLoginModal()" style="flex:1; background:#eee; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; color:#555;">రద్దు</button>
+          <button onclick="submitDirectPinLogin('${roleType}')" style="flex:1; background:${themeColor}; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">లాగిన్ ➔</button>
+        </div>
+
+        <a href="javascript:void(0)" onclick="switchToFullRegister('${roleType}')" style="font-size:11px; color:#1565c0; text-decoration:none;">వేరే నంబర్‌తో నమోదు చేసుకోవాలా? క్లిక్ చేయండి</a>
+      </div>
+    `;
+  } else {
+    // 2. కొత్త యూజర్ అయితే: పూర్తి రిజిస్ట్రేషన్ ఫారమ్ (PIN ఫీల్డ్‌తో సహా)
+    renderRegisterForm(modal, roleType, themeColor);
+  }
+
+  modal.style.display = "flex";
+};
+
+// కొత్త రిజిస్ట్రేషన్ వ్యూ చూపించే హెల్పర్ ఫంక్షన్
+function renderRegisterForm(modal, roleType, themeColor) {
+  const isFarmer = roleType === "FARMER";
+  const title = isFarmer ? "🌾 రైతు ప్రొఫైల్ నమోదు" : "👷 కూలీ ప్రొఫైల్ నమోదు";
 
   modal.innerHTML = `
     <div style="background:#fff; width:100%; max-width:380px; border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
       <h3 style="margin:0 0 14px 0; color:${themeColor}; font-size:18px; text-align:center;">${title}</h3>
       
-      <div style="margin-bottom:12px;">
+      <div style="margin-bottom:10px;">
         <label style="font-size:12px; font-weight:bold; color:#555;">మీ పూర్తి పేరు:</label>
-        <input type="text" id="reg-name" placeholder="ఉదా: కిషోర్ రెడ్డి" style="width:100%; padding:10px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+        <input type="text" id="reg-name" placeholder="ఉదా: కిషోర్ రెడ్డి" style="width:100%; padding:9px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
       </div>
 
-      <div style="margin-bottom:12px;">
+      <div style="margin-bottom:10px;">
         <label style="font-size:12px; font-weight:bold; color:#555;">మొబైల్ నంబర్ (10 అంకెలు):</label>
-        <input type="tel" id="reg-phone" placeholder="9876543210" maxlength="10" style="width:100%; padding:10px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+        <input type="tel" id="reg-phone" placeholder="9876543210" maxlength="10" inputmode="numeric" style="width:100%; padding:9px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label style="font-size:12px; font-weight:bold; color:#555;">గ్రామం / ఊరు (Village):</label>
+        <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి" style="width:100%; padding:9px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
       </div>
 
       <div style="margin-bottom:16px;">
-        <label style="font-size:12px; font-weight:bold; color:#555;">గ్రామం / ఊరు (Village):</label>
-        <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి / గోపాల్‌పూర్" style="width:100%; padding:10px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+        <label style="font-size:12px; font-weight:bold; color:#1b5e20;">భద్రతా పిన్ సెట్ చేయండి (4-Digit PIN):</label>
+        <input type="password" id="reg-pin" placeholder="1234" maxlength="4" inputmode="numeric" style="width:100%; padding:9px; margin-top:4px; border:1.5px solid ${themeColor}; border-radius:8px; font-size:16px; letter-spacing:4px; box-sizing:border-box;">
+        <span style="font-size:11px; color:#777;">తర్వాతిసారి లాగిన్ అవ్వడానికి ఈ 4 అంకెల పిన్ వాడవచ్చు.</span>
       </div>
 
       <div style="display:flex; gap:10px;">
         <button onclick="closeLoginModal()" style="flex:1; background:#eee; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; color:#555;">రద్దు</button>
-        <button onclick="submitUserRegistration('${roleType}')" style="flex:1; background:${themeColor}; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">సమర్పించండి</button>
+        <button onclick="submitUserRegistration('${roleType}')" style="flex:1; background:${themeColor}; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">నమోదు చేసుకోండి</button>
       </div>
     </div>
   `;
+}
 
-  modal.style.display = "flex";
+// అవసరమైనప్పుడు రిజిస్ట్రేషన్ స్క్రీన్‌కు మారడం
+window.switchToFullRegister = function(roleType) {
+  const modal = document.getElementById("role-login-modal");
+  const themeColor = roleType === "FARMER" ? "#2e7d32" : "#e65100";
+  if (modal) renderRegisterForm(modal, roleType, themeColor);
+};
+
+// డైరెక్ట్ 4-Digit PIN తో మాత్రమే లాగిన్ అయ్యే లాజిక్
+window.submitDirectPinLogin = async function(roleType) {
+  const pinInput = document.getElementById("fast-login-pin");
+  const pin = pinInput ? pinInput.value.trim() : "";
+
+  if (!pin || pin.length !== 4) {
+    alert("దయచేసి 4 అంకెల పిన్ ఎంటర్ చేయండి.");
+    return;
+  }
+
+  let savedPhone = "";
+  try {
+    const saved = localStorage.getItem("agri_user_profile");
+    if (saved) savedPhone = JSON.parse(saved).phone;
+  } catch (e) {}
+
+  if (typeof window.loginWithPin === 'function') {
+    const user = await window.loginWithPin(savedPhone, pin);
+    if (!user) return;
+  }
+
+  closeLoginModal();
+  if (typeof applyUserRoleView === 'function') {
+    applyUserRoleView();
+  }
 };
 
 window.closeLoginModal = function() {
@@ -477,22 +555,37 @@ window.closeLoginModal = function() {
   if (modal) modal.style.display = "none";
 };
 
+// పూర్తి వివరాలతో కొత్త యూజర్ రిజిస్ట్రేషన్ లాజిక్
 window.submitUserRegistration = function(roleType) {
   const name = document.getElementById("reg-name")?.value || "";
   const phone = document.getElementById("reg-phone")?.value || "";
   const village = document.getElementById("reg-village")?.value || "";
+  const pin = document.getElementById("reg-pin")?.value || "";
 
   // 1. Central auth.js ఇంజిన్ ద్వారా యూజర్ రిజిస్ట్రేషన్ & క్లౌడ్ సేవ్
   if (typeof window.registerUniversalUser === 'function') {
-    const isSuccess = window.registerUniversalUser({ name, phone, village, roleType });
+    const isSuccess = window.registerUniversalUser({ 
+      name, 
+      phone, 
+      village, 
+      roleType,
+      pin 
+    });
     if (!isSuccess) return;
   } else {
     // auth.js లోడ్ కాకపోతే ఫాల్‌బ్యాక్ సేవ్
     if (!name.trim()) return alert("దయచేసి మీ పేరు నమోదు చేయండి.");
     if (!phone || phone.trim().length !== 10) return alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
     if (!village.trim()) return alert("దయచేసి మీ గ్రామం పేరు నమోదు చేయండి.");
+    if (pin && !/^[0-9]{4}$/.test(pin.trim())) return alert("దయచేసి 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి.");
 
-    const profile = { name: name.trim(), phone: phone.trim(), village: village.trim(), roleType };
+    const profile = { 
+      name: name.trim(), 
+      phone: phone.trim(), 
+      village: village.trim(), 
+      roleType: roleType,
+      pin: pin.trim() || "1234"
+    };
     window.AppState.isLoggedIn = true;
     window.AppState.userType = roleType;
     window.AppState.currentRole = (roleType === 'LABOUR_ONLY') ? 'LABOUR' : 'FARMER';
