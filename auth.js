@@ -16,6 +16,7 @@ window.AppState.currentRole = null;
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = parsed;
         window.AppState.userType = parsed.roleType;
+        window.AppState.providerType = parsed.providerType || 'equipment';
         window.AppState.currentRole = (parsed.roleType === 'LABOUR_ONLY') ? 'LABOUR' : (parsed.roleType || 'FARMER');
       }
     }
@@ -41,13 +42,13 @@ window.getActiveUserPhone = function() {
 
 // 2. Universal User Registration with 4-Digit Security PIN & Cloud Sync
 window.registerUniversalUser = function(profileData) {
-  const { name, phone, village, roleType, pin } = profileData;
+  const { name, phone, village, roleType, pin, providerType } = profileData;
 
   if (!name || !name.trim()) {
     alert("Dayachesi mee peru namodu cheyandi.");
     return false;
   }
-  if (!phone || phone.trim().length !== 10) {
+  if (!phone || phone.trim().length !== 10 || !/^[0-9]{10}$/.test(phone.trim())) {
     alert("Dayachesi saraina 10 ankela mobile number namodu cheyandi.");
     return false;
   }
@@ -55,9 +56,10 @@ window.registerUniversalUser = function(profileData) {
     alert("Dayachesi mee gramam peru namodu cheyandi.");
     return false;
   }
-  // 4-Digit PIN Validation (Set or keep default)
+
+  // 4-Digit PIN Strict Validation
   const cleanPin = (pin || "").toString().trim();
-  if (cleanPin && !/^[0-9]{4}$/.test(cleanPin)) {
+  if (!cleanPin || !/^[0-9]{4}$/.test(cleanPin)) {
     alert("Dayachesi 4 ankela security PIN ni mathrame namodu cheyandi (e.g. 1234).");
     return false;
   }
@@ -68,24 +70,32 @@ window.registerUniversalUser = function(profileData) {
     phone: cleanPhone,
     village: village.trim(),
     roleType: roleType || 'FARMER',
-    pin: cleanPin || "1234" // Default PIN fallback if not typed
+    providerType: providerType || window.AppState.providerType || 'equipment',
+    pin: cleanPin,
+    updatedAt: new Date().toISOString()
   };
 
   // State Update
   window.AppState.isLoggedIn = true;
   window.AppState.userType = profile.roleType;
+  window.AppState.providerType = profile.providerType;
   window.AppState.currentRole = (profile.roleType === 'LABOUR_ONLY') ? 'LABOUR' : profile.roleType;
   window.AppState.userProfile = profile;
 
-    // Local Storage Save
+  // Local Storage Save
   try {
     localStorage.setItem('agri_user_profile', JSON.stringify(profile));
     localStorage.setItem('agri_last_user', JSON.stringify(profile));
-  } catch (e) {}
+  } catch (e) {
+    console.warn("LocalStorage save error:", e);
+  }
 
-  // Central Cloud Sync (AgriDB -> Firestore)
+  // Central Cloud Sync (AgriDB / Firestore)
   if (window.AgriDB && typeof window.AgriDB.saveUser === 'function') {
     window.AgriDB.saveUser(profile);
+  } else if (window.db && window.db.collection) {
+    window.db.collection("users").doc(cleanPhone).set(profile, { merge: true })
+      .catch(err => console.error("Firestore user save error:", err));
   }
 
   return true;
@@ -96,29 +106,33 @@ window.loginWithPin = async function(phone, inputPin) {
   const cleanPhone = (phone || "").toString().trim();
   const cleanPin = (inputPin || "").toString().trim();
 
-  if (!cleanPhone || cleanPhone.length !== 10) {
+  if (!cleanPhone || cleanPhone.length !== 10 || !/^[0-9]{10}$/.test(cleanPhone)) {
     alert("Dayachesi saraina 10 ankela mobile number enter cheyandi.");
     return false;
   }
-  if (!cleanPin || cleanPin.length !== 4) {
+  if (!cleanPin || cleanPin.length !== 4 || !/^[0-9]{4}$/.test(cleanPin)) {
     alert("Dayachesi 4 ankela PIN enter cheyandi.");
     return false;
   }
 
   // A. LocalStorage Check
   try {
-    const saved = localStorage.getItem("agri_user_profile");
+    const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
     if (saved) {
       const user = JSON.parse(saved);
-      if (user.phone === cleanPhone && (user.pin === cleanPin || (!user.pin && cleanPin === "1234"))) {
+      if (user.phone === cleanPhone && user.pin === cleanPin) {
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
         window.AppState.userType = user.roleType;
+        window.AppState.providerType = user.providerType || 'equipment';
         window.AppState.currentRole = (user.roleType === 'LABOUR_ONLY') ? 'LABOUR' : (user.roleType || 'FARMER');
+        localStorage.setItem("agri_user_profile", JSON.stringify(user));
         return user;
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn("LocalStorage login check error:", e);
+  }
 
   // B. Cloud Firestore / AgriDB Verification Check
   if (window.db && window.db.collection) {
@@ -126,19 +140,21 @@ window.loginWithPin = async function(phone, inputPin) {
       const snap = await window.db.collection("users").doc(cleanPhone).get();
       if (snap.exists) {
         const cloudUser = snap.data();
-        if (cloudUser.pin === cleanPin || (!cloudUser.pin && cleanPin === "1234")) {
+        if (cloudUser.pin === cleanPin) {
           window.AppState.isLoggedIn = true;
           window.AppState.userProfile = cloudUser;
           window.AppState.userType = cloudUser.roleType;
+          window.AppState.providerType = cloudUser.providerType || 'equipment';
           window.AppState.currentRole = (cloudUser.roleType === 'LABOUR_ONLY') ? 'LABOUR' : (cloudUser.roleType || 'FARMER');
           localStorage.setItem("agri_user_profile", JSON.stringify(cloudUser));
+          localStorage.setItem("agri_last_user", JSON.stringify(cloudUser));
           return cloudUser;
         } else {
-          alert("Tappudu PIN! Dayachesi saraina 4 ankela PIN enter cheyandi.");
+          alert("తప్పుడు పిన్! దయచేసి సరైన 4 అంకెల పిన్ నమోదు చేయండి.");
           return false;
         }
       } else {
-        alert("Ee mobile number inka register avvaledhu. Dayachesi mundhu register chesukondi.");
+        alert("ఈ మొబైల్ నంబర్ ఇంకా రిజిస్టర్ అవ్వలేదు. దయచేసి ముందుగా నమోదు చేసుకోండి.");
         return false;
       }
     } catch (err) {
@@ -146,7 +162,7 @@ window.loginWithPin = async function(phone, inputPin) {
     }
   }
 
-  alert("Login cheyadam lo samasya vachindi. Vivaralu malli sarichusukondi.");
+  alert("లాగిన్ చేయడంలో సమస్య వచ్చింది. వివరాలు మళ్లీ సరిచూసుకోండి.");
   return false;
 };
 
@@ -155,15 +171,14 @@ window.logoutUser = function() {
   window.AppState.isLoggedIn = false;
   window.AppState.userProfile = null;
   window.AppState.currentRole = null;
-  
-  // కేవలం యాక్టివ్ స్టేటస్ తీసేస్తుంది, ఫాస్ట్ పిన్ లాగిన్ కోసం లాస్ట్ యూజర్ డేటా సేవ్ అయి ఉంటుంది
+
   try {
     const saved = localStorage.getItem("agri_user_profile");
     if (saved) {
       localStorage.setItem("agri_last_user", saved);
     }
   } catch (e) {}
-  
+
   localStorage.removeItem("agri_user_profile");
   location.reload();
 };
