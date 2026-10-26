@@ -1,52 +1,13 @@
 // state.js - Shared Global Data Store for AgriConnect with Escrow
 
 window.AgriState = {
-  jobs: [
-    {
-      id: "JOB-1",
-      farmerName: "కిషోర్",
-      farmerPhone: "9876543210",
-      crop: "వరి (Paddy)",
-      workType: "కోత",
-      count: 2,
-      wage: 450,
-      distanceKm: "2.4",
-      lat: 17.9784,
-      lng: 79.5941,
-      status: "Confirmed",
-      labourName: "రాము (టెస్ట్ కూలీ)",
-      labourPhone: "9876543211"
-    },
-    {
-      id: "JOB-2",
-      farmerName: "వెంకటేశ్వర్లు",
-      farmerPhone: "9876543210",
-      crop: "పత్తి (Cotton)",
-      workType: "తీత",
-      count: 4,
-      wage: 500,
-      distanceKm: "3.5",
-      lat: 17.9850,
-      lng: 79.6012,
-      status: "Open",
-      labourName: "",
-      labourPhone: ""
-    }
-  ],
+  // డమ్మీ డేటా తీసేసి ఖాళీ లిస్ట్‌లు ఉంచాం
+  jobs: [],
 
   wallet: {
-    farmerBalance: 2500,
+    farmerBalance: 0,
     labourBalance: 0,
-    lockedEscrow: [
-      {
-        id: "ESC-1",
-        jobId: "JOB-1",
-        jobTitle: "వరి కోత",
-        labourName: "రాము",
-        amount: 450,
-        status: "Locked" // 'Locked' or 'Released'
-      }
-    ]
+    lockedEscrow: []
   },
 
   getJobs: function() {
@@ -86,11 +47,8 @@ window.AgriState = {
 window.AppState = window.AppState || {
   isLoggedIn: false,        // ప్రారంభంలో లాగిన్ అవ్వలేదు
   userType: null,           // 'LABOUR_ONLY' లేదా 'FARMER'
-  currentRole: "GUEST",     // ప్రారంభంలో 'GUEST', లాగిన్ తర్వాత 'LABOUR' లేదా 'FARMER'
+  currentRole: "GUEST",     // ప్రారంభంలో 'GUEST'
   autoVoice: false,
-  user: {
-    name: "కిషోర్",
-    mobile: "9876543210"
-  }
+  userProfile: null,
+  user: null
 };
-
