@@ -4590,5 +4590,140 @@ header h1 {
 .labour-cbtn-map {
   background: #f57c00;
 }
+/* ==========================================
+   Labour Profile & Skills Modal Styles
+   ========================================== */
+
+.lpm-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.lpm-modal-overlay.is-active {
+  display: flex;
+}
+
+.lpm-modal-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+.lpm-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.lpm-modal-title {
+  margin: 0;
+  color: #0277bd;
+  font-size: 15px;
+}
+
+.lpm-close-btn {
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #777;
+  line-height: 1;
+}
+
+.lpm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lpm-label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #333;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.lpm-input,
+.lpm-select {
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 12px;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.lpm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.lpm-skills-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  background: #f9fbe7;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #e6ee9c;
+}
+
+.lpm-skill-item {
+  font-size: 11px;
+  color: #33691e;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.lpm-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.lpm-btn-cancel {
+  padding: 7px 14px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.lpm-btn-save {
+  padding: 7px 16px;
+  border: none;
+  background: #0288d1;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
 
