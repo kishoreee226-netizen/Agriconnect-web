@@ -4725,5 +4725,48 @@ header h1 {
   font-weight: bold;
   cursor: pointer;
 }
+/* ==========================================
+   Provider Module Landing Card Styles
+   ========================================== */
+
+.provider-landing-card {
+  background: #fff;
+  border: 2px solid #f57c00;
+  border-radius: 14px;
+  padding: 14px;
+  margin: 10px auto;
+  max-width: 440px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  cursor: pointer;
+}
+
+.provider-landing-icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.provider-landing-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #e65100;
+}
+
+.provider-landing-desc {
+  font-size: 12px;
+  color: #666;
+  margin: 6px 0 10px 0;
+}
+
+.provider-landing-btn {
+  background: #f57c00;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
 
 
