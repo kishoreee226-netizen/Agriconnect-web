@@ -115,7 +115,7 @@ window.AgriDB = {
   // 1. User Profile Save (Login / Registration)
   async saveUser(userProfile) {
     if (!window.db) return console.error("Database not ready!");
-    const phone = userProfile.phone;
+    const phone = userProfile?.phone;
     if (!phone) return;
 
     return window.db.collection('users').doc(phone).set({
@@ -149,7 +149,22 @@ window.AgriDB = {
       });
   },
 
-  // 4. Bookings Save (Farmer Bookings with Freeze Logic)
+  // 4. Seeds & Transport Generic Services Live Sync
+  listenToServices(collectionName, callback) {
+    if (!window.db || !collectionName) return;
+    return window.db.collection(collectionName)
+      .onSnapshot(snapshot => {
+        const items = [];
+        snapshot.forEach(doc => {
+          items.push({ docId: doc.id, id: doc.id, ...doc.data() });
+        });
+        callback(items);
+      }, error => {
+        console.error(`${collectionName} live sync error:`, error);
+      });
+  },
+
+  // 5. Bookings Save (Farmer Bookings with Freeze Logic)
   async createBooking(bookingData) {
     if (!window.db) throw new Error("Database not ready!");
     return window.db.collection('bookings').add({
@@ -159,16 +174,16 @@ window.AgriDB = {
     });
   },
 
-  // 5. Bookings Live Sync (Incoming Requests)
+  // 6. Bookings Live Sync (Incoming Requests)
   listenToBookings(filterPhone, callback) {
     if (!window.db) return;
     let query = window.db.collection('bookings');
-    
+
     if (filterPhone) {
       query = query.where('phone', '==', filterPhone);
     }
 
-    return query.onSnapshot(snapshot => {
+    return query.orderBy('createdAt', 'desc').onSnapshot(snapshot => {
       const bookings = [];
       snapshot.forEach(doc => {
         bookings.push({ docId: doc.id, ...doc.data() });
@@ -178,20 +193,22 @@ window.AgriDB = {
       console.error("Bookings sync error:", error);
     });
   },
-// 6. Labour Jobs Live Sync
-listenToLabourJobs(callback) {
-  if (!window.db) return;
-  return window.db.collection("farmer_posted_jobs")
-    .onSnapshot(snapshot => {
-      const list = [];
-      snapshot.forEach(doc => {
-        list.push({ id: doc.id, ...doc.data() });
+
+  // 7. Labour Jobs Live Sync
+  listenToLabourJobs(callback) {
+    if (!window.db) return;
+    return window.db.collection("farmer_posted_jobs")
+      .orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        const list = [];
+        snapshot.forEach(doc => {
+          list.push({ id: doc.id, ...doc.data() });
+        });
+        callback(list);
+      }, error => {
+        console.error("Labour jobs sync error:", error);
       });
-      callback(list);
-    }, error => {
-      console.error("Labour jobs sync error:", error);
-    });
-}
+  }
 };
 
 // Freeze AgriDB to prevent tampering from console
