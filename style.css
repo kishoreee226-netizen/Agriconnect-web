@@ -4831,5 +4831,145 @@ header h1 {
 .eq-card-spaced {
   margin-bottom: 10px;
 }
+/* ==========================================
+   Seeds & Fertilizers Module Styles
+   ========================================== */
+
+/* Advance Filter Box */
+.seeds-filter-bar {
+  background: #f1f8e9;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #dcedc8;
+  box-sizing: border-box;
+}
+
+.seeds-filter-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.seeds-filter-heading {
+  font-size: 12px;
+  font-weight: bold;
+  color: #2e7d32;
+  white-space: nowrap;
+}
+
+.seeds-filter-top-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seeds-select-range {
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #aed581;
+  font-size: 11px;
+  background: #fff;
+  font-weight: 600;
+  color: #2e7d32;
+  outline: none;
+  max-width: 130px;
+}
+
+.seeds-count-badge {
+  font-size: 11px;
+  background: #2e7d32;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+/* 2x2 Filter Grid */
+.seeds-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.seeds-filter-select {
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid #aed581;
+  font-size: 11px;
+  background: #fff;
+  font-weight: 600;
+  color: #2e7d32;
+  outline: none;
+}
+
+/* Crop Guidance Board */
+.crop-guidance-board {
+  background: #fffde7;
+  border: 1px solid #fff59d;
+  border-left: 4px solid #fbc02d;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.crop-guidance-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #f57f17;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.crop-guidance-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 11px;
+  color: #5d4037;
+  line-height: 1.4;
+}
+
+/* Empty State */
+.seeds-empty-card {
+  text-align: center;
+  padding: 18px;
+  color: #555;
+  font-size: 13px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px dashed #c5e1a5;
+}
+
+/* Seed Item Card Details */
+.seed-card-item {
+  margin-bottom: 10px;
+}
+
+.seed-item-title {
+  color: #1b5e20;
+}
+
+.seed-stock-row {
+  margin-top: 4px;
+}
+
+.seed-stock-badge {
+  font-size: 10px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  border: 1px solid #c8e6c9;
+}
+
+.seed-actions-row {
+  margin-top: 8px;
+}
 
 
