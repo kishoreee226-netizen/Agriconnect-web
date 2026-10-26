@@ -2889,4 +2889,9 @@ header h1 {
   color: #ffffff;
   box-shadow: 0 2px 5px rgba(230, 81, 0, 0.3);
 }
+/* Auto-filled input highlight */
+.input-autofilled {
+  background-color: #e8f5e9 !important;
+  font-weight: bold !important;
+}
 
