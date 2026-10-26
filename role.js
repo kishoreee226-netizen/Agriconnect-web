@@ -397,17 +397,15 @@ function prefillFarmerFormDefaults() {
   const phoneInput = document.getElementById("f-phone");
   const villageBtn = document.getElementById("f-village-btn");
 
-  if (nameInput && !nameInput.value) {
-    nameInput.value = profile.name;
-    nameInput.style.backgroundColor = "#e8f5e9";
-    nameInput.style.fontWeight = "bold";
-  }
+        if (nameInput && !nameInput.value) {
+        nameInput.value = profile.name;
+        nameInput.classList.add('input-autofilled');
+      }
 
-  if (phoneInput && !phoneInput.value) {
-    phoneInput.value = profile.phone;
-    phoneInput.style.backgroundColor = "#e8f5e9";
-    phoneInput.style.fontWeight = "bold";
-  }
+      if (phoneInput && !phoneInput.value) {
+        phoneInput.value = profile.phone;
+        phoneInput.classList.add('input-autofilled');
+      }
 
   if (villageBtn && profile.village) {
     villageBtn.textContent = "🏛️ " + profile.village;
