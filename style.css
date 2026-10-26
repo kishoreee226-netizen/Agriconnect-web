@@ -5533,5 +5533,74 @@ header h1 {
   color: #888;
   font-size: 12px;
 }
+/* ==========================================
+   Voice Assistant & Floating Mic Styles
+   ========================================== */
+
+.floating-mic-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #2e7d32;
+  color: #ffffff;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.floating-mic-btn:active {
+  transform: scale(0.95);
+}
+
+.floating-mic-btn.is-recording {
+  background: #d32f2f !important;
+  animation: pulse-mic 1.2s infinite;
+}
+
+@keyframes pulse-mic {
+  0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(211, 47, 47, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+}
+
+.auto-voice-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 6px 0;
+  width: 100%;
+  z-index: 99;
+}
+
+.auto-voice-label {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e8f5e9;
+  border: 1.5px solid #81c784;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2e7d32;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+}
+
+.auto-voice-checkbox {
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+  accent-color: #2e7d32;
+}
 
 
