@@ -786,17 +786,17 @@ window.openAddServiceModal = function(type) {
       title: '🚜 పరికరం వివరాలు జోడించండి',
       color: '#f57c00',
       fields: `
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పరికరం రకం / మోడల్:</label>
-          <input type="text" id="item-field-1" placeholder="ఉదా: మహీంద్రా 575 ట్రాక్టర్ / రోటవేటర్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group">
+          <label class="provider-form-label">పరికరం రకం / మోడల్:</label>
+          <input type="text" id="item-field-1" placeholder="ఉదా: మహీంద్రా 575 ట్రాక్టర్ / రోటవేటర్" required class="provider-form-input" />
         </div>
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">అద్దె ధర (గంటకు ₹):</label>
-          <input type="number" id="item-field-2" placeholder="ఉదా: 900" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group">
+          <label class="provider-form-label">అద్దె ధర (గంటకు ₹):</label>
+          <input type="number" id="item-field-2" placeholder="ఉదా: 900" required class="provider-form-input" />
         </div>
-        <div style="margin-bottom:14px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పని స్థితి (Availability):</label>
-          <select id="item-field-3" style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;">
+        <div class="provider-form-group last">
+          <label class="provider-form-label">పని స్థితి (Availability):</label>
+          <select id="item-field-3" class="provider-form-input">
             <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
             <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
           </select>
@@ -807,17 +807,17 @@ window.openAddServiceModal = function(type) {
       title: '🚚 రవాణా వాహనం వివరాలు జోడించండి',
       color: '#7b1fa2',
       fields: `
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">వాహనం రకం:</label>
-          <input type="text" id="item-field-1" placeholder="ఉదా: బొలెరో పికప్ / 407 DCM / ట్రాక్టర్ ట్రాలీ" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group">
+          <label class="provider-form-label">వాహనం రకం:</label>
+          <input type="text" id="item-field-1" placeholder="ఉదా: బొలెరో పికప్ / 407 DCM / ట్రాక్టర్ ట్రాలీ" required class="provider-form-input" />
         </div>
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">ఛార్జీ (కి.మీ / ట్రిప్ ₹):</label>
-          <input type="text" id="item-field-2" placeholder="ఉదా: ₹35 / కి.మీ లేదా ₹1200 / ట్రిప్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group">
+          <label class="provider-form-label">ఛార్జీ (కి.మీ / ట్రిప్ ₹):</label>
+          <input type="text" id="item-field-2" placeholder="ఉదా: ₹35 / కి.మీ లేదా ₹1200 / ట్రిప్" required class="provider-form-input" />
         </div>
-        <div style="margin-bottom:14px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">మోసే బరువు సామర్థ్యం:</label>
-          <input type="text" id="item-field-3" placeholder="ఉదా: 2 టన్నులు / 50 బస్తాలు" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group last">
+          <label class="provider-form-label">మోసే బరువు సామర్థ్యం:</label>
+          <input type="text" id="item-field-3" placeholder="ఉదా: 2 టన్నులు / 50 బస్తాలు" required class="provider-form-input" />
         </div>
       `
     },
@@ -825,17 +825,17 @@ window.openAddServiceModal = function(type) {
       title: '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి',
       color: '#2e7d32',
       fields: `
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పంట రకం & బ్రాండ్:</label>
-          <input type="text" id="item-field-1" placeholder="ఉదా: వరి BPT 5204 / కాటన్ సీడ్స్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group">
+          <label class="provider-form-label">పంట రకం & బ్రాండ్:</label>
+          <input type="text" id="item-field-1" placeholder="ఉదా: వరి BPT 5204 / కాటన్ సీడ్స్" required class="provider-form-input" />
         </div>
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">ధర (బ్యాగ్ / ప్యాకెట్ ₹):</label>
-          <input type="number" id="item-field-2" placeholder="ఉదా: 850" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group">
+          <label class="provider-form-label">ధర (బ్యాగ్ / ప్యాకెట్ ₹):</label>
+          <input type="number" id="item-field-2" placeholder="ఉదా: 850" required class="provider-form-input" />
         </div>
-        <div style="margin-bottom:14px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">స్టాక్ లభ్యత:</label>
-          <input type="text" id="item-field-3" placeholder="ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group last">
+          <label class="provider-form-label">స్టాక్ లభ్యత:</label>
+          <input type="text" id="item-field-3" placeholder="ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి" required class="provider-form-input" />
         </div>
       `
     }
@@ -845,17 +845,18 @@ window.openAddServiceModal = function(type) {
 
   modal = document.createElement('div');
   modal.id = 'provider-item-modal';
-  modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; padding:14px; box-sizing:border-box;';
+  modal.className = 'pitem-modal-overlay';
+  modal.style.setProperty('--pitem-color', conf.color);
 
   modal.innerHTML = `
-    <div style="background:#fff; border-radius:16px; width:100%; max-width:380px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative;">
-      <button onclick="closeAddServiceModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer; color:#777;">✕</button>
+    <div class="pitem-modal-card">
+      <button onclick="closeAddServiceModal()" class="provider-close-btn">✕</button>
       
-      <h3 style="margin:0 0 14px 0; font-size:16px; color:${conf.color}; text-align:center;">${conf.title}</h3>
+      <h3 class="pitem-modal-title">${conf.title}</h3>
 
       <form onsubmit="handleSaveProviderItem(event, '${type}')">
         ${conf.fields}
-        <button type="submit" style="width:100%; background:${conf.color}; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+        <button type="submit" class="pitem-submit-btn">
           లిస్టింగ్‌ను సేవ్ చేయండి ➔
         </button>
       </form>
@@ -870,169 +871,169 @@ window.closeAddServiceModal = function() {
 };
 
 window.handleSaveProviderItem = async function(e, type) {
-    e.preventDefault();
-    const val1 = document.getElementById('item-field-1').value.trim();
-    const val2 = document.getElementById('item-field-2').value.trim();
-    const val3 = document.getElementById('item-field-3').value.trim();
+  e.preventDefault();
+  const val1 = document.getElementById('item-field-1').value.trim();
+  const val2 = document.getElementById('item-field-2').value.trim();
+  const val3 = document.getElementById('item-field-3').value.trim();
 
-    if (!val1 || !val2 || !val3) {
-        alert("దయచేసి అన్ని వివరాలు నమోదు చేయండి.");
-        return;
+  if (!val1 || !val2 || !val3) {
+    alert("దయచేసి అన్ని వివరాలు నమోదు చేయండి.");
+    return;
+  }
+
+  const profile = window.AppState?.userProfile || 
+                  JSON.parse(localStorage.getItem('agri_user_profile')) || 
+                  JSON.parse(localStorage.getItem('agri_profile')) || {};
+
+  // ఖచ్చితమైన లాగిన్ యూజర్ వివరాలను తీసుకోవడం (డమ్మీ డేటా తొలగించబడింది)
+  const ownerName = profile.name || profile.ownerName || profile.userName || 'యజమాని';
+  const ownerPhone = profile.phone || profile.mobile || '';
+  const ownerVillage = profile.village || '';
+
+  if (!ownerPhone) {
+    alert("దయచేసి ముందుగా సరైన మొబైల్ నంబర్‌తో లాగిన్ అవ్వండి.");
+    return;
+  }
+
+  // 1. Live Data Object
+  const newItem = {
+    name: val1,
+    rate: '₹' + val2 + ' / గంట',
+    rawRate: val2,
+    type: type || 'equipment',
+    category: type || 'equipment',
+    status: val3,
+    owner: ownerName,
+    phone: ownerPhone,
+    village: ownerVillage,
+    loc: ownerVillage ? `${ownerVillage} పరిధి` : 'స్థానిక పరిధి',
+    createdAt: new Date().toISOString()
+  };
+
+  // 2. Central AgriDB ద్వారా Live Firestore లో సేవ్ చేయడం
+  if (window.AgriDB) {
+    try {
+      await window.AgriDB.addProviderItem(newItem);
+      alert("🎉 " + val1 + " విజయవంతంగా లైవ్ డేటాబేస్‌లో చేర్చబడింది!");
+    } catch (error) {
+      console.error("Save error:", error);
+      alert("డేటాబేస్ లోపం: " + error.message);
     }
+  }
 
-            const profile = window.AppState?.userProfile || 
-                        JSON.parse(localStorage.getItem('agri_user_profile')) || 
-                        JSON.parse(localStorage.getItem('agri_profile')) || {};
+  // 3. Local fallback & UI Refresh
+  let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+  items.unshift(newItem);
+  localStorage.setItem('agri_provider_items', JSON.stringify(items));
 
-        // 1. Live Data Object
-        const newItem = {
-            name: val1,
-            rate: '₹' + val2 + ' / గంట',
-            rawRate: val2,
-            type: type || 'equipment',
-            category: type || 'equipment',
-            status: val3,
-            owner: profile.name || profile.ownerName || profile.userName || 'Kishor',
-            phone: profile.phone || profile.mobile || '1234564890',
-            village: profile.village || 'Warangal',
-            loc: (profile.village || 'Warangal') + ' పరిధి',
-            distanceKm: 2.5
-        };
-
-
-    // 2. Central AgriDB ద్వారా Live Firestore లో సేవ్ చేయడం
-    if (window.AgriDB) {
-        try {
-            await window.AgriDB.addProviderItem(newItem);
-            alert("🎉 " + val1 + " విజయవంతంగా లైవ్ డేటాబేస్‌లో చేర్చబడింది!");
-        } catch (error) {
-            console.error("Save error:", error);
-            alert("డేటాబేస్ లోపం: " + error.message);
-        }
-    }
-
-    // 3. Local fallback & UI Refresh
-    let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
-    items.unshift(newItem);
-    localStorage.setItem('agri_provider_items', JSON.stringify(items));
-
-    closeAddServiceModal();
-    renderProviderItemsList(type);
+  closeAddServiceModal();
+  renderProviderItemsList(type);
 };
 
-
 window.renderProviderItemsList = async function(type) {
-    const container = document.getElementById('provider-items-list');
-    if (!container) return;
+  const container = document.getElementById('provider-items-list');
+  if (!container) return;
 
-    // లాగిన్ ప్రొఫైల్ నుంచి 10 అంకెల మొబైల్ నంబర్ తీసుకోవడం
-    const profile = window.AppState?.userProfile || JSON.parse(localStorage.getItem('agri_user_profile')) || {};
-    const currentUserPhone = String(profile.phone || '').trim();
-    const currentType = type || profile.providerType || 'equipment';
+  const profile = window.AppState?.userProfile || JSON.parse(localStorage.getItem('agri_user_profile')) || {};
+  const currentUserPhone = String(profile.phone || '').trim();
+  const currentType = type || profile.providerType || 'equipment';
 
-    container.innerHTML = `<p style="font-size:12px; color:#888; text-align:center; margin:10px 0;">వివరాలు లోడ్ అవుతున్నాయి...</p>`;
+  container.innerHTML = `<p class="pitem-loading-text">వివరాలు లోడ్ అవుతున్నాయి...</p>`;
 
-    try {
-        let items = [];
+  try {
+    let items = [];
 
-        // Firestore లోని provider_items కలెక్షన్ నుండి యూజర్ ఫోన్ నంబర్‌తో ఫిల్టర్ చేయడం
-        if (typeof db !== 'undefined' && db.collection) {
-            const snapshot = await db.collection("provider_items")
-                .where("phone", "==", currentUserPhone)
-                .get();
+    // Firestore లోని provider_items కలెక్షన్ నుండి యూజర్ ఫోన్ నంబర్‌తో ఫిల్టర్ చేయడం
+    if (typeof db !== 'undefined' && db.collection && currentUserPhone) {
+      const snapshot = await db.collection("provider_items")
+        .where("phone", "==", currentUserPhone)
+        .get();
 
-            snapshot.forEach(doc => {
-                items.push({ id: doc.id, ...doc.data() });
-            });
-        }
-
-        // ఒకవేళ ఏ వస్తువులూ లేకపోతే
-        if (items.length === 0) {
-            container.innerHTML = `
-                <div style="background:#f9f9f9; border:1px dashed #ccc; border-radius:8px; padding:12px; text-align:center; color:#777; font-size:12px; margin-top:10px;">
-                    ఈ నంబర్ (${currentUserPhone}) పై ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.
-                </div>
-            `;
-            return;
-        }
-
-        // వస్తువులు ఉంటే స్క్రోల్ అయ్యే లిస్ట్ చూపించడం
-                                        container.innerHTML = `
-            <!-- Premium Orange Theme Outer Box with Soft Shadow -->
-            <div style="background:#ffffff; border:1.5px solid #f97316; border-radius:16px; overflow:hidden; margin-top:16px; box-shadow:0 8px 24px rgba(249, 115, 22, 0.12);">
-                
-                <!-- Premium Fixed Header -->
-                <div style="background:linear-gradient(135deg, #f97316, #ea580c); padding:12px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-                    <div style="font-size:14px; color:#ffffff; font-weight:700; display:flex; align-items:center; gap:6px;">
-                        🚜 మీరు జోడించిన వస్తువులు <span style="background:rgba(255,255,255,0.25); padding:2px 7px; border-radius:10px; font-size:12px;">${items.length}</span>
-                    </div>
-                    <!-- Live Status Badge -->
-                    <span style="font-size:11px; background:#ffffff; color:#16a34a; padding:3px 10px; border-radius:20px; font-weight:700; display:flex; align-items:center; gap:5px; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
-                        <span style="width:7px; height:7px; background:#16a34a; border-radius:50%; display:inline-block;"></span> LIVE
-                    </span>
-                </div>
-
-                <!-- Scrollable Cards Container with Light Tint & Smooth Scroll -->
-                <div style="padding:12px; display:flex; flex-direction:column; gap:10px; max-height:245px; overflow-y:auto; box-sizing:border-box;">
-                    ${items.map(item => `
-                        <div style="background:#fffaf3; border:1px solid #fed7aa; border-radius:10px; padding:11px 14px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 4px rgba(249, 115, 22, 0.05);">
-                            <div>
-                                <div style="font-size:13.5px; font-weight:bold; color:#1c1917;">${item.name || item.title || 'పేరు లేదు'}</div>
-                                <div style="font-size:12px; color:#78350f; margin-top:3px;">
-                                    ధర / అద్దె: <b style="color:#c2410c;">${item.rate || item.price || 'N/A'}</b> | <span style="color:#15803d; font-weight:600;">${item.extra || item.status || 'అందుబాటులో ఉంది'}</span>
-                                </div>
-                            </div>
-                            <button onclick="deleteProviderItem('${item.id}', '${currentType}')" style="background:#fee2e2; border:1px solid #fecaca; color:#b91c1c; padding:6px 12px; border-radius:8px; font-size:11px; cursor:pointer; font-weight:700; flex-shrink:0; margin-left:8px; transition:0.2s;">
-                                తీసివేయి
-                            </button>
-                        </div>
-                    `).join('')}
-                </div>
-
-            </div>
-        `;
-
-
-    } catch (err) {
-        console.error("Firestore Error:", err);
-        container.innerHTML = `<p style="font-size:12px; color:red; text-align:center;">డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.</p>`;
+      snapshot.forEach(doc => {
+        items.push({ id: doc.id, ...doc.data() });
+      });
     }
+
+    // Firestore లేకపోతే LocalStorage ఫాల్‌బ్యాక్
+    if (items.length === 0) {
+      const local = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+      items = local.filter(it => !currentUserPhone || it.phone === currentUserPhone);
+    }
+
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div class="pitem-empty-card">
+          ఈ నంబర్ (${currentUserPhone || 'ప్రొఫైల్'}) పై ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="pitem-box">
+        <div class="pitem-header">
+          <div class="pitem-title-text">
+            🚜 మీరు జోడించిన వస్తువులు <span class="pitem-count-badge">${items.length}</span>
+          </div>
+          <span class="pitem-live-badge">
+            <span class="pitem-live-dot"></span> LIVE
+          </span>
+        </div>
+
+        <div class="pitem-scroll-list">
+          ${items.map(item => `
+            <div class="pitem-card-row">
+              <div>
+                <div class="pitem-card-title">${item.name || item.title || 'పేరు లేదు'}</div>
+                <div class="pitem-card-details">
+                  ధర / అద్దె: <b class="pitem-price-text">${item.rate || item.price || 'N/A'}</b> | <span class="pitem-status-text">${item.extra || item.status || 'అందుబాటులో ఉంది'}</span>
+                </div>
+              </div>
+              <button onclick="deleteProviderItem('${item.id}', '${currentType}')" class="pitem-delete-btn">
+                తీసివేయి
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+  } catch (err) {
+    console.error("Firestore Error:", err);
+    container.innerHTML = `<p class="pitem-error-text">డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.</p>`;
+  }
 };
 
 window.deleteProviderItem = async function(id, type) {
-    if (!id) return;
+  if (!id) return;
 
-    const confirmDelete = confirm("ఈ పరికరాన్ని / సేవను ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?");
-    if (!confirmDelete) return;
+  const confirmDelete = confirm("ఈ పరికరాన్ని / సేవను ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?");
+  if (!confirmDelete) return;
+
+  try {
+    if (typeof db !== 'undefined' && db.collection) {
+      await db.collection("provider_items").doc(id).delete();
+    }
 
     try {
-        // 1. Firebase Firestore నుండి తొలగించడం
-        if (typeof db !== 'undefined' && db.collection) {
-            await db.collection("provider_items").doc(id).delete();
-        }
-
-        // 2. LocalStorage బ్యాకప్ లో ఉంటే అక్కడ కూడా తొలగించడం
-        try {
-            let localItems = JSON.parse(localStorage.getItem('agri_provider_items')) || [];
-            localItems = localItems.filter(item => item.id !== id);
-            localStorage.setItem('agri_provider_items', JSON.stringify(localItems));
-        } catch (e) {
-            console.warn("LocalStorage delete error:", e);
-        }
-
-        alert("విజయవంతంగా తొలగించబడింది!");
-
-        // 3. UI లిస్ట్‌ను వెంటనే రీఫ్రెష్ చేయడం
-        if (typeof window.renderProviderItemsList === 'function') {
-            window.renderProviderItemsList(type);
-        }
-
-    } catch (error) {
-        console.error("Delete error:", error);
-        alert("తొలగించడంలో లోపం వచ్చింది: " + error.message);
+      let localItems = JSON.parse(localStorage.getItem('agri_provider_items')) || [];
+      localItems = localItems.filter(item => item.id !== id);
+      localStorage.setItem('agri_provider_items', JSON.stringify(localItems));
+    } catch (e) {
+      console.warn("LocalStorage delete error:", e);
     }
-};
 
+    alert("విజయవంతంగా తొలగించబడింది!");
+
+    if (typeof window.renderProviderItemsList === 'function') {
+      window.renderProviderItemsList(type);
+    }
+
+  } catch (error) {
+    console.error("Delete error:", error);
+    alert("తొలగించడంలో లోపం వచ్చింది: " + error.message);
+  }
+};
 
 // ===================================================
 // Rhythu Smart Vehicle Booking: Spot vs Advance
