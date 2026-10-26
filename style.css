@@ -3431,5 +3431,164 @@ header h1 {
   margin-left: 8px;
   transition: 0.2s;
 }
+/* ==========================================
+   Rhythu Vehicle Booking Modal Styles
+   ========================================== */
+
+.booking-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.booking-modal-card {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  padding: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.booking-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #666;
+}
+
+.booking-modal-header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.booking-modal-title {
+  margin: 0;
+  font-size: 16px;
+  color: #2e7d32;
+}
+
+.booking-modal-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Mode Switch Row (Spot vs Advance) */
+.booking-mode-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  background: #f1f8e9;
+  padding: 4px;
+  border-radius: 24px;
+}
+
+.booking-mode-btn {
+  flex: 1;
+  padding: 8px 6px;
+  font-size: 12px;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background: transparent;
+  color: #2e7d32;
+  transition: all 0.2s;
+}
+
+.booking-mode-btn.active {
+  background: #2e7d32;
+  color: #fff;
+}
+
+/* GPS Status Bar */
+.gps-status-box {
+  background: #e8f5e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #2e7d32;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gps-refresh-btn {
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* Advance Booking Container */
+.advance-fields-box {
+  display: none;
+  margin-bottom: 10px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.advance-field-group {
+  margin-bottom: 8px;
+}
+
+.advance-field-group.last {
+  margin-bottom: 0;
+}
+
+.advance-label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  color: #b78103;
+  margin-bottom: 4px;
+}
+
+.advance-input {
+  width: 100%;
+  padding: 8px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.booking-submit-btn {
+  width: 100%;
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 6px;
+}
 
 
