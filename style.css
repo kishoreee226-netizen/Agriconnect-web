@@ -5033,5 +5033,88 @@ header h1 {
 .transport-card-item {
   margin-bottom: 10px;
 }
+/* ==========================================
+   Company Branding, Header & Footer Styles
+   ========================================== */
+
+.app-header-container {
+  max-width: 480px;
+  margin: 0 auto 10px auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+}
+
+.header-logo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.header-logo.is-hidden {
+  display: none;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 20px;
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+.brand-text p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: #666;
+}
+
+/* App Footer */
+.app-footer {
+  max-width: 420px;
+  margin: 20px auto 10px auto;
+  text-align: center;
+  border-top: 1px solid #e0e0e0;
+  padding: 14px 10px;
+  line-height: 1.5;
+  box-sizing: border-box;
+}
+
+.footer-company-name {
+  color: #2e7d32;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  letter-spacing: 0.5px;
+}
+
+.footer-udyam-text {
+  margin: 3px 0;
+  font-size: 11px;
+  color: #555;
+  font-weight: 500;
+}
+
+.footer-udyam-val {
+  color: #222;
+  font-weight: 600;
+}
+
+.footer-address-text {
+  margin: 3px 0;
+  font-size: 11px;
+  color: #666;
+}
+
+.footer-copy-text {
+  margin-top: 8px;
+  color: #888;
+  font-size: 10px;
+}
 
 
