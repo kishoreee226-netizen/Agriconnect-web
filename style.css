@@ -3590,5 +3590,186 @@ header h1 {
   cursor: pointer;
   margin-top: 6px;
 }
+/* ==========================================
+   Provider Incoming Requests / Bookings Styles
+   ========================================== */
+
+.porders-box {
+  background: #ffffff;
+  border: 1.5px solid #16a34a;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 20px;
+  box-shadow: 0 8px 24px rgba(22, 163, 74, 0.12);
+}
+
+.porders-header {
+  background: linear-gradient(135deg, #16a34a, #15803d);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.porders-title {
+  font-size: 14px;
+  color: #ffffff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.porders-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.porders-live-badge {
+  font-size: 11px;
+  background: #ffffff;
+  color: #16a34a;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.porders-live-dot {
+  width: 7px;
+  height: 7px;
+  background: #16a34a;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.porders-scroll-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.porders-card {
+  background: #f8fbf8;
+  border: 1.5px solid #fed7aa;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.porders-card.accepted {
+  border-color: #86efac;
+}
+
+.porders-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.porders-type-tag {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.porders-type-tag.spot {
+  background: #fee2e2;
+  color: #c62828;
+  border: 1px solid #fecaca;
+}
+
+.porders-type-tag.advance {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.porders-time-text {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.porders-veh-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.porders-work-details {
+  font-size: 12px;
+  color: #4b5563;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.porders-btn-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.porders-action-btn {
+  flex: 1;
+  min-width: 85px;
+  text-align: center;
+  text-decoration: none;
+  padding: 8px 4px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.porders-call-btn {
+  background: #15803d;
+  color: #fff;
+}
+
+.porders-map-btn {
+  background: #0284c7;
+  color: #fff;
+  min-width: 95px;
+}
+
+.porders-accept-btn {
+  background: #f97316;
+  color: #fff;
+  min-width: 90px;
+}
+
+.porders-accepted-badge {
+  flex: 1;
+  min-width: 110px;
+  text-align: center;
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  padding: 8px 4px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: bold;
+}
 
 
