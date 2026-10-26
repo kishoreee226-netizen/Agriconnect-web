@@ -1,36 +1,38 @@
 // wallet.js - 2-in-1 Escrow Smart Wallet (Digital Lock & Release)
 
-// Helper: Wallet data ni localStorage nundi thecchukovadam
+// Helper: Wallet data ni localStorage / AgriState nundi thecchukovadam
 function getAgriWalletData() {
   const defaultWallet = {
-    farmerBalance: 2500,
+    farmerBalance: 0,
     labourBalance: 0,
-    lockedEscrow: [
-      {
-        id: "ESC-INIT-1",
-        jobId: "INIT-1",
-        jobTitle: "వరి కోత",
-        labourName: "రాము",
-        amount: 450,
-        status: "Locked"
-      }
-    ]
+    lockedEscrow: []
   };
 
   try {
     const saved = localStorage.getItem("agri_wallet");
-    if (saved) return JSON.parse(saved);
-  } catch (e) {}
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed.lockedEscrow)) parsed.lockedEscrow = [];
+      return parsed;
+    }
+  } catch (e) {
+    console.warn("Wallet read error:", e);
+  }
 
   localStorage.setItem("agri_wallet", JSON.stringify(defaultWallet));
   return defaultWallet;
 }
 
-// Helper: Wallet data ni save cheyadam
+// Helper: Wallet data ni save cheyadam mariyu AgriState tho sync cheyadam
 function saveAgriWalletData(data) {
   try {
     localStorage.setItem("agri_wallet", JSON.stringify(data));
-  } catch (e) {}
+    if (window.AgriState) {
+      window.AgriState.wallet = data;
+    }
+  } catch (e) {
+    console.warn("Wallet save error:", e);
+  }
 }
 
 function renderWalletWidget() {
@@ -39,11 +41,11 @@ function renderWalletWidget() {
 
   const walletData = getAgriWalletData();
 
-  const lockedTotal = walletData.lockedEscrow
+  const lockedTotal = (walletData.lockedEscrow || [])
     .filter(item => item.status === "Locked")
     .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-    container.innerHTML = `
+  container.innerHTML = `
     <div class="wallet-card">
       
       <!-- Wallet Header -->
@@ -76,7 +78,7 @@ function renderWalletWidget() {
         <!-- Escrow Active Transactions List -->
         <div class="escrow-section">
           <div class="escrow-title">
-            🔐 Escrow లావాదేవీలు (కూలీకి garanty lock):
+            🔐 Escrow లావాదేవీలు (కూలీకి గ్యారెంటీ లాక్):
           </div>
 
           <div class="escrow-list-container">
@@ -93,7 +95,7 @@ function renderWalletWidget() {
                     <strong class="escrow-amount ${isLocked ? 'is-locked' : 'is-released'}">₹${esc.amount}</strong>
                   </div>
                   <div class="escrow-status-text">
-                    status: <b>${isLocked ? '🔒 lock అయింది (రైతు ఖాతాలో hold)' : '✅ Release అయింది (కూలీ ఖాతాకు చేరింది)'}</b>
+                    పరిస్థితి: <b>${isLocked ? '🔒 lock అయింది (రైతు ఖాతాలో hold)' : '✅ Release అయింది (కూలీ ఖాతాకు చేరింది)'}</b>
                   </div>
                   
                   ${isLocked ? `
@@ -114,22 +116,23 @@ function renderWalletWidget() {
   `;
 }
 
-// Function: Kotha job accept chesinappudu automatic ga Escrow loki lock cheyadam
+// Function: కొత్త కూలీ పనిని Escrow లో లాక్ చేయడం
 window.lockJobToEscrow = function(job, labourName) {
+  if (!job) return;
   const wallet = getAgriWalletData();
   const amount = Number(job.wage || 0);
 
-  // Already lock ayyindo ledo check cheyadam
   const exists = wallet.lockedEscrow.find(e => e.jobId === job.id);
   if (exists) return;
 
   wallet.lockedEscrow.unshift({
     id: "ESC-" + Date.now(),
     jobId: job.id,
-    jobTitle: `${job.crop} (${job.workType})`,
-    labourName: labourName,
+    jobTitle: `${job.crop || 'పంట'} (${job.workType || 'పని'})`,
+    labourName: labourName || "కూలీ",
     amount: amount,
-    status: "Locked"
+    status: "Locked",
+    createdAt: Date.now()
   });
 
   saveAgriWalletData(wallet);
@@ -147,20 +150,14 @@ window.handleReleasePayment = function(escrowId) {
   if (item && item.status === "Locked") {
     const amt = Number(item.amount || 0);
 
-    // 1. Status release ga marchadam
     item.status = "Released";
+    item.releasedAt = Date.now();
 
-    // 2. Farmer balance nundi deduct chesi Labour wallet ki add cheyadam
     wallet.farmerBalance = Math.max(0, wallet.farmerBalance - amt);
     wallet.labourBalance = Number(wallet.labourBalance || 0) + amt;
 
     saveAgriWalletData(wallet);
     renderWalletWidget();
-
-    // AgriState update (if available)
-    if (window.AgriState && window.AgriState.wallet) {
-      window.AgriState.wallet = wallet;
-    }
 
     if (typeof speakTeluguText === "function") {
       speakTeluguText(`కూలీకి ${amt} రూపాయలు విజయవంతంగా విడుదల చేయబడ్డాయి.`);
@@ -179,7 +176,6 @@ window.handleWithdrawUPI = function() {
     return;
   }
 
-  // 1. Amount adagadam
   const amountStr = prompt(`మీ వద్ద మొత్తం ₹${currentBalance} ఉంది.\nఎంత amount withdraw చేయాలనుకుంటున్నారు?`, currentBalance);
   if (!amountStr) return;
 
@@ -195,52 +191,51 @@ window.handleWithdrawUPI = function() {
     return;
   }
 
-  // 2. UPI ID adagadam
-  const upiId = prompt("మీ UPI ID నమోదు చేయండి (ఉదా: 9876543210@ybl):", "9876543211@upi");
-  if (!upiId) return;
+  const upiId = prompt("మీ UPI ID నమోదు చేయండి (ఉదా: 9876543210@upi):", "");
+  if (!upiId || !upiId.trim()) {
+    alert("సరైన UPI ID నమోదు చేయండి!");
+    return;
+  }
 
-  // 3. Balance nundi deduct chesi migilinadhi save cheyadam
   wallet.labourBalance = currentBalance - withdrawAmount;
   saveAgriWalletData(wallet);
   renderWalletWidget();
 
-  alert(`✅ ₹${withdrawAmount} మీ UPI (${upiId}) కి విజయవంతంగా బదిలీ చేయబడింది!\nమిగిలిన balance: ₹${wallet.labourBalance}`);
+  alert(`✅ ₹${withdrawAmount} మీ UPI (${upiId.trim()}) కి విజయవంతంగా బదిలీ చేయబడింది!\nమిగిలిన balance: ₹${wallet.labourBalance}`);
 };
-// --- బుకింగ్ కోసం Escrow Lock ఫంక్షన్ ---
+
+// --- వాహనం / పరికరాల బుకింగ్ కోసం Escrow Lock ఫంక్షన్ ---
 window.lockBookingEscrow = function(bookingId, amount, itemName) {
   const wallet = getAgriWalletData();
   const currentBalance = Number(wallet.farmerBalance || 0);
+  const amt = Number(amount || 0);
 
-  if (currentBalance < amount) {
-    alert(`⚠️ రైతు వ్యాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు! కావలసినది: ₹${amount}, ఉన్నది: ₹${currentBalance}`);
+  if (currentBalance < amt) {
+    alert(`⚠️ రైతు వ్యాలెట్‌లో సరిపడా బ్యాలెన్స్ లేదు! కావలసినది: ₹${amt}, ఉన్నది: ₹${currentBalance}`);
     return false;
   }
 
-  // రైతు బ్యాలెన్స్ నుండి అడ్వాన్స్ కట్ చేసి ఎస్క్రో లో లాక్ చేయడం
-  wallet.farmerBalance = currentBalance - amount;
-  if (!wallet.escrows) wallet.escrows = [];
-  
-  wallet.escrows.unshift({
-    bookingId: bookingId,
-    amount: amount,
-    itemName: itemName,
+  wallet.farmerBalance = currentBalance - amt;
+
+  wallet.lockedEscrow.unshift({
+    id: "ESC-BK-" + Date.now(),
+    jobId: bookingId,
+    jobTitle: itemName || "సేవ బుకింగ్",
+    labourName: "సర్వీస్ ప్రొవైడర్",
+    amount: amt,
     status: "Locked",
-    date: new Date().toLocaleDateString('te-IN')
+    createdAt: Date.now()
   });
 
   saveAgriWalletData(wallet);
   renderWalletWidget();
-
-  if (window.AgriState) {
-    window.AgriState.wallet = wallet;
-  }
 
   // బుకింగ్ స్టేటస్ అప్‌డేట్ చేయడం
   try {
     let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
     bookings = bookings.map(b => {
       if (b.id === bookingId) {
-        b.status = `🔒 ₹${amount} Escrow లో భద్రపరచబడింది`;
+        b.status = `🔒 ₹${amt} Escrow లో భద్రపరచబడింది`;
       }
       return b;
     });
@@ -251,7 +246,6 @@ window.lockBookingEscrow = function(bookingId, amount, itemName) {
     renderBookingRecords();
   }
 
-  alert(`🔒 ₹${amount} అడ్వాన్స్ మొత్తం Smart Wallet (Escrow) లో లాక్ చేయబడింది!`);
+  alert(`🔒 ₹${amt} అడ్వాన్స్ మొత్తం Smart Wallet (Escrow) లో లాక్ చేయబడింది!`);
   return true;
 };
-
