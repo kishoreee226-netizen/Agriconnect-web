@@ -67,7 +67,7 @@ function renderCompanyDetails() {
 
     footer.innerHTML = `
       <p class="footer-company-name">${window.COMPANY_CONFIG.name}</p>
-      <p class="footer-udyam-text">Udyam Reg: <span class="footer-udyam-val">${window.COMPANY_CONFIG.udyamRegNo}</span></p>
+      <p class="footer-udyam-text">Udyam Reg: <span id="cmp-udyam" class="footer-udyam-val">${window.COMPANY_CONFIG.udyamRegNo}</span></p>
       <p class="footer-address-text">📍 ${window.COMPANY_CONFIG.location}</p>
       <p class="footer-copy-text">© ${window.COMPANY_CONFIG.copyrightYear} ${window.COMPANY_CONFIG.name}. All rights reserved.</p>
     `;
