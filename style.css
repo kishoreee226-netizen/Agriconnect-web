@@ -3057,4 +3057,193 @@ header h1 {
   border: 2px solid #4caf50 !important;
   display: block !important;
 }
+/* ==========================================
+   Provider Auth Modal & Dashboard Styles
+   ========================================== */
+
+.provider-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.provider-modal-card {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 380px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.provider-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #777;
+}
+
+.provider-modal-header {
+  text-align: center;
+  margin-bottom: 14px;
+}
+
+.provider-modal-title {
+  margin: 0;
+  font-size: 17px;
+  color: #4a148c;
+}
+
+.provider-modal-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.provider-tab-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.provider-tab-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Equipment Tab */
+.tab-eq {
+  border: 1.5px solid #f57c00;
+  background: #fff3e0;
+  color: #e65100;
+}
+.tab-eq.active {
+  background: #f57c00;
+  color: #ffffff;
+}
+
+/* Transport Tab */
+.tab-tr {
+  border: 1.5px solid #7b1fa2;
+  background: #f3e5f5;
+  color: #7b1fa2;
+}
+.tab-tr.active {
+  background: #7b1fa2;
+  color: #ffffff;
+}
+
+/* Seeds Tab */
+.tab-sd {
+  border: 1.5px solid #2e7d32;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+.tab-sd.active {
+  background: #2e7d32;
+  color: #ffffff;
+}
+
+.provider-form-group {
+  margin-bottom: 10px;
+}
+
+.provider-form-group.last {
+  margin-bottom: 16px;
+}
+
+.provider-form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.provider-form-input {
+  width: 100%;
+  padding: 9px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+.provider-submit-btn {
+  width: 100%;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  background: var(--provider-theme, #f57c00);
+}
+
+/* Provider Dashboard View */
+.provider-dashboard-card {
+  background: #fff;
+  border: 2px solid var(--provider-theme, #f57c00);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 14px auto;
+  max-width: 480px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+.provider-dash-title {
+  margin: 0 0 6px 0;
+  color: var(--provider-theme, #f57c00);
+  font-size: 16px;
+}
+
+.provider-dash-desc {
+  font-size: 12px;
+  color: #555;
+  margin: 0 0 14px 0;
+}
+
+.provider-add-service-btn {
+  background: #fcfcfc;
+  padding: 16px;
+  border-radius: 10px;
+  border: 2px dashed var(--provider-theme, #f57c00);
+  text-align: center;
+  cursor: pointer;
+}
+
+.provider-add-service-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--provider-theme, #f57c00);
+}
+
+.provider-add-service-subtext {
+  font-size: 12px;
+  color: #777;
+  margin: 6px 0 0 0;
+}
+
 
