@@ -9,10 +9,12 @@ function getLabourProfile() {
     if (p) stored = JSON.parse(p);
   } catch (e) {}
 
-  // AppState login profile tho sync cheyadam
+  const activePhone = (typeof window.getActiveUserPhone === "function")
+    ? window.getActiveUserPhone()
+    : (appProf?.phone || stored?.phone || "");
+
   const baseName = appProf?.name || stored?.name || "కూలీ";
-  const basePhone = appProf?.phone || stored?.phone || "9876543210";
-  const baseVillage = appProf?.village || stored?.village || "సమీప గ్రామం";
+  const baseVillage = appProf?.village || stored?.village || "స్థానిక పరిధి";
 
   let dutyStatus = true;
   try {
@@ -26,7 +28,7 @@ function getLabourProfile() {
 
   return {
     name: baseName,
-    phone: basePhone,
+    phone: activePhone,
     village: baseVillage,
     gangCount: stored?.gangCount || 1,
     wage: stored?.wage || 450,
@@ -51,8 +53,8 @@ function saveLabourProfile(profile) {
   }
 
   // Firebase Real-time sync
-  if (window.db) {
-    const docId = "profile_" + (profile.phone || "user");
+  if (window.db && profile.phone) {
+    const docId = "profile_" + profile.phone;
     window.db.collection("labour_profiles").doc(docId).set({
       ...profile,
       status: profile.isDutyOn ? "Available" : "Offline",
@@ -76,7 +78,6 @@ function ensureLabourProfileModal() {
 
   const existingModal = document.getElementById("labourProfileModal");
   if (existingModal) {
-    // Already DOM lo unte latest values inject cheyadam
     document.getElementById("lpf_name").value = prof.name;
     document.getElementById("lpf_phone").value = prof.phone;
     document.getElementById("lpf_village").value = prof.village;
@@ -92,44 +93,44 @@ function ensureLabourProfileModal() {
   }
 
   const modalHtml = `
-    <div id="labourProfileModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
-      <div style="background:#fff; width:100%; max-width:380px; border-radius:12px; padding:16px; box-shadow:0 8px 24px rgba(0,0,0,0.2); max-height:90vh; overflow-y:auto; box-sizing:border-box; font-family:sans-serif;">
+    <div id="labourProfileModal" class="lpm-modal-overlay">
+      <div class="lpm-modal-card">
         
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e0e0e0; padding-bottom:8px; margin-bottom:12px;">
-          <h4 style="margin:0; color:#0277bd; font-size:15px;">👷 నా కూలీ వివరాలు & పనులు</h4>
-          <span onclick="window.closeLabourProfileModal()" style="font-size:22px; font-weight:bold; cursor:pointer; color:#777; line-height:1;">&times;</span>
+        <div class="lpm-modal-header">
+          <h4 class="lpm-modal-title">👷 నా కూలీ వివరాలు & పనులు</h4>
+          <span onclick="window.closeLabourProfileModal()" class="lpm-close-btn">&times;</span>
         </div>
 
-        <form id="labourProfileForm" onsubmit="window.handleLabourProfileSubmit(event)" style="display:flex; flex-direction:column; gap:10px;">
+        <form id="labourProfileForm" onsubmit="window.handleLabourProfileSubmit(event)" class="lpm-form">
           <div>
-            <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">కూలీ / మేస్త్రీ పేరు:</label>
-            <input type="text" id="lpf_name" required value="${prof.name}" style="width:100%; padding:7px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+            <label class="lpm-label">కూలీ / మేస్త్రీ పేరు:</label>
+            <input type="text" id="lpf_name" required value="${prof.name}" class="lpm-input">
           </div>
 
           <div>
-            <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">ఫోన్ నంబర్:</label>
-            <input type="tel" id="lpf_phone" required pattern="[0-9]{10}" value="${prof.phone}" style="width:100%; padding:7px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+            <label class="lpm-label">ఫోన్ నంబర్:</label>
+            <input type="tel" id="lpf_phone" required pattern="[0-9]{10}" value="${prof.phone}" class="lpm-input">
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="lpm-grid-2">
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">గ్రామం / ప్రాంతం:</label>
-              <input type="text" id="lpf_village" required value="${prof.village}" style="width:100%; padding:7px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+              <label class="lpm-label">గ్రామం / ప్రాంతం:</label>
+              <input type="text" id="lpf_village" required value="${prof.village}" class="lpm-input">
             </div>
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">బృందం సభ్యులు:</label>
-              <input type="number" id="lpf_count" min="1" value="${prof.gangCount || 1}" required style="width:100%; padding:7px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+              <label class="lpm-label">బృందం సభ్యులు:</label>
+              <input type="number" id="lpf_count" min="1" value="${prof.gangCount || 1}" required class="lpm-input">
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="lpm-grid-2">
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">రోజు కూలీ (₹):</label>
-              <input type="number" id="lpf_wage" min="100" step="50" value="${prof.wage || 450}" required style="width:100%; padding:7px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+              <label class="lpm-label">రోజు కూలీ (₹):</label>
+              <input type="number" id="lpf_wage" min="100" step="50" value="${prof.wage || 450}" required class="lpm-input">
             </div>
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">సొంత బండి ఉందా?</label>
-              <select id="lpf_trans" style="width:100%; padding:7px; border:1px solid #ccc; border-radius:6px; font-size:12px; background:#fff;">
+              <label class="lpm-label">సొంత బండి ఉందా?</label>
+              <select id="lpf_trans" class="lpm-select">
                 <option value="yes" ${prof.ownTransport ? 'selected' : ''}>🛵 ఉంది</option>
                 <option value="no" ${!prof.ownTransport ? 'selected' : ''}>❌ లేదు (రవాణా కావాలి)</option>
               </select>
@@ -137,12 +138,12 @@ function ensureLabourProfileModal() {
           </div>
 
           <div>
-            <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:4px;">మీకు వచ్చిన పనులు (టిక్ చేయండి):</label>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; background:#f9fbe7; padding:8px; border-radius:6px; border:1px solid #e6ee9c;">
+            <label class="lpm-label">మీకు వచ్చిన పనులు (టిక్ చేయండి):</label>
+            <div class="lpm-skills-box">
               ${allSkills.map(s => {
                 const checked = prof.skills && prof.skills.includes(s) ? 'checked' : '';
                 return `
-                  <label style="font-size:11px; color:#33691e; display:flex; align-items:center; gap:4px; cursor:pointer;">
+                  <label class="lpm-skill-item">
                     <input type="checkbox" name="labour_skills" value="${s}" ${checked}>${s}
                   </label>
                 `;
@@ -150,9 +151,9 @@ function ensureLabourProfileModal() {
             </div>
           </div>
 
-          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-            <button type="button" onclick="window.closeLabourProfileModal()" style="padding:7px 14px; border:1px solid #ccc; background:#f5f5f5; border-radius:6px; font-size:12px; cursor:pointer;">రద్దు</button>
-            <button type="submit" style="padding:7px 16px; border:none; background:#0288d1; color:#fff; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">💾 వివరాలు సేవ్ చేయండి</button>
+          <div class="lpm-btn-row">
+            <button type="button" onclick="window.closeLabourProfileModal()" class="lpm-btn-cancel">రద్దు</button>
+            <button type="submit" class="lpm-btn-save">💾 వివరాలు సేవ్ చేయండి</button>
           </div>
         </form>
 
@@ -165,12 +166,18 @@ function ensureLabourProfileModal() {
 window.openLabourProfileModal = function() {
   ensureLabourProfileModal();
   const modal = document.getElementById("labourProfileModal");
-  if (modal) modal.style.display = "flex";
+  if (modal) {
+    modal.classList.add("is-active");
+    modal.style.display = "flex";
+  }
 };
 
 window.closeLabourProfileModal = function() {
   const modal = document.getElementById("labourProfileModal");
-  if (modal) modal.style.display = "none";
+  if (modal) {
+    modal.classList.remove("is-active");
+    modal.style.display = "none";
+  }
 };
 
 window.handleLabourProfileSubmit = function(e) {
