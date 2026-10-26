@@ -1358,7 +1358,6 @@ window.acceptBookingOrder = async function(bookingId) {
     alert("ఆర్డర్ స్వీకరించడంలో సమస్య వచ్చింది: " + error.message);
   }
 };
-
 // ===================================================
 // Sync Provider Items into Farmer Dashboard & Live Requests (With Scroll & Font Fix)
 // ===================================================
@@ -1371,11 +1370,11 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   if (!reqBanner) {
     reqBanner = document.createElement("div");
     reqBanner.id = "farmer-quick-req-banner";
-    reqBanner.style.cssText = "background: linear-gradient(135deg, #2e7d32, #1b5e20); color: #fff; padding: 14px; border-radius: 12px; margin: 10px 0 16px 0; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);";
+    reqBanner.className = "farmer-quick-req-banner";
     reqBanner.innerHTML = `
-      <div style="font-size:15px; font-weight:bold; margin-bottom:4px;">🚜 అత్యవసరంగా వాహనం / యంత్రం కావాలా?</div>
-      <div style="font-size:12px; opacity:0.9; margin-bottom:10px;">స్పాట్ లో లేదా అడ్వాన్స్ గా బుక్ చేసుకోండి (లైవ్ GPS నావిగేషన్)</div>
-      <button onclick="openFarmerVehicleBookingModal()" style="background:#fff; color:#1b5e20; border:none; padding:9px 18px; border-radius:20px; font-size:13px; font-weight:bold; cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+      <div class="quick-banner-title">🚜 అత్యవసరంగా వాహనం / యంత్రం కావాలా?</div>
+      <div class="quick-banner-subtitle">స్పాట్ లో లేదా అడ్వాన్స్ గా బుక్ చేసుకోండి (లైవ్ GPS నావిగేషన్)</div>
+      <button onclick="openFarmerVehicleBookingModal()" class="quick-banner-btn">
         ⚡ వాహనం కోసం రిక్వెస్ట్ పెట్టండి ➔
       </button>
     `;
@@ -1392,16 +1391,12 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   if (!liveList) {
     liveList = document.createElement("div");
     liveList.id = "farmer-live-provider-items";
-    liveList.style.marginTop = "14px";
+    liveList.className = "farmer-live-items-container";
     farmerContainer.appendChild(liveList);
-  } else {
-    liveList.style.maxHeight = "380px";
-    liveList.style.overflowY = "auto";
-    liveList.style.paddingRight = "4px";
   }
 
   if (savedItems.length === 0) {
-    liveList.innerHTML = '<div style="background:#fff; padding:12px; border-radius:10px; border:1px dashed #ccc; text-align:center; font-size:12px; color:#777;">యజమానులు ఇంకా కొత్త వాహనాలు జోడించలేదు.</div>';
+    liveList.innerHTML = '<div class="farmer-live-empty-card">యజమానులు ఇంకా కొత్త వాహనాలు జోడించలేదు.</div>';
     return;
   }
 
@@ -1413,21 +1408,21 @@ window.renderFarmerWidgetWithLiveProviders = function() {
     const phone = item.providerPhone || item.phone || '';
 
     itemsHtml += `
-      <div style="background:#ffffff; border:1.5px solid #a5d6a7; border-radius:12px; padding:12px; margin-bottom:10px; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div class="farmer-provider-card">
+        <div class="fprov-card-top">
           <div>
-            <div style="font-size:15px; font-weight:bold; color:#1b5e20;">${item.name}</div>
-            <div style="font-size:12px; color:#555; margin-top:2px;">ధర / అద్దె: <b style="color:#e65100; font-size:13px;">₹${item.rate}</b> &nbsp;|&nbsp; ${item.extra || 'అందుబాటులో ఉంది'}</div>
-            <div style="font-size:11px; color:#666; margin-top:4px;">యజమాని: <b>${pName}</b> ${vName}</div>
+            <div class="fprov-item-name">${item.name}</div>
+            <div class="fprov-item-rate-text">ధర / అద్దె: <b class="fprov-item-rate-highlight">₹${item.rate}</b> &nbsp;|&nbsp; ${item.extra || 'అందుబాటులో ఉంది'}</div>
+            <div class="fprov-owner-info">యజమాని: <b>${pName}</b> ${vName}</div>
           </div>
-          <span style="font-size:11px; background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-weight:bold;">లభ్యం</span>
+          <span class="fprov-available-badge">లభ్యం</span>
         </div>
-        <div style="display:flex; gap:8px; margin-top:10px;">
+        <div class="fprov-btn-row">
           ${phone ? `
-            <a href="tel:${phone}" style="flex:1; text-align:center; background:#2e7d32; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">📞 కాల్</a>
-            <a href="https://wa.me/91${phone}" target="_blank" style="flex:1; text-align:center; background:#25d366; color:#fff; text-decoration:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold;">వాట్సాప్</a>
+            <a href="tel:${phone}" class="fprov-btn fprov-call-btn">📞 కాల్</a>
+            <a href="https://wa.me/91${phone}" target="_blank" class="fprov-btn fprov-whatsapp-btn">వాట్సాప్</a>
           ` : `
-            <button onclick="openFarmerVehicleBookingModal()" style="flex:1; background:#2e7d32; color:#fff; border:none; padding:8px 0; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">బుక్ చేసుకోండి</button>
+            <button onclick="openFarmerVehicleBookingModal()" class="fprov-btn fprov-call-btn">బుక్ చేసుకోండి</button>
           `}
         </div>
       </div>
@@ -1435,8 +1430,8 @@ window.renderFarmerWidgetWithLiveProviders = function() {
   }
 
   liveList.innerHTML = `
-    <h4 style="font-size:14px; color:#2e7d32; margin:12px 0 8px 0;">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
-    <div style="max-height: 380px; overflow-y: auto; padding-right: 4px; display:flex; flex-direction:column;">
+    <h4 class="farmer-live-heading">🤝 యజమానులు జోడించిన లైవ్ సేవలు (${savedItems.length}):</h4>
+    <div class="farmer-live-scroll-box">
       ${itemsHtml}
     </div>
   `;
