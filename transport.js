@@ -29,13 +29,13 @@ function startCentralTransportSync() {
 }
 
 function formatAndSetTransport(rawItems) {
-  transportList = rawItems.map(tr => ({
+  transportList = (rawItems || []).map(tr => ({
     id: tr.docId || tr.id,
     name: tr.vehicleType || tr.name || "రవాణా వాహనం",
     driver: tr.driverName || tr.driver || tr.ownerName || "డ్రైవర్",
     rate: tr.rate || (tr.price ? `₹${tr.price}` : "రేటు అందుబాటులో లేదు"),
     phone: tr.phone || tr.driverPhone || "",
-    loc: tr.village || tr.loc || "గ్రామం",
+    loc: tr.village || tr.loc || "స్థానిక పరిధి",
     distanceKm: Number(tr.distanceKm || 2.0),
     village: tr.villageMatch || "same",
     ...tr
@@ -50,7 +50,6 @@ window.renderTransportWidget = function(targetContainerId = "farmer-pane-transpo
   const container = document.getElementById(targetContainerId);
   if (!container) return;
 
-  // మొదటిసారి విడ్జెట్ తెరిచినప్పుడు లైవ్ లిజనర్ ఆన్ అవుతుంది
   if (!isTransportListening) {
     startCentralTransportSync();
   }
@@ -64,22 +63,22 @@ window.renderTransportWidget = function(targetContainerId = "farmer-pane-transpo
     } else if (activeTransportFilter === "10") {
       return tr.distanceKm <= 10;
     }
-    return true; // 'all' అయితే అన్నీ కనిపిస్తాయి
+    return true;
   });
 
   container.innerHTML = `
     <!-- రవాణా లొకేషన్ ఫిల్టర్ బార్ -->
-    <div class="location-filter-bar" style="display:flex; justify-content:space-between; align-items:center; background:#e8f5e9; padding:8px 12px; border-radius:8px; margin-bottom:12px; border:1px solid #c8e6c9;">
-      <div style="display:flex; align-items:center; gap:6px;">
-        <span style="font-size:13px; font-weight:bold; color:#1b5e20;">📍 పరిధి:</span>
-        <select id="tr-loc-filter" onchange="filterTransportByRange(this.value)" style="padding:4px 8px; border-radius:6px; border:1px solid #81c784; font-size:12px; background:#fff; font-weight:600; color:#2e7d32; outline:none;">
+    <div class="transport-filter-bar">
+      <div class="transport-filter-left">
+        <span class="transport-filter-label">📍 పరిధి:</span>
+        <select id="tr-loc-filter" onchange="filterTransportByRange(this.value)" class="transport-filter-select">
           <option value="all" ${activeTransportFilter === 'all' ? 'selected' : ''}>అన్ని వాహనాలు</option>
           <option value="village" ${activeTransportFilter === 'village' ? 'selected' : ''}>🏡 నా గ్రామం (2 కి.మీ)</option>
           <option value="5" ${activeTransportFilter === '5' ? 'selected' : ''}>⚡ 5 కి.మీ లోపు</option>
           <option value="10" ${activeTransportFilter === '10' ? 'selected' : ''}>🚛 10 కి.మీ లోపు</option>
         </select>
       </div>
-      <span style="font-size:11px; background:#2e7d32; color:#fff; padding:3px 8px; border-radius:12px; font-weight:600;">
+      <span class="transport-count-badge">
         ${filteredList.length} లభ్యం
       </span>
     </div>
@@ -87,11 +86,11 @@ window.renderTransportWidget = function(targetContainerId = "farmer-pane-transpo
     <!-- వాహనాల జాబితా -->
     <div class="eq-list-wrap">
       ${filteredList.length === 0 ? `
-        <div style="text-align:center; padding:20px; color:#666; font-size:13px; background:#fff; border-radius:8px; border:1px dashed #ccc;">
+        <div class="transport-empty-state">
           ఈ పరిధిలో ప్రస్తుతం రవాణా వాహనాలు అందుబాటులో లేవు.
         </div>
       ` : filteredList.map(tr => `
-        <div class="eq-item-card" style="margin-bottom:10px;">
+        <div class="eq-item-card transport-card-item">
           <div class="eq-top-row">
             <div>
               <div class="eq-name">${tr.name}</div>
