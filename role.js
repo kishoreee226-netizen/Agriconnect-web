@@ -296,27 +296,27 @@ function renderRoleSwitchBar() {
   let switchContainer = document.getElementById("role-switch-container");
   if (!switchContainer) {
     switchContainer = document.createElement("div");
-    switchContainer.id = "role-switch-container";
-    switchContainer.style.cssText = "max-width: 480px; margin: 8px auto; padding: 4px; background: #e8f5e9; border-radius: 25px; display: flex; justify-content: space-between; border: 1px solid #c8e6c9; box-sizing: border-box;";
+          switchContainer.id = "role-switch-container";
+      switchContainer.className = "role-switch-container";
 
-    const userBanner = document.getElementById("user-profile-banner");
-    if (userBanner && userBanner.parentNode) {
-      userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
-    } else {
-      document.body.prepend(switchContainer);
+      const userBanner = document.getElementById('user-profile-banner');
+      if (userBanner && userBanner.parentNode) {
+        userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
+      } else {
+        document.body.prepend(switchContainer);
+      }
     }
-  }
 
-  const isFarmerRole = (state.currentRole !== "LABOUR");
+    const isFarmerRole = (state.currentRole !== 'LABOUR');
 
-  switchContainer.innerHTML = `
-    <button type="button" onclick="switchRoleMode('FARMER')" style="flex: 1; padding: 9px 8px; border-radius: 22px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1.5px solid #2e7d32; ${isFarmerRole ? 'background: #2e7d32; color: #ffffff; box-shadow: 0 2px 5px rgba(46,125,50,0.3);' : 'background: #e8f5e9; color: #1b5e20;'}">
-      🌾 Farmer mode (రైతు)
-    </button>
-    <button type="button" onclick="switchRoleMode('LABOUR')" style="flex: 1; padding: 9px 8px; border-radius: 22px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; border: 1.5px solid #f57c00; ${!isFarmerRole ? 'background: #e65100; color: #ffffff; box-shadow: 0 2px 5px rgba(230,81,0,0.3);' : 'background: #fff3e0; color: #e65100;'}">
-      👷 Labour mode (కూలీ)
-    </button>
-  `;
+    switchContainer.innerHTML = `
+      <button type="button" onclick="switchRoleMode('FARMER')" class="role-switch-btn role-switch-farmer ${isFarmerRole ? 'active' : ''}">
+        🌾 Farmer mode (రైతు)
+      </button>
+      <button type="button" onclick="switchRoleMode('LABOUR')" class="role-switch-btn role-switch-labour ${!isFarmerRole ? 'active' : ''}">
+        👷 Labour mode (కూలీ)
+      </button>
+    `;
 }
 
 function removeRoleSwitchBar() {
