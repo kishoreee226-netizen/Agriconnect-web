@@ -3245,5 +3245,191 @@ header h1 {
   color: #777;
   margin: 6px 0 0 0;
 }
+/* ==========================================
+   Provider Add Service Modal & Items List
+   ========================================== */
+
+/* Add Service Modal */
+.pitem-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.pitem-modal-card {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 380px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.pitem-modal-title {
+  margin: 0 0 14px 0;
+  font-size: 16px;
+  color: var(--pitem-color, #f57c00);
+  text-align: center;
+}
+
+.pitem-submit-btn {
+  width: 100%;
+  background: var(--pitem-color, #f57c00);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Empty State & Status */
+.pitem-loading-text {
+  font-size: 12px;
+  color: #888;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.pitem-empty-card {
+  background: #f9f9f9;
+  border: 1px dashed #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  color: #777;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.pitem-error-text {
+  font-size: 12px;
+  color: #dc2626;
+  text-align: center;
+}
+
+/* Provider Items List Component */
+.pitem-box {
+  background: #ffffff;
+  border: 1.5px solid #f97316;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-top: 16px;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.12);
+}
+
+.pitem-header {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.pitem-title-text {
+  font-size: 14px;
+  color: #ffffff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pitem-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.pitem-live-badge {
+  font-size: 11px;
+  background: #ffffff;
+  color: #16a34a;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pitem-live-dot {
+  width: 7px;
+  height: 7px;
+  background: #16a34a;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.pitem-scroll-list {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 245px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.pitem-card-row {
+  background: #fffaf3;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 11px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(249, 115, 22, 0.05);
+}
+
+.pitem-card-title {
+  font-size: 13.5px;
+  font-weight: bold;
+  color: #1c1917;
+}
+
+.pitem-card-details {
+  font-size: 12px;
+  color: #78350f;
+  margin-top: 3px;
+}
+
+.pitem-price-text {
+  color: #c2410c;
+}
+
+.pitem-status-text {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.pitem-delete-btn {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  cursor: pointer;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: 0.2s;
+}
 
 
