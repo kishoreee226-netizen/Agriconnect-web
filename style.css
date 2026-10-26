@@ -2707,3 +2707,54 @@ header h1 {
   color: #ffffff !important;
   box-shadow: 0 2px 6px rgba(123, 31, 162, 0.3) !important;
 }
+/* Farmer Landing Card Styles */
+.agri-landing-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.agri-landing-card.farmer-border {
+  border: 2px solid #2e7d32;
+}
+
+.agri-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.agri-icon {
+  font-size: 24px;
+}
+
+.agri-title-farmer {
+  font-size: 16px;
+  color: #2e7d32;
+}
+
+.agri-card-desc-list {
+  font-size: 12px;
+  color: #444;
+  line-height: 1.6;
+  margin: 0 0 12px 18px;
+  padding: 0;
+}
+
+.agri-landing-btn {
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #fff;
+}
+
+.farmer-btn-bg {
+  background: #2e7d32;
+}
