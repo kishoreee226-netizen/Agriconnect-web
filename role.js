@@ -1047,35 +1047,35 @@ window.openFarmerVehicleBookingModal = function() {
 
   modal = document.createElement('div');
   modal.id = 'farmer-booking-modal';
-  modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); display:flex; align-items:center; justify-content:center; z-index:9999; padding:12px; box-sizing:border-box;';
+  modal.className = 'booking-modal-overlay';
 
   modal.innerHTML = `
-    <div style="background:#fff; border-radius:16px; width:100%; max-width:400px; padding:18px; box-shadow:0 10px 28px rgba(0,0,0,0.25); max-height:92vh; overflow-y:auto; position:relative;">
-      <button onclick="closeFarmerBookingModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:22px; cursor:pointer; color:#666;">✕</button>
+    <div class="booking-modal-card">
+      <button onclick="closeFarmerBookingModal()" class="booking-close-btn">✕</button>
       
-      <div style="text-align:center; margin-bottom:12px;">
-        <h3 style="margin:0; font-size:16px; color:#2e7d32;">🚜 వాహనం / యంత్రం బుకింగ్</h3>
-        <p style="margin:4px 0 0 0; font-size:12px; color:#666;">మీ పొలం వద్దకే నేరుగా వాహనాన్ని రప్పించుకోండి</p>
+      <div class="booking-modal-header">
+        <h3 class="booking-modal-title">🚜 వాహనం / యంత్రం బుకింగ్</h3>
+        <p class="booking-modal-subtitle">మీ పొలం వద్దకే నేరుగా వాహనాన్ని రప్పించుకోండి</p>
       </div>
 
-      <div style="display:flex; gap:8px; margin-bottom:14px; background:#f1f8e9; padding:4px; border-radius:24px;">
-        <button id="btn-mode-spot" type="button" onclick="setBookingMode('SPOT')" style="flex:1; padding:8px 6px; font-size:12px; font-weight:bold; border:none; border-radius:20px; background:#2e7d32; color:#fff; cursor:pointer;">
+      <div class="booking-mode-toggle">
+        <button id="btn-mode-spot" type="button" onclick="setBookingMode('SPOT')" class="booking-mode-btn active">
           ⚡ వెంటనే కావాలి (Spot)
         </button>
-        <button id="btn-mode-adv" type="button" onclick="setBookingMode('ADVANCE')" style="flex:1; padding:8px 6px; font-size:12px; font-weight:bold; border:none; border-radius:20px; background:transparent; color:#2e7d32; cursor:pointer;">
+        <button id="btn-mode-adv" type="button" onclick="setBookingMode('ADVANCE')" class="booking-mode-btn">
           📅 అడ్వాన్స్ బుకింగ్ (Advance)
         </button>
       </div>
 
-      <div id="gps-status-box" style="background:#e8f5e9; border:1px solid #a5d6a7; border-radius:8px; padding:10px; margin-bottom:12px; font-size:12px; color:#2e7d32; display:flex; align-items:center; justify-content:space-between;">
+      <div id="gps-status-box" class="gps-status-box">
         <span>📍 లైవ్ లొకేషన్: <b id="gps-text">గుర్తిస్తోంది...</b></span>
-        <button type="button" onclick="fetchRhythuLiveGPS()" style="background:#2e7d32; color:#fff; border:none; padding:4px 8px; border-radius:6px; font-size:11px; cursor:pointer;">రీఫ్రెష్</button>
+        <button type="button" onclick="fetchRhythuLiveGPS()" class="gps-refresh-btn">రీఫ్రెష్</button>
       </div>
 
       <form onsubmit="handleConfirmBookingRequest(event)">
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">వాహనం / పరికరం ఎంచుకోండి:</label>
-          <select id="book-veh-type" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;">
+        <div class="provider-form-group">
+          <label class="provider-form-label">వాహనం / పరికరం ఎంచుకోండి:</label>
+          <select id="book-veh-type" required class="provider-form-input">
             <option value="ట్రాక్టర్ (దుక్కి / రోటవేటర్)">ట్రాక్టర్ (దుక్కి / రోటవేటర్ / కల్టివేటర్)</option>
             <option value="హార్వెస్టర్ (వరి / మొక్కజొన్న కోత)">హార్వెస్టర్ (వరి / మొక్కజొన్న కోత మిషన్)</option>
             <option value="బొలెరో / DCM రవాణా వాహనం">బొలెరో / DCM రవాణా వాహనం</option>
@@ -1085,23 +1085,23 @@ window.openFarmerVehicleBookingModal = function() {
           </select>
         </div>
 
-        <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">పని పరిమాణం (ఎకరాలు / ట్రిప్పులు / బస్తాలు):</label>
-          <input type="text" id="book-work-size" placeholder="ఉదా: 2 ఎకరాలు దుక్కి లేదా 50 బస్తాల లోడ్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+        <div class="provider-form-group">
+          <label class="provider-form-label">పని పరిమాణం (ఎకరాలు / ట్రిప్పులు / బస్తాలు):</label>
+          <input type="text" id="book-work-size" placeholder="ఉదా: 2 ఎకరాలు దుక్కి లేదా 50 బస్తాల లోడ్" required class="provider-form-input" />
         </div>
 
-        <div id="advance-fields-container" style="display:none; margin-bottom:10px; background:#fff8e1; border:1px solid #ffe082; padding:10px; border-radius:8px;">
-          <div style="margin-bottom:8px;">
-            <label style="display:block; font-size:12px; font-weight:bold; color:#b78103; margin-bottom:4px;">ఏ రోజున కావాలి (తేదీ):</label>
-            <input type="date" id="book-date" style="width:100%; padding:8px; font-size:13px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;" />
+        <div id="advance-fields-container" class="advance-fields-box">
+          <div class="advance-field-group">
+            <label class="advance-label">ఏ రోజున కావాలి (తేదీ):</label>
+            <input type="date" id="book-date" class="advance-input" />
           </div>
-          <div>
-            <label style="display:block; font-size:12px; font-weight:bold; color:#b78103; margin-bottom:4px;">సమయం (Time):</label>
-            <input type="time" id="book-time" style="width:100%; padding:8px; font-size:13px; border:1px solid #ccc; border-radius:6px; box-sizing:border-box;" />
+          <div class="advance-field-group last">
+            <label class="advance-label">సమయం (Time):</label>
+            <input type="time" id="book-time" class="advance-input" />
           </div>
         </div>
 
-        <button id="book-submit-btn" type="submit" style="width:100%; background:#2e7d32; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer; margin-top:6px;">
+        <button id="book-submit-btn" type="submit" class="booking-submit-btn">
           ⚡ వెంటనే దగ్గరలోని వాహనాలకు రిక్వెస్ట్ పంపండి ➔
         </button>
       </form>
@@ -1124,13 +1124,13 @@ window.setBookingMode = function(mode) {
   const submitBtn = document.getElementById('book-submit-btn');
 
   if (mode === 'SPOT') {
-    if (spotBtn) { spotBtn.style.background = '#2e7d32'; spotBtn.style.color = '#fff'; }
-    if (advBtn) { advBtn.style.background = 'transparent'; advBtn.style.color = '#2e7d32'; }
+    if (spotBtn) spotBtn.classList.add('active');
+    if (advBtn) advBtn.classList.remove('active');
     if (advFields) advFields.style.display = 'none';
     if (submitBtn) submitBtn.innerHTML = '⚡ వెంటనే దగ్గరలోని వాహనాలకు రిక్వెస్ట్ పంపండి ➔';
   } else {
-    if (advBtn) { advBtn.style.background = '#2e7d32'; advBtn.style.color = '#fff'; }
-    if (spotBtn) { spotBtn.style.background = 'transparent'; spotBtn.style.color = '#2e7d32'; }
+    if (advBtn) advBtn.classList.add('active');
+    if (spotBtn) spotBtn.classList.remove('active');
     if (advFields) advFields.style.display = 'block';
     if (submitBtn) submitBtn.innerHTML = '📅 అడ్వాన్స్ బుకింగ్ కన్ఫర్మ్ చేయండి ➔';
   }
