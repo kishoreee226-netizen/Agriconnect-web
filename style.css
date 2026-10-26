@@ -4079,5 +4079,142 @@ header h1 {
   color: #e65100;
   font-weight: bold;
 }
+/* ==========================================
+   Farmer Booking Records & Escrow Styles
+   ========================================== */
+
+.booking-records-section {
+  margin-top: 15px;
+  border: 1px solid #c8e6c9;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fafdfa;
+}
+
+.booking-records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.booking-records-title {
+  margin: 0;
+  font-size: 13px;
+  color: #2e7d32;
+}
+
+.btn-clear-bookings {
+  background: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.booking-records-scroll {
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.booking-record-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.rec-title-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.rec-status-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.rec-status-tag.is-locked {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.rec-details-row {
+  font-size: 12px;
+  color: #555;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.rec-action-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.rec-btn-wa {
+  flex: 1;
+  text-align: center;
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #c8e6c9;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.rec-btn-call {
+  flex: 1;
+  text-align: center;
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #bbdefb;
+  padding: 5px 0;
+  border-radius: 6px;
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.rec-escrow-badge {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #2e7d32;
+  font-weight: bold;
+  text-align: center;
+  background: #e8f5e9;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.rec-btn-escrow {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffe082;
+  margin-top: 8px;
+  width: 100%;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 6px 0;
+  border-radius: 6px;
+  font-size: 12px;
+}
 
 
