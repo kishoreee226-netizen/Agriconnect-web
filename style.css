@@ -4768,5 +4768,68 @@ header h1 {
   font-weight: bold;
   cursor: pointer;
 }
+/* ==========================================
+   Equipment & Machinery Module Styles
+   ========================================== */
+
+/* Location Filter Bar */
+.eq-filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #e8f5e9;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #c8e6c9;
+}
+
+.eq-filter-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.eq-filter-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.eq-filter-select {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #81c784;
+  font-size: 12px;
+  background: #fff;
+  font-weight: 600;
+  color: #2e7d32;
+  outline: none;
+}
+
+.eq-count-badge {
+  font-size: 11px;
+  background: #2e7d32;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Empty State */
+.eq-empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 13px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px dashed #ccc;
+}
+
+/* Equipment Card Enhancements */
+.eq-card-spaced {
+  margin-bottom: 10px;
+}
 
 
