@@ -623,46 +623,46 @@ window.openProviderModal = function() {
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'provider-auth-modal';
-    modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; padding:14px; box-sizing:border-box;';
+    modal.className = 'provider-modal-overlay';
 
     modal.innerHTML = `
-      <div style="background:#fff; border-radius:16px; width:100%; max-width:380px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2); position:relative;">
-        <button onclick="closeProviderModal()" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px; cursor:pointer; color:#777;">✕</button>
+      <div class="provider-modal-card">
+        <button onclick="closeProviderModal()" class="provider-close-btn">✕</button>
         
-        <div style="text-align:center; margin-bottom:14px;">
-          <h3 style="margin:0; font-size:17px; color:#4a148c;">🤝 యజమానుల సేవా కేంద్రం</h3>
-          <p style="margin:4px 0 0 0; font-size:12px; color:#666;">మీ కేటగిరీని ఎంచుకొని వివరాలు నమోదు చేయండి</p>
+        <div class="provider-modal-header">
+          <h3 class="provider-modal-title">🤝 యజమానుల సేవా కేంద్రం</h3>
+          <p class="provider-modal-subtitle">మీ కేటగిరీని ఎంచుకొని వివరాలు నమోదు చేయండి</p>
         </div>
 
-        <div style="display:flex; gap:6px; margin-bottom:16px;">
-          <button id="p-tab-equipment" type="button" onclick="selectProviderTab('equipment')" style="flex:1; padding:8px 4px; font-size:11px; font-weight:bold; border-radius:18px; border:1.5px solid #f57c00; background:#f57c00; color:#fff; cursor:pointer;">
+        <div class="provider-tab-row">
+          <button id="p-tab-equipment" type="button" onclick="selectProviderTab('equipment')" class="provider-tab-btn tab-eq">
             🚜 పరికరాలు
           </button>
-          <button id="p-tab-transport" type="button" onclick="selectProviderTab('transport')" style="flex:1; padding:8px 4px; font-size:11px; font-weight:bold; border-radius:18px; border:1.5px solid #7b1fa2; background:#f3e5f5; color:#7b1fa2; cursor:pointer;">
+          <button id="p-tab-transport" type="button" onclick="selectProviderTab('transport')" class="provider-tab-btn tab-tr">
             🚚 రవాణా
           </button>
-          <button id="p-tab-seeds" type="button" onclick="selectProviderTab('seeds')" style="flex:1; padding:8px 4px; font-size:11px; font-weight:bold; border-radius:18px; border:1.5px solid #2e7d32; background:#e8f5e9; color:#2e7d32; cursor:pointer;">
+          <button id="p-tab-seeds" type="button" onclick="selectProviderTab('seeds')" class="provider-tab-btn tab-sd">
             🌱 విత్తనాలు
           </button>
         </div>
 
         <form onsubmit="handleProviderLogin(event)">
-          <div style="margin-bottom:10px;">
-            <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">యజమాని / డీలర్ పేరు:</label>
-            <input type="text" id="prov-name" placeholder="ఉదా: రామయ్య / బాలాజీ ఫెర్టిలైజర్స్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+          <div class="provider-form-group">
+            <label class="provider-form-label">యజమాని / డీలర్ పేరు:</label>
+            <input type="text" id="prov-name" placeholder="ఉదా: రామయ్య / బాలాజీ ఫెర్టిలైజర్స్" required class="provider-form-input" />
           </div>
 
-          <div style="margin-bottom:10px;">
-            <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">మొబైల్ నంబర్:</label>
-            <input type="tel" id="prov-phone" pattern="[0-9]{10}" placeholder="10 అంకెల ఫోన్ నంబర్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+          <div class="provider-form-group">
+            <label class="provider-form-label">మొబైల్ నంబర్:</label>
+            <input type="tel" id="prov-phone" pattern="[0-9]{10}" placeholder="10 అంకెల ఫోన్ నంబర్" required class="provider-form-input" />
           </div>
 
-          <div style="margin-bottom:16px;">
-            <label style="display:block; font-size:12px; font-weight:bold; color:#333; margin-bottom:4px;">గ్రామం / పట్టణం:</label>
-            <input type="text" id="prov-village" placeholder="ఉదా: పరకాల, వరంగల్" required style="width:100%; padding:9px; font-size:13px; border:1px solid #ccc; border-radius:8px; box-sizing:border-box;" />
+          <div class="provider-form-group last">
+            <label class="provider-form-label">గ్రామం / పట్టణం:</label>
+            <input type="text" id="prov-village" placeholder="ఉదా: పరకాల, వరంగల్" required class="provider-form-input" />
           </div>
 
-          <button id="prov-submit-btn" type="submit" style="width:100%; background:#f57c00; color:#fff; border:none; border-radius:8px; padding:11px; font-size:14px; font-weight:bold; cursor:pointer;">
+          <button id="prov-submit-btn" type="submit" class="provider-submit-btn">
             🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔
           </button>
         </form>
@@ -687,19 +687,28 @@ window.selectProviderTab = function(type) {
   const sdBtn = document.getElementById('p-tab-seeds');
   const submitBtn = document.getElementById('prov-submit-btn');
 
-  if (eqBtn) { eqBtn.style.background = '#fff3e0'; eqBtn.style.color = '#e65100'; }
-  if (trBtn) { trBtn.style.background = '#f3e5f5'; trBtn.style.color = '#7b1fa2'; }
-  if (sdBtn) { sdBtn.style.background = '#e8f5e9'; sdBtn.style.color = '#2e7d32'; }
+  if (eqBtn) eqBtn.classList.remove('active');
+  if (trBtn) trBtn.classList.remove('active');
+  if (sdBtn) sdBtn.classList.remove('active');
 
   if (type === 'equipment') {
-    if (eqBtn) { eqBtn.style.background = '#f57c00'; eqBtn.style.color = '#ffffff'; }
-    if (submitBtn) { submitBtn.style.background = '#f57c00'; submitBtn.innerHTML = '🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔'; }
+    if (eqBtn) eqBtn.classList.add('active');
+    if (submitBtn) {
+      submitBtn.style.setProperty('--provider-theme', '#f57c00');
+      submitBtn.innerHTML = '🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔';
+    }
   } else if (type === 'transport') {
-    if (trBtn) { trBtn.style.background = '#7b1fa2'; trBtn.style.color = '#ffffff'; }
-    if (submitBtn) { submitBtn.style.background = '#7b1fa2'; submitBtn.innerHTML = '🚚 రవాణా ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔'; }
+    if (trBtn) trBtn.classList.add('active');
+    if (submitBtn) {
+      submitBtn.style.setProperty('--provider-theme', '#7b1fa2');
+      submitBtn.innerHTML = '🚚 రవాణా ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔';
+    }
   } else if (type === 'seeds') {
-    if (sdBtn) { sdBtn.style.background = '#2e7d32'; sdBtn.style.color = '#ffffff'; }
-    if (submitBtn) { submitBtn.style.background = '#2e7d32'; submitBtn.innerHTML = '🌱 విత్తనాల డీలర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔'; }
+    if (sdBtn) sdBtn.classList.add('active');
+    if (submitBtn) {
+      submitBtn.style.setProperty('--provider-theme', '#2e7d32');
+      submitBtn.innerHTML = '🌱 విత్తనాల డీలర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔';
+    }
   }
 };
 
@@ -747,13 +756,13 @@ function renderProviderDashboardView(container, type) {
   const current = titles[type] || titles.equipment;
 
   container.innerHTML = `
-    <div style="background:#fff; border:2px solid ${current.color}; border-radius:14px; padding:16px; margin:14px auto; max-width:480px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
-      <h3 style="margin:0 0 6px 0; color:${current.color}; font-size:16px;">${current.name}</h3>
-      <p style="font-size:12px; color:#555; margin:0 0 14px 0;">${current.desc}</p>
+    <div class="provider-dashboard-card" style="--provider-theme: ${current.color};">
+      <h3 class="provider-dash-title">${current.name}</h3>
+      <p class="provider-dash-desc">${current.desc}</p>
       
-      <div onclick="openAddServiceModal('${type}')" style="background:#fcfcfc; padding:16px; border-radius:10px; border:2px dashed ${current.color}; text-align:center; cursor:pointer;">
-        <span style="font-size:14px; font-weight:bold; color:${current.color};">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
-        <p style="font-size:12px; color:#777; margin:6px 0 0 0;">వివరాలు నమోదు చేయడానికి ఇక్కడ నొక్కండి</p>
+      <div onclick="openAddServiceModal('${type}')" class="provider-add-service-btn">
+        <span class="provider-add-service-text">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
+        <p class="provider-add-service-subtext">వివరాలు నమోదు చేయడానికి ఇక్కడ నొక్కండి</p>
       </div>
 
       <div id="provider-items-list" style="margin-top:16px;"></div>
