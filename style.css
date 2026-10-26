@@ -5384,5 +5384,154 @@ header h1 {
   color: #d32f2f;
   font-weight: 600;
 }
+/* ==========================================
+   Mandi Module Styles
+   ========================================== */
+
+.mandi-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.mandi-card-header {
+  background: #e8f5e9;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #c8e6c9;
+}
+
+.mandi-card-header h3 {
+  margin: 0;
+  font-size: 14px;
+  color: #1b5e20;
+  font-weight: 700;
+}
+
+.mandi-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.mandi-badge.live {
+  background: #2e7d32;
+  color: #fff;
+}
+
+.mandi-badge.backup {
+  background: #f57f17;
+  color: #fff;
+}
+
+.mandi-body {
+  padding: 12px;
+}
+
+.mandi-filters-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mandi-select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #c8e6c9;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #2e7d32;
+  background: #fff;
+  outline: none;
+}
+
+.mandi-table-wrapper {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mandi-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.mandi-table-head-row th {
+  background: #f1f8e9;
+  color: #1b5e20;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.mandi-th-crop {
+  width: 35%;
+}
+
+.mandi-th-market {
+  width: 35%;
+}
+
+.mandi-th-price {
+  width: 30%;
+  text-align: right !important;
+}
+
+.mandi-scroll {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.mandi-row {
+  border-bottom: 1px solid #eee;
+}
+
+.mandi-row:last-child {
+  border-bottom: none;
+}
+
+.mandi-col-crop {
+  width: 35%;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+  word-break: break-word;
+}
+
+.mandi-col-market {
+  width: 35%;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: #666;
+  word-break: break-word;
+}
+
+.mandi-col-price {
+  width: 30%;
+  padding: 8px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2e7d32;
+  text-align: right;
+}
+
+.mandi-empty-cell {
+  padding: 16px;
+  text-align: center;
+  color: #888;
+  font-size: 12px;
+}
 
 
