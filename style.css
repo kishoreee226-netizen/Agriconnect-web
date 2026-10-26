@@ -2758,3 +2758,17 @@ header h1 {
 .farmer-btn-bg {
   background: #2e7d32;
 }
+/* Labour Landing Card Classes */
+.agri-landing-card.labour-border {
+  border: 2px solid #f57c00;
+}
+
+.agri-title-labour {
+  font-size: 16px;
+  color: #e65100;
+}
+
+.labour-btn-bg {
+  background: #f57c00;
+}
+
