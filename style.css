@@ -2791,4 +2791,50 @@ header h1 {
 .provider-btn-bg {
   background: #7b1fa2;
 }
+/* User Profile Banner Styles */
+.user-profile-banner {
+  max-width: 480px;
+  margin: 10px auto;
+  padding: 12px 16px;
+  background: #ffffff;
+  border-left: 5px solid var(--badge-color, #2e7d32);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-banner-name {
+  font-size: 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.profile-banner-badge {
+  font-size: 11px;
+  background: color-mix(in srgb, var(--badge-color, #2e7d32) 15%, transparent);
+  color: var(--badge-color, #2e7d32);
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 6px;
+  font-weight: bold;
+}
+
+.profile-banner-details {
+  font-size: 13px;
+  color: #666;
+  margin-top: 3px;
+}
+
+.profile-banner-logout-btn {
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
