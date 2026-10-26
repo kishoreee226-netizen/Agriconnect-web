@@ -122,24 +122,24 @@ function applyUserRoleView() {
       `;
     }
 
-    // 3. Yajamanula Seva Kendram Card
+        // 3. Yajamanula Seva Kendram Card
     if (providerContainer) {
       providerContainer.style.setProperty('display', 'block', 'important');
       providerContainer.innerHTML = `
-        <div class="provider-card" style="background:#fff; border:2px solid #7b1fa2; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-            <span style="font-size:24px;">🤝</span>
-            <strong style="font-size:16px; color:#7b1fa2;">పరికరాలు, రవాణా & విత్తనాల యజమానుల సేవా కేంద్రం</strong>
+        <div class="agri-landing-card provider-border">
+          <div class="agri-card-header">
+            <span class="agri-icon">🤝</span>
+            <strong class="agri-title-provider">పరికరాలు, రవాణా & విత్తనాల యజమానుల సేవా కేంద్రం</strong>
           </div>
-          <p style="font-size:12px; color:#555; line-height:1.5; margin:0 0 10px 0;">
-            ట్రాక్టర్లు, హార్వెస్టర్లు, రవాణా వాహనాలు లేదా విత్తనాలు/ఎరువుల యజమానులు తమ సేవలను అద్దెకు/అమ్మకానికి ఇక్కడ సులభంగా జోడించవచ్చు.
+          <p class="agri-card-subtext">
+            ట్రాక్టర్లు, హార్వెస్టర్లు, రవాణా వాహనాలు లేదా విత్తనాలు/ఎరువుల యజమానులు తమ సేవలను అద్దెకు/అమ్ముకానికి ఇక్కడ సులభంగా జోడించవచ్చు.
           </p>
-          <ul style="font-size:12px; color:#444; line-height:1.6; margin:0 0 12px 18px; padding:0;">
+          <ul class="agri-card-desc-list">
             <li>రైతుల నుండి నేరుగా బుకింగ్‌లు & ఆర్డర్‌లు పొందండి.</li>
             <li>మీ పరికరాలు, రవాణా రేట్లు మీరే నిర్ణయించుకోండి.</li>
-            <li>కమీషన్ లేకుండా నేరుగా కస్టమర్‌తో ఫోన్ / వాట్సాప్ సంప్రదింపులు.</li>
+            <li>కమిషన్ లేకుండా నేరుగా కస్టమర్‌తో ఫోన్ / వాట్సాప్ సంప్రదింపులు.</li>
           </ul>
-          <button onclick="openProviderModal()" style="width:100%; background:#7b1fa2; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+          <button onclick="openProviderModal()" class="agri-landing-btn provider-btn-bg">
             యజమానిగా Login / సేవలను జోడించండి ➔
           </button>
         </div>
