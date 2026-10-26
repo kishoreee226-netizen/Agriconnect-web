@@ -423,8 +423,7 @@ function filterLabourJobsByLocation() {
   jobCards.forEach(card => {
     const jobVillage = card.getAttribute("data-village") || card.textContent;
     if (jobVillage.toLowerCase().includes(profile.village.toLowerCase())) {
-      card.style.display = "block";
-      card.style.border = "2px solid #4caf50";
+      card.classList.add("job-card-highlight");
     }
   });
 }
@@ -434,40 +433,42 @@ window.openLoginModal = function(roleType) {
   if (!modal) {
     modal = document.createElement("div");
     modal.id = "role-login-modal";
-    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:9999; padding:15px;";
+    modal.className = "agri-modal-overlay";
     document.body.appendChild(modal);
   }
 
   const isFarmer = roleType === "FARMER";
   const themeColor = isFarmer ? "#2e7d32" : "#e65100";
-  
+  modal.style.setProperty("--modal-theme", themeColor);
+
   // గతంలో రిజిస్టర్ అయిన యూజర్ డేటా ఉందో లేదో తనిఖీ
   let savedUser = null;
   try {
     const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
-
     if (saved) savedUser = JSON.parse(saved);
   } catch (e) {}
 
   // 1. ఇప్పటికే యూజర్ ఉంటే: డైరెక్ట్ 4-Digit PIN స్క్రీన్
   if (savedUser && savedUser.phone) {
     modal.innerHTML = `
-      <div style="background:#fff; width:100%; max-width:360px; border-radius:14px; padding:22px; box-shadow:0 8px 24px rgba(0,0,0,0.2); text-align:center;">
-        <div style="font-size:36px; margin-bottom:6px;">🔒</div>
-        <h3 style="margin:0 0 6px 0; color:${themeColor}; font-size:18px;">స్వాగతం, ${savedUser.name || 'రైతు'} గారు!</h3>
-        <p style="font-size:12px; color:#666; margin:0 0 16px 0;">మొబైల్: <b>${savedUser.phone}</b></p>
+      <div class="agri-modal-card fast-pin">
+        <div class="agri-modal-icon">🔒</div>
+        <h3 class="agri-modal-title">స్వాగతం, ${savedUser.name || 'రైతు'} గారు!</h3>
+        <p class="agri-modal-phone-text">మొబైల్: <b>${savedUser.phone}</b></p>
 
-        <div style="margin-bottom:18px;">
-          <label style="font-size:13px; font-weight:bold; color:#333; display:block; margin-bottom:8px;">మీ 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి:</label>
-          <input type="password" id="fast-login-pin" maxlength="4" placeholder="••••" inputmode="numeric" style="width:140px; text-align:center; padding:10px; font-size:22px; letter-spacing:8px; border:2px solid ${themeColor}; border-radius:10px; outline:none; box-sizing:border-box;">
+        <div class="agri-pin-box">
+          <label class="agri-pin-label">మీ 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి:</label>
+          <input type="password" id="fast-login-pin" maxlength="4" placeholder="••••" inputmode="numeric" class="agri-pin-input">
         </div>
 
-        <div style="display:flex; gap:10px; margin-bottom:14px;">
-          <button onclick="closeLoginModal()" style="flex:1; background:#eee; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; color:#555;">రద్దు</button>
-          <button onclick="submitDirectPinLogin('${roleType}')" style="flex:1; background:${themeColor}; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">లాగిన్ ➔</button>
+        <div class="agri-modal-btn-row">
+          <button onclick="closeLoginModal()" class="agri-modal-btn cancel">రద్దు</button>
+          <button onclick="submitDirectPinLogin('${roleType}')" class="agri-modal-btn submit">లాగిన్ ➔</button>
         </div>
 
-        <a href="javascript:void(0)" onclick="switchToFullRegister('${roleType}')" style="font-size:11px; color:#1565c0; text-decoration:none;">వేరే నంబర్‌తో నమోదు చేసుకోవాలా? క్లిక్ చేయండి</a>
+        <a href="javascript:void(0)" onclick="switchToFullRegister('${roleType}')" class="agri-modal-link">
+          వేరే నంబర్‌తో నమోదు చేసుకోవాలా? క్లిక్ చేయండి
+        </a>
       </div>
     `;
   } else {
@@ -484,33 +485,33 @@ function renderRegisterForm(modal, roleType, themeColor) {
   const title = isFarmer ? "🌾 రైతు ప్రొఫైల్ నమోదు" : "👷 కూలీ ప్రొఫైల్ నమోదు";
 
   modal.innerHTML = `
-    <div style="background:#fff; width:100%; max-width:380px; border-radius:14px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,0.2);">
-      <h3 style="margin:0 0 14px 0; color:${themeColor}; font-size:18px; text-align:center;">${title}</h3>
+    <div class="agri-modal-card register-form">
+      <h3 class="agri-modal-title center">${title}</h3>
       
-      <div style="margin-bottom:10px;">
-        <label style="font-size:12px; font-weight:bold; color:#555;">మీ పూర్తి పేరు:</label>
-        <input type="text" id="reg-name" placeholder="ఉదా: కిషోర్ రెడ్డి" style="width:100%; padding:9px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+      <div class="agri-form-group">
+        <label class="agri-form-label">మీ పూర్తి పేరు:</label>
+        <input type="text" id="reg-name" placeholder="ఉదా: కిషోర్ రెడ్డి" class="agri-form-input">
       </div>
 
-      <div style="margin-bottom:10px;">
-        <label style="font-size:12px; font-weight:bold; color:#555;">మొబైల్ నంబర్ (10 అంకెలు):</label>
-        <input type="tel" id="reg-phone" placeholder="9876543210" maxlength="10" inputmode="numeric" style="width:100%; padding:9px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+      <div class="agri-form-group">
+        <label class="agri-form-label">మొబైల్ నంబర్ (10 అంకెలు):</label>
+        <input type="tel" id="reg-phone" placeholder="9876543210" maxlength="10" inputmode="numeric" class="agri-form-input">
       </div>
 
-      <div style="margin-bottom:10px;">
-        <label style="font-size:12px; font-weight:bold; color:#555;">గ్రామం / ఊరు (Village):</label>
-        <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి" style="width:100%; padding:9px; margin-top:4px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+      <div class="agri-form-group">
+        <label class="agri-form-label">గ్రామం / ఊరు (Village):</label>
+        <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి" class="agri-form-input">
       </div>
 
-      <div style="margin-bottom:16px;">
-        <label style="font-size:12px; font-weight:bold; color:#1b5e20;">భద్రతా పిన్ సెట్ చేయండి (4-Digit PIN):</label>
-        <input type="password" id="reg-pin" placeholder="1234" maxlength="4" inputmode="numeric" style="width:100%; padding:9px; margin-top:4px; border:1.5px solid ${themeColor}; border-radius:8px; font-size:16px; letter-spacing:4px; box-sizing:border-box;">
-        <span style="font-size:11px; color:#777;">తర్వాతిసారి లాగిన్ అవ్వడానికి ఈ 4 అంకెల పిన్ వాడవచ్చు.</span>
+      <div class="agri-form-group highlight">
+        <label class="agri-form-label secure">భద్రతా పిన్ సెట్ చేయండి (4-Digit PIN):</label>
+        <input type="password" id="reg-pin" placeholder="1234" maxlength="4" inputmode="numeric" class="agri-form-input pin-style">
+        <span class="agri-form-hint">తర్వాతిసారి లాగిన్ అవ్వడానికి ఈ 4 అంకెల పిన్ వాడవచ్చు.</span>
       </div>
 
-      <div style="display:flex; gap:10px;">
-        <button onclick="closeLoginModal()" style="flex:1; background:#eee; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; color:#555;">రద్దు</button>
-        <button onclick="submitUserRegistration('${roleType}')" style="flex:1; background:${themeColor}; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer;">నమోదు చేసుకోండి</button>
+      <div class="agri-modal-btn-row no-margin">
+        <button onclick="closeLoginModal()" class="agri-modal-btn cancel">రద్దు</button>
+        <button onclick="submitUserRegistration('${roleType}')" class="agri-modal-btn submit">నమోదు చేసుకోండి</button>
       </div>
     </div>
   `;
@@ -534,7 +535,7 @@ window.submitDirectPinLogin = async function(roleType) {
   }
 
   let savedPhone = "";
-    try {
+  try {
     const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
     if (saved) savedPhone = JSON.parse(saved).phone;
   } catch (e) {}
@@ -590,11 +591,10 @@ window.submitUserRegistration = function(roleType) {
     window.AppState.userType = roleType;
     window.AppState.currentRole = (roleType === 'LABOUR_ONLY') ? 'LABOUR' : 'FARMER';
     window.AppState.userProfile = profile;
-        try {
+    try {
       localStorage.setItem("agri_user_profile", JSON.stringify(profile));
       localStorage.setItem("agri_last_user", JSON.stringify(profile));
     } catch (e) {}
-
   }
 
   // 2. మోడల్ క్లోజ్ చేసి వ్యూ ని అప్‌డేట్ చేయడం
