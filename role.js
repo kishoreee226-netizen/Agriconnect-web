@@ -101,21 +101,21 @@ function applyUserRoleView() {
       `;
     }
 
-    // 2. Kooli Login Card
+        // 2. Kooli Login Card
     if (labourContainer) {
       labourContainer.style.setProperty('display', 'block', 'important');
       labourContainer.innerHTML = `
-        <div class="labour-card" style="background:#fff; border:2px solid #f57c00; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-            <span style="font-size:24px;">👷</span>
-            <strong style="font-size:16px; color:#e65100;">కూలీల కోసం (Labour)</strong>
+        <div class="agri-landing-card labour-border">
+          <div class="agri-card-header">
+            <span class="agri-icon">👷</span>
+            <strong class="agri-title-labour">కూలీల కోసం (Labour)</strong>
           </div>
-          <ul style="font-size:12px; color:#444; line-height:1.6; margin:0 0 12px 18px; padding:0;">
+          <ul class="agri-card-desc-list">
             <li>మీ గ్రామం మరియు 5-10 కి.మీ పరిధిలోని రోజువారీ పనులను వెతుక్కోండి.</li>
             <li>రోజువారీ కూలీ వివరాలు, డైరెక్ట్ ఫోన్ / వాట్సాప్ కాలింగ్.</li>
             <li>మీ వేతనాల లెక్కల కోసం సులభమైన వ్యక్తిగత వాలెట్.</li>
           </ul>
-          <button onclick="openLoginModal('LABOUR_ONLY')" style="width:100%; background:#f57c00; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+          <button onclick="openLoginModal('LABOUR_ONLY')" class="agri-landing-btn labour-btn-bg">
             కూలీగా Login / నమోదు అవ్వండి ➔
           </button>
         </div>
