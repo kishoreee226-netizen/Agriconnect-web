@@ -5296,5 +5296,93 @@ header h1 {
   font-weight: 600;
   cursor: pointer;
 }
+/* ==========================================
+   Weather Module Styles
+   ========================================== */
+
+.weather-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.weather-header {
+  background: #e3f2fd;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #bbdefb;
+  font-size: 13px;
+  color: #0d47a1;
+}
+
+.btn-weather-refresh {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.weather-display-box {
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.weather-temp-text {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1565c0;
+}
+
+.weather-desc-text {
+  font-size: 12px;
+  color: #555;
+  margin-top: 2px;
+}
+
+.weather-condition-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #2e7d32;
+  margin-top: 4px;
+}
+
+.weather-icon-lg {
+  font-size: 38px;
+}
+
+.weather-advisory-box {
+  margin: 0 14px 10px 14px;
+  padding: 8px 10px;
+  background: #fff8e1;
+  border-left: 3px solid #ffb300;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #5d4037;
+  line-height: 1.4;
+}
+
+.weather-status-footer {
+  background: #f8f9fa;
+  padding: 8px 14px;
+  font-size: 11px;
+  color: #666;
+  border-top: 1px solid #eee;
+}
+
+.weather-err-text {
+  color: #d32f2f;
+  font-weight: 600;
+}
 
 
