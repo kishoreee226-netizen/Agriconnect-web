@@ -1175,6 +1175,11 @@ window.handleConfirmBookingRequest = function(e) {
   const farmerPhone = (user && user.phone) || '';
   const village = (user && user.village) || '';
 
+  if (!farmerPhone) {
+    alert("దయచేసి మీ మొబైల్ నంబర్‌తో ముందుగా లాగిన్ అవ్వండి.");
+    return;
+  }
+
   const mapLink = userLiveCoords ? `https://www.google.com/maps?q=${userLiveCoords.lat},${userLiveCoords.lng}` : '';
 
   const newBooking = {
