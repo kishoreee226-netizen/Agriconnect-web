@@ -4333,5 +4333,262 @@ header h1 {
   font-weight: bold;
   cursor: pointer;
 }
+/* ==========================================
+   Labour Mode Dashboard & Job Alert Styles
+   ========================================== */
+
+/* Duty Switch Bar */
+.labour-duty-bar {
+  background: #e8f5e9;
+  border: 1px solid #c8e6c9;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.labour-duty-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.labour-duty-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.btn-duty-toggle {
+  padding: 5px 12px;
+  border-radius: 14px;
+  border: none;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.btn-duty-toggle.on {
+  background: #2e7d32;
+}
+
+.btn-duty-toggle.off {
+  background: #c62828;
+}
+
+.btn-labour-skills {
+  background: #0288d1;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Job Alerts Container */
+.labour-alerts-section {
+  margin-bottom: 14px;
+}
+
+.labour-alerts-header {
+  font-size: 13px;
+  font-weight: bold;
+  color: #0277bd;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.labour-alerts-badge {
+  font-size: 11px;
+  background: #e1f5fe;
+  color: #0277bd;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.labour-duty-off-card {
+  background: #ffebee;
+  border: 1px dashed #ef5350;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: #c62828;
+  line-height: 1.5;
+}
+
+.labour-empty-jobs-card {
+  background: #fff;
+  border: 1px dashed #b0bec5;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: #607d8b;
+}
+
+/* Job Card */
+.labour-job-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid #0288d1;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.labour-job-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.labour-job-title {
+  margin: 0;
+  color: #0277bd;
+  font-size: 13px;
+}
+
+.labour-job-farmer-info {
+  font-size: 11px;
+  color: #424242;
+  margin-top: 3px;
+}
+
+.labour-job-schedule {
+  font-size: 11px;
+  color: #d84315;
+  margin-top: 2px;
+  font-weight: bold;
+}
+
+.labour-job-quota {
+  font-size: 11px;
+  color: #2e7d32;
+  margin-top: 3px;
+}
+
+.labour-job-wage {
+  font-size: 13px;
+  font-weight: bold;
+  color: #e65100;
+  text-align: right;
+}
+
+/* Actions */
+.labour-job-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.btn-job-accepted-disabled {
+  flex: 1;
+  background: #c8e6c9;
+  color: #2e7d32;
+  border: none;
+  padding: 7px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.btn-job-accept {
+  flex: 1;
+  background: #2e7d32;
+  color: #fff;
+  border: none;
+  padding: 7px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-job-reject {
+  background: #f5f5f5;
+  color: #616161;
+  border: 1px solid #ccc;
+  padding: 7px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Confirmed Jobs Section */
+.labour-confirmed-section {
+  background: #f1f8e9;
+  border: 1px solid #c5e1a5;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.labour-confirmed-heading {
+  margin: 0 0 8px 0;
+  color: #33691e;
+  font-size: 12px;
+}
+
+.labour-confirmed-card {
+  background: #fff;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border: 1px solid #dcedc8;
+}
+
+.labour-confirmed-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #1b5e20;
+}
+
+.labour-confirmed-sub {
+  font-size: 11px;
+  color: #555;
+  margin-top: 2px;
+}
+
+.labour-confirmed-btn-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.labour-cbtn {
+  flex: 1;
+  text-align: center;
+  color: #fff;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 11px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.labour-cbtn-call {
+  background: #0288d1;
+}
+
+.labour-cbtn-wa {
+  background: #25d366;
+}
+
+.labour-cbtn-map {
+  background: #f57c00;
+}
 
 
