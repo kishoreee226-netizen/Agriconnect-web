@@ -3913,5 +3913,171 @@ header h1 {
 .fprov-whatsapp-btn {
   background: #25d366;
 }
+/* ==========================================
+   Farmer Dashboard & Live Slot Tracking Styles
+   ========================================== */
+
+/* Form Submit Container */
+.farmer-submit-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.btn-farmer-post {
+  width: auto;
+  max-width: fit-content;
+  padding: 10px 22px;
+  font-size: 13px;
+  font-weight: bold;
+  border-radius: 24px;
+  border: none;
+  background: #2e7d32;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.3);
+}
+
+/* Live Slot Tracking Section */
+.slot-tracker-box {
+  background: #f1f8e9;
+  border: 1px solid #c5e1a5;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.slot-tracker-title {
+  margin: 0 0 8px 0;
+  color: #2e7d32;
+  font-size: 13px;
+}
+
+.slot-tracker-scroll {
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.slot-job-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid #f57c00;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.slot-job-card.is-full {
+  border-left-color: #2e7d32;
+}
+
+.slot-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.slot-job-title {
+  color: #2e7d32;
+  font-size: 12px;
+}
+
+.slot-status-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: bold;
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.slot-status-badge.is-full {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.slot-job-details {
+  font-size: 11px;
+  color: #555;
+  margin-top: 2px;
+}
+
+/* Confirmed Labour Sub-List */
+.slot-labours-wrapper {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed #e0e0e0;
+}
+
+.slot-labour-head {
+  font-size: 10px;
+  font-weight: bold;
+  color: #0277bd;
+}
+
+.slot-labour-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9f9f9;
+  padding: 4px 6px;
+  border-radius: 4px;
+  margin-top: 3px;
+}
+
+.slot-labour-info {
+  font-size: 11px;
+  color: #333;
+}
+
+.slot-btn-group {
+  display: flex;
+  gap: 4px;
+}
+
+.slot-btn-call {
+  padding: 2px 6px;
+  background: #0288d1;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.slot-btn-whatsapp {
+  padding: 2px 6px;
+  background: #25d366;
+  color: #fff;
+  border-radius: 3px;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+/* Tab Panes Visibility */
+.farmer-pane {
+  display: block;
+}
+
+.farmer-pane.is-hidden {
+  display: none;
+}
+
+/* Booking Pop-up Info */
+.booking-item-highlight {
+  font-size: 13px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.booking-rate-text {
+  color: #e65100;
+  font-weight: bold;
+}
 
 
