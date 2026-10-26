@@ -57,7 +57,7 @@ function renderFilteredTable(records) {
   if (!records || records.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="3" style="padding: 12px; text-align: center; color: #888; font-size: 11px;">
+        <td colspan="3" class="mandi-empty-cell">
           ఎలాంటి పంటల సమాచారం దొరకలేదు.
         </td>
       </tr>
@@ -65,7 +65,6 @@ function renderFilteredTable(records) {
     return;
   }
 
-    // records.slice limit theesivesi mottham records chupisthunnam
   tableBody.innerHTML = records.map(item => `
     <tr class="mandi-row">
       <td class="mandi-col-crop">${item.commodity || item.Commodity || "పంట"}</td>
@@ -176,9 +175,9 @@ window.renderMandiWidget = async function() {
           <table class="mandi-table">
             <thead>
               <tr class="mandi-table-head-row">
-                <th>పంట</th>
-                <th>మార్కెట్</th>
-                <th style="text-align: right;">ధర (క్వింటాల్)</th>
+                <th class="mandi-th-crop">పంట</th>
+                <th class="mandi-th-market">మార్కెట్</th>
+                <th class="mandi-th-price">ధర (క్వింటాల్)</th>
               </tr>
             </thead>
           </table>
@@ -196,7 +195,6 @@ window.renderMandiWidget = async function() {
 
     </div>
   `;
-
 
   // Event Listeners
   document.getElementById("mandi-category-filter").addEventListener("change", updateCropDropdown);
