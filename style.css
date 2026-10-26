@@ -2837,4 +2837,56 @@ header h1 {
   cursor: pointer;
   font-weight: bold;
 }
+/* Role Switch Bar Styles */
+.role-switch-container {
+  max-width: 480px;
+  margin: 8px auto;
+  padding: 4px;
+  background: #e8f5e9;
+  border-radius: 25px;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #c8e6c9;
+  box-sizing: border-box;
+}
+
+.role-switch-btn {
+  flex: 1;
+  padding: 9px 8px;
+  border-radius: 22px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Farmer Button States */
+.role-switch-farmer {
+  border: 1.5px solid #2e7d32;
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.role-switch-farmer.active {
+  background: #2e7d32;
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(46, 125, 50, 0.3);
+}
+
+/* Labour Button States */
+.role-switch-labour {
+  border: 1.5px solid #f57c00;
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.role-switch-labour.active {
+  background: #e65100;
+  color: #ffffff;
+  box-shadow: 0 2px 5px rgba(230, 81, 0, 0.3);
+}
 
