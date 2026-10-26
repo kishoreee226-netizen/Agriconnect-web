@@ -25,13 +25,14 @@ function playAudioCue(type = 'start') {
       osc.start();
       osc.stop(audioCtx.currentTime + 0.25);
     }
-  } catch (e) {}
+  } catch (e) {
+    console.warn("Audio cue error:", e);
+  }
 }
 
 // 1. Helper: Check if Auto Voice checkbox is ON
 function isAutoVoiceEnabled() {
-  const chk = document.getElementById("auto-voice-check") || 
-              document.querySelector("input[type='checkbox']");
+  const chk = document.getElementById("auto-voice-check");
   if (chk) return chk.checked;
   return window.AppState ? !!window.AppState.autoVoice : false;
 }
@@ -54,11 +55,11 @@ function speakTeluguText(msg, onEndCallback, forceSpeak = false) {
     if (teluguVoice) {
       utterance.voice = teluguVoice;
     }
-    
+
     if (onEndCallback) {
       utterance.onend = onEndCallback;
     }
-    
+
     window.speechSynthesis.speak(utterance);
   }
 }
@@ -74,7 +75,7 @@ window.toggleAutoVoice = function(isEnabled) {
   if (window.AppState) {
     window.AppState.autoVoice = isEnabled;
   }
-  
+
   if (isEnabled) {
     speakTeluguText("ఆటో వాయిస్ గైడెన్స్ ఆన్ చేయబడింది.", null, true);
 
@@ -110,11 +111,10 @@ function handleVoiceCommand(voiceText) {
   const input = voiceText.toLowerCase().trim();
   console.log("Processing Voice:", input);
 
-    // A. Role Switching by Voice
+  // A. Role Switching by Voice
   if (input.includes("కూలీ మోడ్") || input.includes("కూలి మోడ్") || input.includes("కూలీ లాగిన్") || input.includes("కూలీగా మార్చు")) {
     let switched = false;
 
-    // 1. Function direct call
     if (typeof window.switchRole === "function") {
       window.switchRole("LABOUR");
       switched = true;
@@ -123,7 +123,6 @@ function handleVoiceCommand(voiceText) {
       switched = true;
     }
 
-    // 2. UI button click target
     const labourTarget = 
       document.querySelector("button[onclick*='LABOUR'], button[onclick*='labour'], [data-role='LABOUR'], #btn-labour, #role-labour") ||
       document.querySelector("input[value='LABOUR'], input[value='labour']") ||
@@ -137,7 +136,6 @@ function handleVoiceCommand(voiceText) {
       switched = true;
     }
 
-    // 3. AppState update & re-render
     if (window.AppState) {
       window.AppState.currentRole = "LABOUR";
       if (typeof renderLabourWidget === "function") renderLabourWidget();
@@ -224,8 +222,8 @@ function handleVoiceCommand(voiceText) {
       speakTeluguText("ప్రస్తుతం కొత్త పనులేవీ అందుబాటులో లేవు.", null, true);
     } else {
       let speechMsg = `ప్రస్తుతం ${openJobs.length} పనులు అందుబాటులో ఉన్నాయి. `;
-      openJobs.slice(0, 3).forEach((j, idx) => {
-        speechMsg += `${j.village || 'గ్రామం'} లో ${j.crop} ${j.workType} పని ఉంది. రోజుకు కూలీ ${j.wage} రూపాయలు. `;
+      openJobs.slice(0, 3).forEach((j) => {
+        speechMsg += `${j.village || 'గ్రామం'} లో ${j.crop || ''} ${j.workType || ''} పని ఉంది. రోజుకు కూలీ ${j.wage || ''} రూపాయలు. `;
       });
       speechMsg += "మొదటి పనిని ఖరారు చేయాలంటే పని యాక్సెప్ట్ చేయ్ అని చెప్పండి.";
       speakTeluguText(speechMsg, null, true);
@@ -273,52 +271,22 @@ function handleVoiceCommand(voiceText) {
     }
   }
 
-      // F. Wallet Balance by Voice
+  // F. Wallet Balance by Voice
   if (input.includes("పైసలు ఎంత") || input.includes("బ్యాలెన్స్ చెప్పు") || input.includes("డబ్బులు ఎంత") || input.includes("ఖాతా") || input.includes("వాలెట్")) {
     let balanceText = "";
     const isLabour = (window.AppState && (window.AppState.currentRole === "LABOUR" || window.AppState.userType === "LABOUR_ONLY"));
-    
-    // Exact balance amount kosam screen meedha unna ₹ elements ni filter cheyadam
-    const allRupeeElements = Array.from(document.querySelectorAll("*")).filter(el => {
-      const txt = (el.innerText || el.textContent || "").trim();
-      return /^₹\s*\d+$/.test(txt); // Kevalam "₹1300" leda "₹1000" unna element matrame match avthundi
-    });
-
-    let farmerAmount = null;
-    let labourAmount = null;
-
-    allRupeeElements.forEach(el => {
-      const containerText = el.closest("div")?.parentElement?.innerText || "";
-      const val = el.innerText.replace(/[^0-9]/g, "");
-      if (containerText.includes("రైతు ఖాతా") && !farmerAmount) {
-        farmerAmount = val;
-      }
-      if (containerText.includes("కూలీ main") && !labourAmount) {
-        labourAmount = val;
-      }
-    });
-
-    // Fallback: Default ga kanipinche rendu cards lo second card labour card
-    if (!labourAmount && allRupeeElements.length >= 2) {
-      farmerAmount = allRupeeElements[0].innerText.replace(/[^0-9]/g, "");
-      labourAmount = allRupeeElements[1].innerText.replace(/[^0-9]/g, "");
-    }
+    const wallet = (typeof getAgriWalletData === "function") ? getAgriWalletData() : (window.AgriState?.wallet || { farmerBalance: 0, labourBalance: 0 });
 
     if (isLabour) {
-      balanceText = labourAmount 
-        ? `మీ కూలీ మెయిన్ వాలెట్‌లో ${labourAmount} రూపాయలు ఉన్నాయి.` 
-        : "మీ కూలీ వాలెట్ వివరాలు ఇక్కడ ఉన్నాయి.";
+      balanceText = `మీ కూలీ మెయిన్ వాలెట్‌లో ${wallet.labourBalance || 0} రూపాయలు ఉన్నాయి.`;
     } else {
-      balanceText = farmerAmount 
-        ? `మీ రైతు ఖాతాలో ${farmerAmount} రూపాయలు ఉన్నాయి.` 
-        : "మీ రైతు ఖాతా బ్యాలెన్స్ వివరాలు ఇక్కడ ఉన్నాయి.";
+      balanceText = `మీ రైతు ఖాతాలో ${wallet.farmerBalance || 0} రూపాయలు ఉన్నాయి.`;
     }
 
     speakTeluguText(balanceText, null, true);
     document.getElementById("wallet-container")?.scrollIntoView({ behavior: "smooth" });
     return;
   }
-
 
   // G. Mandi / Market Prices
   if (input.includes("ధర") || input.includes("మార్కెట్") || input.includes("మండి")) {
@@ -336,10 +304,10 @@ function handleVoiceCommand(voiceText) {
     if (tempEl && tempEl.innerText && !tempEl.innerText.includes("--")) {
       const temp = tempEl.innerText.replace(/[^0-9]/g, "");
       const wind = descEl ? descEl.innerText : "";
-      
+
       let locName = "మీ ప్రాంతంలో";
       if (locEl && locEl.innerText) {
-        const cleanedLoc = locEl.innerText.replace("📍", "").replace("(Live Weather)", "").trim();
+        const cleanedLoc = locEl.innerText.replace("📍", "").replace("(ఖచ్చితమైన లైవ్ వాతావరణం)", "").replace("(Live Weather)", "").trim();
         if (cleanedLoc) locName = cleanedLoc;
       }
 
@@ -419,7 +387,7 @@ function handleVoiceCommand(voiceText) {
       if (count) reply += count + " మంది కూలీలు, ";
       if (wage) reply += "రోజుకు " + wage + " రూపాయలు. ";
       reply += "పోస్ట్ చేయమంటారా?";
-      
+
       speakTeluguText(reply, () => {
         startListening();
       }, true);
@@ -430,14 +398,14 @@ function handleVoiceCommand(voiceText) {
   speakTeluguText("మీరు చెప్పింది అర్థం కాలేదు, దయచేసి వివరాలు మళ్లీ స్పష్టంగా చెప్పండి.", null, true);
 }
 
-// Mic On Cheyadam
+// Mic On చేయడం
 function startListening() {
   const micBtn = document.getElementById("global-voice-btn");
   if (recognitionInstance) {
     try {
       recognitionInstance.start();
       playAudioCue('start');
-      if (micBtn) micBtn.style.background = "#d32f2f";
+      if (micBtn) micBtn.classList.add("is-recording");
     } catch (e) {}
   }
 }
@@ -451,7 +419,6 @@ function initVoiceAssistant() {
   micBtn.className = "floating-mic-btn";
   micBtn.innerHTML = "🎙️";
   micBtn.title = "మాట్లాడండి";
-  micBtn.style.cssText = "position:fixed; bottom:20px; right:20px; width:52px; height:52px; border-radius:50%; background:#2e7d32; color:#fff; border:none; font-size:22px; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:9999;";
   document.body.appendChild(micBtn);
 
   if (!SpeechRecognition) {
@@ -471,20 +438,20 @@ function initVoiceAssistant() {
       try {
         recognitionInstance.start();
         playAudioCue('start');
-        micBtn.style.background = "#d32f2f";
+        micBtn.classList.add("is-recording");
         isListening = true;
       } catch (err) {
         console.error("Mic start error:", err);
       }
     } else {
       recognitionInstance.stop();
-      micBtn.style.background = "#2e7d32";
+      micBtn.classList.remove("is-recording");
       isListening = false;
     }
   });
 
   recognitionInstance.onresult = function(event) {
-    micBtn.style.background = "#2e7d32";
+    micBtn.classList.remove("is-recording");
     isListening = false;
     const transcript = event.results[event.results.length - 1][0].transcript;
     console.log("Transcribed text:", transcript);
@@ -492,28 +459,28 @@ function initVoiceAssistant() {
   };
 
   recognitionInstance.onerror = (event) => {
-    micBtn.style.background = "#2e7d32";
+    micBtn.classList.remove("is-recording");
     isListening = false;
     console.error("Speech Error:", event.error);
   };
 
   recognitionInstance.onend = () => {
-    micBtn.style.background = "#2e7d32";
+    micBtn.classList.remove("is-recording");
     isListening = false;
   };
 }
 
-// 6. Header kinda Checkbox lekapothe inject chesi sync cheyadam
+// 6. Header కింద Checkbox ఉండేలా చూడటం
 function ensureAutoVoiceCheckbox() {
   let chk = document.getElementById("auto-voice-check");
   if (!chk) {
     const container = document.createElement("div");
     container.id = "auto-voice-box-wrapper";
-    container.style.cssText = "display: flex; justify-content: center; align-items: center; margin: 10px 0 6px 0; width: 100%; z-index: 99;";
+    container.className = "auto-voice-wrapper";
 
     container.innerHTML = `
-      <label style="cursor: pointer; display: flex; align-items: center; gap: 8px; background: #e8f5e9; border: 1.5px solid #81c784; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #2e7d32; box-shadow: 0 2px 5px rgba(0,0,0,0.06);">
-        <input type="checkbox" id="auto-voice-check" style="width: 17px; height: 17px; cursor: pointer; accent-color: #2e7d32;">
+      <label class="auto-voice-label">
+        <input type="checkbox" id="auto-voice-check" class="auto-voice-checkbox">
         🤖 ఆటో వాయిస్ గైడెన్స్ (Auto Voice)
       </label>
     `;
@@ -533,6 +500,7 @@ function ensureAutoVoiceCheckbox() {
 
   const activeChk = document.getElementById("auto-voice-check");
   if (activeChk) {
+    activeChk.checked = window.AppState ? !!window.AppState.autoVoice : false;
     activeChk.onchange = function() {
       window.toggleAutoVoice(this.checked);
     };
