@@ -8,15 +8,28 @@
 </head>
 
 <body>
-  <!-- Dynamic Containers -->
+
   <div class="container">
+    <!-- Role & Auth Containers -->
     <div id="roles-container"></div>
     <div id="auth-container"></div>
+
+    <!-- 1st: Farmer Widget Container -->
     <div id="farmer-post-container"></div>
+
+    <!-- 2nd: Labour Widget Container -->
     <div id="labour-jobs-container"></div>
+
+    <!-- 3rd: Equipment / Seeds / Provider Container -->
     <div id="provider-container"></div>
+
+    <!-- 4th: Wallet Widget Container -->
     <div id="wallet-container"></div>
+
+    <!-- 5th: Market / Mandi Widget Container -->
     <div id="mandi-container"></div>
+
+    <!-- 6th: Weather Widget Container -->
     <div id="weather-container"></div>
   </div>
 
@@ -51,6 +64,32 @@
 
   <!-- 5. Role Controller -->
   <script src="role.js?v=999"></script>
+
+  <!-- Initialization Logic -->
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      // 1. Mandi
+      if (typeof renderMandiWidget === "function") {
+        renderMandiWidget();
+      } else if (typeof renderMandi === "function") {
+        renderMandi();
+      }
+
+      // 2. Wallet
+      if (typeof renderWalletWidget === "function") {
+        renderWalletWidget();
+      }
+
+      // 3. Weather
+      if (typeof window.renderWeatherWidget === "function") {
+        window.renderWeatherWidget();
+      }
+
+      // 4. Role View Controller (దీని ద్వారానే లాగిన్ చెక్, హెడర్, రోల్స్ అన్నీ హ్యాండిల్ అవుతాయి)
+      if (typeof applyUserRoleView === "function") {
+        applyUserRoleView();
+      }
+    });
+  </script>
 </body>
 </html>
- 
