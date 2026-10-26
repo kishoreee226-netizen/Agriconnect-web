@@ -6,29 +6,29 @@ function injectFarmerJobModal() {
   const today = new Date().toISOString().split('T')[0];
 
   const modalHtml = `
-    <div id="farmerJobModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
-      <div style="background:#ffffff; width:100%; max-width:400px; border-radius:14px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,0.3); max-height:90vh; overflow-y:auto; box-sizing:border-box; font-family:sans-serif;">
+    <div id="farmerJobModal" class="fjm-modal-overlay">
+      <div class="fjm-modal-card">
         
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #e8f5e9; padding-bottom:10px; margin-bottom:14px;">
-          <h4 style="margin:0; color:#2e7d32; font-size:16px; font-weight:bold;">🌾 రైతు పనిని పోస్ట్ చేయండి</h4>
-          <span onclick="window.closeFarmerJobModal()" style="font-size:24px; font-weight:bold; cursor:pointer; color:#888; line-height:1;">&times;</span>
+        <div class="fjm-modal-header">
+          <h4 class="fjm-modal-title">🌾 రైతు పనిని పోస్ట్ చేయండి</h4>
+          <span onclick="window.closeFarmerJobModal()" class="fjm-close-btn">&times;</span>
         </div>
 
-        <form id="farmerJobForm" onsubmit="window.handleFarmerJobSubmit(event)" style="display:flex; flex-direction:column; gap:10px;">
+        <form id="farmerJobForm" onsubmit="window.handleFarmerJobSubmit(event)" class="fjm-form">
           <div>
-            <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">రైతు పేరు:</label>
-            <input type="text" id="fjm_name" required placeholder="మీ పేరు" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+            <label class="fjm-label">రైతు పేరు:</label>
+            <input type="text" id="fjm_name" required placeholder="మీ పేరు" class="fjm-input">
           </div>
 
           <div>
-            <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">ఫోన్ నంబర్:</label>
-            <input type="tel" id="fjm_phone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+            <label class="fjm-label">ఫోన్ నంబర్:</label>
+            <input type="tel" id="fjm_phone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" class="fjm-input">
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="fjm-grid-2">
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">పంట రకం:</label>
-              <select id="fjm_crop" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box; background:#fff;">
+              <label class="fjm-label">పంట రకం:</label>
+              <select id="fjm_crop" class="fjm-select">
                 <option value="వరి (Paddy)">వరి</option>
                 <option value="పత్తి (Cotton)">పత్తి</option>
                 <option value="మిరప (Chilli)">మిరప</option>
@@ -37,8 +37,8 @@ function injectFarmerJobModal() {
               </select>
             </div>
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">పని రకం:</label>
-              <select id="fjm_work" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box; background:#fff;">
+              <label class="fjm-label">పని రకం:</label>
+              <select id="fjm_work" class="fjm-select">
                 <option value="వరి నాట్లు">వరి నాట్లు</option>
                 <option value="కలుపు తీత">కలుపు తీత</option>
                 <option value="పంట కోత">పంట కోత</option>
@@ -48,39 +48,39 @@ function injectFarmerJobModal() {
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="fjm-grid-2">
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">ఎంతమంది కూలీలు?:</label>
-              <input type="number" id="fjm_required" min="1" max="50" value="5" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+              <label class="fjm-label">ఎంతమంది కూలీలు?:</label>
+              <input type="number" id="fjm_required" min="1" max="50" value="5" required class="fjm-input">
             </div>
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">రోజు కూలీ (₹):</label>
-              <input type="number" id="fjm_wage" min="100" step="50" value="450" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+              <label class="fjm-label">రోజు కూలీ (₹):</label>
+              <input type="number" id="fjm_wage" min="100" step="50" value="450" required class="fjm-input">
             </div>
           </div>
 
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+          <div class="fjm-grid-2">
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">పని తేదీ:</label>
-              <input type="date" id="fjm_date" value="${today}" min="${today}" required style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+              <label class="fjm-label">పని తేదీ:</label>
+              <input type="date" id="fjm_date" value="${today}" min="${today}" required class="fjm-input">
             </div>
             <div>
-              <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">గ్రామం / పొలం:</label>
-              <input type="text" id="fjm_village" required placeholder="ఊరి పేరు" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box;">
+              <label class="fjm-label">గ్రామం / పొలం:</label>
+              <input type="text" id="fjm_village" required placeholder="ఊరి పేరు" class="fjm-input">
             </div>
           </div>
 
           <div>
-            <label style="font-size:11px; font-weight:bold; color:#333; display:block; margin-bottom:3px;">రవాణా సదుపాయం:</label>
-            <select id="fjm_trans" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:6px; font-size:12px; box-sizing:border-box; background:#fff;">
+            <label class="fjm-label">రవాణా సదుపాయం:</label>
+            <select id="fjm_trans" class="fjm-select">
               <option value="needed">🛺 రైతు రవాణా ఏర్పాటు చేస్తారు</option>
               <option value="own">🛵 కూలీల సొంత బండి ఉండాలి</option>
             </select>
           </div>
 
-          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px;">
-            <button type="button" onclick="window.closeFarmerJobModal()" style="padding:8px 14px; border:1px solid #ccc; background:#f5f5f5; border-radius:6px; font-size:12px; cursor:pointer;">రద్దు</button>
-            <button type="submit" style="padding:8px 16px; border:none; background:#2e7d32; color:#fff; border-radius:6px; font-size:12px; font-weight:bold; cursor:pointer;">🚀 అలర్ట్ పంపండి</button>
+          <div class="fjm-btn-row">
+            <button type="button" onclick="window.closeFarmerJobModal()" class="fjm-btn-cancel">రద్దు</button>
+            <button type="submit" class="fjm-btn-submit">🚀 అలర్ట్ పంపండి</button>
           </div>
         </form>
 
@@ -110,6 +110,7 @@ window.openFarmerJobModal = function() {
   prefillModalFarmerData();
   const modal = document.getElementById("farmerJobModal");
   if (modal) {
+    modal.classList.add("is-active");
     modal.style.display = "flex";
   }
 };
@@ -117,6 +118,7 @@ window.openFarmerJobModal = function() {
 window.closeFarmerJobModal = function() {
   const modal = document.getElementById("farmerJobModal");
   if (modal) {
+    modal.classList.remove("is-active");
     modal.style.display = "none";
   }
 };
