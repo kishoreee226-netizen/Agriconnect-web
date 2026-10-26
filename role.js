@@ -80,21 +80,21 @@ function applyUserRoleView() {
     if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
     if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
 
-    // 1. Rithu Login Card
+        // 1. Rithu Login Card
     if (farmerContainer) {
       farmerContainer.style.setProperty('display', 'block', 'important');
       farmerContainer.innerHTML = `
-        <div class="farmer-card" style="background:#fff; border:2px solid #2e7d32; border-radius:14px; padding:16px; margin-bottom:14px; box-shadow:0 3px 8px rgba(0,0,0,0.08);">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-            <span style="font-size:24px;">🌾</span>
-            <strong style="font-size:16px; color:#2e7d32;">రైతు సోదరుల కోసం (Farmer)</strong>
+        <div class="agri-landing-card farmer-border">
+          <div class="agri-card-header">
+            <span class="agri-icon">🌾</span>
+            <strong class="agri-title-farmer">రైతు సోదరుల కోసం (Farmer)</strong>
           </div>
-          <ul style="font-size:12px; color:#444; line-height:1.6; margin:0 0 12px 18px; padding:0;">
+          <ul class="agri-card-desc-list">
             <li>మీ పొలం పనులకు కూలీలను వెంటనే బుక్ చేసుకోండి.</li>
             <li>ఉచిత జాబ్ పోస్టింగ్ & మార్కెట్ లైవ్ ధరల సమాచారం.</li>
             <li>స్మార్ట్ ఆటో-స్విచ్: సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారే సదుపాయం.</li>
           </ul>
-          <button onclick="openLoginModal('FARMER')" style="width:100%; background:#2e7d32; color:#fff; border:none; border-radius:8px; padding:12px; font-size:14px; font-weight:bold; cursor:pointer;">
+          <button onclick="openLoginModal('FARMER')" class="agri-landing-btn farmer-btn-bg">
             రైతుగా Login / నమోదు అవ్వండి ➔
           </button>
         </div>
