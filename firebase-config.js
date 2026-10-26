@@ -1,4 +1,6 @@
-// 1. Config Object Freeze (Evaru keys ni maarvaleru / tamper cheyaleru)
+// firebase-config.js - Secure Firebase Initialization & Offline-Ready Central Store
+
+// 1. Config Object Freeze (కీస్ మార్చకుండా ఫ్రీజ్ చేయడం)
 const firebaseConfig = Object.freeze({
   apiKey: "AIzaSyAvev9rVOBx5xE1A993EtSD7FG9JxAmbyI",
   authDomain: "agriconnect-5fc39.firebaseapp.com",
@@ -9,26 +11,50 @@ const firebaseConfig = Object.freeze({
 });
 
 // 2. Firebase App Initialization
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+let firestoreInstance = null;
 
-// 3 & 4. Global window.db Tamper-Proof & Freeze Lock (Root Fix)
-try {
-    Object.defineProperty(window, 'db', {
-        get: function() {
-            if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-                return firebase.firestore();
-            }
-            return null;
-        },
-        set: function() {
-            console.warn("⚠️ భద్రత దృష్ట్యా window.db ని మార్చడం నిషేధించబడింది!");
-        },
-        configurable: false
+if (typeof firebase !== 'undefined') {
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  // 3. Firestore Offline Persistence (గ్రామీణ ప్రాంతాల్లో సిగ్నల్ లేకపోయినా డేటా లోడ్ అవ్వడానికి)
+  try {
+    firestoreInstance = firebase.firestore();
+    firestoreInstance.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+      if (err.code === 'failed-precondition') {
+        // బహుళ ట్యాబ్‌లు ఒకేసారి ఓపెన్ అయినప్పుడు
+        console.warn("Firestore persistence notice: Multiple tabs open.");
+      } else if (err.code === 'unimplemented') {
+        // బ్రౌజర్ సపోర్ట్ చేయనప్పుడు
+        console.warn("Firestore persistence notice: Browser not supported.");
+      }
     });
-} catch (e) {
-    console.error("Freeze lock init error:", e);
+  } catch (err) {
+    console.warn("Firestore init notice:", err);
+  }
+} else {
+  console.error("❌ Firebase SDK లోడ్ కాలేదు. ದయచేసి HTML లో Firebase స్క్రిప్ట్‌లు సరిగ్గా ఉన్నాయో లేదో తనిఖీ చేయండి.");
 }
 
-console.log("🔒 Firebase initialized with Tamper-Proof & Freeze Protection!");
+// 4. Global window.db Tamper-Proof & Freeze Lock
+try {
+  Object.defineProperty(window, 'db', {
+    get: function() {
+      if (firestoreInstance) return firestoreInstance;
+      if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+        firestoreInstance = firebase.firestore();
+        return firestoreInstance;
+      }
+      return null;
+    },
+    set: function() {
+      console.warn("⚠️ భద్రత దృష్ట్యా window.db ని మార్చడం నిషేధించబడింది!");
+    },
+    configurable: false
+  });
+} catch (e) {
+  console.error("Freeze lock init error:", e);
+}
+
+console.log("🔒 Firebase initialized with Offline Cache & Tamper-Proof Protection!");
