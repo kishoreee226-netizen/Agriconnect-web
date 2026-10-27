@@ -23,71 +23,51 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Fetch Live Agmarknet Daily Data
+      - name: Fetch Real State-wise Mandi Data
         run: |
           python -c "
           import requests
           import json
 
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
           }
+
+          # Real-time Multi-State APMC Mandi Data Endpoints
+          endpoints = [
+              'https://mandi-api.vercel.app/api/prices',
+              'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=1000'
+          ]
 
           records = []
 
-          # 1. Primary Open Govt Mandi API Endpoint
-          api_endpoints = [
-              'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=500',
-              'https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=500'
-          ]
-
-          for url in api_endpoints:
+          for url in endpoints:
               try:
-                  res = requests.get(url, headers=headers, timeout=15)
+                  res = requests.get(url, headers=headers, timeout=20)
                   if res.status_code == 200:
                       data = res.json()
-                      items = data.get('records', [])
-                      if items:
-                          records = items
-                          print(f'Fetched {len(records)} records from Govt API endpoint.')
+                      items = data if isinstance(data, list) else data.get('records', [])
+                      if len(items) > 0:
+                          for r in items:
+                              records.append({
+                                  'state': r.get('state') or r.get('State') or 'Telangana',
+                                  'district': r.get('district') or r.get('District') or '',
+                                  'market': r.get('market') or r.get('Market') or r.get('mandi', 'APMC'),
+                                  'commodity': r.get('commodity') or r.get('Commodity') or r.get('crop', ''),
+                                  'modal_price': r.get('modal_price') or r.get('Modal_Price') or r.get('price', '0')
+                              })
+                          print(f'Successfully pulled {len(records)} real mandi records.')
                           break
               except Exception as e:
-                  print(f'Endpoint attempt note: {e}')
+                  print(f'Error with {url}: {e}')
 
-          # 2. Existing File Retention: API block ayina file khali avvakunda unchadaniki
-          if not records:
-              try:
-                  with open('mandi_live.json', 'r', encoding='utf-8') as f:
-                      existing = json.load(f)
-                      if existing and len(existing) > 0:
-                          records = existing
-                          print(f'Retained {len(records)} records from existing data.')
-              except Exception as e:
-                  print(f'File read note: {e}')
-
-          # 3. Minimum Baseline Records (Zero-error safe guard)
-          if not records:
-              records = [
-                  {'state': 'Telangana', 'district': 'Warangal', 'market': 'Warangal', 'commodity': 'Cotton', 'modal_price': '7450'},
-                  {'state': 'Telangana', 'district': 'Warangal', 'market': 'Warangal', 'commodity': 'Paddy(Common)', 'modal_price': '2320'},
-                  {'state': 'Telangana', 'district': 'Warangal', 'market': 'Warangal', 'commodity': 'Dry Chillies', 'modal_price': '18500'},
-                  {'state': 'Telangana', 'district': 'Warangal', 'market': 'Warangal', 'commodity': 'Maize', 'modal_price': '2210'},
-                  {'state': 'Telangana', 'district': 'Khammam', 'market': 'Khammam', 'commodity': 'Bengal Gram', 'modal_price': '5950'},
-                  {'state': 'Telangana', 'district': 'Nizamabad', 'market': 'Nizamabad', 'commodity': 'Turmeric', 'modal_price': '13800'},
-                  {'state': 'Telangana', 'district': 'Vikarabad', 'market': 'Tandur', 'commodity:': 'Red Gram', 'modal_price': '9950'},
-                  {'state': 'Telangana', 'district': 'Hyderabad', 'market': 'Bowenpally', 'commodity': 'Tomato', 'modal_price': '1850'},
-                  {'state': 'Telangana', 'district': 'Hyderabad', 'market': 'Malakpet', 'commodity': 'Onion', 'modal_price': '2600'},
-                  {'state': 'Telangana', 'district': 'Mahabubnagar', 'market': 'Badepally', 'commodity': 'Groundnut', 'modal_price': '6650'},
-                  {'state': 'Andhra Pradesh', 'district': 'Guntur', 'market': 'Guntur', 'commodity': 'Dry Chillies', 'modal_price': '19200'},
-                  {'state': 'Andhra Pradesh', 'district': 'Kurnool', 'market': 'Kurnool', 'commodity': 'Onion', 'modal_price': '2400'},
-                  {'state': 'Andhra Pradesh', 'district': 'West Godavari', 'market': 'Eluru', 'commodity': 'Paddy(Common)', 'modal_price': '2300'}
-              ]
-
-          # Write records to mandi_live.json
-          with open('mandi_live.json', 'w', encoding='utf-8') as f:
-              json.dump(records, f, ensure_ascii=False, indent=2)
-
-          print(f'Successfully updated mandi_live.json with {len(records)} records.')
+          if len(records) > 0:
+              with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                  json.dump(records, f, ensure_ascii=False, indent=2)
+              print('mandi_live.json successfully written with real data.')
+          else:
+              print('Could not pull from live feeds.')
+              exit(1)
           "
 
       - name: Commit and Push Live Data
@@ -95,5 +75,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
-          git commit -m "Auto-sync real Mandi rates [skip ci]" || echo "No changes to commit"
+          git commit -m "Auto-sync real Mandi rates [skip ci]" || echo "No changes"
           git push
