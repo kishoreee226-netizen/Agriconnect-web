@@ -4,12 +4,12 @@
 let allMandiRecords = [];
 
 const CROP_CATEGORIES = {
-  "Dhaanyaalu (Cereals)": ["Paddy", "Maize", "Wheat", "Bajra", "Jowar", "Barley", "Ragi"],
-  "Noone Ginjalu (Oilseeds)": ["Groundnut", "Soyabean", "Mustard", "Sesamum", "Sunflower", "Castor Seed"],
-  "Kooragaayalu (Vegetables)": ["Tomato", "Onion", "Potato", "Brinjal", "Cabbage", "Cauliflower", "Green Chilli", "Ladies Finger", "Carrot"],
-  "Pappu Dhaanyaalu (Pulses)": ["Bengal Gram", "Red Gram", "Green Gram", "Black Gram", "Gram", "Lentil"],
-  "Vaanijya Pantalu (Commercial)": ["Cotton", "Sugarcane", "Jute", "Tobacco"],
-  "Masaalaa Dinusulu (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
+  "ధాన్యాలు (Cereals)": ["Paddy", "Maize", "Wheat", "Bajra", "Jowar", "Barley", "Ragi"],
+  "నూనె గింజలు (Oilseeds)": ["Groundnut", "Soyabean", "Mustard", "Sesamum", "Sunflower", "Castor Seed"],
+  "కూరగాయలు (Vegetables)": ["Tomato", "Onion", "Potato", "Brinjal", "Cabbage", "Cauliflower", "Green Chilli", "Ladies Finger", "Carrot"],
+  "పప్పు ధాన్యాలు (Pulses)": ["Bengal Gram", "Red Gram", "Green Gram", "Black Gram", "Gram", "Lentil"],
+  "వాణిజ్య పంటలు (Commercial)": ["Cotton", "Sugarcane", "Jute", "Tobacco"],
+  "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
 // ==========================================
@@ -42,7 +42,7 @@ function renderFilteredTable(records) {
     tableBody.innerHTML = `
       <tr>
         <td colspan="3" class="mandi-empty-cell" style="text-align:center; padding: 24px; color:#64748b;">
-          Samaachaaram andubaatulo ledhu.
+          సమాచారం అందుబాటులో లేదు.
         </td>
       </tr>
     `;
@@ -50,13 +50,15 @@ function renderFilteredTable(records) {
   }
 
   tableBody.innerHTML = records.map(item => {
-    const cropName = item.commodity || item.Commodity || "Crop";
-    const marketName = item.market || item.Market || item.district || "APMC";
+    const cropName = item.commodity || item.Commodity || "పంట";
+    const marketName = item.market || item.Market || item.district || "మార్కెట్";
     const rawPrice = item.modal_price || item.Modal_Price || item.price || "N/A";
     
-    const formattedPrice = !isNaN(rawPrice) && rawPrice !== "N/A" 
-      ? Number(rawPrice).toLocaleString("en-IN") 
-      : rawPrice;
+    // దశాంసాలు లేకుండా క్లీన్ రౌండ్ ఫిగర్ ధర
+    let formattedPrice = rawPrice;
+    if (!isNaN(rawPrice) && rawPrice !== "N/A") {
+      formattedPrice = Math.round(Number(rawPrice)).toLocaleString("en-IN");
+    }
 
     return `
       <tr class="mandi-row">
@@ -98,7 +100,7 @@ function updateCropDropdown() {
   const cropSelect = document.getElementById("mandi-crop-filter");
   if (!cropSelect) return;
 
-  cropSelect.innerHTML = `<option value="">Anni Pantalu (All Crops)</option>`;
+  cropSelect.innerHTML = `<option value="">అన్ని పంటలు (All Crops)</option>`;
 
   let stateRecords = allMandiRecords;
   if (selectedState) {
@@ -143,7 +145,7 @@ window.renderMandiWidget = async function() {
   container.innerHTML = `
     <div class="mandi-card">
       <div class="mandi-card-header">
-        <h3>📈 Mandi / Market Live Dharalu</h3>
+        <h3>📈 మండి / Market Live ధరలు</h3>
         <span class="mandi-badge live">🟢 Live Agmarknet</span>
       </div>
 
@@ -151,21 +153,21 @@ window.renderMandiWidget = async function() {
         <div class="mandi-filters-grid">
           <div>
             <select id="mandi-category-filter" class="mandi-select">
-              <option value="">Panta Vibhaagam (Category)</option>
+              <option value="">పంట విభాగం</option>
               ${Object.keys(CROP_CATEGORIES).map(cat => `<option value="${cat}">${cat}</option>`).join("")}
             </select>
           </div>
 
           <div>
             <select id="mandi-state-filter" class="mandi-select">
-              <option value="">Raashtram (State)</option>
+              <option value="">రాష్ట్రం</option>
               ${states.map(s => `<option value="${s}" ${s.toLowerCase() === "telangana" ? "selected" : ""}>${s}</option>`).join("")}
             </select>
           </div>
 
           <div>
             <select id="mandi-crop-filter" class="mandi-select">
-              <option value="">Anni Pantalu (All Crops)</option>
+              <option value="">అన్ని పంటలు</option>
             </select>
           </div>
         </div>
@@ -174,9 +176,9 @@ window.renderMandiWidget = async function() {
           <table class="mandi-table">
             <thead>
               <tr class="mandi-table-head-row">
-                <th class="mandi-th-crop">Panta</th>
-                <th class="mandi-th-market">Market</th>
-                <th class="mandi-th-price">Dhara (Quintal)</th>
+                <th class="mandi-th-crop">పంట</th>
+                <th class="mandi-th-market">మార్కెట్</th>
+                <th class="mandi-th-price">ధర (క్వింటాల్)</th>
               </tr>
             </thead>
           </table>
