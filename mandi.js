@@ -1,7 +1,7 @@
 // ==========================================
-// 1. Mandi Widget Configuration (Google Apps Script Live Feed)
+// 1. Mandi Widget Configuration (New Active Live Endpoint)
 // ==========================================
-const GOOGLE_APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMbSz4WVnSNsWpYqJ_FM8tyau90WL5ZUMnBzqICoDkeEsWrDvlZoukDW8KiyBkYbn4yw/exec";
+const GOOGLE_APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKqvw6mvLWY5UgBBWeLbCjurCRllYP2bGESrOaKdMZkiG758qsgQqRzIJgXeQ2bY1dgA/exec";
 
 let allMandiRecords = [];
 
@@ -16,11 +16,14 @@ const CROP_CATEGORIES = {
 };
 
 // ==========================================
-// 2. Data Fetching Logic (Google Live Endpoint + Fallback)
+// 2. Data Fetching Logic (Google Live Endpoint + Local Fallback)
 // ==========================================
 async function fetchMandiData() {
   try {
-    const res = await fetch(GOOGLE_APP_SCRIPT_URL);
+    const res = await fetch(GOOGLE_APP_SCRIPT_URL, {
+      method: "GET",
+      redirect: "follow"
+    });
     if (res.ok) {
       const data = await res.json();
       if (data && data.records && data.records.length > 0) {
@@ -28,7 +31,7 @@ async function fetchMandiData() {
       }
     }
   } catch (err) {
-    console.warn("Apps Script API fetch error, checking local backup...", err);
+    console.warn("Live API fetch skipped, trying backup...", err);
   }
 
   // Backup fallback
@@ -58,7 +61,7 @@ function renderFilteredTable(records) {
   if (!records || records.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="3" class="mandi-empty-cell" style="text-align:center; padding: 20px; color:#64748b;">
+        <td colspan="3" class="mandi-empty-cell" style="text-align:center; padding: 24px; color:#64748b;">
           ఎంచుకున్న ఫిల్టర్‌కు సంబంధించిన సమాచారం అందుబాటులో లేదు.
         </td>
       </tr>
@@ -117,7 +120,6 @@ function updateCropDropdown() {
 
   cropSelect.innerHTML = `<option value="">అన్ని పంటలు (All Crops)</option>`;
 
-  // రాష్ట్రం మరియు కేటగిరీ ఆధారంగా పంటల లిస్ట్ ఫిల్టర్ చేయడం
   let stateRecords = allMandiRecords;
   if (selectedState) {
     stateRecords = allMandiRecords.filter(item => (item.state || item.State || "").toLowerCase().includes(selectedState));
@@ -169,10 +171,10 @@ window.renderMandiWidget = async function() {
   const badgeClass = isLive ? "live" : "backup";
   const badgeText = isLive ? "🟢 Live Agmarknet" : "🟡 Saved Backup";
 
-  // డేటాలో ఉన్న అన్ని రాష్ట్రాల పేర్లను తీసి డ్రాప్‌డౌన్‌లో పెట్టడం
+  // డేటాలో ఉన్న అన్ని రాష్ట్రాల పేర్లను సంగ్రహించడం
   let states = [...new Set(allMandiRecords.map(item => item.state || item.State).filter(Boolean))].sort();
   
-  // తెలంగాణ ప్రాధాన్యత కోసం మొదట్లో ఉంచడం
+  // తెలంగాణ ప్రాధాన్యత కోసం ముందు ఉంచడం
   const hasTS = states.some(s => s.toLowerCase() === "telangana");
   states = states.filter(s => s.toLowerCase() !== "telangana");
   if (hasTS) states.unshift("Telangana");
@@ -187,7 +189,7 @@ window.renderMandiWidget = async function() {
       </div>
 
       <div class="mandi-body">
-        <!-- 3 Filter Dropdowns -->
+        <!-- Filters Grid -->
         <div class="mandi-filters-grid">
           <div>
             <select id="mandi-category-filter" class="mandi-select">
@@ -236,12 +238,12 @@ window.renderMandiWidget = async function() {
     </div>
   `;
 
-  // Attach Event Listeners
+  // Event Listeners
   document.getElementById("mandi-category-filter")?.addEventListener("change", updateCropDropdown);
   document.getElementById("mandi-state-filter")?.addEventListener("change", onStateChange);
   document.getElementById("mandi-crop-filter")?.addEventListener("change", filterMandiRecords);
 
-  // Initial load
+  // Initial table display
   updateCropDropdown();
 };
 
