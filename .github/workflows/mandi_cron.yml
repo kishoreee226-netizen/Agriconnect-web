@@ -28,42 +28,46 @@ jobs:
           python -c "
           import requests
           import json
+          import csv
+          import io
 
-          # Live Daily Open Mandi Aggregator Feed (Auto-updated daily)
-          feed_url = 'https://raw.githubusercontent.com/the-prafful/agmarknet-live-data/main/latest_mandi_prices.json'
+          # Official Daily Agmarknet Price Bulletin (Direct Open Portal Data)
+          csv_endpoint = 'https://agmarknet.gov.in/PriceTrends/SA_Pri_Month.aspx'
+          data_gov_url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=csv&limit=3000'
 
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              'Accept': '*/*'
           }
 
-          res = requests.get(feed_url, headers=headers, timeout=30)
-          
-          if res.status_code == 200:
-              items = res.json()
-              records = items if isinstance(items, list) else items.get('records', [])
-              
-              clean_records = []
-              for r in records:
-                  st = r.get('state') or r.get('State') or ''
-                  # ఆల్ ఇండియా లేదా నేషనల్ కాకుండా నిజమైన రాష్ట్ర రికార్డులు మాత్రమే
-                  if st and not 'all india' in st.lower() and not 'national' in st.lower():
-                      clean_records.append({
-                          'state': st,
-                          'district': r.get('district') or r.get('District') or '',
-                          'market': r.get('market') or r.get('Market') or '',
-                          'commodity': r.get('commodity') or r.get('Commodity') or '',
-                          'modal_price': r.get('modal_price') or r.get('Modal_Price') or '0'
-                      })
+          records = []
 
-              if len(clean_records) > 0:
-                  with open('mandi_live.json', 'w', encoding='utf-8') as f:
-                      json.dump(clean_records, f, ensure_ascii=False, indent=2)
-                  print(f'Done! Successfully updated mandi_live.json with {len(clean_records)} live government records.')
-              else:
-                  print('No valid state records found in feed.')
-                  exit(1)
+          # Proxy-safe Govt Open Data Request
+          proxy_url = 'https://corsproxy.io/?url=' + requests.utils.quote(data_gov_url)
+          try:
+              res = requests.get(proxy_url, headers=headers, timeout=35)
+              if res.status_code == 200 and len(res.text) > 100:
+                  reader = csv.DictReader(io.StringIO(res.text))
+                  for row in reader:
+                      st = row.get('state') or row.get('State') or ''
+                      if st:
+                          records.append({
+                              'state': st,
+                              'district': row.get('district') or row.get('District') or '',
+                              'market': row.get('market') or row.get('Market') or '',
+                              'commodity': row.get('commodity') or row.get('Commodity') or '',
+                              'modal_price': row.get('modal_price') or row.get('Modal_Price') or '0'
+                          })
+                  print(f'Successfully downloaded {len(records)} live records via official feed.')
+          except Exception as e:
+              print(f'Attempt 1 note: {e}')
+
+          if len(records) > 0:
+              with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                  json.dump(records, f, ensure_ascii=False, indent=2)
+              print(f'Done! Successfully saved {len(records)} genuine records to mandi_live.json.')
           else:
-              print(f'Failed to fetch feed: HTTP {res.status_code}')
+              print('Could not retrieve live data.')
               exit(1)
           "
 
