@@ -28,37 +28,31 @@ jobs:
           python -c "
           import requests, json
 
+          # Pure Govt Agmarknet Endpoint
           url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070'
           params = {
               'api-key': '579b464db66ecb3875b39ed9319231f2',
               'format': 'json',
-              'limit': '150',
-              'filters[state]': 'Telangana'
+              'limit': '300'
           }
           headers = {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
           }
 
-          try:
-              res = requests.get(url, params=params, headers=headers, timeout=20)
-              data = res.json()
-              if 'records' in data and len(data['records']) > 0:
-                  with open('mandi_live.json', 'w', encoding='utf-8') as f:
-                      json.dump(data['records'], f, ensure_ascii=False, indent=2)
-                  print(f'Success: {len(data[\"records\"])} records written.')
-              else:
-                  print('No Telangana records returned, fetching all states...')
-                  # Fallback to general mandi records if Telangana filter is empty
-                  del params['filters[state]']
-                  res2 = requests.get(url, params=params, headers=headers, timeout=20)
-                  data2 = res2.json()
-                  if 'records' in data2 and len(data2['records']) > 0:
-                      with open('mandi_live.json', 'w', encoding='utf-8') as f:
-                          json.dump(data2['records'], f, ensure_ascii=False, indent=2)
-                      print(f'Success fallback: {len(data2[\"records\"])} records written.')
-          except Exception as e:
-              print(f'Error fetching: {e}')
-              raise e
+          res = requests.get(url, params=params, headers=headers, timeout=30)
+          print(f'Server Status: {res.status_code}')
+
+          data = res.json()
+          records = data.get('records', [])
+          print(f'Total live records received: {len(records)}')
+
+          if len(records) > 0:
+              with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                  json.dump(records, f, ensure_ascii=False, indent=2)
+              print('mandi_live.json successfully updated with live Govt data.')
+          else:
+              print('Govt API returned empty records list.')
+              exit(1)
           "
 
       - name: Commit and Push Updated Data
@@ -66,6 +60,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
-          git commit -m "Auto-update live mandi rates [skip ci]" || echo "No changes to commit"
+          git commit -m "Live Mandi Sync [skip ci]" || echo "No changes"
           git push
-          
