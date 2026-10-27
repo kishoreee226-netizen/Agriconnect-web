@@ -21,33 +21,46 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install requests
 
-      - name: Fetch Live Daily Agmarknet Records
+      - name: Fetch Live Agmarknet Records
         run: |
           python -c "
           import requests, json
 
-          # Active Daily Agmarknet Open Data Feed (Telangana & All States)
-          feed_url = 'https://raw.githubusercontent.com/datameet/agmarknet-data/master/sample_latest.json'
+          # Government Agmarknet Daily Live Commodities Feed
+          api_url = 'https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=500'
           
+          headers = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+          }
+
+          records = []
           try:
-              res = requests.get(feed_url, timeout=25)
+              res = requests.get(api_url, headers=headers, timeout=30)
               if res.status_code == 200:
                   data = res.json()
-                  records = data if isinstance(data, list) else data.get('records', [])
-                  if len(records) > 0:
-                      with open('mandi_live.json', 'w', encoding='utf-8') as f:
-                          json.dump(records, f, ensure_ascii=False, indent=2)
-                      print(f'Success! Updated mandi_live.json with {len(records)} live records.')
-                  else:
-                      print('Records list empty.')
-                      exit(1)
-              else:
-                  print(f'Server status: {res.status_code}')
-                  exit(1)
+                  records = data.get('records', [])
           except Exception as e:
-              print(f'Error fetching feed: {e}')
+              print(f'Primary API error: {e}')
+
+          # Fallback: Open APMC Daily Feed
+          if not records:
+              alt_url = 'https://raw.githubusercontent.com/CivicDataLab/agmarknet-data/main/data/latest.json'
+              try:
+                  res2 = requests.get(alt_url, headers=headers, timeout=30)
+                  if res2.status_code == 200:
+                      data2 = res2.json()
+                      records = data2 if isinstance(data2, list) else data2.get('records', [])
+              except Exception as e:
+                  print(f'Alt feed error: {e}')
+
+          if len(records) > 0:
+              with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                  json.dump(records, f, ensure_ascii=False, indent=2)
+              print(f'Successfully fetched and saved {len(records)} live records!')
+          else:
+              print('Unable to fetch live records from providers.')
               exit(1)
           "
 
@@ -58,4 +71,3 @@ jobs:
           git add mandi_live.json
           git commit -m "Auto-sync real Mandi rates [skip ci]" || echo "No changes"
           git push
-          
