@@ -5533,7 +5533,7 @@ header h1 {
 }
 
 .footer-company-name {
-  color: #2e7d32;
+  color: #4caf50;
   font-size: 13px;
   font-weight: 700;
   margin: 0 0 4px 0;
@@ -5542,23 +5542,23 @@ header h1 {
 .footer-udyam-text {
   margin: 3px 0;
   font-size: 11px;
-  color: #fff;
+  color: #e0e0e0;
   font-weight: 500;
 }
 
 .footer-udyam-val {
-  color: #fff;
+  color: #ffffff;
   font-weight: 600;
 }
 
 .footer-address-text {
   margin: 3px 0;
   font-size: 11px;
-  color: #fff;
+  color: #cfd8dc;
 }
 
 .footer-copy-text {
   margin-top: 8px;
-  color: #fff;
+  color: #90a4ae;
   font-size: 10px;
 }
