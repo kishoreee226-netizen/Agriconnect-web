@@ -5542,23 +5542,23 @@ header h1 {
 .footer-udyam-text {
   margin: 3px 0;
   font-size: 11px;
-  color: #555;
+  color: #fff;
   font-weight: 500;
 }
 
 .footer-udyam-val {
-  color: #222;
+  color: #fff;
   font-weight: 600;
 }
 
 .footer-address-text {
   margin: 3px 0;
   font-size: 11px;
-  color: #666;
+  color: #fff;
 }
 
 .footer-copy-text {
   margin-top: 8px;
-  color: #888;
+  color: #fff;
   font-size: 10px;
 }
