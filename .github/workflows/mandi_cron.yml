@@ -5,6 +5,9 @@ on:
     - cron: '30 0,6,12 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-data:
     runs-on: ubuntu-latest
@@ -27,25 +30,35 @@ jobs:
 
           url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070'
           params = {
-              'api-key': '579b464db66ec23bdd0000012873d6e8fa3847a564325d817ed2b023',
+              'api-key': '579b464db66ecb3875b39ed9319231f2',
               'format': 'json',
-              'limit': '100'
+              'limit': '150',
+              'filters[state]': 'Telangana'
           }
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-              'Accept': 'application/json, text/plain, */*'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
           }
 
           try:
-              res = requests.get(url, params=params, headers=headers, timeout=30)
-              if res.status_code == 200 and 'records' in res.text:
-                  with open('mandi_live.json', 'w') as f:
-                      f.write(res.text)
-                  print('Success: Data written to mandi_live.json')
+              res = requests.get(url, params=params, headers=headers, timeout=20)
+              data = res.json()
+              if 'records' in data and len(data['records']) > 0:
+                  with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                      json.dump(data['records'], f, ensure_ascii=False, indent=2)
+                  print(f'Success: {len(data[\"records\"])} records written.')
               else:
-                  print(f'Govt server status: {res.status_code}')
+                  print('No Telangana records returned, fetching all states...')
+                  # Fallback to general mandi records if Telangana filter is empty
+                  del params['filters[state]']
+                  res2 = requests.get(url, params=params, headers=headers, timeout=20)
+                  data2 = res2.json()
+                  if 'records' in data2 and len(data2['records']) > 0:
+                      with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                          json.dump(data2['records'], f, ensure_ascii=False, indent=2)
+                      print(f'Success fallback: {len(data2[\"records\"])} records written.')
           except Exception as e:
               print(f'Error fetching: {e}')
+              raise e
           "
 
       - name: Commit and Push Updated Data
@@ -53,5 +66,6 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
-          git commit -m "Auto-update live mandi rates [skip ci]" || exit 0
+          git commit -m "Auto-update live mandi rates [skip ci]" || echo "No changes to commit"
           git push
+          
