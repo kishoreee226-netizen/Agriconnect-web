@@ -23,51 +23,48 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Fetch Real State-wise Mandi Data
+      - name: Fetch Real Daily Agmarknet Feed
         run: |
           python -c "
           import requests
           import json
 
-          # Multi-mirror endpoints providing real daily Agmarknet market bulletin
-          mirrors = [
-              'https://raw.githubusercontent.com/the-prafful/agmarknet-live-data/main/latest_mandi_prices.json',
-              'https://api.allorigins.win/raw?url=' + requests.utils.quote('https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=500')
-          ]
+          # Live Daily Open Mandi Aggregator Feed (Auto-updated daily)
+          feed_url = 'https://raw.githubusercontent.com/the-prafful/agmarknet-live-data/main/latest_mandi_prices.json'
 
-          records = []
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
           }
 
-          for url in mirrors:
-              try:
-                  res = requests.get(url, headers=headers, timeout=25)
-                  if res.status_code == 200:
-                      data = res.json()
-                      items = data if isinstance(data, list) else data.get('records', [])
-                      if items and len(items) > 0:
-                          for r in items:
-                              records.append({
-                                  'state': r.get('state') or r.get('State') or '',
-                                  'district': r.get('district') or r.get('District') or '',
-                                  'market': r.get('market') or r.get('Market') or '',
-                                  'commodity': r.get('commodity') or r.get('Commodity') or '',
-                                  'modal_price': r.get('modal_price') or r.get('Modal_Price') or r.get('price', '0')
-                              })
-                          print(f'Fetched {len(records)} state-wise records.')
-                          break
-              except Exception as e:
-                  print(f'Mirror note: {e}')
+          res = requests.get(feed_url, headers=headers, timeout=30)
+          
+          if res.status_code == 200:
+              items = res.json()
+              records = items if isinstance(items, list) else items.get('records', [])
+              
+              clean_records = []
+              for r in records:
+                  st = r.get('state') or r.get('State') or ''
+                  # ఆల్ ఇండియా లేదా నేషనల్ కాకుండా నిజమైన రాష్ట్ర రికార్డులు మాత్రమే
+                  if st and not 'all india' in st.lower() and not 'national' in st.lower():
+                      clean_records.append({
+                          'state': st,
+                          'district': r.get('district') or r.get('District') or '',
+                          'market': r.get('market') or r.get('Market') or '',
+                          'commodity': r.get('commodity') or r.get('Commodity') or '',
+                          'modal_price': r.get('modal_price') or r.get('Modal_Price') or '0'
+                      })
 
-          # File update logic
-          if len(records) > 0:
-              with open('mandi_live.json', 'w', encoding='utf-8') as f:
-                  json.dump(records, f, ensure_ascii=False, indent=2)
-              print('Successfully written live multi-state mandi records.')
+              if len(clean_records) > 0:
+                  with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                      json.dump(clean_records, f, ensure_ascii=False, indent=2)
+                  print(f'Done! Successfully updated mandi_live.json with {len(clean_records)} live government records.')
+              else:
+                  print('No valid state records found in feed.')
+                  exit(1)
           else:
-              # Fallback: maintain existing file without exiting with error
-              print('Retaining current mandi_live.json safely.')
+              print(f'Failed to fetch feed: HTTP {res.status_code}')
+              exit(1)
           "
 
       - name: Commit and Push Live Data
