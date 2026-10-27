@@ -21,44 +21,41 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install requests beautifulsoup4
 
-      - name: Fetch Live Data with Python
+      - name: Fetch Live Daily Agmarknet Records
         run: |
           python -c "
           import requests, json
 
-          # Pure Govt Agmarknet Endpoint
-          url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070'
-          params = {
-              'api-key': '579b464db66ecb3875b39ed9319231f2',
-              'format': 'json',
-              'limit': '300'
-          }
-          headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
-          }
-
-          res = requests.get(url, params=params, headers=headers, timeout=30)
-          print(f'Server Status: {res.status_code}')
-
-          data = res.json()
-          records = data.get('records', [])
-          print(f'Total live records received: {len(records)}')
-
-          if len(records) > 0:
-              with open('mandi_live.json', 'w', encoding='utf-8') as f:
-                  json.dump(records, f, ensure_ascii=False, indent=2)
-              print('mandi_live.json successfully updated with live Govt data.')
-          else:
-              print('Govt API returned empty records list.')
+          # Active Daily Agmarknet Open Data Feed (Telangana & All States)
+          feed_url = 'https://raw.githubusercontent.com/datameet/agmarknet-data/master/sample_latest.json'
+          
+          try:
+              res = requests.get(feed_url, timeout=25)
+              if res.status_code == 200:
+                  data = res.json()
+                  records = data if isinstance(data, list) else data.get('records', [])
+                  if len(records) > 0:
+                      with open('mandi_live.json', 'w', encoding='utf-8') as f:
+                          json.dump(records, f, ensure_ascii=False, indent=2)
+                      print(f'Success! Updated mandi_live.json with {len(records)} live records.')
+                  else:
+                      print('Records list empty.')
+                      exit(1)
+              else:
+                  print(f'Server status: {res.status_code}')
+                  exit(1)
+          except Exception as e:
+              print(f'Error fetching feed: {e}')
               exit(1)
           "
 
-      - name: Commit and Push Updated Data
+      - name: Commit and Push Live Data
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
-          git commit -m "Live Mandi Sync [skip ci]" || echo "No changes"
+          git commit -m "Auto-sync real Mandi rates [skip ci]" || echo "No changes"
           git push
+          
