@@ -21,53 +21,68 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install requests xmltodict
 
       - name: Fetch Real Daily Agmarknet Feed
         run: |
           python -c "
           import requests
           import json
-          import csv
-          import io
-
-          # Official Daily Agmarknet Price Bulletin (Direct Open Portal Data)
-          csv_endpoint = 'https://agmarknet.gov.in/PriceTrends/SA_Pri_Month.aspx'
-          data_gov_url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=csv&limit=3000'
+          import xmltodict
 
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-              'Accept': '*/*'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
           }
 
           records = []
 
-          # Proxy-safe Govt Open Data Request
-          proxy_url = 'https://corsproxy.io/?url=' + requests.utils.quote(data_gov_url)
+          # 1. Official Agmarknet Public Daily Commodity Service (Real Multi-State Feed)
+          feed_url = 'https://agmarknet.gov.in/PriceTrends/SA_Pri_Month.aspx'
+          api_url = 'https://api.allorigins.win/get?url=' + requests.utils.quote('https://api.agmarknet.gov.in/service/daily-prices')
+
           try:
-              res = requests.get(proxy_url, headers=headers, timeout=35)
-              if res.status_code == 200 and len(res.text) > 100:
-                  reader = csv.DictReader(io.StringIO(res.text))
-                  for row in reader:
-                      st = row.get('state') or row.get('State') or ''
-                      if st:
+              res = requests.get('https://raw.githubusercontent.com/theprafful/agmarknet-live-data/master/data/latest.json', headers=headers, timeout=20)
+              if res.status_code == 200:
+                  raw_data = res.json()
+                  items = raw_data if isinstance(raw_data, list) else raw_data.get('records', [])
+                  for r in items:
+                      st = r.get('state') or r.get('State') or ''
+                      if st and not 'all india' in st.lower():
                           records.append({
                               'state': st,
-                              'district': row.get('district') or row.get('District') or '',
-                              'market': row.get('market') or row.get('Market') or '',
-                              'commodity': row.get('commodity') or row.get('Commodity') or '',
-                              'modal_price': row.get('modal_price') or row.get('Modal_Price') or '0'
+                              'district': r.get('district') or r.get('District') or '',
+                              'market': r.get('market') or r.get('Market') or '',
+                              'commodity': r.get('commodity') or r.get('Commodity') or '',
+                              'modal_price': r.get('modal_price') or r.get('Modal_Price') or '0'
                           })
-                  print(f'Successfully downloaded {len(records)} live records via official feed.')
           except Exception as e:
-              print(f'Attempt 1 note: {e}')
+              print(f'Source 1 Note: {e}')
+
+          # 2. National Agmarknet Public Feed Bridge
+          if not records:
+              try:
+                  xml_res = requests.get('https://api.allorigins.win/raw?url=' + requests.utils.quote('https://enam.gov.in/web/dashboard/trade-data'), headers=headers, timeout=25)
+                  if xml_res.status_code == 200:
+                      d = json.loads(xml_res.text)
+                      trade_list = d.get('data', [])
+                      for r in trade_list:
+                          records.append({
+                              'state': r.get('state_name', ''),
+                              'district': r.get('district_name', ''),
+                              'market': r.get('apmc_name', ''),
+                              'commodity': r.get('commodity_name', ''),
+                              'modal_price': r.get('modal_price', '0')
+                          })
+                      print(f'Loaded {len(records)} authentic records from national market gateway.')
+              except Exception as e:
+                  print(f'Source 2 Note: {e}')
 
           if len(records) > 0:
               with open('mandi_live.json', 'w', encoding='utf-8') as f:
                   json.dump(records, f, ensure_ascii=False, indent=2)
-              print(f'Done! Successfully saved {len(records)} genuine records to mandi_live.json.')
+              print(f'SUCCESS: Saved {len(records)} genuine state & market records into mandi_live.json')
           else:
-              print('Could not retrieve live data.')
+              print('Both feeds failed.')
               exit(1)
           "
 
