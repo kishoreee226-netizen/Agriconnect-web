@@ -21,60 +21,58 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests beautifulsoup4
+        run: pip install requests
 
-      - name: Fetch Live Agmarknet Portal Data
+      - name: Fetch Live Agmarknet Daily Data
         run: |
           python -c "
           import requests
-          from bs4 import BeautifulSoup
           import json
-          import re
+          import csv
+          import io
 
-          url = 'https://agmarknet.gov.in/SearchCddb.aspx?Tx_Commodity=0&Tx_State=0&Tx_District=0&Tx_Market=0&DateFrom=&DateTo=&Fr_Date=&To_Date=&Tx_Trend=0&Tx_CommodityHead=&Tx_StateHead=&Tx_DistrictHead=&Tx_MarketHead='
+          # Direct Daily Agmarknet Commodity Report Feed
+          csv_url = 'https://raw.githubusercontent.com/the-prafful/agmarknet-live-data/main/latest_mandi_prices.csv'
+          json_url = 'https://raw.githubusercontent.com/the-prafful/agmarknet-live-data/main/latest_mandi_prices.json'
+
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
           }
 
           records = []
-          try:
-              res = requests.get(url, headers=headers, timeout=30)
-              if res.status_code == 200:
-                  soup = BeautifulSoup(res.text, 'html.parser')
-                  table = soup.find('table', {'id': re.compile(r'.*cgridGovData.*|.*gridCommodity.*')}) or soup.find('table', {'class': 'table'})
-                  
-                  if table:
-                      rows = table.find_all('tr')
-                      for tr in rows[1:]:
-                          cols = [td.get_text(strip=True) for td in tr.find_all('td')]
-                          if len(cols) >= 6:
-                              records.append({
-                                  'state': cols[0],
-                                  'district': cols[1],
-                                  'market': cols[2],
-                                  'commodity': cols[3],
-                                  'modal_price': cols[5]
-                              })
-          except Exception as e:
-              print(f'Agmarknet direct pull note: {e}')
 
-          # Direct fallback from open daily agricultural archive
+          # Method 1: Direct JSON Feed
+          try:
+              res = requests.get(json_url, headers=headers, timeout=25)
+              if res.status_code == 200:
+                  data = res.json()
+                  records = data if isinstance(data, list) else data.get('records', [])
+          except Exception as e:
+              print(f'JSON fetch note: {e}')
+
+          # Method 2: Live CSV parsing fallback
           if not records:
-              feed = 'https://raw.githubusercontent.com/datameet/agmarknet-data/master/data/latest.json'
               try:
-                  r = requests.get(feed, headers=headers, timeout=25)
-                  if r.status_code == 200:
-                      data = r.json()
-                      records = data if isinstance(data, list) else data.get('records', [])
+                  res = requests.get(csv_url, headers=headers, timeout=25)
+                  if res.status_code == 200:
+                      reader = csv.DictReader(io.StringIO(res.text))
+                      for row in reader:
+                          records.append({
+                              'state': row.get('State') or row.get('state', ''),
+                              'district': row.get('District') or row.get('district', ''),
+                              'market': row.get('Market') or row.get('market', ''),
+                              'commodity': row.get('Commodity') or row.get('commodity', ''),
+                              'modal_price': row.get('Modal_Price') or row.get('modal_price') or row.get('Modal Price', '0')
+                          })
               except Exception as e:
-                  print(f'Archive note: {e}')
+                  print(f'CSV fetch note: {e}')
 
           if len(records) > 0:
               with open('mandi_live.json', 'w', encoding='utf-8') as f:
                   json.dump(records, f, ensure_ascii=False, indent=2)
               print(f'Success! Updated mandi_live.json with {len(records)} live records.')
           else:
-              print('No records found.')
+              print('Records list empty.')
               exit(1)
           "
 
