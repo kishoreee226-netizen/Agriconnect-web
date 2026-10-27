@@ -21,68 +21,63 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests xmltodict
+        run: pip install requests
 
-      - name: Fetch Real Daily Agmarknet Feed
+      - name: Fetch Real Multi-State Mandi Data
         run: |
           python -c "
           import requests
           import json
-          import xmltodict
 
+          # Official eNAM Real-Time Market Trade Dashboard API
+          url = 'https://enam.gov.in/web/Ajax_ctrl/trade_data_list'
+          
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'X-Requested-With': 'XMLHttpRequest',
+              'Referer': 'https://enam.gov.in/web/dashboard/trade-data'
+          }
+
+          payload = {
+              'language': 'en',
+              'state_name': '-- All --',
+              'apmc_name': '-- All --',
+              'commodity_name': '-- All --'
           }
 
           records = []
-
-          # 1. Official Agmarknet Public Daily Commodity Service (Real Multi-State Feed)
-          feed_url = 'https://agmarknet.gov.in/PriceTrends/SA_Pri_Month.aspx'
-          api_url = 'https://api.allorigins.win/get?url=' + requests.utils.quote('https://api.agmarknet.gov.in/service/daily-prices')
-
           try:
-              res = requests.get('https://raw.githubusercontent.com/theprafful/agmarknet-live-data/master/data/latest.json', headers=headers, timeout=20)
+              res = requests.post(url, headers=headers, data=payload, timeout=30)
               if res.status_code == 200:
-                  raw_data = res.json()
-                  items = raw_data if isinstance(raw_data, list) else raw_data.get('records', [])
-                  for r in items:
-                      st = r.get('state') or r.get('State') or ''
-                      if st and not 'all india' in st.lower():
+                  json_data = res.json()
+                  raw_list = json_data.get('data', [])
+                  for item in raw_list:
+                      state = item.get('state_name', '').strip()
+                      market = item.get('apmc_name', '').strip()
+                      commodity = item.get('commodity_name', '').strip()
+                      price = item.get('modal_price') or item.get('max_price') or '0'
+                      
+                      if state and commodity:
                           records.append({
-                              'state': st,
-                              'district': r.get('district') or r.get('District') or '',
-                              'market': r.get('market') or r.get('Market') or '',
-                              'commodity': r.get('commodity') or r.get('Commodity') or '',
-                              'modal_price': r.get('modal_price') or r.get('Modal_Price') or '0'
+                              'state': state,
+                              'district': item.get('district_name', '').strip(),
+                              'market': market,
+                              'commodity': commodity,
+                              'modal_price': str(price)
                           })
+                  print(f'Retrieved {len(records)} authentic records directly from e-NAM.')
+              else:
+                  print(f'eNAM status code: {res.status_code}')
           except Exception as e:
-              print(f'Source 1 Note: {e}')
-
-          # 2. National Agmarknet Public Feed Bridge
-          if not records:
-              try:
-                  xml_res = requests.get('https://api.allorigins.win/raw?url=' + requests.utils.quote('https://enam.gov.in/web/dashboard/trade-data'), headers=headers, timeout=25)
-                  if xml_res.status_code == 200:
-                      d = json.loads(xml_res.text)
-                      trade_list = d.get('data', [])
-                      for r in trade_list:
-                          records.append({
-                              'state': r.get('state_name', ''),
-                              'district': r.get('district_name', ''),
-                              'market': r.get('apmc_name', ''),
-                              'commodity': r.get('commodity_name', ''),
-                              'modal_price': r.get('modal_price', '0')
-                          })
-                      print(f'Loaded {len(records)} authentic records from national market gateway.')
-              except Exception as e:
-                  print(f'Source 2 Note: {e}')
+              print(f'eNAM request error: {e}')
 
           if len(records) > 0:
               with open('mandi_live.json', 'w', encoding='utf-8') as f:
                   json.dump(records, f, ensure_ascii=False, indent=2)
-              print(f'SUCCESS: Saved {len(records)} genuine state & market records into mandi_live.json')
+              print(f'SUCCESS: mandi_live.json updated with {len(records)} real state/market records.')
           else:
-              print('Both feeds failed.')
+              print('Failed to pull live records.')
               exit(1)
           "
 
@@ -91,5 +86,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
-          git commit -m "Auto-sync real Mandi rates [skip ci]" || echo "No changes"
+          git commit -m "Auto-sync live multi-state Mandi rates [skip ci]" || echo "No changes"
           git push
