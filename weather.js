@@ -47,6 +47,12 @@ function renderWeatherWidget() {
             <span class="metric-label">🌧️ వర్ష సూచన:</span>
             <strong id="weather-rain-prob">--%</strong>
           </div>
+         
+          <!-- కొత్తగా UV Index లైన్: -->
+          <div class="metric-item">
+            <span class="metric-label">☀️ UV ఇండెక్స్:</span>
+            <strong id="weather-uv">--</strong>
+          </div>
         </div>
       </div>
 
@@ -81,6 +87,7 @@ function getLiveLocationWeather() {
   const windEl = document.getElementById("weather-wind");
   const humEl = document.getElementById("weather-humidity");
   const rainEl = document.getElementById("weather-rain-prob");
+const uvEl = document.getElementById("weather-uv");
   const advEl = document.getElementById("weather-advisory");
   const forecastStrip = document.getElementById("weather-forecast-strip");
 
@@ -107,7 +114,7 @@ function getLiveLocationWeather() {
     const lon = pos.coords.longitude;
     try {
       // 1. Comprehensive Weather API Call (Current + Metrics + 3-day Daily Forecast)
-      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto`;
       const weatherPromise = fetch(weatherUrl).then(r => r.json());
 
       // 2. Reverse Geocode for Village & District
@@ -130,6 +137,13 @@ function getLiveLocationWeather() {
         // Today's max precipitation probability
         const todayRainProb = weatherData.daily?.precipitation_probability_max?.[0] ?? 0;
         if (rainEl) rainEl.innerText = `${todayRainProb}%`;
+ // === UV INDEX CODE ఇక్కడ పెట్టండి================
+        const todayUv = weatherData.daily?.uv_index_max?.[0] ?? 0;
+        let uvText = `${todayUv}`;
+        if (todayUv <= 2) uvText += " (తక్కువ)";
+        else if (todayUv <= 5) uvText += " (మోస్తరు)";
+        else if (todayUv <= 7) uvText += " (ఎక్కువ)";
+        else uvText += " (తీవ్రం)";
 
         // Smart dynamic advisory combination
         let customAdvisory = info.advisory;
