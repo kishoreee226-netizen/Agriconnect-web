@@ -1,5 +1,5 @@
 // ==========================================
-// 1. Mandi Widget Configuration (Pure Dynamic Data)
+// 1. Mandi Widget Configuration
 // ==========================================
 let allMandiRecords = [];
 
@@ -40,7 +40,7 @@ function renderFilteredTable(records) {
     tableBody.innerHTML = `
       <tr>
         <td colspan="3" class="mandi-empty-cell" style="text-align:center; padding: 24px; color:#64748b;">
-          ఎంచుకున్న ఫిల్టర్‌కు సంబంధించిన సమాచారం అందుబాటులో లేదు.
+          ఎంచుకున్న రాష్ట్రం / మార్కెట్‌కు సమాచారం అందుబాటులో లేదు.
         </td>
       </tr>
     `;
@@ -48,9 +48,9 @@ function renderFilteredTable(records) {
   }
 
   tableBody.innerHTML = records.map(item => {
-    const cropName = item.commodity || "పంట";
-    const marketName = item.market || item.district || "మార్కెట్";
-    const rawPrice = item.modal_price || "N/A";
+    const cropName = item.commodity || item.Commodity || "పంట";
+    const marketName = item.market || item.Market || item.district || "మార్కెట్";
+    const rawPrice = item.modal_price || item.Modal_Price || item.price || "N/A";
     
     let formattedPrice = rawPrice;
     if (!isNaN(rawPrice) && rawPrice !== "N/A") {
@@ -68,7 +68,7 @@ function renderFilteredTable(records) {
 }
 
 // ==========================================
-// 4. Dynamic Filtering (State, Market, Category, Crop)
+// 4. Filtering Logic
 // ==========================================
 function filterMandiRecords() {
   const selectedCategory = document.getElementById("mandi-category-filter")?.value || "";
@@ -78,8 +78,8 @@ function filterMandiRecords() {
   const allowedCrops = selectedCategory ? (CROP_CATEGORIES[selectedCategory] || []).map(c => c.toLowerCase()) : null;
 
   const filtered = allMandiRecords.filter(item => {
-    const itemCrop = (item.commodity || "").toLowerCase();
-    const itemState = (item.state || "").toLowerCase();
+    const itemCrop = (item.commodity || item.Commodity || "").toLowerCase();
+    const itemState = (item.state || item.State || "").toLowerCase();
 
     const matchesCategory = !allowedCrops || allowedCrops.some(c => itemCrop.includes(c) || c.includes(itemCrop));
     const matchesState = !selectedState || itemState === selectedState || itemState.includes(selectedState);
@@ -101,7 +101,7 @@ function updateCropDropdown() {
 
   let stateRecords = allMandiRecords;
   if (selectedState) {
-    stateRecords = allMandiRecords.filter(item => (item.state || "").toLowerCase().includes(selectedState));
+    stateRecords = allMandiRecords.filter(item => (item.state || item.State || "").toLowerCase().includes(selectedState));
   }
 
   if (selectedCategory && CROP_CATEGORIES[selectedCategory]) {
@@ -110,7 +110,7 @@ function updateCropDropdown() {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
     });
   } else {
-    const uniqueCrops = [...new Set(stateRecords.map(item => item.commodity).filter(Boolean))].sort();
+    const uniqueCrops = [...new Set(stateRecords.map(item => item.commodity || item.Commodity).filter(Boolean))].sort();
     uniqueCrops.forEach(crop => {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
     });
@@ -133,14 +133,17 @@ window.renderMandiWidget = async function() {
 
   allMandiRecords = await fetchMandiData();
 
-  // JSON లో ఉన్న రాష్ట్రాలను ఆటోమేటిక్‌గా యూనిక్‌గా వేరుచేయడం
-  let uniqueStates = [...new Set(allMandiRecords.map(item => item.state).filter(Boolean))].sort();
+  // JSON నుండి రాష్ట్రాల పేర్లను డైనమిక్‌గా తీసుకోవడం
+  let states = [...new Set(allMandiRecords.map(item => item.state || item.State).filter(Boolean))].sort();
+  
+  // ఆల్ ఇండియా లేదా నేషనల్ కాకుండా ఫిల్టర్ చేయడం
+  states = states.filter(s => !s.toLowerCase().includes("all india") && !s.toLowerCase().includes("national"));
 
-  // తెలంగాణ ఉంటే మొదటి ఆప్షన్‌గా చూపించడం
-  const hasTS = uniqueStates.some(s => s.toLowerCase() === "telangana");
+  // తెలంగాణను మొదటి ఆప్షన్‌గా చూపించడం
+  const hasTS = states.some(s => s.toLowerCase() === "telangana");
   if (hasTS) {
-    uniqueStates = uniqueStates.filter(s => s.toLowerCase() !== "telangana");
-    uniqueStates.unshift("Telangana");
+    states = states.filter(s => s.toLowerCase() !== "telangana");
+    states.unshift("Telangana");
   }
 
   container.innerHTML = `
@@ -162,7 +165,7 @@ window.renderMandiWidget = async function() {
           <div>
             <select id="mandi-state-filter" class="mandi-select">
               <option value="">రాష్ట్రం ఎంచుకోండి</option>
-              ${uniqueStates.map(s => `<option value="${s}" ${s.toLowerCase() === "telangana" ? "selected" : ""}>${s}</option>`).join("")}
+              ${states.map(s => `<option value="${s}" ${s.toLowerCase() === "telangana" ? "selected" : ""}>${s}</option>`).join("")}
             </select>
           </div>
 
