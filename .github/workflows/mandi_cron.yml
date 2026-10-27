@@ -21,46 +21,60 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests
+        run: pip install requests beautifulsoup4
 
-      - name: Fetch Live Agmarknet Records
+      - name: Fetch Live Agmarknet Portal Data
         run: |
           python -c "
-          import requests, json
+          import requests
+          from bs4 import BeautifulSoup
+          import json
+          import re
 
-          # Government Agmarknet Daily Live Commodities Feed
-          api_url = 'https://api.data.gov.in/resource/35985678-0d79-46b4-9ed6-6f13308a1d24?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=500'
-          
+          url = 'https://agmarknet.gov.in/SearchCddb.aspx?Tx_Commodity=0&Tx_State=0&Tx_District=0&Tx_Market=0&DateFrom=&DateTo=&Fr_Date=&To_Date=&Tx_Trend=0&Tx_CommodityHead=&Tx_StateHead=&Tx_DistrictHead=&Tx_MarketHead='
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
           }
 
           records = []
           try:
-              res = requests.get(api_url, headers=headers, timeout=30)
+              res = requests.get(url, headers=headers, timeout=30)
               if res.status_code == 200:
-                  data = res.json()
-                  records = data.get('records', [])
+                  soup = BeautifulSoup(res.text, 'html.parser')
+                  table = soup.find('table', {'id': re.compile(r'.*cgridGovData.*|.*gridCommodity.*')}) or soup.find('table', {'class': 'table'})
+                  
+                  if table:
+                      rows = table.find_all('tr')
+                      for tr in rows[1:]:
+                          cols = [td.get_text(strip=True) for td in tr.find_all('td')]
+                          if len(cols) >= 6:
+                              records.append({
+                                  'state': cols[0],
+                                  'district': cols[1],
+                                  'market': cols[2],
+                                  'commodity': cols[3],
+                                  'modal_price': cols[5]
+                              })
           except Exception as e:
-              print(f'Primary API error: {e}')
+              print(f'Agmarknet direct pull note: {e}')
 
-          # Fallback: Open APMC Daily Feed
+          # Direct fallback from open daily agricultural archive
           if not records:
-              alt_url = 'https://raw.githubusercontent.com/CivicDataLab/agmarknet-data/main/data/latest.json'
+              feed = 'https://raw.githubusercontent.com/datameet/agmarknet-data/master/data/latest.json'
               try:
-                  res2 = requests.get(alt_url, headers=headers, timeout=30)
-                  if res2.status_code == 200:
-                      data2 = res2.json()
-                      records = data2 if isinstance(data2, list) else data2.get('records', [])
+                  r = requests.get(feed, headers=headers, timeout=25)
+                  if r.status_code == 200:
+                      data = r.json()
+                      records = data if isinstance(data, list) else data.get('records', [])
               except Exception as e:
-                  print(f'Alt feed error: {e}')
+                  print(f'Archive note: {e}')
 
           if len(records) > 0:
               with open('mandi_live.json', 'w', encoding='utf-8') as f:
                   json.dump(records, f, ensure_ascii=False, indent=2)
-              print(f'Successfully fetched and saved {len(records)} live records!')
+              print(f'Success! Updated mandi_live.json with {len(records)} live records.')
           else:
-              print('Unable to fetch live records from providers.')
+              print('No records found.')
               exit(1)
           "
 
