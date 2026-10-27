@@ -1,74 +1,55 @@
 // ==========================================
-// 1. Mandi Widget Configuration
+// 1. Mandi Widget Configuration (Google Apps Script Live Feed)
 // ==========================================
-const MANDI_API_KEY = "579b464db66ecb3875b39ed9319231f2";
-// Original Govt Agmarknet Endpoint
-const RAW_GOVT_URL = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${MANDI_API_KEY}&format=json&limit=150&filters[state]=Telangana`;
-
-// CORS Bypass Proxy (Browser లో డైరెక్ట్ గా బ్లాక్ అవ్వకుండా లైవ్ డేటా తేవడానికి)
-const PROXY_GOVT_URL = `https://corsproxy.io/?` + encodeURIComponent(RAW_GOVT_URL);
+const GOOGLE_APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMbSz4WVnSNsWpYqJ_FM8tyau90WL5ZUMnBzqICoDkeEsWrDvlZoukDW8KiyBkYbn4yw/exec";
 
 let allMandiRecords = [];
 
-// Crop Categories Map
+// పంటల వర్గీకరణ
 const CROP_CATEGORIES = {
-  "ధాన్యాలు (Cereals)": ["Paddy(Common)", "Paddy", "Maize", "Wheat", "Bajra", "Jowar"],
+  "ధాన్యాలు (Cereals)": ["Paddy", "Maize", "Wheat", "Bajra", "Jowar", "Barley", "Ragi"],
   "నూనె గింజలు (Oilseeds)": ["Groundnut", "Soyabean", "Mustard", "Sesamum", "Sunflower", "Castor Seed"],
-  "కూరగాయలు (Vegetables)": ["Tomato", "Onion", "Potato", "Brinjal", "Cabbage", "Cauliflower", "Green Chilli"],
-  "పప్పు ధాన్యాలు (Pulses)": ["Bengal Gram", "Red Gram", "Green Gram", "Black Gram"],
+  "కూరగాయలు (Vegetables)": ["Tomato", "Onion", "Potato", "Brinjal", "Cabbage", "Cauliflower", "Green Chilli", "Ladies Finger", "Carrot"],
+  "పప్పు ధాన్యాలు (Pulses)": ["Bengal Gram", "Red Gram", "Green Gram", "Black Gram", "Gram", "Lentil"],
   "వాణిజ్య పంటలు (Commercial)": ["Cotton", "Sugarcane", "Jute", "Tobacco"],
-  "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Turmeric", "Coriander", "Garlic", "Ginger"]
+  "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
 // ==========================================
-// 2. Data Fetching Logic (Live Govt Data + Smart Fallback)
+// 2. Data Fetching Logic (Google Live Endpoint + Fallback)
 // ==========================================
 async function fetchMandiData() {
-  // 1. First Attempt: Live Agmarknet via Proxy (10s Timeout)
   try {
-    const liveResponse = await fetch(PROXY_GOVT_URL, { signal: AbortSignal.timeout(10000) });
-    if (liveResponse.ok) {
-      const liveData = await liveResponse.json();
-      const records = liveData.records || [];
-      if (records.length > 0) {
-        return { source: "Live Server", isLive: true, records: records };
+    const res = await fetch(GOOGLE_APP_SCRIPT_URL);
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.records && data.records.length > 0) {
+        return { source: "Live Agmarknet", isLive: true, records: data.records };
       }
     }
   } catch (err) {
-    console.warn("Proxy Govt API error, trying direct fetch...", err);
+    console.warn("Apps Script API fetch error, checking local backup...", err);
   }
 
-  // 2. Second Attempt: Direct API fetch
+  // Backup fallback
   try {
-    const directResponse = await fetch(RAW_GOVT_URL, { signal: AbortSignal.timeout(6000) });
-    if (directResponse.ok) {
-      const directData = await directResponse.json();
-      const records = directData.records || [];
+    const localRes = await fetch("mandi_live.json?v=" + Date.now());
+    if (localRes.ok) {
+      const localData = await localRes.json();
+      const records = Array.isArray(localData) ? localData : (localData.records || []);
       if (records.length > 0) {
-        return { source: "Live Server", isLive: true, records: records };
+        return { source: "Saved Backup", isLive: false, records: records };
       }
     }
   } catch (err) {
-    console.warn("Direct Govt API failed. Loading backup json...", err);
-  }
-
-  // 3. Fallback: Local mandi_live.json
-  try {
-    const localResponse = await fetch("mandi_live.json?v=" + new Date().getTime());
-    if (localResponse.ok) {
-      const localData = await localResponse.json();
-      const backupRecords = Array.isArray(localData) ? localData : (localData.records || []);
-      return { source: "Saved Backup", isLive: false, records: backupRecords };
-    }
-  } catch (err) {
-    console.error("Local mandi_live.json load kaledhu:", err);
+    console.error("Local backup failed:", err);
   }
 
   return { source: "None", isLive: false, records: [] };
 }
 
 // ==========================================
-// 3. Render Table Rows (Scrollable - All Records)
+// 3. Render Table Rows
 // ==========================================
 function renderFilteredTable(records) {
   const tableBody = document.getElementById("mandi-table-body");
@@ -77,8 +58,8 @@ function renderFilteredTable(records) {
   if (!records || records.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="3" class="mandi-empty-cell" style="text-align:center; padding: 14px; color:#666;">
-          ఎలాంటి పంటల సమాచారం దొరకలేదు.
+        <td colspan="3" class="mandi-empty-cell" style="text-align:center; padding: 20px; color:#64748b;">
+          ఎంచుకున్న ఫిల్టర్‌కు సంబంధించిన సమాచారం అందుబాటులో లేదు.
         </td>
       </tr>
     `;
@@ -90,7 +71,6 @@ function renderFilteredTable(records) {
     const marketName = item.market || item.Market || item.district || "APMC";
     const rawPrice = item.modal_price || item.Modal_Price || item.price || item.max_price || "N/A";
     
-    // Number format clean up
     const formattedPrice = !isNaN(rawPrice) && rawPrice !== "N/A" 
       ? Number(rawPrice).toLocaleString("en-IN") 
       : rawPrice;
@@ -106,22 +86,22 @@ function renderFilteredTable(records) {
 }
 
 // ==========================================
-// 4. Filtering Logic
+// 4. Filtering Logic (Dynamic State, Category & Crop)
 // ==========================================
 function filterMandiRecords() {
   const selectedCategory = document.getElementById("mandi-category-filter")?.value || "";
-  const selectedState = document.getElementById("mandi-state-filter")?.value.toLowerCase().trim() || "";
-  const selectedCrop = document.getElementById("mandi-crop-filter")?.value.toLowerCase().trim() || "";
+  const selectedState = (document.getElementById("mandi-state-filter")?.value || "").toLowerCase().trim();
+  const selectedCrop = (document.getElementById("mandi-crop-filter")?.value || "").toLowerCase().trim();
 
   const allowedCrops = selectedCategory ? (CROP_CATEGORIES[selectedCategory] || []).map(c => c.toLowerCase()) : null;
 
   const filtered = allMandiRecords.filter(item => {
     const itemCrop = (item.commodity || item.Commodity || "").toLowerCase();
-    const itemState = (item.state || item.State || "Telangana").toLowerCase();
+    const itemState = (item.state || item.State || "").toLowerCase();
 
     const matchesCategory = !allowedCrops || allowedCrops.some(c => itemCrop.includes(c) || c.includes(itemCrop));
-    const matchesState = !selectedState || itemState.includes(selectedState);
-    const matchesCrop = !selectedCrop || itemCrop.includes(selectedCrop);
+    const matchesState = !selectedState || itemState === selectedState || itemState.includes(selectedState);
+    const matchesCrop = !selectedCrop || itemCrop === selectedCrop || itemCrop.includes(selectedCrop);
 
     return matchesCategory && matchesState && matchesCrop;
   });
@@ -131,22 +111,35 @@ function filterMandiRecords() {
 
 function updateCropDropdown() {
   const selectedCategory = document.getElementById("mandi-category-filter")?.value;
+  const selectedState = (document.getElementById("mandi-state-filter")?.value || "").toLowerCase().trim();
   const cropSelect = document.getElementById("mandi-crop-filter");
   if (!cropSelect) return;
 
   cropSelect.innerHTML = `<option value="">అన్ని పంటలు (All Crops)</option>`;
 
+  // రాష్ట్రం మరియు కేటగిరీ ఆధారంగా పంటల లిస్ట్ ఫిల్టర్ చేయడం
+  let stateRecords = allMandiRecords;
+  if (selectedState) {
+    stateRecords = allMandiRecords.filter(item => (item.state || item.State || "").toLowerCase().includes(selectedState));
+  }
+
   if (selectedCategory && CROP_CATEGORIES[selectedCategory]) {
-    CROP_CATEGORIES[selectedCategory].forEach(crop => {
+    const validCrops = CROP_CATEGORIES[selectedCategory];
+    validCrops.forEach(crop => {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
     });
   } else {
-    const uniqueCrops = [...new Set(allMandiRecords.map(item => item.commodity || item.Commodity).filter(Boolean))];
+    const uniqueCrops = [...new Set(stateRecords.map(item => item.commodity || item.Commodity).filter(Boolean))].sort();
     uniqueCrops.forEach(crop => {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
     });
   }
 
+  filterMandiRecords();
+}
+
+function onStateChange() {
+  updateCropDropdown();
   filterMandiRecords();
 }
 
@@ -157,15 +150,14 @@ window.renderMandiWidget = async function() {
   const container = document.getElementById("mandi-container");
   if (!container) return;
 
-  // Initial Loader UI
   container.innerHTML = `
     <div class="mandi-card">
       <div class="mandi-card-header">
         <h3>📈 మండి / Market Live ధరలు</h3>
-        <span class="mandi-badge" style="background:#e2e8f0; color:#475569;">⏳ లోడ్ అవుతోంది...</span>
+        <span class="mandi-badge" style="background:#e2e8f0; color:#475569;">⏳ లైవ్ సింక్ అవుతోంది...</span>
       </div>
-      <div style="padding: 20px; text-align: center; color: #64748b; font-size: 13px;">
-        ప్రభుత్వ మార్కెట్ (Agmarknet) లైవ్ ధరలను సేకరిస్తోంది...
+      <div style="padding: 24px; text-align: center; color: #64748b; font-size: 13px;">
+        ప్రభుత్వ మార్కెట్ (Agmarknet) లైవ్ డేటాను సేకరిస్తోంది...
       </div>
     </div>
   `;
@@ -177,13 +169,18 @@ window.renderMandiWidget = async function() {
   const badgeClass = isLive ? "live" : "backup";
   const badgeText = isLive ? "🟢 Live Agmarknet" : "🟡 Saved Backup";
 
-  const states = [...new Set(allMandiRecords.map(item => item.state || item.State).filter(Boolean))];
-  if (!states.includes("Telangana")) states.unshift("Telangana");
+  // డేటాలో ఉన్న అన్ని రాష్ట్రాల పేర్లను తీసి డ్రాప్‌డౌన్‌లో పెట్టడం
+  let states = [...new Set(allMandiRecords.map(item => item.state || item.State).filter(Boolean))].sort();
+  
+  // తెలంగాణ ప్రాధాన్యత కోసం మొదట్లో ఉంచడం
+  const hasTS = states.some(s => s.toLowerCase() === "telangana");
+  states = states.filter(s => s.toLowerCase() !== "telangana");
+  if (hasTS) states.unshift("Telangana");
 
   container.innerHTML = `
     <div class="mandi-card">
       
-      <!-- Top Title Header Strip -->
+      <!-- Card Header -->
       <div class="mandi-card-header">
         <h3>📈 మండి / Market Live ధరలు</h3>
         <span class="mandi-badge ${badgeClass}">${badgeText}</span>
@@ -201,19 +198,19 @@ window.renderMandiWidget = async function() {
 
           <div>
             <select id="mandi-state-filter" class="mandi-select">
-              <option value="">రాష్ట్రం (State)</option>
-              ${states.map(s => `<option value="${s}">${s}</option>`).join("")}
+              <option value="">రాష్ట్రం ఎంచుకోండి (State)</option>
+              ${states.map(s => `<option value="${s}" ${s.toLowerCase() === "telangana" ? "selected" : ""}>${s}</option>`).join("")}
             </select>
           </div>
 
           <div>
             <select id="mandi-crop-filter" class="mandi-select">
-              <option value="">పంట (Crop)</option>
+              <option value="">అన్ని పంటలు (All Crops)</option>
             </select>
           </div>
         </div>
 
-        <!-- Scrollable Table Section -->
+        <!-- Table Display -->
         <div class="mandi-table-wrapper">
           <table class="mandi-table">
             <thead>
@@ -239,16 +236,16 @@ window.renderMandiWidget = async function() {
     </div>
   `;
 
-  // Event Listeners
+  // Attach Event Listeners
   document.getElementById("mandi-category-filter")?.addEventListener("change", updateCropDropdown);
-  document.getElementById("mandi-state-filter")?.addEventListener("change", filterMandiRecords);
+  document.getElementById("mandi-state-filter")?.addEventListener("change", onStateChange);
   document.getElementById("mandi-crop-filter")?.addEventListener("change", filterMandiRecords);
 
-  // Initial populate
+  // Initial load
   updateCropDropdown();
 };
 
-// Auto Execute
+// Auto Initialization
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", window.renderMandiWidget);
 } else {
