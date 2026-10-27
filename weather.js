@@ -48,7 +48,7 @@ function renderWeatherWidget() {
             <strong id="weather-rain-prob">--%</strong>
           </div>
          
-          <!-- కొత్తగా UV Index లైన్: -->
+          <!-- UV Index లైన్ -->
           <div class="metric-item">
             <span class="metric-label">☀️ UV ఇండెక్స్:</span>
             <strong id="weather-uv">--</strong>
@@ -87,7 +87,7 @@ function getLiveLocationWeather() {
   const windEl = document.getElementById("weather-wind");
   const humEl = document.getElementById("weather-humidity");
   const rainEl = document.getElementById("weather-rain-prob");
-const uvEl = document.getElementById("weather-uv");
+  const uvEl = document.getElementById("weather-uv");
   const advEl = document.getElementById("weather-advisory");
   const forecastStrip = document.getElementById("weather-forecast-strip");
 
@@ -137,13 +137,16 @@ const uvEl = document.getElementById("weather-uv");
         // Today's max precipitation probability
         const todayRainProb = weatherData.daily?.precipitation_probability_max?.[0] ?? 0;
         if (rainEl) rainEl.innerText = `${todayRainProb}%`;
- // === UV INDEX CODE ఇక్కడ పెట్టండి================
+
+        // UV Index Processing
         const todayUv = weatherData.daily?.uv_index_max?.[0] ?? 0;
         let uvText = `${todayUv}`;
         if (todayUv <= 2) uvText += " (తక్కువ)";
         else if (todayUv <= 5) uvText += " (మోస్తరు)";
         else if (todayUv <= 7) uvText += " (ఎక్కువ)";
         else uvText += " (తీవ్రం)";
+
+        if (uvEl) uvEl.innerText = uvText; // <-- ఈ అసైన్‌మెంట్ లైన్ సరిచేయబడింది
 
         // Smart dynamic advisory combination
         let customAdvisory = info.advisory;
