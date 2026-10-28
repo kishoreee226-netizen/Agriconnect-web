@@ -9,32 +9,36 @@ const CROP_CATEGORIES = {
   "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
-// Pure Dynamic Live Fetcher using your existing Google Script URL
-async function fetchMandiData() {
-  const myScriptUrl = "https://script.google.com/macros/s/AKfycbwMbSz4WVnSNsWpYqJ_FM8tyau90WL5ZUMnBzqICoDkeEsWrDvlZoukDW8KiyBkYbn4yw/exec";
+// Pure Client-side Live Fetching (Direct Injection)
+function fetchMandiData() {
+  return new Promise((resolve) => {
+    const apiKey = "579b464db66ecb3875b39ed9319231f2";
+    const resourceId = "9ef84268-d588-465a-a308-a864a43d0070";
+    const callbackName = "gov_agmarknet_callback_" + Math.floor(Math.random() * 100000);
 
-  // Google 302 redirect & CORS block bypass routes
-  const gateways = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(myScriptUrl)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(myScriptUrl)}`,
-    myScriptUrl
-  ];
+    const script = document.createElement("script");
+    const targetUrl = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=1000&callback=${callbackName}`;
 
-  for (const ep of gateways) {
-    try {
-      console.log("Loading live mandi feed via:", ep);
-      const res = await fetch(ep);
-      if (res.ok) {
-        let data = await res.json();
-        
-        if (typeof data === "string") {
-          try { data = JSON.parse(data); } catch(e){}
-        }
+    // Timer fallback in case of deep network throttling
+    const timeout = setTimeout(() => {
+      cleanup();
+      console.warn("Direct live script timed out, loading repository cache.");
+      loadRepoFallback().then(resolve);
+    }, 6000);
 
-        const records = data.records || (Array.isArray(data) ? data : []);
-        if (records.length > 0) {
-          console.log(`Live data received: ${records.length} records`);
-          return records
+    function cleanup() {
+      clearTimeout(timeout);
+      if (window[callbackName]) delete window[callbackName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[callbackName] = function(response) {
+      cleanup();
+      const records = (response && response.records) ? response.records : [];
+      if (records.length > 0) {
+        console.log(`Direct Gov Stream Success: ${records.length} records!`);
+        resolve(
+          records
             .map(r => ({
               state: (r.state || r.State || "").trim(),
               district: (r.district || r.District || "").trim(),
@@ -42,23 +46,33 @@ async function fetchMandiData() {
               commodity: (r.commodity || r.Commodity || "").trim(),
               modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
             }))
-            .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
-        }
+            .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"))
+        );
+      } else {
+        loadRepoFallback().then(resolve);
       }
-    } catch (err) {
-      console.warn("Gateway attempt failed, trying next:", err);
-    }
-  }
+    };
 
-  // Fallback to local snapshot if available
+    script.onerror = function() {
+      cleanup();
+      loadRepoFallback().then(resolve);
+    };
+
+    script.src = targetUrl;
+    document.head.appendChild(script);
+  });
+}
+
+async function loadRepoFallback() {
   try {
-    const backupRes = await fetch("mandi_live.json?t=" + Date.now());
-    if (backupRes.ok) {
-      const bData = await backupRes.json();
-      return Array.isArray(bData) ? bData : (bData.records || []);
+    const res = await fetch("mandi_live.json?v=" + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      return Array.isArray(data) ? data : (data.records || []);
     }
-  } catch(e){}
-
+  } catch (e) {
+    console.error("Fallback load failed:", e);
+  }
   return [];
 }
 
