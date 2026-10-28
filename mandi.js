@@ -9,69 +9,20 @@ const CROP_CATEGORIES = {
   "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
-// Pure Client-side Live Fetching (Direct Injection)
-function fetchMandiData() {
-  return new Promise((resolve) => {
-    const apiKey = "579b464db66ecb3875b39ed9319231f2";
-    const resourceId = "9ef84268-d588-465a-a308-a864a43d0070";
-    const callbackName = "gov_agmarknet_callback_" + Math.floor(Math.random() * 100000);
-
-    const script = document.createElement("script");
-    const targetUrl = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=1000&callback=${callbackName}`;
-
-    // Timer fallback in case of deep network throttling
-    const timeout = setTimeout(() => {
-      cleanup();
-      console.warn("Direct live script timed out, loading repository cache.");
-      loadRepoFallback().then(resolve);
-    }, 6000);
-
-    function cleanup() {
-      clearTimeout(timeout);
-      if (window[callbackName]) delete window[callbackName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[callbackName] = function(response) {
-      cleanup();
-      const records = (response && response.records) ? response.records : [];
-      if (records.length > 0) {
-        console.log(`Direct Gov Stream Success: ${records.length} records!`);
-        resolve(
-          records
-            .map(r => ({
-              state: (r.state || r.State || "").trim(),
-              district: (r.district || r.District || "").trim(),
-              market: (r.market || r.Market || "").trim(),
-              commodity: (r.commodity || r.Commodity || "").trim(),
-              modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
-            }))
-            .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"))
-        );
-      } else {
-        loadRepoFallback().then(resolve);
-      }
-    };
-
-    script.onerror = function() {
-      cleanup();
-      loadRepoFallback().then(resolve);
-    };
-
-    script.src = targetUrl;
-    document.head.appendChild(script);
-  });
-}
-
-async function loadRepoFallback() {
+// Pure Automated Live Fetcher
+async function fetchMandiData() {
   try {
-    const res = await fetch("mandi_live.json?v=" + Date.now());
+    const res = await fetch("mandi_live.json?v=" + Date.now(), { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
-      return Array.isArray(data) ? data : (data.records || []);
+      const records = Array.isArray(data) ? data : (data.records || []);
+      if (records.length > 0) {
+        console.log(`Live APMC records loaded: ${records.length}`);
+        return records;
+      }
     }
-  } catch (e) {
-    console.error("Fallback load failed:", e);
+  } catch (err) {
+    console.error("Mandi live data load error:", err);
   }
   return [];
 }
@@ -167,18 +118,6 @@ function onStateChange() {
 window.renderMandiWidget = async function() {
   const container = document.getElementById("mandi-container");
   if (!container) return;
-
-  container.innerHTML = `
-    <div class="mandi-card">
-      <div class="mandi-card-header">
-        <h3>📈 మండి / Market Live ధరలు</h3>
-        <span class="mandi-badge live">🟢 Live Agmarknet</span>
-      </div>
-      <div class="mandi-body" style="text-align:center; padding:30px; color:#475569;">
-        అధికారిక Agmarknet లైవ్ డేటా లోడ్ అవుతోంది...
-      </div>
-    </div>
-  `;
 
   allMandiRecords = await fetchMandiData();
 
