@@ -5313,94 +5313,7 @@ header h1 {
   font-weight: 600;
   cursor: pointer;
 }
-/* ==========================================
-   Weather Module Styles
-   ========================================== */
 
-.weather-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 16px;
-  overflow: hidden;
-}
-
-.weather-header {
-  background: #e3f2fd;
-  padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #bbdefb;
-  font-size: 13px;
-  color: #0d47a1;
-}
-
-.btn-weather-refresh {
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.weather-display-box {
-  padding: 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.weather-temp-text {
-  font-size: 28px;
-  font-weight: 700;
-  color: #1565c0;
-}
-
-.weather-desc-text {
-  font-size: 12px;
-  color: #555;
-  margin-top: 2px;
-}
-
-.weather-condition-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: #2e7d32;
-  margin-top: 4px;
-}
-
-.weather-icon-lg {
-  font-size: 38px;
-}
-
-.weather-advisory-box {
-  margin: 0 14px 10px 14px;
-  padding: 8px 10px;
-  background: #fff8e1;
-  border-left: 3px solid #ffb300;
-  border-radius: 4px;
-  font-size: 11px;
-  color: #5d4037;
-  line-height: 1.4;
-}
-
-.weather-status-footer {
-  background: #f8f9fa;
-  padding: 8px 14px;
-  font-size: 11px;
-  color: #666;
-  border-top: 1px solid #eee;
-}
-
-.weather-err-text {
-  color: #d32f2f;
-  font-weight: 600;
-}
 /* ==========================================
    Mandi Module Styles
    ========================================== */
@@ -5660,4 +5573,212 @@ header h1 {
   margin-top: 8px;
   color: #90a4ae;
   font-size: 10px;
+}
+/* Weather Card Layout Styles */
+.weather-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 16px;
+  margin: 12px auto;
+  max-width: 480px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.weather-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0284c7;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-refresh {
+  background: #0284c7;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.weather-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.weather-temp-val {
+  font-size: 38px;
+  font-weight: 900;
+  color: #1e40af;
+  line-height: 1;
+}
+
+.weather-status-sub {
+  font-size: 12px;
+  font-weight: 700;
+  color: #059669;
+  margin-top: 4px;
+}
+
+.weather-main-icon {
+  font-size: 32px;
+  margin-top: 4px;
+}
+
+.weather-stats-list {
+  text-align: right;
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.7;
+}
+
+/* Voice Button */
+.btn-voice-agri {
+  width: 100%;
+  background: linear-gradient(90deg, #16a34a, #15803d);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+  animation: voicePulse 1.5s infinite;
+}
+
+@keyframes voicePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* Advisory Box */
+.advisory-box {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  border-left: 4px solid;
+}
+
+.advisory-safe { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+.advisory-warning { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
+.advisory-danger { background: #fef2f2; border-color: #ef4444; color: #b91c1c; }
+
+/* Forecast */
+.forecast-section {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.forecast-header {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.forecast-row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.forecast-day-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  flex: 1;
+}
+
+.forecast-day-title { font-size: 12px; font-weight: 700; color: #334155; }
+.forecast-day-icon { font-size: 22px; margin: 4px 0; }
+.forecast-day-temp { font-size: 12px; font-weight: 700; color: #0f172a; }
+.forecast-day-rain { font-size: 11px; color: #0284c7; font-weight: 600; margin-top: 2px; }
+
+/* Agri Drawer */
+.agri-drawer {
+  margin-top: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.agri-drawer-summary {
+  font-weight: 700;
+  color: #1e293b;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-arrow { font-size: 11px; color: #0284c7; }
+
+.agri-drawer-grid {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e2e8f0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.agri-metric-tile {
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #edf2f7;
+}
+
+.agri-metric-label { font-size: 11px; color: #64748b; }
+.agri-metric-value { font-size: 14px; font-weight: 800; margin-top: 2px; }
+
+.text-blue { color: #0284c7; }
+.text-orange { color: #ea580c; }
+.text-green { color: #16a34a; }
+.text-dark { color: #475569; }
+
+.badge {
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+.badge-success { background: #dcfce7; color: #15803d; }
+.badge-neutral { background: #fef9c3; color: #854d0e; }
+.badge-danger { background: #fee2e2; color: #b91c1c; }
+
+.weather-footer {
+  text-align: center;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 12px;
 }
