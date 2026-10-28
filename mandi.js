@@ -1,6 +1,3 @@
-// ==========================================
-// 1. Mandi Widget State & Category Setup
-// ==========================================
 let allMandiRecords = [];
 
 const CROP_CATEGORIES = {
@@ -12,50 +9,47 @@ const CROP_CATEGORIES = {
   "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
-// ==========================================
-// 2. Fetch Pure Real-Time Mandi Data
-// ==========================================
+// Pure Dynamic Fetch directly from Official Government Mandi Resource
 async function fetchMandiData() {
-  // Strategy 1: Direct Real-Time Call to Official Government Portal from User's Device (Indian IP)
-  try {
-    const govUrl = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=1500";
-    const res = await fetch(govUrl);
-    if (res.ok) {
-      const data = await res.json();
-      const records = data.records || [];
-      if (records.length > 0) {
-        console.log("100% Live data received directly from official data.gov.in:", records.length);
-        return records.map(r => ({
-          state: (r.state || r.State || "").trim(),
-          district: (r.district || r.District || "").trim(),
-          market: (r.market || r.Market || "").trim(),
-          commodity: (r.commodity || r.Commodity || "").trim(),
-          modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
-        })).filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
-      }
-    }
-  } catch (err) {
-    console.warn("Direct device-level live call fallback:", err);
-  }
+  const apiKey = "579b464db66ecb3875b39ed9319231f2";
+  const resourceId = "9ef84268-d588-465a-a308-a864a43d0070";
+  const targetUrl = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=1500`;
 
-  // Strategy 2: Fallback to synchronized local repo cache
-  try {
-    const localRes = await fetch("mandi_live.json?v=" + Date.now(), { cache: "no-store" });
-    if (localRes.ok) {
-      const localData = await localRes.json();
-      const records = Array.isArray(localData) ? localData : (localData.records || []);
-      if (records.length > 0) return records;
+  // Real-time browser gateways bypassing browser CORS restrictions
+  const liveEndpoints = [
+    `https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`,
+    `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`,
+    targetUrl
+  ];
+
+  for (const url of liveEndpoints) {
+    try {
+      console.log("Fetching live government mandi feed:", url);
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        const records = data.records || [];
+        if (records.length > 0) {
+          console.log(`SUCCESS: Loaded ${records.length} authentic APMC records.`);
+          return records
+            .map(r => ({
+              state: (r.state || r.State || "").trim(),
+              district: (r.district || r.District || "").trim(),
+              market: (r.market || r.Market || "").trim(),
+              commodity: (r.commodity || r.Commodity || "").trim(),
+              modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
+            }))
+            .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
+        }
+      }
+    } catch (e) {
+      console.warn("Gateway attempt failed, trying next route:", e);
     }
-  } catch (err) {
-    console.error("Local sync read error:", err);
   }
 
   return [];
 }
 
-// ==========================================
-// 3. Render Table
-// ==========================================
 function renderFilteredTable(records) {
   const tableBody = document.getElementById("mandi-table-body");
   if (!tableBody) return;
@@ -91,9 +85,6 @@ function renderFilteredTable(records) {
   }).join("");
 }
 
-// ==========================================
-// 4. Filters Logic
-// ==========================================
 function filterMandiRecords() {
   const selectedCategory = document.getElementById("mandi-category-filter")?.value || "";
   const selectedState = (document.getElementById("mandi-state-filter")?.value || "").toLowerCase().trim();
@@ -147,9 +138,6 @@ function onStateChange() {
   filterMandiRecords();
 }
 
-// ==========================================
-// 5. Initialize Widget
-// ==========================================
 window.renderMandiWidget = async function() {
   const container = document.getElementById("mandi-container");
   if (!container) return;
@@ -161,7 +149,7 @@ window.renderMandiWidget = async function() {
         <span class="mandi-badge live">🟢 Live Agmarknet</span>
       </div>
       <div class="mandi-body" style="text-align:center; padding:30px; color:#475569;">
-        డేటా లోడ్ అవుతోంది, దయచేసి వేచి ఉండండి...
+        అధికారిక Agmarknet లైవ్ డేటా లోడ్ అవుతోంది...
       </div>
     </div>
   `;
