@@ -36,68 +36,65 @@ jobs:
 
           urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+          # e-NAM Official Live APMC Trade Data Endpoint
+          url = 'https://enam.gov.in/web/Ajax_ctrl/trade_data_list'
+
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-              'Accept': 'application/json'
+              'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
+              'Accept': 'application/json, text/javascript, */*; q=0.01',
+              'Accept-Language': 'en-US,en;q=0.9',
+              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'X-Requested-With': 'XMLHttpRequest',
+              'Origin': 'https://enam.gov.in',
+              'Referer': 'https://enam.gov.in/web/dashboard/trade-data'
           }
 
-          api_key = '579b464db66ecb3875b39ed9319231f2'
-          resource_id = '9ef84268-d588-465a-a308-a864a43d0070'
-          gov_endpoint = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json&limit=1500'
-
-          # Robust multi-route dynamic gateways that route directly into data.gov.in
-          routes = [
-              f'https://api.allorigins.win/get?url={requests.utils.quote(gov_endpoint)}',
-              f'https://api.codetabs.com/v1/proxy?quest={gov_endpoint}'
-          ]
+          payload = {
+              'language': 'en',
+              'state_name': '-- All --',
+              'apmc_name': '-- All --',
+              'commodity_name': '-- All --'
+          }
 
           records = []
+          try:
+              session = requests.Session()
+              # First hit the dashboard to grab active session cookies
+              session.get('https://enam.gov.in/web/dashboard/trade-data', headers=headers, timeout=15, verify=False)
+              
+              print('Querying live trade data from e-NAM...')
+              res = session.post(url, headers=headers, data=payload, timeout=25, verify=False)
+              
+              if res.status_code == 200 and res.text.strip():
+                  data = res.json()
+                  items = data.get('data', []) if isinstance(data, dict) else []
+                  for it in items:
+                      state = (it.get('state_name') or it.get('state') or '').strip()
+                      market = (it.get('apmc_name') or it.get('market') or '').strip()
+                      commodity = (it.get('commodity_name') or it.get('commodity') or '').strip()
+                      price = str(it.get('modal_price') or it.get('max_price') or it.get('min_price') or '0').strip()
 
-          for route in routes:
-              try:
-                  print(f'Querying live gateway: {route[:60]}...')
-                  res = requests.get(route, headers=headers, timeout=30)
-                  if res.status_code == 200:
-                      payload = res.json()
-                      # Allorigins wraps response in 'contents'
-                      if isinstance(payload, dict) and 'contents' in payload:
-                          try:
-                              payload = json.loads(payload['contents'])
-                          except Exception:
-                              pass
-                      
-                      items = payload.get('records', []) if isinstance(payload, dict) else (payload if isinstance(payload, list) else [])
-                      
-                      for it in items:
-                          state = (it.get('state') or it.get('State') or '').strip()
-                          market = (it.get('market') or it.get('Market') or '').strip()
-                          commodity = (it.get('commodity') or it.get('Commodity') or '').strip()
-                          price = str(it.get('modal_price') or it.get('Modal_Price') or it.get('price') or '0').strip()
-
-                          if state and commodity and 'national' not in market.lower() and 'all india' not in state.lower():
-                              records.append({
-                                  'state': state,
-                                  'district': (it.get('district') or it.get('District') or '').strip(),
-                                  'market': market,
-                                  'commodity': commodity,
-                                  'modal_price': price
-                              })
-
-                      if len(records) > 0:
-                          print(f'SUCCESS: Streamed {len(records)} authentic APMC records directly from data.gov.in.')
-                          break
-              except Exception as err:
-                  print(f'Gateway attempt notice: {err}')
+                      if state and commodity and 'national' not in market.lower() and 'all india' not in state.lower():
+                          records.append({
+                              'state': state,
+                              'district': (it.get('district_name') or it.get('district') or '').strip(),
+                              'market': market,
+                              'commodity': commodity,
+                              'modal_price': price
+                          })
+                  print(f'SUCCESS: Fetched {len(records)} authentic APMC records from e-NAM.')
+          except Exception as err:
+              print(f'eNAM Fetch notice: {err}')
 
           if len(records) == 0:
-              print('CRITICAL: Government feed unreachable across gateways.')
+              print('CRITICAL: Live dynamic records could not be fetched.')
               sys.exit(1)
 
           file_path = os.path.join(os.getcwd(), 'mandi_live.json')
           with open(file_path, 'w', encoding='utf-8') as f:
               json.dump(records, f, ensure_ascii=False, indent=2)
 
-          print(f'Successfully wrote {len(records)} live dynamic records to {file_path}')
+          print(f'Saved {len(records)} authentic records to {file_path}')
           "
 
       - name: Commit and Push Live Data
@@ -106,5 +103,5 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
           git status
-          git commit -m "Auto-sync real live Mandi rates [skip ci]" || echo "No changes"
+          git commit -m "Auto-sync live dynamic APMC rates [skip ci]" || echo "No changes"
           git push origin main
