@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests urllib3
 
-      - name: Fetch Real Dynamic Mandi Rates
+      - name: Stream Real Agmarknet Market Bulletin
         run: |
           python -c "
           import requests
@@ -38,54 +38,74 @@ jobs:
 
           headers = {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-              'Accept': 'application/json'
+              'Accept': '*/*'
           }
 
           records = []
 
-          # Direct public-access data.gov.in Agmarknet mirrors that don't block GitHub Actions
-          sources = [
-              'https://raw.githubusercontent.com/datameet/agmarknet/master/data/latest/all_india_mandi.json',
-              'https://cdn.jsdelivr.net/gh/datameet/agmarknet@master/data/latest/all_india_mandi.json',
-              'https://api.allorigins.win/raw?url=' + requests.utils.quote('https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=1000')
+          # Public-facing Agmarknet state-wise daily commodity bulletin mirrors
+          feed_urls = [
+              'https://api.github.com/repos/theprafful/agmarknet-live-data/git/blobs/master',
+              'https://raw.githubusercontent.com/sivakar/agmarknet-data/master/latest.json'
           ]
 
-          for src in sources:
+          # Try mirror first
+          for f_url in feed_urls:
               try:
-                  print(f'Fetching live data feed: {src[:65]}...')
-                  res = requests.get(src, headers=headers, timeout=20)
-                  if res.status_code == 200 and len(res.text) > 100:
-                      payload = res.json()
-                      items = payload if isinstance(payload, list) else (payload.get('records') or payload.get('data') or [])
+                  print(f'Attempting bulletin: {f_url[:60]}...')
+                  r = requests.get(f_url, headers=headers, timeout=20)
+                  if r.status_code == 200:
+                      data = r.json()
+                      items = data if isinstance(data, list) else data.get('records', [])
                       for it in items:
-                          state = (it.get('state') or it.get('State') or it.get('state_name') or '').strip()
-                          market = (it.get('market') or it.get('Market') or it.get('apmc_name') or '').strip()
-                          commodity = (it.get('commodity') or it.get('Commodity') or it.get('commodity_name') or '').strip()
-                          price = str(it.get('modal_price') or it.get('Modal_Price') or it.get('price') or '0').strip()
-
-                          if state and commodity and 'national' not in market.lower() and 'all india' not in state.lower():
+                          st = (it.get('state') or it.get('State') or '').strip()
+                          mkt = (it.get('market') or it.get('Market') or '').strip()
+                          comm = (it.get('commodity') or it.get('Commodity') or '').strip()
+                          pr = str(it.get('modal_price') or it.get('Modal_Price') or it.get('price') or '0').strip()
+                          if st and comm and 'national' not in mkt.lower() and 'all india' not in st.lower():
                               records.append({
-                                  'state': state,
-                                  'district': (it.get('district') or it.get('District') or it.get('district_name') or '').strip(),
-                                  'market': market,
-                                  'commodity': commodity,
-                                  'modal_price': price
+                                  'state': st,
+                                  'district': (it.get('district') or it.get('District') or '').strip(),
+                                  'market': mkt,
+                                  'commodity': comm,
+                                  'modal_price': pr
                               })
                       if len(records) > 0:
-                          print(f'SUCCESS: Synced {len(records)} authentic APMC records.')
                           break
-              except Exception as err:
-                  print(f'Notice: {err}')
+              except Exception as e:
+                  print(f'Bulletin notice: {e}')
+
+          # Secondary: Query Open Agmarknet Daily State Aggregates
+          if len(records) == 0:
+              try:
+                  url = 'https://raw.githubusercontent.com/theprafful/agmarknet-live-data/5a91bc171d1e4c738096f2e825a2503ea2974b65/latest_mandi_prices.json'
+                  res = requests.get(url, headers=headers, timeout=20)
+                  if res.status_code == 200:
+                      for item in res.json():
+                          st = (item.get('state') or item.get('State') or '').strip()
+                          mkt = (item.get('market') or item.get('Market') or '').strip()
+                          comm = (item.get('commodity') or item.get('Commodity') or '').strip()
+                          pr = str(item.get('modal_price') or item.get('Modal_Price') or item.get('price') or '0').strip()
+                          if st and comm and 'national' not in mkt.lower() and 'all india' not in st.lower():
+                              records.append({
+                                  'state': st,
+                                  'district': (item.get('district') or item.get('District') or '').strip(),
+                                  'market': mkt,
+                                  'commodity': comm,
+                                  'modal_price': pr
+                              })
+              except Exception as e:
+                  print(f'Direct raw notice: {e}')
 
           if len(records) == 0:
-              print('CRITICAL: Dynamic data stream unreachable.')
+              print('CRITICAL: Feed unreachable.')
               sys.exit(1)
 
           file_path = os.path.join(os.getcwd(), 'mandi_live.json')
           with open(file_path, 'w', encoding='utf-8') as f:
               json.dump(records, f, ensure_ascii=False, indent=2)
 
-          print(f'Successfully wrote {len(records)} records to {file_path}')
+          print(f'SUCCESS: Synced {len(records)} authentic APMC records into {file_path}')
           "
 
       - name: Commit and Push Live Data
@@ -94,5 +114,5 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
           git status
-          git commit -m "Auto-sync real live Mandi rates [skip ci]" || echo "No changes"
+          git commit -m "Auto-sync live APMC rates [skip ci]" || echo "No changes"
           git push origin main
