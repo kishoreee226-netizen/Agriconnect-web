@@ -30,45 +30,47 @@ jobs:
           python -c "
           import requests
           import json
+          import csv
+          import io
           import os
           import sys
 
-          # Dynamic multi-state Agmarknet data aggregator endpoints
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+              'Accept': '*/*'
           }
 
+          records = []
+
+          # 1. Official Data.gov.in Agmarknet CSV Stream Endpoint (Lightweight & avoids proxy JSON timeout)
           api_key = '579b464db66ecb3875b39ed9319231f2'
           resource_id = '9ef84268-d588-465a-a308-a864a43d0070'
-          target_api = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json&limit=2000'
+          csv_url = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=csv&limit=1000'
 
-          proxies = [
-              f'https://thingproxy.freeboard.io/fetch/{target_api}',
-              f'https://api.codetabs.com/v1/proxy?quest={requests.utils.quote(target_api)}',
-              f'https://api.allorigins.win/raw?url={requests.utils.quote(target_api)}'
+          # Reliable fast mirror streams
+          stream_urls = [
+              f'https://api.allorigins.win/raw?url={requests.utils.quote(csv_url)}',
+              f'https://corsproxy.io/?{requests.utils.quote(csv_url)}'
           ]
 
-          records = []
-          for p_url in proxies:
+          for s_url in stream_urls:
               try:
-                  print(f'Connecting to dynamic stream: {p_url[:45]}...')
-                  res = requests.get(p_url, headers=headers, timeout=30)
-                  if res.status_code == 200:
-                      data = res.json()
-                      items = data.get('records', []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
-                      
-                      for it in items:
-                          state = (it.get('state') or it.get('State') or '').strip()
-                          market = (it.get('market') or it.get('Market') or '').strip()
-                          commodity = (it.get('commodity') or it.get('Commodity') or '').strip()
-                          price = str(it.get('modal_price') or it.get('Modal_Price') or it.get('price') or '0').strip()
+                  print(f'Connecting to dynamic stream: {s_url[:50]}...')
+                  res = requests.get(s_url, headers=headers, timeout=20)
+                  if res.status_code == 200 and len(res.text) > 200:
+                      csv_reader = csv.DictReader(io.StringIO(res.text))
+                      for row in csv_reader:
+                          st = (row.get('state') or row.get('State') or '').strip()
+                          mkt = (row.get('market') or row.get('Market') or '').strip()
+                          comm = (row.get('commodity') or row.get('Commodity') or '').strip()
+                          price = str(row.get('modal_price') or row.get('Modal_Price') or row.get('price') or '0').strip()
 
-                          if state and commodity and 'national' not in market.lower() and 'all india' not in state.lower():
+                          if st and comm and 'national' not in mkt.lower() and 'all india' not in st.lower():
                               records.append({
-                                  'state': state,
-                                  'district': (it.get('district') or it.get('District') or '').strip(),
-                                  'market': market,
-                                  'commodity': commodity,
+                                  'state': st,
+                                  'district': (row.get('district') or row.get('District') or '').strip(),
+                                  'market': mkt,
+                                  'commodity': comm,
                                   'modal_price': price
                               })
 
@@ -76,17 +78,17 @@ jobs:
                           print(f'SUCCESS: Streamed {len(records)} live dynamic APMC records.')
                           break
               except Exception as err:
-                  print(f'Gateway notice: {err}')
+                  print(f'Stream notice: {err}')
 
           if len(records) == 0:
-              print('Live stream unavailable across endpoints.')
+              print('CRITICAL: Live dynamic stream could not retrieve records.')
               sys.exit(1)
 
-          file_path = os.path.join(os.getcwd(), 'mandi_live.json')
-          with open(file_path, 'w', encoding='utf-8') as f:
+          target_file = os.path.join(os.getcwd(), 'mandi_live.json')
+          with open(target_file, 'w', encoding='utf-8') as f:
               json.dump(records, f, ensure_ascii=False, indent=2)
 
-          print(f'Generated fresh dynamic json with {len(records)} entries.')
+          print(f'Saved {len(records)} live dynamic records into {target_file}')
           "
 
       - name: Commit and Push Live Data
