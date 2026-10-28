@@ -1,1 +1,135 @@
-[]
+[
+  {
+    "state": "Telangana",
+    "district": "Warangal",
+    "market": "Warangal",
+    "commodity": "Chilli Red",
+    "modal_price": "18500"
+  },
+  {
+    "state": "Telangana",
+    "district": "Warangal",
+    "market": "Warangal",
+    "commodity": "Cotton",
+    "modal_price": "7420"
+  },
+  {
+    "state": "Telangana",
+    "district": "Warangal",
+    "market": "Warangal",
+    "commodity": "Paddy",
+    "modal_price": "2360"
+  },
+  {
+    "state": "Telangana",
+    "district": "Warangal",
+    "market": "Warangal",
+    "commodity": "Maize",
+    "modal_price": "2280"
+  },
+  {
+    "state": "Telangana",
+    "district": "Khammam",
+    "market": "Khammam",
+    "commodity": "Chilli Red",
+    "modal_price": "19200"
+  },
+  {
+    "state": "Telangana",
+    "district": "Khammam",
+    "market": "Khammam",
+    "commodity": "Cotton",
+    "modal_price": "7550"
+  },
+  {
+    "state": "Telangana",
+    "district": "Karimnagar",
+    "market": "Jammikunta",
+    "commodity": "Cotton",
+    "modal_price": "7480"
+  },
+  {
+    "state": "Telangana",
+    "district": "Nizamabad",
+    "market": "Nizamabad",
+    "commodity": "Turmeric",
+    "modal_price": "14600"
+  },
+  {
+    "state": "Telangana",
+    "district": "Nalgonda",
+    "market": "Suryapet",
+    "commodity": "Paddy",
+    "modal_price": "2390"
+  },
+  {
+    "state": "Telangana",
+    "district": "Hyderabad",
+    "market": "Bowenpally",
+    "commodity": "Tomato",
+    "modal_price": "1900"
+  },
+  {
+    "state": "Telangana",
+    "district": "Hyderabad",
+    "market": "Bowenpally",
+    "commodity": "Onion",
+    "modal_price": "2700"
+  },
+  {
+    "state": "Telangana",
+    "district": "Hyderabad",
+    "market": "Bowenpally",
+    "commodity": "Green Chilli",
+    "modal_price": "3500"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "Guntur",
+    "market": "Guntur",
+    "commodity": "Chilli Red",
+    "modal_price": "19800"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "Kurnool",
+    "market": "Adoni",
+    "commodity": "Cotton",
+    "modal_price": "7650"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "Kurnool",
+    "market": "Kurnool",
+    "commodity": "Onion",
+    "modal_price": "2450"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "Chittoor",
+    "market": "Madanapalle",
+    "commodity": "Tomato",
+    "modal_price": "1750"
+  },
+  {
+    "state": "Andhra Pradesh",
+    "district": "East Godavari",
+    "market": "Rajahmundry",
+    "commodity": "Paddy",
+    "modal_price": "2340"
+  },
+  {
+    "state": "Karnataka",
+    "district": "Raichur",
+    "market": "Raichur",
+    "commodity": "Cotton",
+    "modal_price": "7560"
+  },
+  {
+    "state": "Maharashtra",
+    "district": "Nashik",
+    "market": "Lasalgaon",
+    "commodity": "Onion",
+    "modal_price": "2600"
+  }
+]
