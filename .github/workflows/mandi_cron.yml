@@ -23,68 +23,70 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests xmltodict
+        run: pip install requests
 
-      - name: Fetch Pure Live Agmarknet Mandi Records
+      - name: Fetch Pure Dynamic Mandi Data
         run: |
           python -c "
           import requests
           import json
           import os
           import sys
-          import xmltodict
 
+          # Dynamic multi-state Agmarknet data aggregator endpoints
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-              'Accept': 'application/json, text/xml, */*'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
           }
 
-          records = []
+          api_key = '579b464db66ecb3875b39ed9319231f2'
+          resource_id = '9ef84268-d588-465a-a308-a864a43d0070'
+          target_api = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json&limit=2000'
 
-          # 1. Multi-state Open Agricultural Live Feeds (Real Mandi APIs)
-          live_sources = [
-              'https://raw.githubusercontent.com/theprafful/agmarknet-live-data/master/data/latest.json',
-              'https://api.allorigins.win/raw?url=' + requests.utils.quote('https://enam.gov.in/web/dashboard/trade-data')
+          proxies = [
+              f'https://thingproxy.freeboard.io/fetch/{target_api}',
+              f'https://api.codetabs.com/v1/proxy?quest={requests.utils.quote(target_api)}',
+              f'https://api.allorigins.win/raw?url={requests.utils.quote(target_api)}'
           ]
 
-          for src in live_sources:
+          records = []
+          for p_url in proxies:
               try:
-                  print(f'Attempting live feed: {src[:50]}...')
-                  res = requests.get(src, headers=headers, timeout=25)
-                  if res.status_code == 200 and len(res.text) > 100:
-                      payload = res.json()
-                      items = payload if isinstance(payload, list) else (payload.get('records') or payload.get('data') or [])
+                  print(f'Connecting to dynamic stream: {p_url[:45]}...')
+                  res = requests.get(p_url, headers=headers, timeout=30)
+                  if res.status_code == 200:
+                      data = res.json()
+                      items = data.get('records', []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
                       
                       for it in items:
-                          state = (it.get('state') or it.get('State') or it.get('state_name') or '').strip()
-                          market = (it.get('market') or it.get('Market') or it.get('apmc_name') or '').strip()
-                          commodity = (it.get('commodity') or it.get('Commodity') or it.get('commodity_name') or '').strip()
+                          state = (it.get('state') or it.get('State') or '').strip()
+                          market = (it.get('market') or it.get('Market') or '').strip()
+                          commodity = (it.get('commodity') or it.get('Commodity') or '').strip()
                           price = str(it.get('modal_price') or it.get('Modal_Price') or it.get('price') or '0').strip()
 
                           if state and commodity and 'national' not in market.lower() and 'all india' not in state.lower():
                               records.append({
                                   'state': state,
-                                  'district': (it.get('district') or it.get('District') or it.get('district_name') or '').strip(),
+                                  'district': (it.get('district') or it.get('District') or '').strip(),
                                   'market': market,
                                   'commodity': commodity,
                                   'modal_price': price
                               })
 
                       if len(records) > 0:
-                          print(f'SUCCESS: Retrieved {len(records)} authentic APMC records.')
+                          print(f'SUCCESS: Streamed {len(records)} live dynamic APMC records.')
                           break
               except Exception as err:
-                  print(f'Feed notice: {err}')
+                  print(f'Gateway notice: {err}')
 
           if len(records) == 0:
-              print('CRITICAL: No dynamic records could be fetched from live endpoints.')
+              print('Live stream unavailable across endpoints.')
               sys.exit(1)
 
-          target_path = os.path.join(os.getcwd(), 'mandi_live.json')
-          with open(target_path, 'w', encoding='utf-8') as f:
+          file_path = os.path.join(os.getcwd(), 'mandi_live.json')
+          with open(file_path, 'w', encoding='utf-8') as f:
               json.dump(records, f, ensure_ascii=False, indent=2)
 
-          print(f'Successfully wrote {len(records)} live records to {target_path}')
+          print(f'Generated fresh dynamic json with {len(records)} entries.')
           "
 
       - name: Commit and Push Live Data
@@ -93,5 +95,5 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
           git status
-          git commit -m "Automated sync: live APMC mandi rates [skip ci]" || echo "No changes"
+          git commit -m "Auto-sync real live Mandi rates [skip ci]" || echo "No changes to commit"
           git push origin main
