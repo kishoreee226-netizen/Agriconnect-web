@@ -88,6 +88,10 @@
       if (typeof window.renderWeatherWidget === "function") {
         window.renderWeatherWidget();
       }
+    // 3.1 Agri Station
+    if (typeof window.loadAgriStation === "function") {
+        window.loadAgriStation();
+    }
 
       // 4. Role View Controller (దీని ద్వారానే లాగిన్ చెక్, హెడర్, రోల్స్ అన్నీ హ్యాండిల్ అవుతాయి)
       if (typeof applyUserRoleView === "function") {
