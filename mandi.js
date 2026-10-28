@@ -1,5 +1,5 @@
 // ==========================================
-// 1. Mandi Widget Configuration
+// 1. Mandi Widget State & Category Setup
 // ==========================================
 let allMandiRecords = [];
 
@@ -13,24 +13,48 @@ const CROP_CATEGORIES = {
 };
 
 // ==========================================
-// 2. Fetch Live Mandi JSON Data
+// 2. Fetch Pure Real-Time Mandi Data
 // ==========================================
 async function fetchMandiData() {
+  // Strategy 1: Direct Real-Time Call to Official Government Portal from User's Device (Indian IP)
   try {
-    const res = await fetch("mandi_live.json?v=" + Date.now(), { cache: "no-store" });
+    const govUrl = "https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=1500";
+    const res = await fetch(govUrl);
     if (res.ok) {
       const data = await res.json();
-      const records = Array.isArray(data) ? data : (data.records || []);
-      return records;
+      const records = data.records || [];
+      if (records.length > 0) {
+        console.log("100% Live data received directly from official data.gov.in:", records.length);
+        return records.map(r => ({
+          state: (r.state || r.State || "").trim(),
+          district: (r.district || r.District || "").trim(),
+          market: (r.market || r.Market || "").trim(),
+          commodity: (r.commodity || r.Commodity || "").trim(),
+          modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
+        })).filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
+      }
     }
   } catch (err) {
-    console.error("Mandi data fetch error:", err);
+    console.warn("Direct device-level live call fallback:", err);
   }
+
+  // Strategy 2: Fallback to synchronized local repo cache
+  try {
+    const localRes = await fetch("mandi_live.json?v=" + Date.now(), { cache: "no-store" });
+    if (localRes.ok) {
+      const localData = await localRes.json();
+      const records = Array.isArray(localData) ? localData : (localData.records || []);
+      if (records.length > 0) return records;
+    }
+  } catch (err) {
+    console.error("Local sync read error:", err);
+  }
+
   return [];
 }
 
 // ==========================================
-// 3. Render Table Rows
+// 3. Render Table
 // ==========================================
 function renderFilteredTable(records) {
   const tableBody = document.getElementById("mandi-table-body");
@@ -39,7 +63,7 @@ function renderFilteredTable(records) {
   if (!records || records.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="3" class="mandi-empty-cell" style="text-align:center; padding: 24px; color:#64748b;">
+        <td colspan="3" style="text-align:center; padding: 25px; color:#64748b;">
           ఎంచుకున్న రాష్ట్రం / మార్కెట్‌కు సమాచారం అందుబాటులో లేదు.
         </td>
       </tr>
@@ -48,12 +72,12 @@ function renderFilteredTable(records) {
   }
 
   tableBody.innerHTML = records.map(item => {
-    const cropName = item.commodity || item.Commodity || "పంట";
-    const marketName = item.market || item.Market || item.district || "మార్కెట్";
-    const rawPrice = item.modal_price || item.Modal_Price || item.price || "N/A";
+    const cropName = item.commodity || "పంట";
+    const marketName = item.market || item.district || "మార్కెట్";
+    const rawPrice = item.modal_price || "0";
     
     let formattedPrice = rawPrice;
-    if (!isNaN(rawPrice) && rawPrice !== "N/A") {
+    if (!isNaN(rawPrice) && Number(rawPrice) > 0) {
       formattedPrice = Math.round(Number(rawPrice)).toLocaleString("en-IN");
     }
 
@@ -68,7 +92,7 @@ function renderFilteredTable(records) {
 }
 
 // ==========================================
-// 4. Filtering Logic
+// 4. Filters Logic
 // ==========================================
 function filterMandiRecords() {
   const selectedCategory = document.getElementById("mandi-category-filter")?.value || "";
@@ -78,8 +102,8 @@ function filterMandiRecords() {
   const allowedCrops = selectedCategory ? (CROP_CATEGORIES[selectedCategory] || []).map(c => c.toLowerCase()) : null;
 
   const filtered = allMandiRecords.filter(item => {
-    const itemCrop = (item.commodity || item.Commodity || "").toLowerCase();
-    const itemState = (item.state || item.State || "").toLowerCase();
+    const itemCrop = (item.commodity || "").toLowerCase();
+    const itemState = (item.state || "").toLowerCase();
 
     const matchesCategory = !allowedCrops || allowedCrops.some(c => itemCrop.includes(c) || c.includes(itemCrop));
     const matchesState = !selectedState || itemState === selectedState || itemState.includes(selectedState);
@@ -101,16 +125,15 @@ function updateCropDropdown() {
 
   let stateRecords = allMandiRecords;
   if (selectedState) {
-    stateRecords = allMandiRecords.filter(item => (item.state || item.State || "").toLowerCase().includes(selectedState));
+    stateRecords = allMandiRecords.filter(item => (item.state || "").toLowerCase().includes(selectedState));
   }
 
   if (selectedCategory && CROP_CATEGORIES[selectedCategory]) {
-    const validCrops = CROP_CATEGORIES[selectedCategory];
-    validCrops.forEach(crop => {
+    CROP_CATEGORIES[selectedCategory].forEach(crop => {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
     });
   } else {
-    const uniqueCrops = [...new Set(stateRecords.map(item => item.commodity || item.Commodity).filter(Boolean))].sort();
+    const uniqueCrops = [...new Set(stateRecords.map(item => item.commodity).filter(Boolean))].sort();
     uniqueCrops.forEach(crop => {
       cropSelect.innerHTML += `<option value="${crop}">${crop}</option>`;
     });
@@ -125,21 +148,29 @@ function onStateChange() {
 }
 
 // ==========================================
-// 5. Main Render Function
+// 5. Initialize Widget
 // ==========================================
 window.renderMandiWidget = async function() {
   const container = document.getElementById("mandi-container");
   if (!container) return;
 
+  container.innerHTML = `
+    <div class="mandi-card">
+      <div class="mandi-card-header">
+        <h3>📈 మండి / Market Live ధరలు</h3>
+        <span class="mandi-badge live">🟢 Live Agmarknet</span>
+      </div>
+      <div class="mandi-body" style="text-align:center; padding:30px; color:#475569;">
+        డేటా లోడ్ అవుతోంది, దయచేసి వేచి ఉండండి...
+      </div>
+    </div>
+  `;
+
   allMandiRecords = await fetchMandiData();
 
-  // JSON నుండి రాష్ట్రాల పేర్లను డైనమిక్‌గా తీసుకోవడం
-  let states = [...new Set(allMandiRecords.map(item => item.state || item.State).filter(Boolean))].sort();
-  
-  // ఆల్ ఇండియా లేదా నేషనల్ కాకుండా ఫిల్టర్ చేయడం
+  let states = [...new Set(allMandiRecords.map(item => item.state).filter(Boolean))].sort();
   states = states.filter(s => !s.toLowerCase().includes("all india") && !s.toLowerCase().includes("national"));
 
-  // తెలంగాణను మొదటి ఆప్షన్‌గా చూపించడం
   const hasTS = states.some(s => s.toLowerCase() === "telangana");
   if (hasTS) {
     states = states.filter(s => s.toLowerCase() !== "telangana");
