@@ -1,14 +1,14 @@
-// weather.js - Pure Dynamic Agri Weather Station with Moon Phase & Live Clock
+// weather.js - Micro-Accurate GPS, Dynamic Moon Badge & Night/Day Themes
 
 function getDynamicWindDir(deg) {
   const dirs = [
-    "Uttharam (N)", "Eesanyam (NE)", "Thoorpu (E)", "Aagneyam (SE)",
-    "Dakshinam (S)", "Nairuthi (SW)", "Padamara (W)", "Vaayuvyam (NW)"
+    "ఉత్తరం (N)", "ఈశాన్యం (NE)", "తూర్పు (E)", "ఆగ్నేయం (SE)",
+    "దక్షిణం (S)", "నైరుతి (SW)", "పడమర (W)", "వాయవ్యం (NW)"
   ];
   return dirs[Math.round(deg / 45) % 8];
 }
 
-// Calculate Moon Phase (Amavasya to Pournami & Return)
+// Moon Phase Calculator
 function getDynamicMoonPhase(date) {
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
@@ -27,69 +27,73 @@ function getDynamicMoonPhase(date) {
   let cycles = (jd - 2451549.5) / 29.53058770576;
   let phase = cycles - Math.floor(cycles);
 
-  if (phase < 0.03 || phase > 0.97) return { icon: "🌑", name: "Amavasya (New Moon)" };
-  if (phase < 0.22) return { icon: "🌒", name: "Shukla Pradhama - Chandrakala" };
-  if (phase < 0.28) return { icon: "🌓", name: "Shukla Ashtami (First Qtr)" };
-  if (phase < 0.47) return { icon: "🌔", name: "Shukla Thrayodashi" };
-  if (phase < 0.53) return { icon: "🌕", name: "Pournami (Full Moon)" };
-  if (phase < 0.72) return { icon: "🌖", name: "Krishna Thrayodashi" };
-  if (phase < 0.78) return { icon: "🌗", name: "Krishna Ashtami (Last Qtr)" };
-  return { icon: "🌘", name: "Krishna Chathurdashi - Amavasya Daggarlo" };
+  if (phase < 0.03 || phase > 0.97) return { icon: "🌑", name: "అమావాస్య" };
+  if (phase < 0.22) return { icon: "🌒", name: "శుక్ల పాడ్యమి / చంద్రకళ" };
+  if (phase < 0.28) return { icon: "🌓", name: "శుక్ల అష్టమి" };
+  if (phase < 0.47) return { icon: "🌔", name: "శుక్ల త్రయోదశి" };
+  if (phase < 0.53) return { icon: "🌕", name: "పౌర్ణమి" };
+  if (phase < 0.72) return { icon: "🌖", name: "కృష్ణ త్రయోదశి" };
+  if (phase < 0.78) return { icon: "🌗", name: "కృష్ణ అష్టమి" };
+  return { icon: "🌘", name: "కృష్ణ చతుర్దశి" };
 }
 
 function parseDynamicWMO(code, isDay) {
   const wmoMap = {
-    0: { text: isDay ? "Nirmalamaina Enda" : "Nirmalamaina Rathri", icon: isDay ? "☀️" : "🌙" },
-    1: { text: "Thelikapaati Meaghalu", icon: isDay ? "🌤️" : "☁️" },
-    2: { text: "Madhyastha Meaghalu", icon: isDay ? "⛅" : "☁️" },
-    3: { text: "Mabbulu Kaminayi (Overcast)", icon: "☁️" },
-    45: { text: "Pogamanchu (Fog)", icon: "🌫️" },
-    48: { text: "Challani Manchu", icon: "🌫️" },
-    51: { text: "Thelikapaati Chirujallulu", icon: "🌦️" },
-    53: { text: "Madhyastha Drizzle", icon: "🌦️" },
-    55: { text: "Bhaari Chirujallulu", icon: "🌧️" },
-    61: { text: "Thelikapaati Varsham", icon: "🌧️" },
-    63: { text: "Varsham Paduthondi", icon: "🌧️" },
-    65: { text: "Bhaari Varsham", icon: "🌧️" },
-    80: { text: "Varshapu Jallulu", icon: "🌦️" },
-    81: { text: "Theevra Varshapu Jallulu", icon: "🌧️" },
-    82: { text: "Bhaari Varshapu Tufaanu", icon: "⛈️" },
-    95: { text: "Urumulu Merupulatho Varsham", icon: "⛈️" }
+    0: { text: isDay ? "నిర్మలమైన ఎండ" : "నిర్మలమైన రాత్రి", icon: isDay ? "☀️" : "🌙" },
+    1: { text: "తేలికపాటి మేఘాలు", icon: isDay ? "🌤️" : "☁️" },
+    2: { text: "మబ్బులతో కూడిన ఎండ", icon: isDay ? "⛅" : "☁️" },
+    3: { text: "పూర్తిగా మబ్బులు (Overcast)", icon: "☁️" },
+    45: { text: "పొగమంచు (Fog)", icon: "🌫️" },
+    48: { text: "చల్లని మంచు", icon: "🌫️" },
+    51: { text: "తేలికపాటి చిరుజల్లులు", icon: "🌦️" },
+    53: { text: "మధ్యస్థ చిరుజల్లులు", icon: "🌦️" },
+    55: { text: "భారీ చిరుజల్లులు", icon: "🌧️" },
+    61: { text: "తేలికపాటి వర్షం", icon: "🌧️" },
+    63: { text: "వర్షం పడుతోంది", icon: "🌧️" },
+    65: { text: "భారీ వర్షం", icon: "🌧️" },
+    80: { text: "వర్షపు జల్లులు", icon: "🌦️" },
+    81: { text: "తీవ్రమైన జల్లులు", icon: "🌧️" },
+    82: { text: "భారీ వర్షపు తుఫాను", icon: "⛈️" },
+    95: { text: "ఉరుములు, మెరుపులతో వర్షం", icon: "⛈️" }
   };
-  return wmoMap[code] || { text: "Saadharana Vaathavaranam", icon: isDay ? "🌤️" : "🌙" };
+  return wmoMap[code] || { text: "సాధారణ వాతావరణం", icon: isDay ? "🌤️" : "🌙" };
 }
 
-// Mobile GPS Location Promise
-function getRealPhoneGPS() {
+// High Accuracy GPS Pinpointer
+function getAccuratePhoneGPS() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
-      reject(new Error("Mee mobile lo GPS support ledu."));
+      reject(new Error("మొబైల్‌లో GPS సదుపాయం లేదు."));
       return;
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      (err) => reject(new Error("Phone lo Location (GPS) access on cheyandi.")),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (err) => reject(new Error("మొబైల్ లొకేషన్ (GPS) ఆన్ చేసి పర్మిషన్ ఇవ్వండి.")),
+      { enableHighAccuracy: true, timeout: 9000, maximumAge: 0 }
     );
   });
 }
 
-// Pure Dynamic Reverse Geocoding: Returns Exact Village / Mandal & District
-async function fetchRealVillageAndDistrict(lat, lon) {
+// Deep Local Area / Street Level Reverse Geocoding
+async function fetchAccurateAreaName(lat, lon) {
   try {
     const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`);
     if (!res.ok) throw new Error();
-    const data = await res.json();
-    const village = data.locality || data.village || data.town || data.city || data.localityInfo?.administrative?.[3]?.name || "";
-    const district = data.countrySubdivisionName || data.principalSubdivision || "";
-    if (village && district) {
-      return `📍 ${village}, ${district} (Live GPS)`;
-    } else if (village || district) {
-      return `📍 ${village || district} (Live GPS)`;
-    }
-    return `📍 Gurtimpu Jarigina Prantham (Live GPS)`;
+    const d = await res.json();
+    
+    // Exact hierarchy: Street / Colony -> Mandal / Town -> District
+    const microArea = d.localityInfo?.administrative?.[4]?.name || d.localityInfo?.administrative?.[3]?.name || d.locality || "";
+    const town = d.city || d.locality || "";
+    const district = d.countrySubdivisionName || d.principalSubdivision || "";
+
+    let finalParts = [];
+    if (microArea) finalParts.push(microArea);
+    if (town && town !== microArea) finalParts.push(town);
+    if (district && !finalParts.includes(district)) finalParts.push(district);
+
+    return `📍 ${finalParts.join(", ")} (లైవ్ GPS)`;
   } catch (e) {
-    return `📍 Live GPS Coords: ${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E`;
+    return `📍 లైవ్ లొకేషన్ (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
   }
 }
 
@@ -100,11 +104,11 @@ window.renderWeatherWidget = async function() {
   const refreshBtn = document.getElementById("weather-refresh-btn");
   if (refreshBtn) {
     refreshBtn.classList.add("btn-refresh-active");
-    refreshBtn.innerHTML = "⏳ Load Avthondi...";
+    refreshBtn.innerHTML = "⏳ లోడ్ అవుతోంది...";
   }
 
   try {
-    const loc = await getRealPhoneGPS();
+    const loc = await getAccuratePhoneGPS();
     const lat = loc.lat;
     const lon = loc.lon;
 
@@ -140,17 +144,17 @@ window.renderWeatherWidget = async function() {
 
     const [weatherRes, placeDisplay] = await Promise.all([
       fetch(apiUrl),
-      fetchRealVillageAndDistrict(lat, lon)
+      fetchAccurateAreaName(lat, lon)
     ]);
 
-    if (!weatherRes.ok) throw new Error("API nundi data load avvaledu.");
+    if (!weatherRes.ok) throw new Error("సర్వర్ నుంచి వాతావరణ సమాచారం రాలేదు.");
     const data = await weatherRes.json();
 
     const c = data.current;
     const d = data.daily;
     const isDay = c.is_day === 1;
 
-    // Time & Moon details
+    // Digital Time
     const now = new Date();
     const hours = now.getHours();
     const minutes = String(now.getMinutes()).padStart(2, "0");
@@ -180,21 +184,21 @@ window.renderWeatherWidget = async function() {
     // Dynamic Advisory
     let alertClass = "advisory-safe";
     let sprayTitle = "రైతు సలహా: మందుల స్ప్రేకి అనుకూలం";
-    let sprayDesc = `గాలి అదుపులో ఉంది (${windSpeed} km/h). దిశ: <strong>${windDir}</strong>. పిచికారీ పనులకు మంచి సమయం.`;
+    let sprayDesc = `గాలి సాధారణంగా ఉంది (${windSpeed} km/h). దిశ: <strong>${windDir}</strong>. పిచికారీ పనులకు అనువైన సమయం.`;
 
     if (Number(currentRainRate) > 0 || c.weather_code >= 51 || rainProb >= 60) {
       alertClass = "advisory-danger";
       sprayTitle = "రైతు సలహా: మందులు స్ప్రే చేయవద్దు!";
-      sprayDesc = `వర్షం పడే అవకాశం ఉంది (${rainProb}% - ${currentRainRate} mm). మందుల పిచికారీ వెంటనే ఆపండి.`;
+      sprayDesc = `వర్షం పడే అవకాశం ఉంది (${rainProb}% - ${currentRainRate} mm). పిచికారీ వెంటనే ఆపండి.`;
     } else if (Number(windSpeed) > 18 || Number(windGusts) > 25) {
       alertClass = "advisory-warning";
       sprayTitle = "రైతు సలహా: స్ప్రే కాసేపు ఆపండి!";
-      sprayDesc = `ఈదురుగాలులు అధికంగా ఉన్నాయి (${windGusts} km/h). మందు పక్కకు వెళ్లిపోయే ప్రమాదం ఉంది.`;
+      sprayDesc = `ఈదురుగాలులు అధికంగా ఉన్నాయి (${windGusts} km/h). మందు పక్కకు వెళ్లిపోతుంది.`;
     }
 
     let soilBadge = "";
     if (sMoistRoot >= 60) {
-      soilBadge = `<span class="badge badge-success">💧 తడి బాగుంది</span>`;
+      soilBadge = `<span class="badge badge-success">💧 తడి పుష్కలం</span>`;
     } else if (sMoistRoot >= 35) {
       soilBadge = `<span class="badge badge-neutral">🌱 తేమ సాధారణం</span>`;
     } else {
@@ -228,7 +232,7 @@ window.renderWeatherWidget = async function() {
     }
 
     container.innerHTML = `
-      <div class="weather-card ${isDay ? 'weather-day' : 'weather-night'}">
+      <div class="weather-card ${isDay ? 'weather-day-theme' : 'weather-night-theme'}">
         
         <div class="weather-header">
           <div class="weather-title">
@@ -248,7 +252,10 @@ window.renderWeatherWidget = async function() {
             <div class="weather-status-sub">${weatherCond.text}</div>
             <div class="weather-icons-combo">
               <span class="main-wmo-icon">${weatherCond.icon}</span>
-              <span class="moon-phase-badge" title="${moon.name}">${moon.icon} ${moon.name}</span>
+              <div class="moon-phase-badge">
+                <span>${moon.icon}</span>
+                <span>${moon.name}</span>
+              </div>
             </div>
           </div>
           <div class="weather-stats-list">
