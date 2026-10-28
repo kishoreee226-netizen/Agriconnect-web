@@ -23,88 +23,64 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: pip install requests urllib3
+        run: pip install requests
 
       - name: Fetch Real Dynamic Mandi Rates
         run: |
           python -c "
           import requests
           import json
-          import csv
-          import io
           import os
           import sys
-          import urllib3
-
-          urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-              'Accept': '*/*'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
           }
 
           records = []
 
-          # 1. Live Multi-state Agmarknet Data Feed (Pure Dynamic Government Records)
-          target_urls = [
+          # Active Multi-State Agricultural Mandi Records Stream
+          urls = [
               'https://raw.githubusercontent.com/CivicDataLab/agmarknet-data/main/data/sample_latest.json',
-              'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=csv&limit=500'
+              'https://raw.githubusercontent.com/theprafful/agmarknet-live-data/master/data/latest.json'
           ]
 
-          for url in target_urls:
+          for u in urls:
               try:
-                  print(f'Fetching from dynamic source: {url[:60]}...')
-                  res = requests.get(url, headers=headers, timeout=25, verify=False)
-                  if res.status_code == 200 and len(res.text) > 100:
-                      if url.endswith('.json'):
-                          items = res.json()
-                          raw_list = items if isinstance(items, list) else items.get('records', [])
-                          for it in raw_list:
-                              st = (it.get('state') or it.get('State') or '').strip()
-                              mkt = (it.get('market') or it.get('Market') or '').strip()
-                              comm = (it.get('commodity') or it.get('Commodity') or '').strip()
-                              price = str(it.get('modal_price') or it.get('Modal_Price') or it.get('price') or '0').strip()
+                  print(f'Connecting to data stream: {u}')
+                  r = requests.get(u, headers=headers, timeout=20)
+                  if r.status_code == 200:
+                      raw_data = r.json()
+                      items = raw_data if isinstance(raw_data, list) else (raw_data.get('records') or [])
+                      for item in items:
+                          st = (item.get('state') or item.get('State') or '').strip()
+                          mkt = (item.get('market') or item.get('Market') or '').strip()
+                          comm = (item.get('commodity') or item.get('Commodity') or '').strip()
+                          price = str(item.get('modal_price') or item.get('Modal_Price') or item.get('price') or '0').strip()
 
-                              if st and comm and 'national' not in mkt.lower() and 'all india' not in st.lower():
-                                  records.append({
-                                      'state': st,
-                                      'district': (it.get('district') or it.get('District') or '').strip(),
-                                      'market': mkt,
-                                      'commodity': comm,
-                                      'modal_price': price
-                                  })
-                      else:
-                          csv_reader = csv.DictReader(io.StringIO(res.text))
-                          for row in csv_reader:
-                              st = (row.get('state') or row.get('State') or '').strip()
-                              mkt = (row.get('market') or row.get('Market') or '').strip()
-                              comm = (row.get('commodity') or row.get('Commodity') or '').strip()
-                              price = str(row.get('modal_price') or row.get('Modal_Price') or '0').strip()
-
-                              if st and comm and 'national' not in mkt.lower() and 'all india' not in st.lower():
-                                  records.append({
-                                      'state': st,
-                                      'district': (row.get('district') or row.get('District') or '').strip(),
-                                      'market': mkt,
-                                      'commodity': comm,
-                                      'modal_price': price
-                                  })
-
+                          if st and comm and 'national' not in mkt.lower() and 'all india' not in st.lower():
+                              records.append({
+                                  'state': st,
+                                  'district': (item.get('district') or item.get('District') or '').strip(),
+                                  'market': mkt,
+                                  'commodity': comm,
+                                  'modal_price': price
+                              })
                       if len(records) > 0:
-                          print(f'SUCCESS: Loaded {len(records)} authentic APMC records.')
+                          print(f'SUCCESS: Retrieved {len(records)} authentic APMC records.')
                           break
               except Exception as err:
-                  print(f'Source fetch error: {err}')
+                  print(f'Notice: {err}')
 
           if len(records) == 0:
-              print('CRITICAL: Pure dynamic data not reachable right now.')
+              print('CRITICAL: No dynamic records retrieved.')
               sys.exit(1)
 
           file_path = os.path.join(os.getcwd(), 'mandi_live.json')
           with open(file_path, 'w', encoding='utf-8') as f:
               json.dump(records, f, ensure_ascii=False, indent=2)
 
-          print(f'Successfully updated {len(records)} dynamic records into {file_path}')
+          print(f'Saved {len(records)} dynamic records into {file_path}')
           "
 
       - name: Commit and Push Live Data
@@ -113,5 +89,5 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
           git status
-          git commit -m "Auto-sync live dynamic APMC rates [skip ci]" || echo "No changes"
+          git commit -m "Auto-sync real live Mandi rates [skip ci]" || echo "No changes"
           git push origin main
