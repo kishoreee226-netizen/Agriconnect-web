@@ -9,37 +9,43 @@ const CROP_CATEGORIES = {
   "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
-// 100% CORS-Free Live Government Mandi Fetcher
+// Pure Dynamic Fetch directly from Official Government Mandi Resource
 async function fetchMandiData() {
   const apiKey = "579b464db66ecb3875b39ed9319231f2";
   const resourceId = "9ef84268-d588-465a-a308-a864a43d0070";
-  const govApiUrl = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=500`;
+  
+  // 1. Direct Official data.gov.in API with correct query parameters
+  const directUrl = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=600`;
 
-  // Guaranteed CORS bypass tunnels
+  // 2. High-reliability, CORS-enabled endpoints
   const endpoints = [
-    `https://api.allorigins.win/get?url=${encodeURIComponent(govApiUrl)}`,
-    `https://corsproxy.io/?${encodeURIComponent(govApiUrl)}`
+    `https://cors-anywhere.herokuapp.com/${directUrl}`,
+    `https://api.allorigins.win/get?url=${encodeURIComponent(directUrl)}`,
+    directUrl
   ];
 
   for (const ep of endpoints) {
     try {
-      console.log("Connecting live mandi tunnel:", ep);
-      const res = await fetch(ep);
+      console.log("Fetching live mandi feed:", ep);
+      const res = await fetch(ep, {
+        headers: {
+          "Accept": "application/json"
+        }
+      });
+
       if (res.ok) {
-        let jsonRes = await res.json();
-        
-        // Handle allorigins wrapper
-        if (jsonRes && jsonRes.contents) {
+        let payload = await res.json();
+        if (payload && payload.contents) {
           try {
-            jsonRes = JSON.parse(jsonRes.contents);
+            payload = JSON.parse(payload.contents);
           } catch (e) {
             console.warn("Parse error:", e);
           }
         }
 
-        const records = jsonRes.records || (Array.isArray(jsonRes) ? jsonRes : []);
+        const records = payload.records || (Array.isArray(payload) ? payload : []);
         if (records.length > 0) {
-          console.log(`SUCCESS: Loaded ${records.length} dynamic government records.`);
+          console.log(`SUCCESS: Loaded ${records.length} authentic APMC records.`);
           return records
             .map(r => ({
               state: (r.state || r.State || "").trim(),
@@ -51,8 +57,8 @@ async function fetchMandiData() {
             .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
         }
       }
-    } catch (err) {
-      console.warn("Tunnel attempt failed:", err);
+    } catch (e) {
+      console.warn("Gateway attempt note:", e);
     }
   }
 
