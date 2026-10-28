@@ -5782,3 +5782,166 @@ header h1 {
   color: #64748b;
   margin-top: 12px;
 }
+/* Advisory Box Style */
+.advisory-box {
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 12px;
+  margin-bottom: 10px;
+  line-height: 1.45;
+  border-left: 4px solid;
+}
+.advisory-heading {
+  font-weight: 800;
+  font-size: 11.5px;
+  margin-bottom: 3px;
+}
+.advisory-text {
+  font-size: 11.5px;
+  font-weight: 500;
+}
+.advisory-safe { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+.advisory-warning { background: #fffbeb; border-color: #f59e0b; color: #b45309; }
+.advisory-danger { background: #fef2f2; border-color: #ef4444; color: #b91c1c; }
+
+/* 4-Day Cards - Professional Compact Layout */
+.forecast-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+}
+.forecast-header {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+.forecast-row {
+  display: flex;
+  gap: 6px;
+  justify-content: space-between;
+}
+.forecast-day-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 6px 3px; /* Vertical height taggincham */
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+}
+.forecast-day-title { 
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #334155; 
+}
+.forecast-day-icon { 
+  font-size: 16px; 
+  margin: 2px 0; 
+}
+.forecast-day-temp { 
+  font-size: 11px; 
+  font-weight: 700; 
+  color: #0f172a; 
+}
+.forecast-day-rain { 
+  font-size: 10px; 
+  color: #0284c7; 
+  font-weight: 600; 
+  margin-top: 1px; 
+}
+
+/* Footer clean style */
+.weather-footer {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 10px;
+}
+/* Temp and Digital Clock Row */
+.temp-clock-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.weather-digital-clock {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+/* Day vs Night Mode Styling */
+.weather-day {
+  background: #ffffff;
+}
+
+.weather-night {
+  background: #fcfdfe;
+  border-color: #cbd5e1;
+}
+
+/* Icons Combo: Weather Icon + Moon Phase */
+.weather-icons-combo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.main-wmo-icon {
+  font-size: 28px;
+}
+
+.moon-phase-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 3px 7px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 4-Day Forecast Cards Compact Alignment */
+.forecast-section {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.forecast-header {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.forecast-row {
+  display: flex;
+  gap: 6px;
+  justify-content: space-between;
+}
+
+.forecast-day-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 6px 3px;
+  text-align: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.forecast-day-title { font-size: 11px; font-weight: 700; color: #334155; }
+.forecast-day-icon { font-size: 16px; margin: 2px 0; }
+.forecast-day-temp { font-size: 11px; font-weight: 700; color: #0f172a; }
+.forecast-day-rain { font-size: 10px; color: #0284c7; font-weight: 600; margin-top: 1px; }
+
