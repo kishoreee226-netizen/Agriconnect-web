@@ -23,45 +23,43 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: |
-          pip install requests urllib3 cloudscraper
+        run: pip install requests urllib3
 
-      - name: Fetch Live Data via Dynamic Gov Tunnel
+      - name: Stream Authentic Agmarknet Records
         run: |
           python -c "
           import requests
           import json
           import os
           import sys
-          import cloudscraper
+          import urllib3
 
-          scraper = cloudscraper.create_scraper(
-              browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
-          )
+          urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
           api_key = '579b464db66ecb3875b39ed9319231f2'
           resource_id = '9ef84268-d588-465a-a308-a864a43d0070'
-          gov_url = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json&limit=1500'
+          gov_api = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json&limit=1200'
 
-          # Direct & Proxy Gateways
-          endpoints = [
-              f'https://proxy.cors.sh/{gov_url}',
-              f'https://api.allorigins.win/raw?url={requests.utils.quote(gov_url)}',
-              gov_url
+          # Direct Global Edge Mirrors into data.gov.in
+          gateways = [
+              'https://api.codetabs.com/v1/proxy?quest=' + requests.utils.quote(gov_api),
+              'https://proxy.cors.sh/' + gov_api,
+              gov_api
           ]
 
           records = []
 
-          for ep in endpoints:
+          headers = {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+              'Accept': 'application/json'
+          }
+
+          for gw in gateways:
               try:
-                  print(f'Connecting to: {ep[:60]}...')
-                  headers = {
-                      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-                      'x-cors-grida-api-key': 'free'
-                  }
-                  res = scraper.get(ep, headers=headers, timeout=25)
-                  if res.status_code == 200 and len(res.text) > 100:
-                      payload = res.json()
+                  print(f'Fetching from gateway: {gw[:50]}...')
+                  r = requests.get(gw, headers=headers, timeout=25, verify=False)
+                  if r.status_code == 200 and len(r.text) > 100:
+                      payload = r.json()
                       items = payload.get('records', []) if isinstance(payload, dict) else (payload if isinstance(payload, list) else [])
                       
                       for it in items:
@@ -78,32 +76,30 @@ jobs:
                                   'commodity': comm,
                                   'modal_price': pr
                               })
-                      
+
                       if len(records) > 0:
-                          print(f'SUCCESS: Retrieved {len(records)} authentic APMC records.')
+                          print(f'SUCCESS: Acquired {len(records)} live APMC records.')
                           break
-              except Exception as e:
-                  print(f'Route notice: {e}')
+              except Exception as err:
+                  print(f'Gateway notice: {err}')
 
-          target_file = os.path.join(os.getcwd(), 'mandi_live.json')
+          # Strict check: fail if zero records fetched
+          if len(records) == 0:
+              print('CRITICAL: Government feed unreachable.')
+              sys.exit(1)
 
-          # If live stream was successful, write fresh records
-          if len(records) > 0:
-              with open(target_file, 'w', encoding='utf-8') as f:
-                  json.dump(records, f, ensure_ascii=False, indent=2)
-              print(f'Updated {target_file} with {len(records)} live entries.')
-          else:
-              print('Warning: Live stream could not be reached this run. Checking existing file.')
-              if not os.path.exists(target_file) or os.path.getsize(target_file) < 50:
-                  print('Error: mandi_live.json is empty.')
-                  sys.exit(1)
+          file_path = os.path.join(os.getcwd(), 'mandi_live.json')
+          with open(file_path, 'w', encoding='utf-8') as f:
+              json.dump(records, f, ensure_ascii=False, indent=2)
+
+          print(f'Wrote {len(records)} records directly into {file_path}')
           "
 
-      - name: Commit and Push Live Data
+      - name: Force Commit and Push
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
           git status
-          git commit -m "Auto-sync real live Mandi rates [skip ci]" || echo "No changes"
-          git push origin main || echo "Nothing to push"
+          git commit -m "Auto-sync real live Mandi rates [skip ci]"
+          git push origin main
