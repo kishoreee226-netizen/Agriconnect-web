@@ -5944,4 +5944,100 @@ header h1 {
 .forecast-day-icon { font-size: 16px; margin: 2px 0; }
 .forecast-day-temp { font-size: 11px; font-weight: 700; color: #0f172a; }
 .forecast-day-rain { font-size: 10px; color: #0284c7; font-weight: 600; margin-top: 1px; }
+/* Card Core Structure */
+.weather-card {
+  border-radius: 18px;
+  padding: 16px;
+  margin: 12px auto;
+  max-width: 480px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+/* 1. Morning Theme (Vibrant, Fresh Daytime Look) */
+.weather-day-theme {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+}
+.weather-day-theme .weather-temp-val {
+  color: #1e40af;
+}
+
+/* 2. Night Theme (Distinct Dark/Indigo Atmosphere) */
+.weather-night-theme {
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  border: 1px solid #334155;
+  color: #f1f5f9;
+}
+.weather-night-theme .weather-title {
+  color: #38bdf8 !important;
+}
+.weather-night-theme .weather-temp-val {
+  color: #60a5fa !important;
+}
+.weather-night-theme .weather-stats-list {
+  color: #cbd5e1 !important;
+}
+.weather-night-theme .weather-digital-clock {
+  background: #334155 !important;
+  color: #94a3b8 !important;
+}
+.weather-night-theme .forecast-day-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+.weather-night-theme .forecast-day-title {
+  color: #94a3b8 !important;
+}
+.weather-night-theme .forecast-day-temp {
+  color: #f8fafc !important;
+}
+.weather-night-theme .agri-drawer {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+.weather-night-theme .agri-drawer-summary {
+  color: #e2e8f0 !important;
+}
+.weather-night-theme .agri-metric-tile {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+.weather-night-theme .weather-footer {
+  color: #94a3b8 !important;
+}
+
+/* 3. Moon Phase Badge - Strictly Fitted to Text Width */
+.weather-icons-combo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.main-wmo-icon {
+  font-size: 26px;
+}
+
+.moon-phase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  max-width: fit-content;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.weather-night-theme .moon-phase-badge {
+  background: #334155;
+  border-color: #475569;
+  color: #f1f5f9;
+}
+
 
