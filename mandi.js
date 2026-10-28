@@ -9,57 +9,56 @@ const CROP_CATEGORIES = {
   "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
-// Pure Dynamic Fetch directly from Official Government Mandi Resource
+// Pure Dynamic Live Fetcher via Google Apps Script Gateway
 async function fetchMandiData() {
-  const apiKey = "579b464db66ecb3875b39ed9319231f2";
-  const resourceId = "9ef84268-d588-465a-a308-a864a43d0070";
-  
-  // 1. Direct Official data.gov.in API with correct query parameters
-  const directUrl = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=600`;
+  const liveApiUrl = "https://script.google.com/macros/s/AKfycbwMbSz4WVnSNsWpYqJ_FM8tyau90WL5ZUMnBzqICoDkeEsWrDvlZoukDW8KiyBkYbn4yw/exec";
 
-  // 2. High-reliability, CORS-enabled endpoints
-  const endpoints = [
-    `https://cors-anywhere.herokuapp.com/${directUrl}`,
-    `https://api.allorigins.win/get?url=${encodeURIComponent(directUrl)}`,
-    directUrl
-  ];
+  try {
+    console.log("Fetching live data from Apps Script Gateway...");
+    const res = await fetch(liveApiUrl, {
+      method: "GET",
+      mode: "cors"
+    });
 
-  for (const ep of endpoints) {
-    try {
-      console.log("Fetching live mandi feed:", ep);
-      const res = await fetch(ep, {
-        headers: {
-          "Accept": "application/json"
-        }
-      });
-
-      if (res.ok) {
-        let payload = await res.json();
-        if (payload && payload.contents) {
-          try {
-            payload = JSON.parse(payload.contents);
-          } catch (e) {
-            console.warn("Parse error:", e);
-          }
-        }
-
-        const records = payload.records || (Array.isArray(payload) ? payload : []);
-        if (records.length > 0) {
-          console.log(`SUCCESS: Loaded ${records.length} authentic APMC records.`);
-          return records
-            .map(r => ({
-              state: (r.state || r.State || "").trim(),
-              district: (r.district || r.District || "").trim(),
-              market: (r.market || r.Market || "").trim(),
-              commodity: (r.commodity || r.Commodity || "").trim(),
-              modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
-            }))
-            .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
+    if (res.ok) {
+      let data = await res.json();
+      
+      // Handle nested string or parsed object
+      if (typeof data === "string") {
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          console.warn("String parse notice:", e);
         }
       }
-    } catch (e) {
-      console.warn("Gateway attempt note:", e);
+
+      const records = data.records || (Array.isArray(data) ? data : []);
+      if (records.length > 0) {
+        console.log(`SUCCESS: Fetched ${records.length} authentic records!`);
+        return records
+          .map(r => ({
+            state: (r.state || r.State || "").trim(),
+            district: (r.district || r.District || "").trim(),
+            market: (r.market || r.Market || "").trim(),
+            commodity: (r.commodity || r.Commodity || "").trim(),
+            modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
+          }))
+          .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
+      }
     }
+  } catch (err) {
+    console.error("Live gateway fetch error:", err);
+  }
+
+  // Fallback to local snapshot if network is unavailable
+  try {
+    const localRes = await fetch("mandi_live.json?t=" + Date.now());
+    if (localRes.ok) {
+      const fallback = await localRes.json();
+      return Array.isArray(fallback) ? fallback : (fallback.records || []);
+    }
+  } catch (e) {
+    console.warn("Fallback notice:", e);
   }
 
   return [];
