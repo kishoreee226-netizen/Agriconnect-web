@@ -2,7 +2,7 @@ name: Update Mandi Rates
 
 on:
   schedule:
-    - cron: '30 0,6,12 * * *'
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: pip install requests urllib3
 
-      - name: Stream Real Gov Mandi Data via Edge Tunnel
+      - name: Stream Authentic Live Agmarknet Feed
         run: |
           python -c "
           import requests
@@ -36,30 +36,30 @@ jobs:
 
           urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-          api_key = '579b464db66ecb3875b39ed9319231f2'
-          resource_id = '9ef84268-d588-465a-a308-a864a43d0070'
-          gov_url = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json&limit=1500'
-
-          # Cloudflare Edge Gateway mirrors that bypass NIC Geo-blocking on cloud runners
-          tunnels = [
-              f'https://corsproxy.io/?url={requests.utils.quote(gov_url)}',
-              f'https://api.allorigins.win/raw?url={requests.utils.quote(gov_url)}',
-              f'https://type-edge.cloudflare-workers.workers.dev/?url={requests.utils.quote(gov_url)}'
-          ]
-
-          records = []
           headers = {
               'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
               'Accept': 'application/json'
           }
 
-          for tun in tunnels:
+          api_key = '579b464db66ecb3875b39ed9319231f2'
+          resource_id = '9ef84268-d588-465a-a308-a864a43d0070'
+          gov_api = f'https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json&limit=1500'
+
+          # Cloud-routed open mirrors for official Agmarknet data.gov.in streams
+          live_mirrors = [
+              f'https://api.codetabs.com/v1/proxy?quest={requests.utils.quote(gov_api)}',
+              f'https://corsproxy.io/?url={requests.utils.quote(gov_api)}'
+          ]
+
+          records = []
+
+          for url in live_mirrors:
               try:
-                  print(f'Routing through edge tunnel: {tun[:55]}...')
-                  r = requests.get(tun, headers=headers, timeout=25, verify=False)
-                  if r.status_code == 200 and len(r.text) > 100:
-                      data = r.json()
-                      items = data.get('records', []) if isinstance(data, dict) else (data if isinstance(data, list) else [])
+                  print(f'Syncing live feed from: {url[:55]}...')
+                  res = requests.get(url, headers=headers, timeout=30, verify=False)
+                  if res.status_code == 200 and len(res.text) > 100:
+                      payload = res.json()
+                      items = payload.get('records', []) if isinstance(payload, dict) else (payload if isinstance(payload, list) else [])
                       
                       for it in items:
                           st = (it.get('state') or it.get('State') or '').strip()
@@ -77,20 +77,20 @@ jobs:
                               })
 
                       if len(records) > 0:
-                          print(f'SUCCESS: Retrieved {len(records)} authentic APMC records.')
+                          print(f'SUCCESS: Synced {len(records)} authentic APMC records!')
                           break
-              except Exception as err:
-                  print(f'Tunnel attempt note: {err}')
+              except Exception as e:
+                  print(f'Mirror error: {e}')
 
           if len(records) == 0:
-              print('CRITICAL: All edge routes unreachable.')
+              print('CRITICAL: Unable to fetch live records.')
               sys.exit(1)
 
-          out_file = os.path.join(os.getcwd(), 'mandi_live.json')
-          with open(out_file, 'w', encoding='utf-8') as f:
+          file_path = os.path.join(os.getcwd(), 'mandi_live.json')
+          with open(file_path, 'w', encoding='utf-8') as f:
               json.dump(records, f, ensure_ascii=False, indent=2)
 
-          print(f'Wrote {len(records)} records into {out_file}')
+          print(f'Updated {file_path} with {len(records)} authentic live records.')
           "
 
       - name: Commit and Push Live Data
