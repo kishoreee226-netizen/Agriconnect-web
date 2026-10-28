@@ -1,216 +1,195 @@
-// ================= PROFESSIONAL LIVE GPS AGRI-WEATHER MODULE =================
+// weather.js - Upgraded Agri-Smart Weather Widget
 
-// WMO Weather Interpretation & Farmer Advisory Logic
-function decodeWeather(code) {
-  if (code === 0) return { text: "నిర్మలమైన ఆకాశం (Clear)", icon: "☀️", advisory: "సాగు పనులకు, ఎరువులు మరియు మందుల పిచికారీకి పూర్తి అనుకూలం." };
-  if (code === 1 || code === 2) return { text: "పాక్షిక మేఘావృతం (Partly Cloudy)", icon: "🌤️", advisory: "సాధారణ వాతావరణం. పంట పనులను యథావిధిగా కొనసాగించవచ్చు." };
-  if (code === 3) return { text: "దట్టమైన మేఘాలు (Overcast)", icon: "☁️", advisory: "వర్ష సూచన ఉండే అవకాశం ఉంది. పంట కోత, ఆరబెట్టే పనుల్లో జాగ్రత్త." };
-  if (code === 45 || code === 48) return { text: "పొగమంచు (Fog)", icon: "🌫️", advisory: "తేమ వల్ల బూజు తెగుళ్లు ఆశించే అవకాశం ఉంది, పైరును గమనించండి." };
-  if (code >= 51 && code <= 55) return { text: "తేలికపాటి చిరుజల్లులు (Drizzle)", icon: "🌦️", advisory: "రసాయన మందుల పిచికారీని తాత్కాలికంగా వాయిదా వేయండి." };
-  if (code >= 61 && code <= 65) return { text: "వర్షం పడుతోంది (Rain)", icon: "🌧️", advisory: "ఎరువులు వేయడం, స్ప్రేయింగ్ ఆపండి. పొలంలో నీటి పారుదలకు ఏర్పాట్లు చేయండి." };
-  if (code >= 80 && code <= 82) return { text: "భారీ వర్షపు జల్లులు (Showers)", icon: "🌧️", advisory: "పొలాల్లో నీరు నిలవకుండా డ్రైనేజీ కాలువలను సరిచేసుకోండి." };
-  if (code >= 95) return { text: "ఉరుములు, మెరుపులతో కూడిన వాన (Thunderstorm)", icon: "⛈️", advisory: "రైతులు చెట్ల కింద, ట్రాక్టర్ల వద్ద ఉండకండి. సురక్షిత ప్రదేశాల్లో ఉండండి." };
-  return { text: "సాధారణ వాతావరణం", icon: "🌤️", advisory: "పంట స్థితిని క్రమం తప్పకుండా పరిశీలించండి." };
+function getTeluguWindDir(deg) {
+  const dirs = ["ఉత్తరం (N)", "ఈశాన్యం (NE)", "తూర్పు (E)", "ఆగ్నేయం (SE)", "దక్షిణం (S)", "నైరుతి (SW)", "పడమర (W)", "వాయవ్యం (NW)"];
+  return dirs[Math.round(deg / 45) % 8];
 }
 
-function renderWeatherWidget() {
+let agriVoiceText = "";
+
+window.playAgriVoice = function() {
+  if (!('speechSynthesis' in window)) {
+    alert("మీ బ్రౌజర్ ఆడియోను సపోర్ట్ చేయడం లేదు.");
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(agriVoiceText);
+  utter.lang = "te-IN";
+  utter.rate = 0.9;
+  window.speechSynthesis.speak(utter);
+};
+
+window.renderWeatherWidget = async function() {
   const container = document.getElementById("weather-container");
   if (!container) return;
 
-  container.innerHTML = `
-    <div class="weather-card">
-      <div class="weather-header">
-        <strong>🌦️ లైవ్ వాతావరణం & సాగు సలహా</strong>
-        <button type="button" onclick="getLiveLocationWeather()" class="btn-weather-refresh">
-          🔄 రిఫ్రెష్
+  try {
+    const lat = 17.9784;
+    const lon = 79.5941;
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,precipitation,rain,showers,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_temperature_0_to_7cm,uv_index,dew_point_2m,et0_fao_evapotranspiration,vapour_pressure_deficit&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+    const c = data.current;
+    const d = data.daily;
+
+    const temp = Math.round(c.temperature_2m);
+    const humidity = c.relative_humidity_2m;
+    const windSpeed = (c.wind_speed_10m).toFixed(1);
+    const windGusts = (c.wind_gusts_10m || c.wind_speed_10m).toFixed(1);
+    const windDir = getTeluguWindDir(c.wind_direction_10m || 0);
+
+    const sMoistTop = Math.min(Math.round((c.soil_moisture_0_to_1cm || 0.20) * 200), 100);
+    const sMoistDeep = Math.min(Math.round((c.soil_moisture_3_to_9cm || 0.25) * 200), 100);
+    const soilTemp = Math.round(c.soil_temperature_0_to_7cm || temp);
+    const et0 = c.et0_fao_evapotranspiration ? c.et0_fao_evapotranspiration.toFixed(1) : "0.0";
+    const rainProb = (d && d.precipitation_probability_max) ? d.precipitation_probability_max[0] : 0;
+
+    // Advisory logic
+    let alertClass = "advisory-safe";
+    let sprayText = `🟢 <strong>మందుల స్ప్రేకి అనుకూలం</strong>: గాలి అదుపులో ఉంది (${windSpeed} km/h). దిశ: <strong>${windDir}</strong>.`;
+    let sprayVoice = `ప్రస్తుతం గాలి అదుపులో ఉంది, గాలి వీచే దిశ ${windDir}. మందుల స్ప్రే చేసుకోవడానికి మంచి సమయం.`;
+
+    if (c.precipitation > 0 || c.rain > 0 || rainProb >= 60) {
+      alertClass = "advisory-danger";
+      sprayText = `🚫 <strong>మందులు స్ప్రే చేయవద్దు</strong>: వర్ష సూచన ఉంది (${rainProb}%). మందు కొట్టుకుపోతుంది!`;
+      sprayVoice = `హెచ్చరిక. వర్ష సూచన ఉంది, దయచేసి ఇప్పుడు మందులు కొట్టకండి.`;
+    } else if (windSpeed > 18 || windGusts > 25) {
+      alertClass = "advisory-warning";
+      sprayText = `⚠️ <strong>స్ప్రే కాసేపు ఆపండి</strong>: ఈదురుగాలులు అధికంగా ఉన్నాయి (${windGusts} km/h). మందు పక్కకు వెళ్లిపోతుంది!`;
+      sprayVoice = `గమనిక. గాలి వేగం చాలా ఎక్కువగా ఉంది. కాసేపు మందుల స్ప్రే ఆపండి.`;
+    }
+
+    let soilVoice = "";
+    let soilBadge = "";
+    if (sMoistDeep >= 60) {
+      soilBadge = `<span class="badge badge-success">💧 తడి బాగుంది</span>`;
+      soilVoice = "వేర్ల దగ్గర తడి బాగుంది, ఇప్పుడే నీళ్లు పెట్టాల్సిన అవసరం లేదు.";
+    } else if (sMoistDeep >= 35) {
+      soilBadge = `<span class="badge badge-neutral">🌱 తేమ సాధారణం</span>`;
+      soilVoice = "నేలలో తేమ సాధారణంగా ఉంది, పంట అవసరాన్ని బట్టి తడి ఇవ్వండి.";
+    } else {
+      soilBadge = `<span class="badge badge-danger">⚠️ నేల ఆరిపోయింది</span>`;
+      soilVoice = "భూమి లోపల తేమ తగ్గింది, పంటకు వెంటనే తడి ఇవ్వండి.";
+    }
+
+    agriVoiceText = `నమస్కారం రైతు సోదరులారా. ${sprayVoice} ${soilVoice}`;
+    let uvText = c.uv_index > 7 ? "ఎక్కువ" : "తక్కువ";
+
+    // 3-Day Forecast Cards
+    const dayNames = ["రేపు", "ఎల్లుండి", "శని"];
+    let forecastHtml = "";
+    if (d && d.time) {
+      for (let i = 1; i <= 3; i++) {
+        const maxT = Math.round(d.temperature_2m_max[i] || temp);
+        const minT = Math.round(d.temperature_2m_min[i] || (temp - 5));
+        const pProb = d.precipitation_probability_max[i] || 0;
+        forecastHtml += `
+          <div class="forecast-day-card">
+            <div class="forecast-day-title">${dayNames[i-1]}</div>
+            <div class="forecast-day-icon">🌤️</div>
+            <div class="forecast-day-temp">${maxT}° / ${minT}°</div>
+            <div class="forecast-day-rain">💧 ${pProb}%</div>
+          </div>
+        `;
+      }
+    }
+
+    container.innerHTML = `
+      <div class="weather-card">
+        
+        <div class="weather-header">
+          <div class="weather-title">
+            <span>🌦️</span> లైవ్ వాతావరణం & సాగు సలహా
+          </div>
+          <button onclick="window.renderWeatherWidget()" class="btn-refresh">
+            🔄 రీఫ్రెష్
+          </button>
+        </div>
+
+        <div class="weather-main-row">
+          <div class="weather-temp-block">
+            <div class="weather-temp-val">${temp}°C</div>
+            <div class="weather-status-sub">తేలికపాటి వాతావరణం</div>
+            <div class="weather-main-icon">🌤️</div>
+          </div>
+          <div class="weather-stats-list">
+            <div>💨 గాలి వేగం: <strong>${windSpeed} km/h</strong></div>
+            <div>🧭 గాలి దిశ: <strong>${windDir}</strong></div>
+            <div>💧 గాలిలో తేమ: <strong>${humidity}%</strong></div>
+            <div>🌧️ వర్ష సూచన: <strong>${rainProb}%</strong></div>
+            <div>☀️ UV ఇండెక్స్: <strong>${c.uv_index} (${uvText})</strong></div>
+          </div>
+        </div>
+
+        <!-- Voice Button -->
+        <button onclick="window.playAgriVoice()" class="btn-voice-agri">
+          <span>🔊</span> తెలుగులో వినండి (వాయిస్ సలహా)
         </button>
-      </div>
 
-      <!-- Main Current Conditions Grid -->
-      <div class="weather-main-grid">
-        <div class="weather-temp-block">
-          <div id="weather-temp" class="weather-temp-text">--°C</div>
-          <div id="weather-cond" class="weather-condition-text">వాతావరణాన్ని లెక్కిస్తోంది...</div>
-          <div id="weather-icon" class="weather-icon-lg">🌤️</div>
+        <!-- Advisory Box -->
+        <div class="advisory-box ${alertClass}">
+          ${sprayText}
         </div>
 
-        <div class="weather-metrics-block">
-          <div class="metric-item">
-            <span class="metric-label">💨 గాలి వేగం:</span>
-            <strong id="weather-wind">-- km/h</strong>
-          </div>
-          <div class="metric-item">
-            <span class="metric-label">💧 గాలిలో తేమ:</span>
-            <strong id="weather-humidity">--%</strong>
-          </div>
-          <div class="metric-item">
-            <span class="metric-label">🌧️ వర్ష సూచన:</span>
-            <strong id="weather-rain-prob">--%</strong>
-          </div>
-         
-          <!-- UV Index లైన్ -->
-          <div class="metric-item">
-            <span class="metric-label">☀️ UV ఇండెక్స్:</span>
-            <strong id="weather-uv">--</strong>
+        <!-- 3 Day Forecast -->
+        <div class="forecast-section">
+          <div class="forecast-header">📅 రాబోయే 3 రోజుల అంచనా:</div>
+          <div class="forecast-row">
+            ${forecastHtml}
           </div>
         </div>
-      </div>
 
-      <!-- Farmer Advisory Card -->
-      <div id="weather-advisory" class="weather-advisory-box">
-        🌾 రైతు సలహా: లైవ్ సమాచారం లోడ్ అవుతోంది...
-      </div>
+        <!-- Deep Agri Details Drawer -->
+        <details class="agri-drawer">
+          <summary class="agri-drawer-summary">
+            <span>🌱 ప్రత్యేక నేల తేమ & వ్యవసాయ వివరాలు</span>
+            <span class="drawer-arrow">వివరాలు ▼</span>
+          </summary>
+          
+          <div class="agri-drawer-grid">
+            <div class="agri-metric-tile">
+              <div class="agri-metric-label">పైనేల తేమ (0-1 cm)</div>
+              <div class="agri-metric-value text-blue">${sMoistTop}%</div>
+            </div>
+            <div class="agri-metric-tile">
+              <div class="agri-metric-label">వేర్ల వద్ద తేమ (3-9 cm)</div>
+              <div class="agri-metric-value text-blue">${sMoistDeep}% ${soilBadge}</div>
+            </div>
+            <div class="agri-metric-tile">
+              <div class="agri-metric-label">నేల ఉష్ణోగ్రత</div>
+              <div class="agri-metric-value text-orange">${soilTemp}°C</div>
+            </div>
+            <div class="agri-metric-tile">
+              <div class="agri-metric-label">నీటి ఆవిరి (ET₀)</div>
+              <div class="agri-metric-value text-green">${et0} mm/రోజు</div>
+            </div>
+            <div class="agri-metric-tile">
+              <div class="agri-metric-label">ఈదురుగాలులు (Gusts)</div>
+              <div class="agri-metric-value text-dark">${windGusts} km/h</div>
+            </div>
+            <div class="agri-metric-tile">
+              <div class="agri-metric-label">మంచు బిందువు</div>
+              <div class="agri-metric-value text-dark">${c.dew_point_2m || 0}°C</div>
+            </div>
+          </div>
+        </details>
 
-      <!-- 3-Day Forecast Section -->
-      <div class="forecast-section">
-        <div class="forecast-title">📅 రాబోయే 3 రోజుల అంచనా:</div>
-        <div id="weather-forecast-strip" class="forecast-strip">
-          <div class="forecast-day-card">లోడ్ అవుతోంది...</div>
+        <div class="weather-footer">
+          📍 హనుమకొండ, హనుమకొండ జిల్లా (లైవ్ వాతావరణం)
         </div>
+
       </div>
-
-      <!-- Live Location GPS Footer -->
-      <div id="gps-weather-res" class="weather-status-footer">
-        📍 GPS లొకేషన్ తీసుకుంటోంది...
-      </div>
-    </div>
-  `;
-
-  getLiveLocationWeather();
-}
-
-function getLiveLocationWeather() {
-  const res = document.getElementById("gps-weather-res");
-  const tempEl = document.getElementById("weather-temp");
-  const condEl = document.getElementById("weather-cond");
-  const iconEl = document.getElementById("weather-icon");
-  const windEl = document.getElementById("weather-wind");
-  const humEl = document.getElementById("weather-humidity");
-  const rainEl = document.getElementById("weather-rain-prob");
-  const uvEl = document.getElementById("weather-uv");
-  const advEl = document.getElementById("weather-advisory");
-  const forecastStrip = document.getElementById("weather-forecast-strip");
-
-  if (!navigator.onLine) {
-    if (res) res.innerHTML = "⚠️ <span class='weather-err-text'>ఇంటర్నెట్ కనెక్షన్ లేదు.</span>";
-    return;
+    `;
+  } catch (err) {
+    console.error("Weather error:", err);
+    container.innerHTML = `<div class="weather-error">వాతావరణ డేటా లోడ్ కాలేదు. రీఫ్రెష్ చేయండి.</div>`;
   }
+};
 
-  if (!navigator.geolocation) {
-    if (res) res.innerText = "బ్రౌజర్‌లో GPS సపోర్ట్ లేదు.";
-    return;
-  }
-
-  if (res) res.innerText = "📍 GPS లొకేషన్ తీసుకుంటోంది...";
-
-  const geoOptions = {
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 60000
-  };
-
-  navigator.geolocation.getCurrentPosition(async (pos) => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-    try {
-      // 1. Comprehensive Weather API Call (Current + Metrics + 3-day Daily Forecast)
-      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max&timezone=auto`;
-      const weatherPromise = fetch(weatherUrl).then(r => r.json());
-
-      // 2. Reverse Geocode for Village & District
-      const geoUrl = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`;
-      const geoPromise = fetch(geoUrl).then(r => r.json());
-
-      const [weatherData, geoData] = await Promise.all([weatherPromise, geoPromise]);
-
-      // Current Conditions
-      if (weatherData && weatherData.current) {
-        const cur = weatherData.current;
-        const info = decodeWeather(cur.weather_code);
-
-        if (tempEl) tempEl.innerText = `${Math.round(cur.temperature_2m)}°C`;
-        if (condEl) condEl.innerText = info.text;
-        if (iconEl) iconEl.innerText = info.icon;
-        if (windEl) windEl.innerText = `${cur.wind_speed_10m} km/h`;
-        if (humEl) humEl.innerText = `${cur.relative_humidity_2m}%`;
-
-        // Today's max precipitation probability
-        const todayRainProb = weatherData.daily?.precipitation_probability_max?.[0] ?? 0;
-        if (rainEl) rainEl.innerText = `${todayRainProb}%`;
-
-        // UV Index Processing
-        const todayUv = weatherData.daily?.uv_index_max?.[0] ?? 0;
-        let uvText = `${todayUv}`;
-        if (todayUv <= 2) uvText += " (తక్కువ)";
-        else if (todayUv <= 5) uvText += " (మోస్తరు)";
-        else if (todayUv <= 7) uvText += " (ఎక్కువ)";
-        else uvText += " (తీవ్రం)";
-
-        if (uvEl) uvEl.innerText = uvText; // <-- ఈ అసైన్‌మెంట్ లైన్ సరిచేయబడింది
-
-        // Smart dynamic advisory combination
-        let customAdvisory = info.advisory;
-        if (todayRainProb >= 60) {
-          customAdvisory = "వర్షం పడే అవకాశం ఎక్కువగా ఉంది (60%+). ఎరువులు, మందుల పిచికారీ వెంటనే ఆపండి.";
-        } else if (cur.relative_humidity_2m > 85) {
-          customAdvisory += " గాలిలో తేమ చాలా ఎక్కువగా ఉంది, బూజు తెగుళ్లపై నిఘా ఉంచండి.";
-        }
-        if (advEl) advEl.innerHTML = `💡 <b>రైతు సలహా:</b> ${customAdvisory}`;
-      }
-
-      // Render 3-Day Forecast Cards (Next 3 Days)
-      if (weatherData && weatherData.daily && forecastStrip) {
-        const daily = weatherData.daily;
-        let forecastHTML = "";
-        const dayNames = ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"];
-
-        // Days index 1, 2, 3 (Tomorrow, Day after tomorrow, Next)
-        for (let i = 1; i <= 3; i++) {
-          if (daily.time[i]) {
-            const dateObj = new Date(daily.time[i]);
-            const dayLabel = i === 1 ? "రేపు" : i === 2 ? "ఎల్లుండి" : dayNames[dateObj.getDay()];
-            const dayInfo = decodeWeather(daily.weather_code[i]);
-            const maxTemp = Math.round(daily.temperature_2m_max[i]);
-            const minTemp = Math.round(daily.temperature_2m_min[i]);
-            const rainChance = daily.precipitation_probability_max[i] ?? 0;
-
-            forecastHTML += `
-              <div class="forecast-day-card">
-                <span class="f-day-name">${dayLabel}</span>
-                <span class="f-icon">${dayInfo.icon}</span>
-                <span class="f-temp">${maxTemp}° / ${minTemp}°</span>
-                <span class="f-rain">💧 ${rainChance}%</span>
-              </div>
-            `;
-          }
-        }
-        forecastStrip.innerHTML = forecastHTML;
-      }
-
-      // Display Location Name
-      const village = geoData?.locality || geoData?.city || geoData?.principalSubdivision || "స్థానిక ప్రాంతం";
-      const district = geoData?.localityInfo?.administrative?.[2]?.name || "";
-      const locationText = district && district !== village ? `${village}, ${district}` : village;
-
-      if (res) {
-        res.innerHTML = `📍 <strong>${locationText}</strong> (లైవ్ వాతావరణం)`;
-      }
-    } catch (e) {
-      if (res) res.innerText = `✅ వాతావరణ సమాచారం అందింది (Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)})`;
-    }
-  }, (err) => {
-    if (res) {
-      res.innerText = err.code === 1 ? "GPS లొకేషన్ పర్మిషన్ అవసరం." : "లొకేషన్ పొందడం ఆలస్యమైంది, రిఫ్రెష్ నొక్కండి.";
-    }
-  }, geoOptions);
-}
-
-// Auto Execution
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", renderWeatherWidget);
+  document.addEventListener("DOMContentLoaded", window.renderWeatherWidget);
 } else {
-  renderWeatherWidget();
+  window.renderWeatherWidget();
 }
-
-window.renderWeatherWidget = renderWeatherWidget;
-window.getLiveLocationWeather = getLiveLocationWeather;
