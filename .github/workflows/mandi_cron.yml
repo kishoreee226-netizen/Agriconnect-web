@@ -36,65 +36,56 @@ jobs:
 
           urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-          # e-NAM Official Live APMC Trade Data Endpoint
-          url = 'https://enam.gov.in/web/Ajax_ctrl/trade_data_list'
-
           headers = {
-              'User-Agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
-              'Accept': 'application/json, text/javascript, */*; q=0.01',
-              'Accept-Language': 'en-US,en;q=0.9',
-              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-              'X-Requested-With': 'XMLHttpRequest',
-              'Origin': 'https://enam.gov.in',
-              'Referer': 'https://enam.gov.in/web/dashboard/trade-data'
-          }
-
-          payload = {
-              'language': 'en',
-              'state_name': '-- All --',
-              'apmc_name': '-- All --',
-              'commodity_name': '-- All --'
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+              'Accept': 'application/json'
           }
 
           records = []
-          try:
-              session = requests.Session()
-              # First hit the dashboard to grab active session cookies
-              session.get('https://enam.gov.in/web/dashboard/trade-data', headers=headers, timeout=15, verify=False)
-              
-              print('Querying live trade data from e-NAM...')
-              res = session.post(url, headers=headers, data=payload, timeout=25, verify=False)
-              
-              if res.status_code == 200 and res.text.strip():
-                  data = res.json()
-                  items = data.get('data', []) if isinstance(data, dict) else []
-                  for it in items:
-                      state = (it.get('state_name') or it.get('state') or '').strip()
-                      market = (it.get('apmc_name') or it.get('market') or '').strip()
-                      commodity = (it.get('commodity_name') or it.get('commodity') or '').strip()
-                      price = str(it.get('modal_price') or it.get('max_price') or it.get('min_price') or '0').strip()
 
-                      if state and commodity and 'national' not in market.lower() and 'all india' not in state.lower():
-                          records.append({
-                              'state': state,
-                              'district': (it.get('district_name') or it.get('district') or '').strip(),
-                              'market': market,
-                              'commodity': commodity,
-                              'modal_price': price
-                          })
-                  print(f'SUCCESS: Fetched {len(records)} authentic APMC records from e-NAM.')
-          except Exception as err:
-              print(f'eNAM Fetch notice: {err}')
+          # Direct public-access data.gov.in Agmarknet mirrors that don't block GitHub Actions
+          sources = [
+              'https://raw.githubusercontent.com/datameet/agmarknet/master/data/latest/all_india_mandi.json',
+              'https://cdn.jsdelivr.net/gh/datameet/agmarknet@master/data/latest/all_india_mandi.json',
+              'https://api.allorigins.win/raw?url=' + requests.utils.quote('https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ecb3875b39ed9319231f2&format=json&limit=1000')
+          ]
+
+          for src in sources:
+              try:
+                  print(f'Fetching live data feed: {src[:65]}...')
+                  res = requests.get(src, headers=headers, timeout=20)
+                  if res.status_code == 200 and len(res.text) > 100:
+                      payload = res.json()
+                      items = payload if isinstance(payload, list) else (payload.get('records') or payload.get('data') or [])
+                      for it in items:
+                          state = (it.get('state') or it.get('State') or it.get('state_name') or '').strip()
+                          market = (it.get('market') or it.get('Market') or it.get('apmc_name') or '').strip()
+                          commodity = (it.get('commodity') or it.get('Commodity') or it.get('commodity_name') or '').strip()
+                          price = str(it.get('modal_price') or it.get('Modal_Price') or it.get('price') or '0').strip()
+
+                          if state and commodity and 'national' not in market.lower() and 'all india' not in state.lower():
+                              records.append({
+                                  'state': state,
+                                  'district': (it.get('district') or it.get('District') or it.get('district_name') or '').strip(),
+                                  'market': market,
+                                  'commodity': commodity,
+                                  'modal_price': price
+                              })
+                      if len(records) > 0:
+                          print(f'SUCCESS: Synced {len(records)} authentic APMC records.')
+                          break
+              except Exception as err:
+                  print(f'Notice: {err}')
 
           if len(records) == 0:
-              print('CRITICAL: Live dynamic records could not be fetched.')
+              print('CRITICAL: Dynamic data stream unreachable.')
               sys.exit(1)
 
           file_path = os.path.join(os.getcwd(), 'mandi_live.json')
           with open(file_path, 'w', encoding='utf-8') as f:
               json.dump(records, f, ensure_ascii=False, indent=2)
 
-          print(f'Saved {len(records)} authentic records to {file_path}')
+          print(f'Successfully wrote {len(records)} records to {file_path}')
           "
 
       - name: Commit and Push Live Data
@@ -103,5 +94,5 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add mandi_live.json
           git status
-          git commit -m "Auto-sync live dynamic APMC rates [skip ci]" || echo "No changes"
+          git commit -m "Auto-sync real live Mandi rates [skip ci]" || echo "No changes"
           git push origin main
