@@ -31,8 +31,6 @@
 
     <!-- 6th: Weather Widget Container -->
     <div id="weather-container"></div>
-  <!-- 7th: Agri Pro Station (40+ Parameters) Container -->
-<div id="agri-station-container"></div>
   </div>
 
   <!-- Firebase SDKs -->
@@ -63,8 +61,6 @@
   <script src="farmer.js?v=999"></script>
   <script src="labour.js?v=999"></script>
   <script src="provider.js?v=999"></script>
- <script src="agri_station.js?v=999"></script>
-
 
   <!-- 5. Role Controller -->
   <script src="role.js?v=999"></script>
@@ -88,10 +84,6 @@
       if (typeof window.renderWeatherWidget === "function") {
         window.renderWeatherWidget();
       }
-    // 3.1 Agri Station
-    if (typeof window.loadAgriStation === "function") {
-        window.loadAgriStation();
-    }
 
       // 4. Role View Controller (దీని ద్వారానే లాగిన్ చెక్, హెడర్, రోల్స్ అన్నీ హ్యాండిల్ అవుతాయి)
       if (typeof applyUserRoleView === "function") {
