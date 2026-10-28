@@ -9,55 +9,20 @@ const CROP_CATEGORIES = {
   "మసాలా దినుసులు (Spices)": ["Dry Chillies", "Chilli Red", "Turmeric", "Coriander", "Garlic", "Ginger", "Cumin"]
 };
 
-// Pure Client-side Live Agmarknet Streamer
+// Instant Direct Loader
 async function fetchMandiData() {
-  const apiKey = "579b464db66ecb3875b39ed9319231f2";
-  const resourceId = "9ef84268-d588-465a-a308-a864a43d0070";
-  const rawTarget = `https://api.data.gov.in/resource/${resourceId}?api-key=${apiKey}&format=json&limit=800`;
-
-  // Multiple high-speed client routers bypassing browser-level CORS
-  const gateways = [
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(rawTarget)}`,
-    `https://corsproxy.io/?url=${encodeURIComponent(rawTarget)}`,
-    `https://thingproxy.freeboard.io/fetch/${rawTarget}`
-  ];
-
-  for (const url of gateways) {
-    try {
-      console.log("Streaming live government rates from:", url);
-      const res = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Accept": "application/json"
-        }
-      });
-
-      if (res.ok) {
-        let payload = await res.json();
-        
-        if (typeof payload === "string") {
-          try { payload = JSON.parse(payload); } catch(e){}
-        }
-
-        const items = payload.records || (Array.isArray(payload) ? payload : []);
-        if (items.length > 0) {
-          console.log(`SUCCESS: Captured ${items.length} authentic live APMC records.`);
-          return items
-            .map(r => ({
-              state: (r.state || r.State || "").trim(),
-              district: (r.district || r.District || "").trim(),
-              market: (r.market || r.Market || "").trim(),
-              commodity: (r.commodity || r.Commodity || "").trim(),
-              modal_price: String(r.modal_price || r.Modal_Price || r.price || "0").trim()
-            }))
-            .filter(r => r.state && r.commodity && !r.market.toLowerCase().includes("national") && !r.state.toLowerCase().includes("all india"));
-        }
+  try {
+    const res = await fetch("mandi_live.json?cache_bust=" + Date.now());
+    if (res.ok) {
+      const records = await res.json();
+      if (Array.isArray(records) && records.length > 0) {
+        console.log(`Loaded ${records.length} mandi records successfully!`);
+        return records;
       }
-    } catch (err) {
-      console.warn("Route unavailable, shifting:", err);
     }
+  } catch (err) {
+    console.error("Direct JSON load error:", err);
   }
-
   return [];
 }
 
@@ -152,18 +117,6 @@ function onStateChange() {
 window.renderMandiWidget = async function() {
   const container = document.getElementById("mandi-container");
   if (!container) return;
-
-  container.innerHTML = `
-    <div class="mandi-card">
-      <div class="mandi-card-header">
-        <h3>📈 మండి / Market Live ధరలు</h3>
-        <span class="mandi-badge live">🟢 Live Agmarknet</span>
-      </div>
-      <div class="mandi-body" style="text-align:center; padding:30px; color:#475569;">
-        అధికారిక Agmarknet లైవ్ డేటా లోడ్ అవుతోంది...
-      </div>
-    </div>
-  `;
 
   allMandiRecords = await fetchMandiData();
 
