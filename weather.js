@@ -1,4 +1,4 @@
-// weather.js - 100% Pure Dynamic Agri Weather & Soil Station (Zero Hardcoding)
+// weather.js - 100% Robust Dynamic Agri Weather & Soil Station
 
 function getDynamicWindDir(deg) {
   const dirs = [
@@ -48,7 +48,7 @@ window.playAgriVoice = function() {
   window.speechSynthesis.speak(utter);
 };
 
-// లైవ్ GPS పొజిషన్ మాత్రమే తీసుకుంటుంది (ఏ హార్డ్‌కోడెడ్ లొకేషన్ ఉండదు)
+// ఫోన్ నుండి రియల్ GPS కోఆర్డినేట్స్
 function getPureGPSLocation() {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
@@ -57,19 +57,23 @@ function getPureGPSLocation() {
     }
     navigator.geolocation.getCurrentPosition(
       (pos) => resolve({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
-      (err) => reject(new Error("GPS లొకేషన్ పర్మిషన్ ఆన్ చేయండి.")),
-      { enableHighAccuracy: true, timeout: 10000 }
+      (err) => reject(new Error("లొకేషన్ (GPS) ఆన్ చేయండి.")),
+      { enableHighAccuracy: true, timeout: 8000 }
     );
   });
 }
 
-// లైవ్ కోఆర్డినేట్స్ ఆధారంగా లైవ్ ఊరు పేరు తెస్తుంది
+// ఊరి పేరు డైనమిక్ గుర్తింపు (వెదర్ API ఆగకుండా స్వతంత్రంగా నడుస్తుంది)
 async function fetchPureDynamicCity(lat, lon) {
-  const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`);
-  if (!res.ok) throw new Error("లొకేషన్ పేరు పొందడం వీలుకాలేదు.");
-  const data = await res.json();
-  const place = data.locality || data.city || data.principalSubdivision || "";
-  return `📍 ${place} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E) - లైవ్ GPS`;
+  try {
+    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const place = data.locality || data.city || data.principalSubdivision || "";
+    return `📍 ${place} (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E) - లైవ్ GPS`;
+  } catch (e) {
+    return `📍 లైవ్ లొకేషన్ (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E) - లైవ్ GPS`;
+  }
 }
 
 window.renderWeatherWidget = async function() {
@@ -79,24 +83,22 @@ window.renderWeatherWidget = async function() {
   const refreshBtn = document.getElementById("weather-refresh-btn");
   if (refreshBtn) {
     refreshBtn.classList.add("btn-refresh-active");
-    refreshBtn.innerHTML = "⏳ అప్‌డేట్ అవుతోంది...";
+    refreshBtn.innerHTML = "⏳ లోడ్ అవుతోంది...";
   }
 
   try {
-    // 1. ఫోన్ నుంచి మాత్రమే రియల్ GPS కోఆర్డినేట్స్
+    // 1. ఫోన్ జీపీఎస్ కోఆర్డినేట్స్
     const loc = await getPureGPSLocation();
     const lat = loc.lat;
     const lon = loc.lon;
 
-    // 2. లైవ్ వెదర్ & సాయిల్ API కాల్
-    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,is_day,precipitation,rain,showers,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_temperature_0_to_7cm,uv_index,dew_point_2m,et0_fao_evapotranspiration,vapour_pressure_deficit,direct_radiation&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,time&timezone=auto`;
+    // 2. Open-Meteo అధికారిక పారామీటర్ల API కాల్
+    const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,is_day,precipitation,rain,weather_code,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,soil_temperature_0_to_7cm,uv_index,dew_point_2m,et0_fao_evapotranspiration,vapour_pressure_deficit,direct_radiation&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,time&timezone=auto`;
 
-    const [weatherRes, placeDisplay] = await Promise.all([
-      fetch(apiUrl),
-      fetchPureDynamicCity(lat, lon)
-    ]);
-
-    if (!weatherRes.ok) throw new Error("వాతావరణ API నుంచి డేటా రాలేదు.");
+    const weatherRes = await fetch(apiUrl);
+    if (!weatherRes.ok) {
+      throw new Error(`సర్వర్ నుంచి రెస్పాన్స్ రాలేదు (స్టేటస్: ${weatherRes.status})`);
+    }
     const data = await weatherRes.json();
 
     const c = data.current;
@@ -105,21 +107,21 @@ window.renderWeatherWidget = async function() {
     const weatherCond = parseDynamicWMO(c.weather_code, c.is_day === 1);
     const temp = Math.round(c.temperature_2m);
     const humidity = Math.round(c.relative_humidity_2m);
-    const windSpeed = Number(c.wind_speed_10m).toFixed(1);
-    const windGusts = Number(c.wind_gusts_10m).toFixed(1);
-    const windDir = getDynamicWindDir(c.wind_direction_10m);
+    const windSpeed = Number(c.wind_speed_10m || 0).toFixed(1);
+    const windGusts = Number(c.wind_gusts_10m || c.wind_speed_10m || 0).toFixed(1);
+    const windDir = getDynamicWindDir(c.wind_direction_10m || 0);
 
-    // వాస్తవ శాటిలైట్ అబ్జల్యూట్ రీడింగ్ ఆధారంగా మాత్రమే కాలిక్యులేషన్ (డెఫాల్ట్ విలువలు లేవు)
-    const sMoistTop = Math.min(Math.round(c.soil_moisture_0_to_1cm * 200), 100);
-    const sMoistRoot = Math.min(Math.round(c.soil_moisture_3_to_9cm * 200), 100);
-    const sMoistSub = Math.min(Math.round(c.soil_moisture_9_to_27cm * 200), 100);
+    // నేల తేమ శాతాలు (డైనమిక్ శాటిలైట్ అబ్జల్యూట్ రీడింగ్)
+    const sMoistTop = Math.min(Math.round((c.soil_moisture_0_to_1cm || 0) * 200), 100);
+    const sMoistRoot = Math.min(Math.round((c.soil_moisture_3_to_9cm || 0) * 200), 100);
+    const sMoistSub = Math.min(Math.round((c.soil_moisture_9_to_27cm || 0) * 200), 100);
 
-    const soilTemp = Math.round(c.soil_temperature_0_to_7cm);
-    const et0 = Number(c.et0_fao_evapotranspiration).toFixed(1);
-    const vpd = Number(c.vapour_pressure_deficit).toFixed(2);
-    const solarPow = Math.round(c.direct_radiation);
-    const rainProb = d.precipitation_probability_max[0];
-    const currentRainRate = Number(c.precipitation).toFixed(1);
+    const soilTemp = Math.round(c.soil_temperature_0_to_7cm || temp);
+    const et0 = c.et0_fao_evapotranspiration != null ? Number(c.et0_fao_evapotranspiration).toFixed(1) : "0.0";
+    const vpd = c.vapour_pressure_deficit != null ? Number(c.vapour_pressure_deficit).toFixed(2) : "0.00";
+    const solarPow = Math.round(c.direct_radiation || 0);
+    const rainProb = (d && d.precipitation_probability_max) ? d.precipitation_probability_max[0] : 0;
+    const currentRainRate = Number(c.precipitation || c.rain || 0).toFixed(1);
 
     // డైనమిక్ స్ప్రే అడ్వైజరీ
     let alertClass = "advisory-safe";
@@ -151,28 +153,34 @@ window.renderWeatherWidget = async function() {
     }
 
     dynamicVoiceData = `నమస్కారం రైతు సోదరులారా. ప్రస్తుతం ${weatherCond.text}. ${sprayVoice} ${soilVoice}`;
-    const uvDesc = c.uv_index >= 8 ? "చాలా ఎక్కువ" : (c.uv_index >= 5 ? "మధ్యస్థం" : "తక్కువ");
+    const uvDesc = (c.uv_index || 0) >= 8 ? "చాలా ఎక్కువ" : ((c.uv_index || 0) >= 5 ? "మధ్యస్థం" : "తక్కువ");
 
-    // క్యాలెండర్ ప్రకారం రాబోయే 4 రోజుల డైనమిక్ కార్డులు
+    // రాబోయే 4 రోజుల డైనమిక్ కార్డులు
     const teluguDays = ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"];
     let forecastHtml = "";
-    for (let i = 1; i <= 4; i++) {
-      const targetDate = new Date(d.time[i]);
-      const dayTitle = i === 1 ? "రేపు" : (i === 2 ? "ఎల్లుండి" : teluguDays[targetDate.getDay()]);
-      const maxT = Math.round(d.temperature_2m_max[i]);
-      const minT = Math.round(d.temperature_2m_min[i]);
-      const pMax = d.precipitation_probability_max[i];
-      const dayWmo = parseDynamicWMO(d.weather_code[i], true);
+    if (d && d.time) {
+      for (let i = 1; i <= 4; i++) {
+        if (!d.time[i]) break;
+        const targetDate = new Date(d.time[i]);
+        const dayTitle = i === 1 ? "రేపు" : (i === 2 ? "ఎల్లుండి" : teluguDays[targetDate.getDay()]);
+        const maxT = Math.round(d.temperature_2m_max[i] != null ? d.temperature_2m_max[i] : temp);
+        const minT = Math.round(d.temperature_2m_min[i] != null ? d.temperature_2m_min[i] : (temp - 5));
+        const pMax = d.precipitation_probability_max[i] || 0;
+        const dayWmo = parseDynamicWMO(d.weather_code[i] || 0, true);
 
-      forecastHtml += `
-        <div class="forecast-day-card">
-          <div class="forecast-day-title">${dayTitle}</div>
-          <div class="forecast-day-icon">${dayWmo.icon}</div>
-          <div class="forecast-day-temp">${maxT}° / ${minT}°</div>
-          <div class="forecast-day-rain">💧 ${pMax}%</div>
-        </div>
-      `;
+        forecastHtml += `
+          <div class="forecast-day-card">
+            <div class="forecast-day-title">${dayTitle}</div>
+            <div class="forecast-day-icon">${dayWmo.icon}</div>
+            <div class="forecast-day-temp">${maxT}° / ${minT}°</div>
+            <div class="forecast-day-rain">💧 ${pMax}%</div>
+          </div>
+        `;
+      }
     }
+
+    // ఊరి పేరును పొందడం
+    const placeDisplay = await fetchPureDynamicCity(lat, lon);
 
     container.innerHTML = `
       <div class="weather-card">
@@ -197,7 +205,7 @@ window.renderWeatherWidget = async function() {
             <div>🧭 గాలి దిశ: <strong>${windDir}</strong></div>
             <div>💧 గాలిలో తేమ: <strong>${humidity}%</strong></div>
             <div>🌧️ వర్ష సూచన: <strong>${rainProb}% (${currentRainRate} mm)</strong></div>
-            <div>☀️ UV ఇండెక్స్: <strong>${c.uv_index} (${uvDesc})</strong></div>
+            <div>☀️ UV ఇండెక్స్: <strong>${c.uv_index || 0} (${uvDesc})</strong></div>
           </div>
         </div>
 
@@ -265,10 +273,11 @@ window.renderWeatherWidget = async function() {
       </div>
     `;
   } catch (err) {
+    console.error("Live weather error:", err);
     container.innerHTML = `
       <div style="background:#ffffff; border-radius:18px; padding:20px; text-align:center; border:1px solid #fee2e2; max-width:480px; margin:12px auto;">
         <div style="font-size:13px; color:#ef4444; font-weight:700;">⚠️ ${err.message}</div>
-        <div style="font-size:11px; color:#64748b; margin-top:4px;">ఫోన్ లొకేషన్ (GPS) ఆన్ చేసి రీఫ్రెష్ చేయండి.</div>
+        <div style="font-size:11px; color:#64748b; margin-top:4px;">ఫోన్ లొకేషన్ (GPS) అనుమతించి రీఫ్రెష్ చేయండి.</div>
         <button onclick="window.renderWeatherWidget()" class="btn-refresh" style="margin-top:10px;">🔄 మళ్లీ ప్రయత్నించండి</button>
       </div>
     `;
