@@ -74,24 +74,40 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Deep Local Area / Street Level Reverse Geocoding
+// Deep Local Area / Colony / Street Level Reverse Geocoding
 async function fetchAccurateAreaName(lat, lon) {
   try {
     const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`);
     if (!res.ok) throw new Error();
     const d = await res.json();
-    
-    // Exact hierarchy: Street / Colony -> Mandal / Town -> District
-    const microArea = d.localityInfo?.administrative?.[4]?.name || d.localityInfo?.administrative?.[3]?.name || d.locality || "";
-    const town = d.city || d.locality || "";
+
+    const admin = d.localityInfo?.administrative || [];
+    const inform = d.localityInfo?.informative || [];
+
+    // కాలనీ, వీధి లేదా సబ్-ఏరియా పేరును వెతకడం
+    let colonyName = "";
+    for (const item of [...inform, ...admin]) {
+      // ఆర్డర్ 6 కంటే ఎక్కువ ఉంటే అది కాలనీ / వీధి అవుతుంది
+      if ((item.order >= 6 || item.adminLevel >= 8) && item.name) {
+        if (!item.name.includes("మండలం") && !item.name.includes("జిల్లా") && !item.name.includes("తెలంగాణ")) {
+          colonyName = item.name;
+          break;
+        }
+      }
+    }
+
+    const mandalOrTown = d.locality || d.city || "";
     const district = d.countrySubdivisionName || d.principalSubdivision || "";
 
     let finalParts = [];
-    if (microArea) finalParts.push(microArea);
-    if (town && town !== microArea) finalParts.push(town);
+    if (colonyName) finalParts.push(colonyName);
+    if (mandalOrTown && mandalOrTown !== colonyName) finalParts.push(mandalOrTown);
     if (district && !finalParts.includes(district)) finalParts.push(district);
 
-    return `📍 ${finalParts.join(", ")} (లైవ్ GPS)`;
+    if (finalParts.length > 0) {
+      return `📍 ${finalParts.join(", ")} (లైవ్ GPS)`;
+    }
+    return `📍 ${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E (లైవ్ GPS)`;
   } catch (e) {
     return `📍 లైవ్ లొకేషన్ (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
   }
