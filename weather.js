@@ -74,52 +74,45 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Micro-Precise Reverse Geocoding (Direct Colony -> Sub-locality -> Mandal/District)
+// Exact Micro-Location Parser (Extracts Colony / Street directly from Live GPS)
 async function fetchAccurateAreaName(lat, lon) {
   try {
-    // 1. OpenStreetMap Reverse Search (Zoom level 17 - Colony/Locality precision)
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=17&format=json&addressdetails=1&accept-language=te,en`);
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=te,en`;
+    const res = await fetch(url);
     if (res.ok) {
       const d = await res.json();
-      const a = d.address || {};
+      
+      // Nominatim ఇచ్చే పూర్తి చిరునామా నుండి భాగాలు
+      const fullDisplay = d.display_name || "";
+      const rawParts = fullDisplay.split(",").map(s => s.trim()).filter(Boolean);
 
-      // కాలనీ, సబర్బ్, రెసిడెన్షియల్ లేదా లోకల్ ఏరియా
-      const colony = a.neighbourhood || a.suburb || a.residential || a.quarter || a.hamlet || "";
-      // గ్రామం లేదా పట్టణం
-      const locality = a.village || a.town || a.city || a.municipality || "";
-      // మండలం లేదా జిల్లా
-      const district = a.county || a.state_district || a.district || "";
+      // చిరునామాలోని మొదటి 1-2 పదాలే కాలనీ / వీధి / గ్రామం అవుతాయి
+      let cleanParts = [];
+      for (const part of rawParts) {
+        const lower = part.toLowerCase();
+        // పిన్‌కోడ్, దేశం, రాష్ట్రం, బేసిన్ లాంటివి తీసివేయడం
+        if (
+          !/^\d{5,6}$/.test(part) &&
+          !lower.includes("india") &&
+          !lower.includes("తెలంగాణ") &&
+          !lower.includes("telangana") &&
+          !lower.includes("basin")
+        ) {
+          // ఒకే పదం మళ్లీ రాకుండా చూసుకోవడం
+          if (!cleanParts.some(cp => cp.toLowerCase() === lower)) {
+            cleanParts.push(part);
+          }
+        }
+        if (cleanParts.length >= 3) break; // కేవలం కాలనీ, ఊరు, జిల్లా సరిపోతాయి
+      }
 
-      let parts = [];
-      if (colony) parts.push(colony);
-      if (locality && !parts.some(p => p.toLowerCase() === locality.toLowerCase())) parts.push(locality);
-      if (district && !parts.some(p => p.toLowerCase() === district.toLowerCase())) parts.push(district);
-
-      if (parts.length > 0) {
-        return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
+      if (cleanParts.length > 0) {
+        return `📍 ${cleanParts.join(", ")} (లైవ్ GPS)`;
       }
     }
-  } catch (e1) {
-    // network fallback
+  } catch (err) {
+    // network issue
   }
-
-  // 2. క్లీన్ ఫాల్‌బ్యాక్
-  try {
-    const res2 = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`);
-    if (res2.ok) {
-      const data2 = await res2.json();
-      const p = data2.features?.[0]?.properties || {};
-      
-      const loc = p.district || p.locality || p.village || p.town || p.city || "";
-      const dist = p.county || p.state || "";
-
-      let parts = [];
-      if (loc) parts.push(loc);
-      if (dist && !parts.includes(dist)) parts.push(dist);
-
-      if (parts.length > 0) return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
-    }
-  } catch (e2) {}
 
   return `📍 GPS: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (లైవ్ GPS)`;
 }
