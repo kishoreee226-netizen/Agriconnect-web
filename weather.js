@@ -157,7 +157,8 @@ window.renderWeatherWidget = async function() {
       "weather_code",
       "temperature_2m_max",
       "temperature_2m_min",
-      "precipitation_probability_max"
+      "precipitation_probability_max",      "sunrise",
+    "sunset"
     ].join(",");
 
     const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=${currentVars}&daily=${dailyVars}&timezone=auto`;
