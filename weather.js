@@ -760,7 +760,7 @@ window.applySelectedFarmLocation = async function() {
   fetchAreaNameForFarm(selectedFarmLat, selectedFarmLon);
 
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,uv_index&hourly=soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,precipitation_probability,precipitation,dew_point_2m&daily=shortwave_radiation_sum,sunrise,sunset&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,uv_index&hourly=soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,precipitation_probability,precipitation,dew_point_2m&daily=shortwave_radiation_sum,sunrise,sunset,precipitation_probability_max,precipitation_sum&timezone=auto`;
     const res = await fetch(url);
     const d = await res.json();
 
@@ -780,6 +780,45 @@ window.applySelectedFarmLocation = async function() {
       const sunsetElem = document.getElementById("farm_sunset");
       if (sunriseElem) sunriseElem.innerText = `🌅 సూర్యోదయం: ${formatTime(d.daily.sunrise[0])}`;
       if (sunsetElem) sunsetElem.innerText = `🌇 సూర్యాస్తమయం: ${formatTime(d.daily.sunset[0])}`;
+    }
+
+    // 3-Day Rain Forecast for Farm
+    const rainContainer = document.getElementById("farm_3day_rain");
+    if (rainContainer && d.daily && d.daily.time) {
+      const daysTelugu = ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"];
+      let rainHtml = "";
+      
+      // రాబోయే 3 రోజులు (రేపు, ఎల్లుండి, మూడో రోజు)
+      for (let i = 1; i <= 3; i++) {
+        if (!d.daily.time[i]) break;
+        const dt = new Date(d.daily.time[i]);
+        const dayName = i === 1 ? "రేపు" : (i === 2 ? "ఎల్లుండి" : daysTelugu[dt.getDay()]);
+        const pMax = d.daily.precipitation_probability_max ? (d.daily.precipitation_probability_max[i] ?? 0) : 0;
+        
+        let statusText = "పొడిగా";
+        let statusColor = "#166534";
+        let rainIcon = "☀️";
+        
+        if (pMax >= 60) {
+          statusText = "భారీ వర్షం";
+          statusColor = "#dc2626";
+          rainIcon = "⛈️";
+        } else if (pMax >= 30) {
+          statusText = "తేలికపాటి";
+          statusColor = "#d97706";
+          rainIcon = "🌦️";
+        }
+
+        rainHtml += `
+          <div style="flex: 1; background: #ffffff; border: 1px solid #dcfce7; border-radius: 8px; padding: 6px 4px; text-align: center;">
+            <div style="font-size: 11px; font-weight: bold; color: #374151;">${dayName}</div>
+            <div style="font-size: 16px; margin: 2px 0;">${rainIcon}</div>
+            <div style="font-size: 11px; font-weight: bold; color: #2563eb;">${pMax}%</div>
+            <div style="font-size: 9.5px; color: ${statusColor}; font-weight: 600;">${statusText}</div>
+          </div>
+        `;
+      }
+      rainContainer.innerHTML = rainHtml;
     }
 
     if (d && d.hourly) {
