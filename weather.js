@@ -811,7 +811,14 @@ window.applySelectedFarmLocation = async function() {
   fetchAreaNameForFarm(selectedFarmLat, selectedFarmLon);
 
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,uv_index&hourly=soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,precipitation_probability,precipitation,dew_point_2m&daily=shortwave_radiation_sum,sunrise,sunset,precipitation_probability_max,precipitation_sum&timezone=auto`;
+
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}` +
+      `&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,uv_index,cape` +
+      `&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,dew_point_2m` +
+      `&daily=shortwave_radiation_sum,sunrise,sunset,precipitation_probability_max,precipitation_sum` +
+      `&past_days=1&timezone=auto`;
+
+
     const res = await fetch(url);
     const d = await res.json();
 
