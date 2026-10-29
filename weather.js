@@ -74,7 +74,7 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Pure Village -> Mandal -> District Geocoding
+// Pure Direct Reverse Geocoding: Village, Mandal, District
 async function fetchAccurateAreaName(lat, lon) {
   try {
     const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=te,en`;
@@ -83,44 +83,26 @@ async function fetchAccurateAreaName(lat, lon) {
       const d = await res.json();
       const a = d.address || {};
 
-      // 1. Village (Grāmam / Hamlet / Colony)
-      const village = a.village || a.hamlet || a.suburb || a.neighbourhood || a.residential || "";
+      // 1. Village / Colony
+      const village = a.village || a.suburb || a.neighbourhood || a.hamlet || a.residential || "";
 
-      // 2. Mandal (Town / City / Sub-district)
+      // 2. Mandal / Town
       const mandal = a.county || a.town || a.city || a.municipality || "";
 
-      // 3. District (Jillā)
+      // 3. District
       const district = a.state_district || a.district || "";
 
       let parts = [];
-
-      // Helper: Same name malla malla repeat avvakunda chuse filter
-      const addUniquePart = (name) => {
-        if (!name) return;
-        const cleanName = name.trim();
-        const lower = cleanName.toLowerCase().replace(/[\s-]/g, "");
-        
-        const alreadyExists = parts.some(p => {
-          const pLower = p.toLowerCase().replace(/[\s-]/g, "");
-          return pLower.includes(lower) || lower.includes(pLower);
-        });
-
-        if (!alreadyExists) {
-          parts.push(cleanName);
-        }
-      };
-
-      // Exact order: Village -> Mandal -> District
-      addUniquePart(village);
-      addUniquePart(mandal);
-      addUniquePart(district);
+      if (village) parts.push(village);
+      if (mandal) parts.push(mandal);
+      if (district) parts.push(district);
 
       if (parts.length > 0) {
         return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
       }
     }
   } catch (err) {
-    // Network fallback
+    // network fallback
   }
 
   return `📍 GPS: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (లైవ్ GPS)`;
