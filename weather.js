@@ -74,42 +74,49 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Deep Local Area / Colony / Street Level Reverse Geocoding
+// Clean Reverse Geocoding (Direct Colony / Village -> Mandal -> District)
 async function fetchAccurateAreaName(lat, lon) {
   try {
-    const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`);
-    if (!res.ok) throw new Error();
-    const d = await res.json();
+    // 1. Direct OpenStreetMap (Nominatim) call - Colony / Street level
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=te,en`);
+    if (res.ok) {
+      const data = await res.json();
+      const a = data.address || {};
 
-    const admin = d.localityInfo?.administrative || [];
-    const inform = d.localityInfo?.informative || [];
+      // 1st priority: Colony, Street, leda Village
+      const colonyOrVillage = a.suburb || a.neighbourhood || a.residential || a.village || a.road || "";
+      // 2nd priority: Town leda Mandal
+      const townOrMandal = a.town || a.city || a.municipality || a.county || "";
+      // 3rd priority: District
+      const district = a.state_district || a.district || "";
 
-    // కాలనీ, వీధి లేదా సబ్-ఏరియా పేరును వెతకడం
-    let colonyName = "";
-    for (const item of [...inform, ...admin]) {
-      // ఆర్డర్ 6 కంటే ఎక్కువ ఉంటే అది కాలనీ / వీధి అవుతుంది
-      if ((item.order >= 6 || item.adminLevel >= 8) && item.name) {
-        if (!item.name.includes("మండలం") && !item.name.includes("జిల్లా") && !item.name.includes("తెలంగాణ")) {
-          colonyName = item.name;
-          break;
-        }
+      let parts = [];
+      if (colonyOrVillage) parts.push(colonyOrVillage);
+      if (townOrMandal && townOrMandal !== colonyOrVillage) parts.push(townOrMandal);
+      if (district && !parts.includes(district)) parts.push(district);
+
+      if (parts.length > 0) {
+        return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
       }
     }
+    throw new Error();
+  } catch (err) {
+    // 2. Simple Fallback (Kevalam Town & District matrame)
+    try {
+      const res2 = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`);
+      const d = await res2.json();
 
-    const mandalOrTown = d.locality || d.city || "";
-    const district = d.countrySubdivisionName || d.principalSubdivision || "";
+      const localName = d.locality || d.city || "";
+      const distName = d.countrySubdivisionName || d.principalSubdivision || "";
 
-    let finalParts = [];
-    if (colonyName) finalParts.push(colonyName);
-    if (mandalOrTown && mandalOrTown !== colonyName) finalParts.push(mandalOrTown);
-    if (district && !finalParts.includes(district)) finalParts.push(district);
+      let fallbackParts = [];
+      if (localName) fallbackParts.push(localName);
+      if (distName && distName !== localName) fallbackParts.push(distName);
 
-    if (finalParts.length > 0) {
-      return `📍 ${finalParts.join(", ")} (లైవ్ GPS)`;
+      return `📍 ${fallbackParts.join(", ")} (లైవ్ GPS)`;
+    } catch (e2) {
+      return `📍 లైవ్ లొకేషన్ (లైవ్ GPS)`;
     }
-    return `📍 ${lat.toFixed(3)}°N, ${lon.toFixed(3)}°E (లైవ్ GPS)`;
-  } catch (e) {
-    return `📍 లైవ్ లొకేషన్ (${lat.toFixed(2)}°N, ${lon.toFixed(2)}°E)`;
   }
 }
 
