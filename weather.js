@@ -369,6 +369,30 @@ window.renderWeatherWidget = async function() {
               </button>
             </div>
 
+            <!-- Action Strip: ఆడియో, వాట్సాప్, సేవ్ పొలం -->
+            <div style="display: flex; gap: 8px; margin: 10px 0 12px 0; overflow-x: auto; padding-bottom: 4px;">
+              <button 
+                type="button" 
+                onclick="speakFarmAdvisory()" 
+                style="flex: 1; min-width: 95px; background: #e0f2fe; color: #0284c7; border: 1px solid #7dd3fc; border-radius: 8px; padding: 6px 8px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                🔊 సలహా వినండి
+              </button>
+
+              <button 
+                type="button" 
+                onclick="shareFarmToWhatsApp()" 
+                style="flex: 1; min-width: 95px; background: #dcfce7; color: #15803d; border: 1px solid #86efac; border-radius: 8px; padding: 6px 8px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                📲 వాట్సాప్ షేర్
+              </button>
+
+              <button 
+                type="button" 
+                onclick="saveCurrentFarmLocation()" 
+                style="flex: 1; min-width: 95px; background: #fef9c3; color: #a16207; border: 1px solid #fde047; border-radius: 8px; padding: 6px 8px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;">
+                ⭐ పొలం సేవ్ చేయి
+              </button>
+            </div>
+
             <div class="agri-drawer-grid">
               <div class="agri-metric-tile">
                 <div class="agri-metric-label">పైనేల తేమ (0-1 cm)</div>
