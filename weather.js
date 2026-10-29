@@ -403,6 +403,78 @@ window.renderWeatherWidget = async function() {
                 <div class="agri-metric-label">ఈదురుగాలులు (Gusts)</div>
                 <div id="farm_gusts" class="agri-metric-value text-dark">--</div>
               </div>
+              <!-- 9. వర్ష సూచన -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">వర్ష సూచన (Rain Forecast)</div>
+                <div id="farm_rain_prob" class="agri-metric-value text-blue">--</div>
+              </div>
+
+              <!-- 10. వర్ష స్థితి -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">వర్ష స్థితి (Live Rain)</div>
+                <div id="farm_rain_status" class="agri-metric-value text-green">--</div>
+              </div>
+
+              <!-- 11. పొలం ఉష్ణోగ్రత -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">పొలం ఉష్ణోగ్రత (Temp)</div>
+                <div id="farm_air_temp" class="agri-metric-value text-orange">--</div>
+              </div>
+
+              <!-- 12. గాలిలో తేమ -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">గాలిలో తేమ (Humidity)</div>
+                <div id="farm_air_humidity" class="agri-metric-value text-blue">--</div>
+              </div>
+
+              <!-- 13. గాలి వేగం & దిశ -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">గాలి వేగం & దిశ</div>
+                <div id="farm_wind_speed" class="agri-metric-value text-dark">--</div>
+              </div>
+
+              <!-- 14. మంచు బిందువు -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">మంచు బిందువు (Dew Point)</div>
+                <div id="farm_dew_point" class="agri-metric-value text-green">--</div>
+              </div>
+
+              <!-- 15. UV ఇండెక్స్ -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">UV ఇండెక్స్ (ఎండ తీవ్రత)</div>
+                <div id="farm_uv_index" class="agri-metric-value text-orange">--</div>
+              </div>
+
+              <!-- 16. స్ప్రే సలహా -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">మందుల స్ప్రే (Spray Alert)</div>
+                <div id="farm_spray_advice" class="agri-metric-value" style="font-size: 11px; font-weight: bold; margin-top: 4px;">--</div>
+              </div>
+
+              <!-- 17. నీటి తడి సలహా -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">నీటి తడి (Irrigation Alert)</div>
+                <div id="farm_water_advice" class="agri-metric-value" style="font-size: 11px; font-weight: bold; margin-top: 4px;">--</div>
+              </div>
+
+              <!-- 18. ఎరువుల సమయం -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">ఎరువుల సమయం (Fertilizer)</div>
+                <div id="farm_fert_advice" class="agri-metric-value" style="font-size: 11px; font-weight: bold; margin-top: 4px;">--</div>
+              </div>
+
+              <!-- 19. తెగుళ్ల & బూజు ముప్పు -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">తెగుళ్ల ముప్పు (Pest/Fungus)</div>
+                <div id="farm_pest_advice" class="agri-metric-value" style="font-size: 11px; font-weight: bold; margin-top: 4px;">--</div>
+              </div>
+
+              <!-- 20. కోత & ఆరబోత అనుకూలత -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">కోత & ఆరబోత (Harvest)</div>
+                <div id="farm_harvest_advice" class="agri-metric-value" style="font-size: 11px; font-weight: bold; margin-top: 4px;">--</div>
+              </div>
+
             </div>
           </div>
 
