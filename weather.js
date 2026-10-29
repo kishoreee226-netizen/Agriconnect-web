@@ -651,7 +651,7 @@ window.closeFarmMapModal = function() {
   if (modal) modal.style.display = "none";
 };
 
-// 5. పిన్ వివరాల ఆధారంగా డేటాను తెచ్చి కొత్త 8 కార్డ్స్‌లో చూపించడం
+// 5. పిన్ వివరాల ఆధారంగా డేటాను తెచ్చి కొత్త 8+12 మొత్తం 20 కార్డ్స్‌లో చూపించడం
 window.applySelectedFarmLocation = async function() {
   if (!selectedFarmLat || !selectedFarmLon) return;
 
@@ -663,21 +663,23 @@ window.applySelectedFarmLocation = async function() {
   fetchAreaNameForFarm(selectedFarmLat, selectedFarmLon);
 
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}&current=soil_temperature_0cm,wind_gusts_10m&hourly=soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit&daily=shortwave_radiation_sum&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,uv_index&hourly=soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,precipitation_probability,precipitation,dew_point_2m&daily=shortwave_radiation_sum&timezone=auto`;
     const res = await fetch(url);
     const d = await res.json();
 
     if (d && d.hourly) {
       const h = d.hourly;
+      const cur = d.current || {};
       const idx = 0;
 
+      // 1 to 8 Soil Metrics
       const sm0_1 = h.soil_moisture_0_to_1cm ? Math.round(h.soil_moisture_0_to_1cm[idx] * 100) : "--";
       const sm3_9 = h.soil_moisture_3_to_9cm ? Math.round(h.soil_moisture_3_to_9cm[idx] * 100) : "--";
       const sm9_27 = h.soil_moisture_9_to_27cm ? Math.round(h.soil_moisture_9_to_27cm[idx] * 100) : "--";
-      const sTemp = d.current && d.current.soil_temperature_0cm ? Math.round(d.current.soil_temperature_0cm) : "--";
+      const sTemp = cur.soil_temperature_0cm !== undefined ? Math.round(cur.soil_temperature_0cm) : "--";
       const et0 = h.et0_fao_evapotranspiration ? h.et0_fao_evapotranspiration[idx].toFixed(1) : "--";
       const vpd = h.vapour_pressure_deficit ? h.vapour_pressure_deficit[idx].toFixed(2) : "--";
-      const gusts = d.current && d.current.wind_gusts_10m ? Math.round(d.current.wind_gusts_10m) : "--";
+      const gusts = cur.wind_gusts_10m !== undefined ? Math.round(cur.wind_gusts_10m) : "--";
       const solar = d.daily && d.daily.shortwave_radiation_sum ? Math.round(d.daily.shortwave_radiation_sum[0] / 3.6) : "410";
 
       document.getElementById("farm_soil_0_1").innerText = `${sm0_1}%`;
@@ -689,6 +691,136 @@ window.applySelectedFarmLocation = async function() {
       document.getElementById("farm_gusts").innerText = `${gusts} km/h`;
       document.getElementById("farm_solar").innerText = `${solar} W/m²`;
 
+      // 9. వర్ష సూచన
+      const rainProb = h.precipitation_probability ? h.precipitation_probability[idx] : 0;
+      const rainMm = h.precipitation ? h.precipitation[idx] : 0;
+      const rainProbElem = document.getElementById("farm_rain_prob");
+      if (rainProbElem) rainProbElem.innerText = `${rainProb}% (${rainMm.toFixed(1)} mm)`;
+
+      // 10. వర్ష స్థితి
+      const liveRain = cur.precipitation || cur.rain || 0;
+      const rainStatusElem = document.getElementById("farm_rain_status");
+      if (rainStatusElem) {
+        if (liveRain > 2.5) {
+          rainStatusElem.innerText = `🌧️ వర్షం (${liveRain} mm)`;
+          rainStatusElem.style.color = "#0288d1";
+        } else if (liveRain > 0) {
+          rainStatusElem.innerText = `🌦️ జల్లులు (${liveRain} mm)`;
+          rainStatusElem.style.color = "#0288d1";
+        } else if (rainProb >= 50) {
+          rainStatusElem.innerText = "☁️ పడే అవకాశం ఉంది";
+          rainStatusElem.style.color = "#e65100";
+        } else {
+          rainStatusElem.innerText = "☀️ వర్షం లేదు (పొడిగా)";
+          rainStatusElem.style.color = "#2e7d32";
+        }
+      }
+
+      // 11. ఉష్ణోగ్రత
+      const airTemp = cur.temperature_2m !== undefined ? Math.round(cur.temperature_2m) : "--";
+      const airTempElem = document.getElementById("farm_air_temp");
+      if (airTempElem) airTempElem.innerText = `${airTemp}°C`;
+
+      // 12. గాలిలో తేమ
+      const airHum = cur.relative_humidity_2m !== undefined ? Math.round(cur.relative_humidity_2m) : "--";
+      const airHumElem = document.getElementById("farm_air_humidity");
+      if (airHumElem) airHumElem.innerText = `${airHum}%`;
+
+      // 13. గాలి వేగం & దిశ
+      const wSpeed = cur.wind_speed_10m !== undefined ? Math.round(cur.wind_speed_10m) : 0;
+      const wDirDeg = cur.wind_direction_10m || 0;
+      const directions = ["ఉత్తరం (N)", "ఈశాన్యం (NE)", "తూర్పు (E)", "ఆగ్నేయం (SE)", "దక్షిణం (S)", "నైరుతి (SW)", "పడమర (W)", "వాయువ్యం (NW)"];
+      const wDirText = directions[Math.round(wDirDeg / 45) % 8];
+      const windSpeedElem = document.getElementById("farm_wind_speed");
+      if (windSpeedElem) windSpeedElem.innerText = `${wSpeed} km/h (${wDirText})`;
+
+      // 14. మంచు బిందువు
+      const dewPt = h.dew_point_2m ? Math.round(h.dew_point_2m[idx]) : "--";
+      const dewElem = document.getElementById("farm_dew_point");
+      if (dewElem) dewElem.innerText = `${dewPt}°C`;
+
+      // 15. UV ఇండెక్స్
+      const uvIdx = cur.uv_index !== undefined ? Math.round(cur.uv_index) : 0;
+      let uvLabel = "తక్కువ";
+      if (uvIdx >= 8) uvLabel = "చాలా ఎక్కువ";
+      else if (uvIdx >= 6) uvLabel = "ఎక్కువ";
+      else if (uvIdx >= 3) uvLabel = "మధ్యస్థం";
+      const uvElem = document.getElementById("farm_uv_index");
+      if (uvElem) uvElem.innerText = `${uvIdx} (${uvLabel})`;
+
+      // 16. స్ప్రే సలహా
+      const sprayElem = document.getElementById("farm_spray_advice");
+      if (sprayElem) {
+        if (liveRain > 0 || rainProb >= 60) {
+          sprayElem.innerText = "❌ స్ప్రే వద్దు (వర్షం)";
+          sprayElem.style.color = "#c62828";
+        } else if (wSpeed > 18 || (gusts !== "--" && gusts > 25)) {
+          sprayElem.innerText = "⚠️ స్ప్రే వద్దు (ఈదురుగాలులు)";
+          sprayElem.style.color = "#e65100";
+        } else {
+          sprayElem.innerText = "✅ స్ప్రేకి అనుకూలం";
+          sprayElem.style.color = "#2e7d32";
+        }
+      }
+
+      // 17. నీటి తడి సలహా
+      const waterElem = document.getElementById("farm_water_advice");
+      if (waterElem) {
+        if (liveRain > 0 || (rainProb >= 65 && rainMm >= 3)) {
+          waterElem.innerText = "🌧️ తడి వద్దు (వర్షం సూచన)";
+          waterElem.style.color = "#0288d1";
+        } else if (sm3_9 !== "--" && sm3_9 < 35) {
+          waterElem.innerText = "⚠️ నీరు పెట్టాలి (తేమ తక్కువ)";
+          waterElem.style.color = "#c62828";
+        } else {
+          waterElem.innerText = "✅ తేమ సరిపడా ఉంది";
+          waterElem.style.color = "#2e7d32";
+        }
+      }
+
+      // 18. ఎరువుల సమయం
+      const fertElem = document.getElementById("farm_fert_advice");
+      if (fertElem) {
+        if (liveRain > 0 || rainProb >= 60) {
+          fertElem.innerText = "❌ ఎరువులు వేయవద్దు (వర్షం)";
+          fertElem.style.color = "#c62828";
+        } else if (sm3_9 !== "--" && sm3_9 >= 35) {
+          fertElem.innerText = "✅ ఎరువులకు అనుకూలం";
+          fertElem.style.color = "#2e7d32";
+        } else {
+          fertElem.innerText = "⚠️ తడి ఇచ్చిన తర్వాత వేయండి";
+          fertElem.style.color = "#e65100";
+        }
+      }
+
+      // 19. తెగుళ్ల ముప్పు
+      const pestElem = document.getElementById("farm_pest_advice");
+      if (pestElem) {
+        if (airHum !== "--" && airHum >= 80 && airTemp >= 20 && airTemp <= 32) {
+          pestElem.innerText = "⚠️ బూజు/ఫంగస్ ముప్పు ఎక్కువ";
+          pestElem.style.color = "#c62828";
+        } else {
+          pestElem.innerText = "✅ సాధారణ స్థితి (ముప్పు తక్కువ)";
+          pestElem.style.color = "#2e7d32";
+        }
+      }
+
+      // 20. కోత & ఆరబోత
+      const harvestElem = document.getElementById("farm_harvest_advice");
+      if (harvestElem) {
+        if (liveRain > 0 || rainProb >= 40) {
+          harvestElem.innerText = "❌ ఆరబోయవద్దు (వర్షం ముప్పు)";
+          harvestElem.style.color = "#c62828";
+        } else if (airHum !== "--" && airHum < 65 && uvIdx >= 4) {
+          harvestElem.innerText = "☀️ కోత & ఆరబోతకు అనుకూలం";
+          harvestElem.style.color = "#2e7d32";
+        } else {
+          harvestElem.innerText = "☁️ మధ్యస్థం (జాగ్రత్త అవసరం)";
+          harvestElem.style.color = "#e65100";
+        }
+      }
+
+      // Soil badge
       const statusElem = document.getElementById("farm_soil_status");
       if (statusElem) {
         if (sm3_9 >= 60) statusElem.innerText = "💧 తడి పుష్కలం";
@@ -697,7 +829,7 @@ window.applySelectedFarmLocation = async function() {
       }
     }
   } catch (err) {
-    console.error("Farm soil fetch error:", err);
+    console.error("Farm metrics fetch error:", err);
   }
 };
 
