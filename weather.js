@@ -530,6 +530,50 @@ window.renderWeatherWidget = async function() {
 
       </div>
     `;
+    // Main Weather Sun Tracker Logic
+    if (d && d.sunrise && d.sunset) {
+      const formatTime = (isoStr) => {
+        if (!isoStr) return "--";
+        const dt = new Date(isoStr);
+        let h = dt.getHours();
+        const m = dt.getMinutes().toString().padStart(2, '0');
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        return `${h}:${m} ${ampm}`;
+      };
+
+      const riseTime = new Date(d.sunrise[0]).getTime();
+      const setTime = new Date(d.sunset[0]).getTime();
+      const curTime = new Date().getTime();
+
+      const riseElem = document.getElementById("main_sunrise");
+      const setElem = document.getElementById("main_sunset");
+      const barElem = document.getElementById("main_sun_bar");
+      const cursorElem = document.getElementById("main_sun_cursor");
+      const statusElem = document.getElementById("main_sun_status");
+
+      if (riseElem) riseElem.innerText = `🌅 ${formatTime(d.sunrise[0])}`;
+      if (setElem) setElem.innerText = `🌇 ${formatTime(d.sunset[0])}`;
+
+      let percent = 0;
+      if (curTime < riseTime) {
+        percent = 0;
+        if (statusElem) statusElem.innerText = "ఇంకా తెల్లవారలేదు (రాత్రి)";
+        if (cursorElem) cursorElem.innerText = "🌙";
+      } else if (curTime > setTime) {
+        percent = 100;
+        if (statusElem) statusElem.innerText = "సూర్యాస్తమయం అయింది (రాత్రి)";
+        if (cursorElem) cursorElem.innerText = "🌙";
+      } else {
+        percent = Math.round(((curTime - riseTime) / (setTime - riseTime)) * 100);
+        if (statusElem) statusElem.innerText = `పగటి సమయం (${percent}%)`;
+        if (cursorElem) cursorElem.innerText = "☀️";
+      }
+
+      if (barElem) barElem.style.width = `${percent}%`;
+      if (cursorElem) cursorElem.style.left = `${percent}%`;
+    }
+
   } catch (err) {
     container.innerHTML = `
       <div style="background:#ffffff; border-radius:18px; padding:20px; text-align:center; border:1px solid #fee2e2; max-width:480px; margin:12px auto;">
