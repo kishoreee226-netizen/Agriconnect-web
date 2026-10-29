@@ -562,7 +562,7 @@ window.renderWeatherWidget = async function() {
             </div>
             <!-- 24-Hour Slider -->
             <div style="margin-top: 14px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px;">
-              <div style="font-size: 11.5px; font-weight: 700; color: #cbd5e1; margin-bottom: 8px;">
+              <div style="font-size: 11.5px; font-weight: 700; color: #1e293b; margin-bottom: 8px;">
                 🕒 రాబోయే 24 గంటల వాతావరణం (Hourly Slider)
               </div>
               <div id="farm_hourly_slider" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
@@ -1135,7 +1135,7 @@ window.applySelectedFarmLocation = async function() {
 
           hHtml += `
             <div style="min-width: 58px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px 3px; text-align: center; flex-shrink: 0;">
-              <div style="font-size: 10px; color: #94a3b8;">${hr} ${ampm}</div>
+              <div style="font-size: 10px; color: #64748b;">${hr} ${ampm}</div>
               <div style="font-size: 15px; margin: 2px 0;">${icon}</div>
               <div style="font-size: 11px; font-weight: 700; color: #0f172a;">${tempVal}°C</div>
               <div style="font-size: 10px; color: #38bdf8; font-weight: 600;">${prob}%</div>
