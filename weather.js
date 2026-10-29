@@ -518,8 +518,17 @@ window.renderWeatherWidget = async function() {
                 <div class="agri-metric-label">కోత & ఆరబోత (Harvest)</div>
                 <div id="farm_harvest_advice" class="agri-metric-value" style="font-size: 11px; font-weight: bold; margin-top: 4px;">--</div>
               </div>
-
             </div>
+            <!-- 3-Day Rain Forecast Strip -->
+            <div style="margin-top: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px;">
+              <div style="font-size: 11.5px; font-weight: bold; color: #166534; margin-bottom: 8px;">
+                🌧️ రాబోయే 3 రోజుల వర్ష సూచన (పొలం ప్రాంతం)
+              </div>
+              <div id="farm_3day_rain" style="display: flex; gap: 8px; justify-content: space-between;">
+                <!-- JS tho auto fill avthundi -->
+              </div>
+            </div>
+
           </div>
 
         </details>
