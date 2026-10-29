@@ -559,6 +559,21 @@ window.renderWeatherWidget = async function() {
                 <div id="farm_fungus_val" class="agri-metric-value text-orange" style="font-size: 12.5px;">--</div>
                 <div id="farm_fungus_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
               </div>
+<!-- Row: Card 27 & Card 28 -->
+<!-- Card 27: Cold, Frost & Snow Alert -->
+<div class="agri-metric-tile">
+  <div class="agri-metric-label">చలి & హిమపాతం (Cold & Snow)</div>
+  <div id="farm_cold_val" class="agri-metric-value" style="font-size: 13px;">--</div>
+  <div id="farm_cold_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+</div>
+
+<!-- Card 28: Crop Growth (GDD) -->
+<div class="agri-metric-tile">
+  <div class="agri-metric-label">ఎదుగుదల వేగం (Crop GDD)</div>
+  <div id="farm_gdd_val" class="agri-metric-value" style="font-size: 13px;">--</div>
+  <div id="farm_gdd_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+</div>
+
             </div>
            <!-- 24-Hour Slider -->
             <div style="margin-top: 10px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 7px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
