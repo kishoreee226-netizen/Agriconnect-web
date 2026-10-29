@@ -799,7 +799,7 @@ window.closeFarmMapModal = function() {
   if (modal) modal.style.display = "none";
 };
 
-// 5. పిన్ వివరాల ఆధారంగా డేటాను తెచ్చి కొత్త 8+12 మొత్తం 20 కార్డ్స్‌లో చూపించడం
+// 5. పిన్ వివరాల ఆధారంగా డేటాను తెచ్చి మొత్తం 26 కార్డ్స్ + స్లైడర్‌లో చూపించడం
 window.applySelectedFarmLocation = async function() {
   if (!selectedFarmLat || !selectedFarmLon) return;
 
@@ -811,13 +811,11 @@ window.applySelectedFarmLocation = async function() {
   fetchAreaNameForFarm(selectedFarmLat, selectedFarmLon);
 
   try {
-
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}` +
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}` +
       `&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,soil_temperature_0cm,uv_index,cape` +
       `&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code,soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,dew_point_2m` +
       `&daily=shortwave_radiation_sum,sunrise,sunset,precipitation_probability_max,precipitation_sum` +
       `&past_days=1&timezone=auto`;
-
 
     const res = await fetch(url);
     const d = await res.json();
@@ -845,18 +843,17 @@ window.applySelectedFarmLocation = async function() {
     if (rainContainer && d.daily && d.daily.time) {
       const daysTelugu = ["ఆది", "సోమ", "మంగళ", "బుధ", "గురు", "శుక్ర", "శని"];
       let rainHtml = "";
-      
-      // రాబోయే 3 రోజులు (రేపు, ఎల్లుండి, మూడో రోజు)
+
       for (let i = 1; i <= 3; i++) {
         if (!d.daily.time[i]) break;
         const dt = new Date(d.daily.time[i]);
         const dayName = i === 1 ? "రేపు" : (i === 2 ? "ఎల్లుండి" : daysTelugu[dt.getDay()]);
         const pMax = d.daily.precipitation_probability_max ? (d.daily.precipitation_probability_max[i] ?? 0) : 0;
-        
+
         let statusText = "పొడిగా";
         let statusColor = "#166534";
         let rainIcon = "☀️";
-        
+
         if (pMax >= 60) {
           statusText = "భారీ వర్షం";
           statusColor = "#dc2626";
@@ -1038,6 +1035,114 @@ window.applySelectedFarmLocation = async function() {
         if (sm3_9 >= 60) statusElem.innerText = "💧 తడి పుష్కలం";
         else if (sm3_9 >= 35) statusElem.innerText = "🌱 సాగుకు అనుకూలం";
         else statusElem.innerText = "⚠️ నీరు అవసరం";
+      }
+
+      // ========================================================
+      // ఇక్కడి నుండి కొత్త 21 - 26 కార్డ్స్ & 24-HR స్లైడర్ కోడ్
+      // ========================================================
+
+      // 21. పిడుగుల ముప్పు (CAPE Risk)
+      const curCape = cur.cape || 0;
+      const capeVal = document.getElementById("farm_cape_val");
+      const capeSub = document.getElementById("farm_cape_sub");
+      if (capeVal) {
+        if (curCape > 800) {
+          capeVal.innerText = "తీవ్ర ముప్పు!";
+          capeVal.style.color = "#ef4444";
+          if (capeSub) capeSub.innerText = "పిడుగుల ముప్పు ఉంది";
+        } else if (curCape > 350) {
+          capeVal.innerText = "ఉరుములు";
+          capeVal.style.color = "#f59e0b";
+          if (capeSub) capeSub.innerText = "తేలికపాటి గాలివాన";
+        } else {
+          capeVal.innerText = "సురక్షితం";
+          capeVal.style.color = "#22c55e";
+          if (capeSub) capeSub.innerText = "ప్రమాదం లేదు";
+        }
+      }
+
+      // 22. గత 24 గంటల వర్షం (Past Rain)
+      const pastRain = (d.daily && d.daily.precipitation_sum) ? d.daily.precipitation_sum[0] : 0;
+      const pRainVal = document.getElementById("farm_past_rain_val");
+      const pRainSub = document.getElementById("farm_past_rain_sub");
+      if (pRainVal) pRainVal.innerText = `${pastRain} mm`;
+      if (pRainSub) pRainSub.innerText = pastRain > 5 ? "వర్షపాతం నమోదైంది" : "పొడి వాతావరణం";
+
+      // 23. దుక్కి & ట్రాక్టర్ అనుకూలత (Field Workability)
+      let wScore = sm0_1 > 40 ? 25 : (sm0_1 > 30 ? 60 : 90);
+      const workVal = document.getElementById("farm_work_val");
+      const workSub = document.getElementById("farm_work_sub");
+      if (workVal) {
+        workVal.innerText = `${wScore}%`;
+        workVal.style.color = wScore > 70 ? "#22c55e" : (wScore > 40 ? "#f59e0b" : "#ef4444");
+      }
+      if (workSub) workSub.innerText = wScore > 70 ? "దుక్కికి అనుకూలం" : "బురదగా ఉంది";
+
+      // 24. బోరు / డ్రిప్ టైమర్ (Irrigation Timer)
+      const pumpVal = document.getElementById("farm_pump_val");
+      const pumpSub = document.getElementById("farm_pump_sub");
+      if (sm3_9 !== "--" && sm3_9 < 22) {
+        if (pumpVal) { pumpVal.innerText = "1 గం. 30 నిమి"; pumpVal.style.color = "#ef4444"; }
+        if (pumpSub) pumpSub.innerText = "సాయంత్రం తడి ఇవ్వండి";
+      } else if (sm3_9 !== "--" && sm3_9 < 35) {
+        if (pumpVal) { pumpVal.innerText = "45 నిమి"; pumpVal.style.color = "#f59e0b"; }
+        if (pumpSub) pumpSub.innerText = "తేలికపాటి తడి చాలు";
+      } else {
+        if (pumpVal) { pumpVal.innerText = "0 నిమి"; pumpVal.style.color = "#22c55e"; }
+        if (pumpSub) pumpSub.innerText = "తడి అవసరం లేదు";
+      }
+
+      // 25. స్ప్రే విండో (Spray Window)
+      const sprayVal = document.getElementById("farm_spray_val");
+      const spraySub = document.getElementById("farm_spray_sub");
+      if (wSpeed > 15 || liveRain > 0) {
+        if (sprayVal) { sprayVal.innerText = "అనుకూలం కాదు"; sprayVal.style.color = "#ef4444"; }
+        if (spraySub) spraySub.innerText = wSpeed > 15 ? "గాలి వేగం ఎక్కువ" : "వర్షం పడుతోంది";
+      } else if (wSpeed >= 5 && wSpeed <= 12) {
+        if (sprayVal) { sprayVal.innerText = "చాలా అనుకూలం"; sprayVal.style.color = "#22c55e"; }
+        if (spraySub) spraySub.innerText = "సరైన గాలి వేగం";
+      } else {
+        if (sprayVal) { sprayVal.innerText = "మధ్యస్థం"; sprayVal.style.color = "#f59e0b"; }
+        if (spraySub) spraySub.innerText = "ఉదయం/సాయంత్రం మేలు";
+      }
+
+      // 26. బూజు & తెగుళ్లు (Fungus Risk)
+      const fungVal = document.getElementById("farm_fungus_val");
+      const fungSub = document.getElementById("farm_fungus_sub");
+      if (airHum !== "--" && airHum >= 75) {
+        if (fungVal) { fungVal.innerText = "తీవ్ర ముప్పు"; fungVal.style.color = "#ef4444"; }
+        if (fungSub) fungSub.innerText = "అధిక తేమ వల్ల బూజు";
+      } else if (airHum !== "--" && airHum >= 60) {
+        if (fungVal) { fungVal.innerText = "మధ్యస్థం"; fungVal.style.color = "#eab308"; }
+        if (fungSub) fungSub.innerText = "తేలికపాటి జాగ్రత్తలు";
+      } else {
+        if (fungVal) { fungVal.innerText = "తక్కువ"; fungVal.style.color = "#22c55e"; }
+        if (fungSub) fungSub.innerText = "వాతావరణం పొడిగా ఉంది";
+      }
+
+      // 24-Hour Slider Logic
+      const hourlySlider = document.getElementById("farm_hourly_slider");
+      if (hourlySlider && h.time) {
+        let hHtml = "";
+        for (let i = 0; i < 24; i++) {
+          const dt = new Date(h.time[i]);
+          let hr = dt.getHours();
+          const ampm = hr >= 12 ? "PM" : "AM";
+          hr = hr % 12 || 12;
+          const tempVal = Math.round(h.temperature_2m[i]);
+          const prob = h.precipitation_probability ? h.precipitation_probability[i] : 0;
+          const icon = prob > 40 ? "🌧️" : (dt.getHours() >= 6 && dt.getHours() <= 18 ? "☀️" : "🌙");
+
+          hHtml += `
+            <div style="min-width: 58px; background: #0b1329; border: 1px solid #1e293b; border-radius: 10px; padding: 6px 3px; text-align: center; flex-shrink: 0;">
+              <div style="font-size: 10px; color: #94a3b8;">${hr} ${ampm}</div>
+              <div style="font-size: 15px; margin: 2px 0;">${icon}</div>
+              <div style="font-size: 11px; font-weight: 700; color: #f1f5f9;">${tempVal}°C</div>
+              <div style="font-size: 10px; color: #38bdf8; font-weight: 600;">${prob}%</div>
+            </div>
+          `;
+        }
+        hourlySlider.innerHTML = hHtml;
       }
     }
   } catch (err) {
