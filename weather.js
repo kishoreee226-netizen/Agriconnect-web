@@ -1135,74 +1135,66 @@ window.applySelectedFarmLocation = async function() {
         if (fungVal) { fungVal.innerText = "తక్కువ"; fungVal.style.color = "#22c55e"; }
         if (fungSub) fungSub.innerText = "వాతావరణం పొడిగా ఉంది";
       }
-// --- Card 27: Cold, Frost & Snow Logic ---
-const tMin = (data.daily && data.daily.temperature_2m_min) ? data.daily.temperature_2m_min[0] : 20;
-const snowSum = (data.daily && data.daily.snowfall_sum) ? data.daily.snowfall_sum[0] : 0;
+            // --- Card 27: Cold, Frost & Snow Alert ---
+            const tMin = (d.daily && d.daily.temperature_2m_min) ? Math.round(d.daily.temperature_2m_min[0]) : 20;
+            const snowSum = (d.daily && d.daily.snowfall_sum) ? d.daily.snowfall_sum[0] : 0;
 
-let coldTitle = "సాధారణం";
-let coldDesc = "చలి లేదా మంచు ప్రభావం లేదు";
-let coldClr = "#16a34a"; // Green
+            let coldTitle = "🌿 సాధారణం";
+            let coldDesc = "చలి లేదా మంచు ప్రభావం లేదు";
+            let coldClr = "#22c55e";
 
-if (snowSum > 0) {
-  coldTitle = `❄️ హిమపాతం (${snowSum} cm)`;
-  coldDesc = "మంచు కురుస్తుంది - పంటలకు రక్షణ చర్యలు అవసరం";
-  coldClr = "#0284c7"; // Blue
-} else if (tMin <= 3) {
-  coldTitle = "🧊 గడ్డకట్టే చలి (Frost Alert)";
-  coldDesc = `${tMin}°C కనిష్టం - పూత, ఆకు రాలే ప్రమాదం`;
-  coldClr = "#dc2626"; // Red
-} else if (tMin <= 10) {
-  coldTitle = "🥶 తీవ్ర చలి";
-  coldDesc = `${tMin}°C కనిష్టం - లేత పంటలు, పశువులకు జాగ్రత్త`;
-  coldClr = "#ea580c"; // Orange
-} else if (tMin <= 16) {
-  coldTitle = "🧥 మితమైన చలి";
-  coldDesc = `${tMin}°C కనిష్టం - సాధారణ శీతాకాల వాతావరణం`;
-  coldClr = "#0284c7"; // Sky Blue
-}
+            if (snowSum > 0) {
+              coldTitle = `❄️ హిమపాతం (${snowSum}cm)`;
+              coldDesc = "మంచు కురుస్తుంది - పంటలకు రక్షణ చర్యలు అవసరం";
+              coldClr = "#0284c7";
+            } else if (tMin <= 3) {
+              coldTitle = "🧊 తుషారం (Frost Alert)";
+              coldDesc = `${tMin}°C కనిష్టం - గడ్డకట్టే చలి ముప్పు`;
+              coldClr = "#ef4444";
+            } else if (tMin <= 10) {
+              coldTitle = "🥶 తీవ్ర చలి";
+              coldDesc = `${tMin}°C కనిష్టం - లేత పంటలకు జాగ్రత్త`;
+              coldClr = "#ea580c";
+            } else if (tMin <= 16) {
+              coldTitle = "🧥 మితమైన చలి";
+              coldDesc = `${tMin}°C కనిష్టం - సాధారణ శీతాకాల వాతావరణం`;
+              coldClr = "#0284c7";
+            }
 
-const cValElem = document.getElementById("farm_cold_val");
-const cSubElem = document.getElementById("farm_cold_sub");
+            const cValElem = document.getElementById("farm_cold_val");
+            const cSubElem = document.getElementById("farm_cold_sub");
+            if (cValElem && cSubElem) {
+              cValElem.innerText = coldTitle;
+              cValElem.style.color = coldClr;
+              cSubElem.innerText = coldDesc;
+            }
 
-if (cValElem && cSubElem) {
-  cValElem.innerText = coldTitle;
-  cValElem.style.color = coldClr;
-  cSubElem.innerText = coldDesc;
-}
-// --- Card 28: Growing Degree Days (GDD) Logic ---
-const tMax = (data.daily && data.daily.temperature_2m_max) ? data.daily.temperature_2m_max[0] : 30;
-// tMin ఆల్రెడీ Card 27 కోసం తీసుకున్నాం
+            // --- Card 28: Growing Degree Days (GDD) ---
+            const tMax = (d.daily && d.daily.temperature_2m_max) ? Math.round(d.daily.temperature_2m_max[0]) : 30;
+            const meanTemp = (tMax + tMin) / 2;
+            const gddUnits = Math.max(0, Math.round((meanTemp - 10) * 10) / 10);
 
-// వ్యవసాయ ప్రామాణిక బేస్ ఉష్ణోగ్రత 10°C
-const meanTemp = (tMax + tMin) / 2;
-const gddUnits = Math.max(0, Math.round((meanTemp - 10) * 10) / 10);
+            let gddTitle = `🌱 ${gddUnits} GDD`;
+            let gddDesc = "సమతుల్య పంట ఎదుగుదల";
+            let gddClr = "#22c55e";
 
-let gddTitle = `${gddUnits} GDD`;
-let gddDesc = "అనుకూల ఎదుగుదల వేగం";
-let gddClr = "#16a34a"; // Green
+            if (gddUnits >= 15) {
+              gddTitle = `⚡ ${gddUnits} GDD (వేగవంతం)`;
+              gddDesc = "అధిక ఉష్ణోగ్రత - మొగ్గ, పూత దశ వేగంగా సాగుతుంది";
+              gddClr = "#0284c7";
+            } else if (gddUnits < 8) {
+              gddTitle = `⏳ ${gddUnits} GDD (మందగమనం)`;
+              gddDesc = "చల్లటి వాతావరణం వల్ల నెమ్మది ఎదుగుదల";
+              gddClr = "#ea580c";
+            }
 
-if (gddUnits >= 15) {
-  gddTitle = `${gddUnits} GDD (వేగవంతం)`;
-  gddDesc = "అధిక ఉష్ణోగ్రత - మొగ్గ, పూత దశ వేగంగా సాగుతుంది";
-  gddClr = "#0284c7"; // Sky Blue
-} else if (gddUnits >= 8) {
-  gddTitle = `${gddUnits} GDD (మితం)`;
-  gddDesc = "పంట సమతుల్య ఎదుగుదలకు అనుకూలం";
-  gddClr = "#16a34a"; // Green
-} else {
-  gddTitle = `${gddUnits} GDD (మందగమనం)`;
-  gddDesc = "చల్లటి వాతావరణం వల్ల నెమ్మది ఎదుగుదల";
-  gddClr = "#ea580c"; // Orange
-}
-
-const gValElem = document.getElementById("farm_gdd_val");
-const gSubElem = document.getElementById("farm_gdd_sub");
-
-if (gValElem && gSubElem) {
-  gValElem.innerText = gddTitle;
-  gValElem.style.color = gddClr;
-  gSubElem.innerText = gddDesc;
-}
+            const gValElem = document.getElementById("farm_gdd_val");
+            const gSubElem = document.getElementById("farm_gdd_sub");
+            if (gValElem && gSubElem) {
+              gValElem.innerText = gddTitle;
+              gValElem.style.color = gddClr;
+              gSubElem.innerText = gddDesc;
+            }
 
       // 24-Hour Slider Logic
       const hourlySlider = document.getElementById("farm_hourly_slider");
