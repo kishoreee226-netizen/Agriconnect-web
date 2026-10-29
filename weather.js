@@ -570,12 +570,12 @@ window.renderWeatherWidget = async function() {
               </div>
             </div>
 
-            <!-- 3-Day Rain Forecast Strip -->
-            <div style="margin-top: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px;">
-              <div style="font-size: 11.5px; font-weight: bold; color: #166534; margin-bottom: 8px;">
+     <!-- 3-Day Rain Forecast Strip -->
+            <div style="margin-top: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 7px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+              <div style="font-size: 11px; font-weight: 700; color: #166534; margin-bottom: 5px;">
                 🌧️ రాబోయే 3 రోజుల వర్ష సూచన (పొలం ప్రాంతం)
               </div>
-              <div id="farm_3day_rain" style="display: flex; gap: 8px; justify-content: space-between;">
+              <div id="farm_3day_rain" style="display: flex; gap: 6px; justify-content: space-between;">
                 <!-- JS tho auto fill avthundi -->
               </div>
             </div>
@@ -865,13 +865,14 @@ window.applySelectedFarmLocation = async function() {
         }
 
         rainHtml += `
-          <div style="flex: 1; background: #ffffff; border: 1px solid #dcfce7; border-radius: 8px; padding: 6px 4px; text-align: center;">
-            <div style="font-size: 11px; font-weight: bold; color: #374151;">${dayName}</div>
-            <div style="font-size: 16px; margin: 2px 0;">${rainIcon}</div>
-            <div style="font-size: 11px; font-weight: bold; color: #2563eb;">${pMax}%</div>
-            <div style="font-size: 9.5px; color: ${statusColor}; font-weight: 600;">${statusText}</div>
-          </div>
-        `;
+  <div style="flex: 1; background: #ffffff; border: 1px solid #dcfce7; border-radius: 8px; padding: 4px 2px; text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+    <div style="font-size: 10px; font-weight: 700; color: #0f172a; line-height: 1.1;">${dayName}</div>
+    <div style="font-size: 13.5px; margin: 1px 0;">${rainIcon}</div>
+    <div style="font-size: 10.5px; font-weight: 700; color: #0284c7; line-height: 1.1;">${pMax}%</div>
+    <div style="font-size: 9.5px; color: ${statusColor}; font-weight: 600; line-height: 1.1;">${statusText}</div>
+  </div>
+`;
+
       }
       rainContainer.innerHTML = rainHtml;
     }
