@@ -560,12 +560,12 @@ window.renderWeatherWidget = async function() {
                 <div id="farm_fungus_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
               </div>
             </div>
-                        <!-- 24-Hour Slider -->
-            <div style="margin-top: 14px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-              <div style="font-size: 11.5px; font-weight: 700; color: #0369a1; margin-bottom: 8px;">
-                🕒 రాబోయే 24 గంటల వాతావరణం (Hourly Slider)
+           <!-- 24-Hour Slider -->
+            <div style="margin-top: 10px; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 7px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+              <div style="font-size: 11px; font-weight: 700; color: #0369a1; margin-bottom: 5px;">
+               🕒 రాబోయే 24 గంటల వాతావరణం (Hourly Slider)
               </div>
-              <div id="farm_hourly_slider" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+              <div id="farm_hourly_slider" style="display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px;">
                 <!-- JS auto fill -->
               </div>
             </div>
@@ -1133,12 +1133,12 @@ window.applySelectedFarmLocation = async function() {
           const prob = h.precipitation_probability ? h.precipitation_probability[i] : 0;
           const icon = prob > 40 ? "🌧️" : (dt.getHours() >= 6 && dt.getHours() <= 18 ? "☀️" : "🌙");
 
-                    hHtml += `
-            <div style="min-width: 58px; background: #ffffff; border: 1px solid #e0f2fe; border-radius: 10px; padding: 6px 3px; text-align: center; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-              <div style="font-size: 10.5px; font-weight: 700; color: #0f172a;">${hr} ${ampm}</div>
-              <div style="font-size: 15px; margin: 2px 0;">${icon}</div>
-              <div style="font-size: 11px; font-weight: 700; color: #0f172a;">${tempVal}°C</div>
-              <div style="font-size: 10px; color: #0284c7; font-weight: 600;">${prob}%</div>
+           hHtml += `
+            <div style="min-width: 52px; background: #ffffff; border: 1px solid #e0f2fe; border-radius: 8px; padding: 4px 2px; text-align: center; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+              <div style="font-size: 10px; font-weight: 700; color: #0f172a; line-height: 1.1;">${hr} ${ampm}</div>
+              <div style="font-size: 13.5px; margin: 1px 0;">${icon}</div>
+              <div style="font-size: 10.5px; font-weight: 700; color: #0f172a; line-height: 1.1;">${tempVal}°C</div>
+              <div style="font-size: 9.5px; color: #0284c7; font-weight: 600; line-height: 1.1;">${prob}%</div>
             </div>
           `;
 
