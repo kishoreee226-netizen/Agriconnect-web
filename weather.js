@@ -299,12 +299,13 @@ window.renderWeatherWidget = async function() {
           </div>
         </div>
 
-        <details class="agri-drawer">
+                <details class="agri-drawer">
           <summary class="agri-drawer-summary">
             <span>🌱 ప్రత్యేక నేల తేమ & వ్యవసాయ వివరాలు</span>
             <span class="drawer-arrow">వివరాలు ▼</span>
           </summary>
           
+          <!-- ప్రస్తుత లైవ్ GPS 8 కార్డ్స్ (ఇవి మారవు) -->
           <div class="agri-drawer-grid">
             <div class="agri-metric-tile">
               <div class="agri-metric-label">పైనేల తేమ (0-1 cm)</div>
@@ -339,6 +340,72 @@ window.renderWeatherWidget = async function() {
               <div class="agri-metric-value text-dark">${windGusts} km/h</div>
             </div>
           </div>
+
+          <!-- కొత్త ఫీచర్: పొలాన్ని మ్యాప్‌లో ఎంచుకునే బటన్ -->
+          <div style="margin-top: 15px; padding: 12px; background: #f0fdf4; border: 1.5px dashed #86efac; border-radius: 12px; text-align: center;">
+            <p style="margin: 0 0 8px 0; font-size: 12px; color: #166534; font-weight: 600;">
+              🌾 మీరు మీ వ్యవసాయ భూమి వద్ద లేరా?
+            </p>
+            <button 
+              type="button" 
+              onclick="openFarmMapModal()" 
+              style="background: #2e7d32; color: #ffffff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: bold; cursor: pointer;">
+              📍 మ్యాప్‌లో పొలాన్ని ఎంచుకోండి
+            </button>
+          </div>
+
+          <!-- ఎంచుకున్న పొలం తాలూకు 8 కార్డ్స్ (మ్యాప్‌లో పిన్ పెట్టినప్పుడు మాత్రమే కింద కనిపిస్తాయి) -->
+          <div id="selectedFarmReportSection" style="display: none; margin-top: 15px; padding-top: 12px; border-top: 1px solid #bbf7d0;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div>
+                <span style="font-size: 13px; font-weight: bold; color: #15803d;">🌾 ఎంచుకున్న పొలం నివేదిక</span>
+                <div id="selectedFarmLocationName" style="font-size: 11px; color: #4b5563; margin-top: 2px;"></div>
+              </div>
+              <button 
+                type="button" 
+                onclick="clearSelectedFarm()" 
+                style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer;">
+                ✖ తీసివేయి
+              </button>
+            </div>
+
+            <div class="agri-drawer-grid">
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">పైనేల తేమ (0-1 cm)</div>
+                <div id="farm_soil_0_1" class="agri-metric-value text-blue">--</div>
+              </div>
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">వేర్ల వద్ద తేమ (3-9 cm)</div>
+                <div id="farm_soil_3_9" class="agri-metric-value text-blue">--</div>
+                <div id="farm_soil_status" style="font-size: 10px; color: #15803d; font-weight: bold; margin-top: 2px;">--</div>
+              </div>
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">లోతు నేల తేమ (9-27 cm)</div>
+                <div id="farm_soil_9_27" class="agri-metric-value text-blue">--</div>
+              </div>
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">నేల ఉష్ణోగ్రత</div>
+                <div id="farm_soil_temp" class="agri-metric-value text-orange">--</div>
+              </div>
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">నీటి ఆవిరి (ET₀)</div>
+                <div id="farm_et0" class="agri-metric-value text-green">--</div>
+              </div>
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">సౌరశక్తి (Solar Power)</div>
+                <div id="farm_solar" class="agri-metric-value text-orange">--</div>
+              </div>
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">ఆకుల ఒత్తిడి (VPD)</div>
+                <div id="farm_vpd" class="agri-metric-value text-green">--</div>
+              </div>
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">ఈదురుగాలులు (Gusts)</div>
+                <div id="farm_gusts" class="agri-metric-value text-dark">--</div>
+              </div>
+            </div>
+          </div>
+
         </details>
 
         <div class="weather-footer">
