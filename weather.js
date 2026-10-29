@@ -889,4 +889,73 @@ window.clearSelectedFarm = function() {
     farmMarker = null;
   }
 };
+// 1. ఆడియో సలహా చదివి వినిపించే ఫంక్షన్ (Web Speech API)
+window.speakFarmAdvisory = function() {
+  if (!('speechSynthesis' in window)) {
+    alert("మీ బ్రౌజర్ ఆడియోను సపోర్ట్ చేయడం లేదు.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const locName = document.getElementById("selectedFarmLocationName")?.innerText || "పొలం";
+  const rainStatus = document.getElementById("farm_rain_status")?.innerText || "";
+  const spray = document.getElementById("farm_spray_advice")?.innerText || "";
+  const water = document.getElementById("farm_water_advice")?.innerText || "";
+  const pest = document.getElementById("farm_pest_advice")?.innerText || "";
+
+  const textToRead = `${locName} వివరాలు. ప్రస్తుతం వర్షం: ${rainStatus}. స్ప్రే సలహా: ${spray}. నీటి తడి: ${water}. తెగుళ్ల పరిస్థితి: ${pest}.`;
+
+  const utter = new SpeechSynthesisUtterance(textToRead);
+  utter.lang = "te-IN";
+  utter.rate = 0.9;
+
+  window.speechSynthesis.speak(utter);
+};
+
+// 2. వాట్సాప్‌లో నివేదిక షేర్ చేసే ఫంక్షన్
+window.shareFarmToWhatsApp = function() {
+  const locName = document.getElementById("selectedFarmLocationName")?.innerText || "ఎంచుకున్న పొలం";
+  const rainProb = document.getElementById("farm_rain_prob")?.innerText || "--";
+  const rainStatus = document.getElementById("farm_rain_status")?.innerText || "--";
+  const temp = document.getElementById("farm_air_temp")?.innerText || "--";
+  const spray = document.getElementById("farm_spray_advice")?.innerText || "--";
+  const water = document.getElementById("farm_water_advice")?.innerText || "--";
+
+  const message = `🌾 *AgriConnect - పొలం వాతావరణ నివేదిక* 🌾\n\n` +
+    `📍 ${locName}\n` +
+    `🌡️ ఉష్ణోగ్రత: ${temp}\n` +
+    `🌧️ వర్ష సూచన: ${rainProb}\n` +
+    `🌦️ ప్రస్తుత వర్షం: ${rainStatus}\n` +
+    `💧 నీటి తడి: ${water}\n` +
+    `🚜 స్ప్రే సలహా: ${spray}\n\n` +
+    `_AgriConnect ద్వారా పంపబడింది_`;
+
+  const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+  window.open(waUrl, "_blank");
+};
+
+// 3. పొలాన్ని లోకల్‌గా సేవ్ చేసుకునే ఫంక్షన్
+window.saveCurrentFarmLocation = function() {
+  if (!selectedFarmLat || !selectedFarmLon) {
+    alert("మొదట మ్యాప్‌లో పొలాన్ని ఎంచుకోండి.");
+    return;
+  }
+
+  const defName = document.getElementById("selectedFarmLocationName")?.innerText.replace("📍 ", "") || "నా పొలం";
+  const farmCustomName = prompt("ఈ పొలానికి ఒక పేరు ఇవ్వండి (ఉదా: బావి దగ్గర పొలం):", defName);
+
+  if (!farmCustomName) return;
+
+  const savedFarms = JSON.parse(localStorage.getItem("agriSavedFarms") || "[]");
+  savedFarms.push({
+    name: farmCustomName,
+    lat: selectedFarmLat,
+    lon: selectedFarmLon,
+    time: new Date().toLocaleDateString('te-IN')
+  });
+
+  localStorage.setItem("agriSavedFarms", JSON.stringify(savedFarms));
+  alert(`✅ "${farmCustomName}" విజయవంతంగా సేవ్ అయింది!`);
+};
 
