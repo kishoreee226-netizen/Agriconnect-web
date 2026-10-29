@@ -74,35 +74,44 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Pure Direct Reverse Geocoding: Village, Mandal, District
+// Exact Micro-Location Parser (Extracts Colony / Street directly from Live GPS)
 async function fetchAccurateAreaName(lat, lon) {
   try {
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=te,en`;
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=te,en`;
     const res = await fetch(url);
     if (res.ok) {
       const d = await res.json();
-      const a = d.address || {};
+      
+      // Nominatim ఇచ్చే పూర్తి చిరునామా నుండి భాగాలు
+      const fullDisplay = d.display_name || "";
+      const rawParts = fullDisplay.split(",").map(s => s.trim()).filter(Boolean);
 
-      // 1. Village / Colony
-      const village = a.village || a.suburb || a.neighbourhood || a.hamlet || a.residential || "";
+      // చిరునామాలోని మొదటి 1-2 పదాలే కాలనీ / వీధి / గ్రామం అవుతాయి
+      let cleanParts = [];
+      for (const part of rawParts) {
+        const lower = part.toLowerCase();
+        // పిన్‌కోడ్, దేశం, రాష్ట్రం, బేసిన్ లాంటివి తీసివేయడం
+        if (
+          !/^\d{5,6}$/.test(part) &&
+          !lower.includes("india") &&
+          !lower.includes("తెలంగాణ") &&
+          !lower.includes("telangana") &&
+          !lower.includes("basin")
+        ) {
+          // ఒకే పదం మళ్లీ రాకుండా చూసుకోవడం
+          if (!cleanParts.some(cp => cp.toLowerCase() === lower)) {
+            cleanParts.push(part);
+          }
+        }
+        if (cleanParts.length >= 3) break; // కేవలం కాలనీ, ఊరు, జిల్లా సరిపోతాయి
+      }
 
-      // 2. Mandal / Town
-      const mandal = a.county || a.town || a.city || a.municipality || "";
-
-      // 3. District
-      const district = a.state_district || a.district || "";
-
-      let parts = [];
-      if (village) parts.push(village);
-      if (mandal) parts.push(mandal);
-      if (district) parts.push(district);
-
-      if (parts.length > 0) {
-        return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
+      if (cleanParts.length > 0) {
+        return `📍 ${cleanParts.join(", ")} (లైవ్ GPS)`;
       }
     }
   } catch (err) {
-    // network fallback
+    // network issue
   }
 
   return `📍 GPS: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (లైవ్ GPS)`;
