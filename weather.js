@@ -291,6 +291,19 @@ window.renderWeatherWidget = async function() {
           <div class="advisory-heading">💡 ${sprayTitle}</div>
           <div class="advisory-text">${sprayDesc}</div>
         </div>
+            <!-- Main Weather: Sun Progress Tracker -->
+            <div class="sun-tracker-container">
+              <div class="sun-tracker-header">
+                <span id="main_sunrise">🌅 --</span>
+                <span id="main_sun_status" class="sun-tracker-badge">సూర్యుని గమనం</span>
+                <span id="main_sunset">🌇 --</span>
+              </div>
+              
+              <div class="sun-tracker-track">
+                <div id="main_sun_bar" class="sun-tracker-bar"></div>
+                <div id="main_sun_cursor" class="sun-tracker-cursor">☀️</div>
+              </div>
+            </div>
 
         <div class="forecast-section">
           <div class="forecast-header">📅 రాబోయే 4 రోజుల అంచనా:</div>
