@@ -74,50 +74,34 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Clean Reverse Geocoding (Direct Colony / Village -> Mandal -> District)
+// Pure Street / Colony / Village Geocoding (No Rivers, No Basins, No Filters)
 async function fetchAccurateAreaName(lat, lon) {
   try {
-    // 1. Direct OpenStreetMap (Nominatim) call - Colony / Street level
-    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=te,en`);
+    const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`);
     if (res.ok) {
       const data = await res.json();
-      const a = data.address || {};
+      const p = data.features?.[0]?.properties || {};
 
-      // 1st priority: Colony, Street, leda Village
-      const colonyOrVillage = a.suburb || a.neighbourhood || a.residential || a.village || a.road || "";
-      // 2nd priority: Town leda Mandal
-      const townOrMandal = a.town || a.city || a.municipality || a.county || "";
-      // 3rd priority: District
-      const district = a.state_district || a.district || "";
+      // కేవలం కాలనీ/స్ట్రీట్, ఊరు, జిల్లా మాత్రమే
+      const colonyOrStreet = p.district || p.street || p.locality || "";
+      const townOrVillage = p.city || p.town || p.village || "";
+      const district = p.county || p.state || "";
 
       let parts = [];
-      if (colonyOrVillage) parts.push(colonyOrVillage);
-      if (townOrMandal && townOrMandal !== colonyOrVillage) parts.push(townOrMandal);
+      if (colonyOrStreet) parts.push(colonyOrStreet);
+      if (townOrVillage && townOrVillage !== colonyOrStreet) parts.push(townOrVillage);
       if (district && !parts.includes(district)) parts.push(district);
 
       if (parts.length > 0) {
         return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
       }
     }
-    throw new Error();
-  } catch (err) {
-    // 2. Simple Fallback (Kevalam Town & District matrame)
-    try {
-      const res2 = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=te`);
-      const d = await res2.json();
-
-      const localName = d.locality || d.city || "";
-      const distName = d.countrySubdivisionName || d.principalSubdivision || "";
-
-      let fallbackParts = [];
-      if (localName) fallbackParts.push(localName);
-      if (distName && distName !== localName) fallbackParts.push(distName);
-
-      return `📍 ${fallbackParts.join(", ")} (లైవ్ GPS)`;
-    } catch (e2) {
-      return `📍 లైవ్ లొకేషన్ (లైవ్ GPS)`;
-    }
+  } catch (e) {
+    // network issue
   }
+
+  // ఏ ఊరు పేరు రాకపోతే సింపుల్‌గా జీపీఎస్ నంబర్లు
+  return `📍 GPS: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (లైవ్ GPS)`;
 }
 
 window.renderWeatherWidget = async function() {
