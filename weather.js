@@ -1135,29 +1135,29 @@ window.applySelectedFarmLocation = async function() {
         if (fungVal) { fungVal.innerText = "తక్కువ"; fungVal.style.color = "#22c55e"; }
         if (fungSub) fungSub.innerText = "వాతావరణం పొడిగా ఉంది";
       }
-            // --- Card 27: Cold, Frost & Snow Alert ---
+// --- Card 27: Cold, Frost & Snow Alert ---
             const tMin = (d.daily && d.daily.temperature_2m_min) ? Math.round(d.daily.temperature_2m_min[0]) : 20;
             const snowSum = (d.daily && d.daily.snowfall_sum) ? d.daily.snowfall_sum[0] : 0;
 
-            let coldTitle = "🌿 సాధారణం";
-            let coldDesc = "చలి లేదా మంచు ప్రభావం లేదు";
+  let coldTitle = "🌿 సాధారణం";
+let coldDesc = "చలి లేదా మంచు ప్రభావం లేదు";
             let coldClr = "#22c55e";
 
             if (snowSum > 0) {
-              coldTitle = `❄️ హిమపాతం (${snowSum}cm)`;
-              coldDesc = "మంచు కురుస్తుంది - పంటలకు రక్షణ చర్యలు అవసరం";
+coldTitle = `❄️ హిమపాతం (${snowSum}cm)`;
+  coldDesc = "మంచు కురుస్తుంది - పంటలకు రక్షణ చర్యలు అవసరం";
               coldClr = "#0284c7";
             } else if (tMin <= 3) {
-              coldTitle = "🧊 తుషారం (Frost Alert)";
-              coldDesc = `${tMin}°C కనిష్టం - గడ్డకట్టే చలి ముప్పు`;
+coldTitle = "🧊 తుషారం (Frost Alert)";
+coldDesc = `${tMin}°C కనిష్టం - గడ్డకట్టే చలి ముప్పు`;
               coldClr = "#ef4444";
             } else if (tMin <= 10) {
-              coldTitle = "🥶 తీవ్ర చలి";
-              coldDesc = `${tMin}°C కనిష్టం - లేత పంటలకు జాగ్రత్త`;
+          coldTitle = "🥶 తీవ్ర చలి";
+ coldDesc = `${tMin}°C కనిష్టం - లేత పంటలకు జాగ్రత్త`;
               coldClr = "#ea580c";
             } else if (tMin <= 16) {
               coldTitle = "🧥 మితమైన చలి";
-              coldDesc = `${tMin}°C కనిష్టం - సాధారణ శీతాకాల వాతావరణం`;
+  coldDesc = `${tMin}°C కనిష్టం - సాధారణ శీతాకాల వాతావరణం`;
               coldClr = "#0284c7";
             }
 
