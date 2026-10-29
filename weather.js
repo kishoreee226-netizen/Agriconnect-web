@@ -559,8 +559,17 @@ window.renderWeatherWidget = async function() {
                 <div id="farm_fungus_val" class="agri-metric-value text-orange" style="font-size: 12.5px;">--</div>
                 <div id="farm_fungus_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
               </div>
-
             </div>
+            <!-- 24-Hour Slider -->
+            <div style="margin-top: 14px; background: #131f37; border: 1px solid #1e293b; border-radius: 12px; padding: 10px;">
+              <div style="font-size: 11.5px; font-weight: 700; color: #cbd5e1; margin-bottom: 8px;">
+                🕒 రాబోయే 24 గంటల వాతావరణం (Hourly Slider)
+              </div>
+              <div id="farm_hourly_slider" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+                <!-- JS auto fill -->
+              </div>
+            </div>
+
             <!-- 3-Day Rain Forecast Strip -->
             <div style="margin-top: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px;">
               <div style="font-size: 11.5px; font-weight: bold; color: #166534; margin-bottom: 8px;">
