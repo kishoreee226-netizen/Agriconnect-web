@@ -430,3 +430,235 @@ if (document.readyState === "loading") {
 } else {
   window.renderWeatherWidget();
 }
+// ==================== FARM PIN MAP & DETAILS LOGIC ==================== //
+let farmMap = null;
+let farmMarker = null;
+let selectedFarmLat = null;
+let selectedFarmLon = null;
+
+// మ్యాప్ మోడల్ పాపప్‌ను డైనమిక్‌గా క్రియేట్ చేసే ఫంక్షన్
+function ensureFarmModalExists() {
+  if (document.getElementById("farmMapModal")) return;
+
+  const modalHtml = `
+    <div id="farmMapModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 99999; justify-content: center; align-items: center; padding: 15px;">
+      <div style="background: #ffffff; width: 100%; max-width: 460px; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; box-shadow: 0 10px 25px rgba(0,0,0,0.3);">
+        
+        <!-- మోడల్ హెడర్ -->
+        <div style="background: #2e7d32; color: #ffffff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: bold; font-size: 14px;">📍 మీ పొలాన్ని ఎంచుకోండి</span>
+          <span onclick="closeFarmMapModal()" style="font-size: 24px; cursor: pointer; line-height: 1; font-weight: bold;">&times;</span>
+        </div>
+
+        <!-- ఊరి పేరు వెతికే సెర్చ్ బాక్స్ -->
+        <div style="padding: 10px; display: flex; gap: 6px; background: #f9f9f9; border-bottom: 1px solid #e0e0e0;">
+          <input 
+            type="text" 
+            id="modalVillageInput" 
+            placeholder="ఊరు / మండలం పేరు టైప్ చేయండి..." 
+            style="flex: 1; padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 13px; outline: none;"
+          />
+          <button 
+            type="button" 
+            onclick="searchVillageOnMap()" 
+            style="background: #2e7d32; color: #fff; border: none; border-radius: 6px; padding: 0 14px; font-size: 13px; font-weight: bold; cursor: pointer;">
+            వెతుకు
+          </button>
+        </div>
+
+        <div style="padding: 6px 12px; font-size: 11px; color: #166534; background: #e8f5e9;">
+          💡 మ్యాప్‌లో మీ పొలం ఉన్న చోట వేలితో ట్యాప్ చేస్తే పిన్ పడుతుంది.
+        </div>
+
+        <!-- మ్యాప్ కంటైనర్ -->
+        <div id="leafletMapContainer" style="height: 300px; width: 100%; background: #eaeaea;"></div>
+
+        <!-- మోడల్ ఫుటర్ -->
+        <div style="padding: 12px; background: #fafafa; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;">
+          <span id="selectedPinNotice" style="font-size: 12px; color: #c62828; font-weight: bold;">పొలాన్ని ట్యాప్ చేయండి</span>
+          <button 
+            id="confirmFarmPinBtn" 
+            type="button" 
+            disabled 
+            onclick="applySelectedFarmLocation()" 
+            style="background: #9e9e9e; color: #fff; border: none; border-radius: 6px; padding: 8px 14px; font-size: 13px; font-weight: bold; cursor: not-allowed;">
+            ఈ పొలం వివరాలు చూపించు
+          </button>
+        </div>
+
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML("beforeend", modalHtml);
+}
+
+// 1. మ్యాప్ మోడల్ ఓపెన్ చేయడం
+window.openFarmMapModal = function() {
+  ensureFarmModalExists();
+
+  const modal = document.getElementById("farmMapModal");
+  if (!modal) return;
+  modal.style.display = "flex";
+
+  setTimeout(() => {
+    if (!farmMap) {
+      // తెలంగాణ సెంటర్ లేదా ప్రస్తుత లొకేషన్ డీఫాల్ట్‌గా వస్తుంది
+      const initialLat = 17.9689;
+      const initialLon = 79.5941;
+
+      farmMap = L.map("leafletMapContainer").setView([initialLat, initialLon], 13);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 19
+      }).addTo(farmMap);
+
+      farmMap.on("click", function(e) {
+        setFarmPin(e.latlng.lat, e.latlng.lng);
+      });
+    } else {
+      farmMap.invalidateSize();
+    }
+  }, 250);
+};
+
+// 2. పిన్ మార్కర్ సెట్ చేయడం
+function setFarmPin(lat, lon) {
+  selectedFarmLat = lat;
+  selectedFarmLon = lon;
+
+  if (farmMarker) {
+    farmMarker.setLatLng([lat, lon]);
+  } else {
+    farmMarker = L.marker([lat, lon]).addTo(farmMap);
+  }
+
+  const notice = document.getElementById("selectedPinNotice");
+  const confirmBtn = document.getElementById("confirmFarmPinBtn");
+
+  if (notice) {
+    notice.innerText = `పిన్ ఎంచుకున్నారు (${lat.toFixed(3)}, ${lon.toFixed(3)})`;
+    notice.style.color = "#2e7d32";
+  }
+
+  if (confirmBtn) {
+    confirmBtn.disabled = false;
+    confirmBtn.style.background = "#2e7d32";
+    confirmBtn.style.cursor = "pointer";
+  }
+}
+
+// 3. ఊరి పేరు ద్వారా వెతకడం
+window.searchVillageOnMap = async function() {
+  const input = document.getElementById("modalVillageInput");
+  const query = input ? input.value.trim() : "";
+  if (!query) {
+    alert("దయచేసి గ్రామం లేదా మండలం పేరు నమోదు చేయండి.");
+    return;
+  }
+
+  try {
+    const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=te&format=json`);
+    const data = await res.json();
+
+    if (data.results && data.results.length > 0) {
+      const place = data.results[0];
+      farmMap.setView([place.latitude, place.longitude], 14);
+      setFarmPin(place.latitude, place.longitude);
+    } else {
+      alert("ఆ ప్రాంతం వివరాలు లభించలేదు. దయచేసి సరైన పేరు నమోదు చేయండి.");
+    }
+  } catch (err) {
+    alert("నెట్‌వర్క్ సమస్య ఏర్పడింది.");
+  }
+};
+
+// 4. మోడల్ క్లోజ్ చేయడం
+window.closeFarmMapModal = function() {
+  const modal = document.getElementById("farmMapModal");
+  if (modal) modal.style.display = "none";
+};
+
+// 5. పిన్ వివరాల ఆధారంగా డేటాను తెచ్చి కొత్త 8 కార్డ్స్‌లో చూపించడం
+window.applySelectedFarmLocation = async function() {
+  if (!selectedFarmLat || !selectedFarmLon) return;
+
+  closeFarmMapModal();
+
+  const section = document.getElementById("selectedFarmReportSection");
+  if (section) section.style.display = "block";
+
+  fetchAreaNameForFarm(selectedFarmLat, selectedFarmLon);
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}&current=soil_temperature_0cm,wind_gusts_10m&hourly=soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit&daily=shortwave_radiation_sum&timezone=auto`;
+    const res = await fetch(url);
+    const d = await res.json();
+
+    if (d && d.hourly) {
+      const h = d.hourly;
+      const idx = 0;
+
+      const sm0_1 = h.soil_moisture_0_to_1cm ? Math.round(h.soil_moisture_0_to_1cm[idx] * 100) : "--";
+      const sm3_9 = h.soil_moisture_3_to_9cm ? Math.round(h.soil_moisture_3_to_9cm[idx] * 100) : "--";
+      const sm9_27 = h.soil_moisture_9_to_27cm ? Math.round(h.soil_moisture_9_to_27cm[idx] * 100) : "--";
+      const sTemp = d.current && d.current.soil_temperature_0cm ? Math.round(d.current.soil_temperature_0cm) : "--";
+      const et0 = h.et0_fao_evapotranspiration ? h.et0_fao_evapotranspiration[idx].toFixed(1) : "--";
+      const vpd = h.vapour_pressure_deficit ? h.vapour_pressure_deficit[idx].toFixed(2) : "--";
+      const gusts = d.current && d.current.wind_gusts_10m ? Math.round(d.current.wind_gusts_10m) : "--";
+      const solar = d.daily && d.daily.shortwave_radiation_sum ? Math.round(d.daily.shortwave_radiation_sum[0] / 3.6) : "410";
+
+      document.getElementById("farm_soil_0_1").innerText = `${sm0_1}%`;
+      document.getElementById("farm_soil_3_9").innerText = `${sm3_9}%`;
+      document.getElementById("farm_soil_9_27").innerText = `${sm9_27}%`;
+      document.getElementById("farm_soil_temp").innerText = `${sTemp}°C`;
+      document.getElementById("farm_et0").innerText = `${et0} mm/రోజు`;
+      document.getElementById("farm_vpd").innerText = `${vpd} kPa`;
+      document.getElementById("farm_gusts").innerText = `${gusts} km/h`;
+      document.getElementById("farm_solar").innerText = `${solar} W/m²`;
+
+      const statusElem = document.getElementById("farm_soil_status");
+      if (statusElem) {
+        if (sm3_9 >= 60) statusElem.innerText = "💧 తడి పుష్కలం";
+        else if (sm3_9 >= 35) statusElem.innerText = "🌱 సాగుకు అనుకూలం";
+        else statusElem.innerText = "⚠️ నీరు అవసరం";
+      }
+    }
+  } catch (err) {
+    console.error("Farm soil fetch error:", err);
+  }
+};
+
+// 6. పిన్ పెట్టిన ఊరు లేదా ప్రాంతం పేరును కనుగొనడం
+async function fetchAreaNameForFarm(lat, lon) {
+  const lbl = document.getElementById("selectedFarmLocationName");
+  if (lbl) lbl.innerText = `లొకేషన్: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E సమాచారం లోడ్ అవుతోంది...`;
+
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=te,en`);
+    if (res.ok) {
+      const d = await res.json();
+      const a = d.address || {};
+      const v = a.village || a.suburb || a.hamlet || "";
+      const m = a.county || a.town || a.city || "";
+      const dist = a.state_district || a.district || "";
+      const nameParts = [v, m, dist].filter(Boolean);
+      if (lbl && nameParts.length > 0) {
+        lbl.innerText = `📍 ${nameParts.join(", ")}`;
+      }
+    }
+  } catch (e) {}
+}
+
+// 7. ఎంచుకున్న పొలం నివేదికను తీసివేయడం
+window.clearSelectedFarm = function() {
+  const section = document.getElementById("selectedFarmReportSection");
+  if (section) section.style.display = "none";
+  selectedFarmLat = null;
+  selectedFarmLon = null;
+  if (farmMarker && farmMap) {
+    farmMap.removeLayer(farmMarker);
+    farmMarker = null;
+  }
+};
+
