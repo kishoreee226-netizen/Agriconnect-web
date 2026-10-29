@@ -74,35 +74,52 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Clean Street/Colony/Area Geocoding (Photon Engine)
+// Micro-Precise Reverse Geocoding (Direct Colony -> Sub-locality -> Mandal/District)
 async function fetchAccurateAreaName(lat, lon) {
   try {
-    const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`);
+    // 1. OpenStreetMap Reverse Search (Zoom level 17 - Colony/Locality precision)
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=17&format=json&addressdetails=1&accept-language=te,en`);
     if (res.ok) {
-      const data = await res.json();
-      const p = data.features?.[0]?.properties || {};
+      const d = await res.json();
+      const a = d.address || {};
 
-      // 1. కాలనీ లేదా లోకల్ ఏరియా (రోడ్డు లేదా దారి పేర్లు కాకుండా)
-      let area = p.district || p.locality || p.neighbourhood || "";
-      
-      // 2. గ్రామం లేదా టౌన్ (ఉదా: Unikicherla / Gopalpur)
-      const village = p.village || p.town || p.city || "";
-      
-      // 3. మండలం లేదా జిల్లా (ఉదా: Dharmasagar mandal / Hanamkonda)
-      const mandal = p.county || p.state || "";
+      // కాలనీ, సబర్బ్, రెసిడెన్షియల్ లేదా లోకల్ ఏరియా
+      const colony = a.neighbourhood || a.suburb || a.residential || a.quarter || a.hamlet || "";
+      // గ్రామం లేదా పట్టణం
+      const locality = a.village || a.town || a.city || a.municipality || "";
+      // మండలం లేదా జిల్లా
+      const district = a.county || a.state_district || a.district || "";
 
       let parts = [];
-      if (area) parts.push(area);
-      if (village && !parts.includes(village)) parts.push(village);
-      if (mandal && !parts.includes(mandal)) parts.push(mandal);
+      if (colony) parts.push(colony);
+      if (locality && !parts.some(p => p.toLowerCase() === locality.toLowerCase())) parts.push(locality);
+      if (district && !parts.some(p => p.toLowerCase() === district.toLowerCase())) parts.push(district);
 
       if (parts.length > 0) {
         return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
       }
     }
-  } catch (e) {
-    // network issue
+  } catch (e1) {
+    // network fallback
   }
+
+  // 2. క్లీన్ ఫాల్‌బ్యాక్
+  try {
+    const res2 = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`);
+    if (res2.ok) {
+      const data2 = await res2.json();
+      const p = data2.features?.[0]?.properties || {};
+      
+      const loc = p.district || p.locality || p.village || p.town || p.city || "";
+      const dist = p.county || p.state || "";
+
+      let parts = [];
+      if (loc) parts.push(loc);
+      if (dist && !parts.includes(dist)) parts.push(dist);
+
+      if (parts.length > 0) return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
+    }
+  } catch (e2) {}
 
   return `📍 GPS: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (లైవ్ GPS)`;
 }
