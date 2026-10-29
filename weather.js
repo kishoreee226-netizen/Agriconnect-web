@@ -74,57 +74,36 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Micro-Precise Reverse Geocoding (Zoom 18 - కాలనీ & లోకల్ ఏరియా పిన్‌పాయింట్)
+// Clean Street/Colony/Area Geocoding (Photon Engine)
 async function fetchAccurateAreaName(lat, lon) {
   try {
-    // zoom=18 పెట్టడం వల్ల కేవలం 50-100 మీటర్ల లోపల ఉన్న కాలనీ లేదా రెసిడెన్షియల్ ఏరియా మాత్రమే వస్తుంది
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=18&format=json&addressdetails=1&accept-language=te,en`;
-    const res = await fetch(url);
+    const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`);
     if (res.ok) {
       const data = await res.json();
-      const a = data.address || {};
+      const p = data.features?.[0]?.properties || {};
 
-      // 1. కాలనీ / హ్యామ్‌లెట్ / ఏరియా / వీధి
-      const colony = a.neighbourhood || a.suburb || a.residential || a.hamlet || a.quarter || a.isolated_dwelling || a.village || "";
+      // 1. కాలనీ లేదా లోకల్ ఏరియా (రోడ్డు లేదా దారి పేర్లు కాకుండా)
+      let area = p.district || p.locality || p.neighbourhood || "";
       
-      // 2. మండలం లేదా ఊరు
-      const mandalOrTown = a.town || a.city || a.county || a.municipality || "";
+      // 2. గ్రామం లేదా టౌన్ (ఉదా: Unikicherla / Gopalpur)
+      const village = p.village || p.town || p.city || "";
       
-      // 3. జిల్లా
-      const district = a.state_district || a.district || "";
+      // 3. మండలం లేదా జిల్లా (ఉదా: Dharmasagar mandal / Hanamkonda)
+      const mandal = p.county || p.state || "";
 
       let parts = [];
-      if (colony) parts.push(colony);
-
-      // హన్మకొండ అని రెండుసార్లు పడకుండా ఉండే ఫిల్టర్
-      if (mandalOrTown) {
-        const isDuplicate = parts.some(p => 
-          p.toLowerCase().includes(mandalOrTown.toLowerCase()) || 
-          mandalOrTown.toLowerCase().includes(p.toLowerCase())
-        );
-        if (!isDuplicate) {
-          parts.push(mandalOrTown);
-        }
-      }
-
-      if (district) {
-        const isDistDuplicate = parts.some(p => 
-          p.toLowerCase().includes(district.toLowerCase())
-        );
-        if (!isDistDuplicate) {
-          parts.push(district);
-        }
-      }
+      if (area) parts.push(area);
+      if (village && !parts.includes(village)) parts.push(village);
+      if (mandal && !parts.includes(mandal)) parts.push(mandal);
 
       if (parts.length > 0) {
         return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
       }
     }
-  } catch (err) {
-    // నెట్‌వర్క్ సమస్య వస్తే
+  } catch (e) {
+    // network issue
   }
 
-  // ఎలాంటి పేరు లభించకపోతే నేరుగా GPS కోఆర్డినేట్స్
   return `📍 GPS: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (లైవ్ GPS)`;
 }
 
