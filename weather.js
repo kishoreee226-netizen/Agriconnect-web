@@ -518,6 +518,48 @@ window.renderWeatherWidget = async function() {
                 <div class="agri-metric-label">కోత & ఆరబోత (Harvest)</div>
                 <div id="farm_harvest_advice" class="agri-metric-value" style="font-size: 11px; font-weight: bold; margin-top: 4px;">--</div>
               </div>
+              <!-- 21. పిడుగుల ముప్పు -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">పిడుగుల ముప్పు (Lightning)</div>
+                <div id="farm_cape_val" class="agri-metric-value text-green" style="font-size: 13px;">--</div>
+                <div id="farm_cape_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+              </div>
+
+              <!-- 22. గత 24 గంటల వర్షం -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">గత 24 గం. వర్షం (Past Rain)</div>
+                <div id="farm_past_rain_val" class="agri-metric-value text-blue">0.0 mm</div>
+                <div id="farm_past_rain_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+              </div>
+
+              <!-- 23. దుక్కి & ట్రాక్టర్ -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">దుక్కి అనుకూలత (Field Work)</div>
+                <div id="farm_work_val" class="agri-metric-value text-green">--%</div>
+                <div id="farm_work_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+              </div>
+
+              <!-- 24. బోరు / డ్రిప్ సమయం -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">బోరు సమయం (Pump Timer)</div>
+                <div id="farm_pump_val" class="agri-metric-value text-blue" style="font-size: 13px;">0 నిమి</div>
+                <div id="farm_pump_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+              </div>
+
+              <!-- 25. స్ప్రే విండో -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">స్ప్రే విండో (Spray Timing)</div>
+                <div id="farm_spray_val" class="agri-metric-value text-green" style="font-size: 12.5px;">--</div>
+                <div id="farm_spray_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+              </div>
+
+              <!-- 26. బూజు & తెగుళ్లు -->
+              <div class="agri-metric-tile">
+                <div class="agri-metric-label">బూజు ముప్పు (Fungus Risk)</div>
+                <div id="farm_fungus_val" class="agri-metric-value text-orange" style="font-size: 12.5px;">--</div>
+                <div id="farm_fungus_sub" style="font-size: 9.5px; color: #64748b; margin-top: 2px;">--</div>
+              </div>
+
             </div>
             <!-- 3-Day Rain Forecast Strip -->
             <div style="margin-top: 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px;">
