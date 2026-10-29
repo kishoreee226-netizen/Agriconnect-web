@@ -74,33 +74,36 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Pure Street / Colony / Village Geocoding (No Rivers, No Basins, No Filters)
+// Clean & Accurate Colony / Village Geocoding
 async function fetchAccurateAreaName(lat, lon) {
   try {
-    const res = await fetch(`https://photon.komoot.io/reverse?lat=${lat}&lon=${lon}`);
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=te,en`);
     if (res.ok) {
       const data = await res.json();
-      const p = data.features?.[0]?.properties || {};
+      const a = data.address || {};
 
-      // కేవలం కాలనీ/స్ట్రీట్, ఊరు, జిల్లా మాత్రమే
-      const colonyOrStreet = p.district || p.street || p.locality || "";
-      const townOrVillage = p.city || p.town || p.village || "";
-      const district = p.county || p.state || "";
+      // 1. కాలనీ లేదా రెసిడెన్షియల్ ఏరియా మాత్రమే (రోడ్డు పేర్లు కాకుండా)
+      const colony = a.neighbourhood || a.suburb || a.residential || a.quarter || "";
+      
+      // 2. గ్రామం లేదా టౌన్/సిటీ
+      const villageOrTown = a.village || a.town || a.city || a.municipality || "";
+      
+      // 3. మండలం లేదా జిల్లా
+      const district = a.county || a.state_district || a.district || "";
 
       let parts = [];
-      if (colonyOrStreet) parts.push(colonyOrStreet);
-      if (townOrVillage && townOrVillage !== colonyOrStreet) parts.push(townOrVillage);
+      if (colony) parts.push(colony);
+      if (villageOrTown && villageOrTown !== colony) parts.push(villageOrTown);
       if (district && !parts.includes(district)) parts.push(district);
 
       if (parts.length > 0) {
         return `📍 ${parts.join(", ")} (లైవ్ GPS)`;
       }
     }
-  } catch (e) {
+  } catch (err) {
     // network issue
   }
 
-  // ఏ ఊరు పేరు రాకపోతే సింపుల్‌గా జీపీఎస్ నంబర్లు
   return `📍 GPS: ${lat.toFixed(4)}°N, ${lon.toFixed(4)}°E (లైవ్ GPS)`;
 }
 
