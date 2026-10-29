@@ -74,7 +74,7 @@ function getAccuratePhoneGPS() {
   });
 }
 
-// Clean & Accurate Colony / Village Geocoding
+// Clean & Accurate Micro-Area / Colony Geocoding
 async function fetchAccurateAreaName(lat, lon) {
   try {
     const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&addressdetails=1&accept-language=te,en`);
@@ -82,13 +82,13 @@ async function fetchAccurateAreaName(lat, lon) {
       const data = await res.json();
       const a = data.address || {};
 
-      // 1. కాలనీ లేదా రెసిడెన్షియల్ ఏరియా మాత్రమే (రోడ్డు పేర్లు కాకుండా)
-      const colony = a.neighbourhood || a.suburb || a.residential || a.quarter || "";
+      // 1. కాలనీ, హ్యామ్‌లెట్ (చిన్న పల్లె/ఏరియా), రెసిడెన్షియల్ లేదా సబర్బ్
+      const colony = a.neighbourhood || a.suburb || a.residential || a.hamlet || a.quarter || a.isolated_dwelling || "";
       
-      // 2. గ్రామం లేదా టౌన్/సిటీ
+      // 2. విలేజ్ లేదా టౌన్/మండలం
       const villageOrTown = a.village || a.town || a.city || a.municipality || "";
       
-      // 3. మండలం లేదా జిల్లా
+      // 3. జిల్లా
       const district = a.county || a.state_district || a.district || "";
 
       let parts = [];
