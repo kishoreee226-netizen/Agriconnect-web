@@ -6096,5 +6096,88 @@ header h1 {
   transition: left 0.4s ease;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
+/* AgriConnect Smart Bulletin Theme Matching Styles */
+.agri-bulletin-card {
+  margin: 14px 0;
+  background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid #86efac;
+  box-shadow: 0 2px 8px rgba(22, 101, 52, 0.06);
+}
+
+.agri-bulletin-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #bbf7d0;
+  padding-bottom: 7px;
+  margin-bottom: 9px;
+}
+
+.agri-bulletin-header-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #14532d;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.agri-bulletin-live-badge {
+  font-size: 10px;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 700;
+  border: 1px solid #86efac;
+}
+
+.agri-bulletin-items-box {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.agri-bulletin-row {
+  font-size: 12px;
+  line-height: 1.5;
+  background: #ffffff;
+  color: #1e293b;
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid #dcfce7;
+  border-left: 4px solid #16a34a;
+  margin-bottom: 7px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.agri-bulletin-footer {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px dashed #86efac;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #166534;
+}
+
+.agri-bulletin-imd-title {
+  font-weight: 600;
+}
+
+.agri-bulletin-imd-btn {
+  color: #15803d;
+  text-decoration: none;
+  font-weight: 700;
+  background: #ffffff;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid #86efac;
+}
 
 
