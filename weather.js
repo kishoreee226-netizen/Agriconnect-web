@@ -1313,7 +1313,10 @@ window.speakFarmAdvisory = function(type) {
     return;
   }
 
+  if (window.speechSynthesis.speaking) {
   window.speechSynthesis.cancel();
+  return;
+}
 
   let textToRead = "";
 
