@@ -1376,53 +1376,53 @@ window.saveCurrentFarmLocation = function() {
 
 window.readAgriBulletins = function() {
   if (!('speechSynthesis' in window)) {
-    alert("మీ ఫోన్ బ్రౌజర్‌లో వాయిస్ సపోర్ట్ అందుబాటులో లేదు.");
+    alert("మీ బ్రౌజర్‌లో వాయిస్ ఫీచర్ సపోర్ట్ లేదు.");
     return;
   }
 
-  // 1. Force stop & clear queue
+  // మునుపటి వాయిస్‌ను ఆపివేయడం
   window.speechSynthesis.cancel();
 
-  // 2. Extract clean text from cards
+  // కార్డుల నుండి టెక్స్ట్ సేకరించడం
   var rows = document.querySelectorAll('.agri-bulletin-row');
-  var sentences = ["ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సాగు సలహాలు."];
+  var fullText = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సాగు సలహాలు. ";
 
   rows.forEach(function(r) {
     var txt = (r.innerText || r.textContent || "")
-      .replace(/[⚠️✅🌧️🌾💧🚫🔬📢🏛️]/g, '')
+      .replace(/[⚠️✅🌧️🌾💧🚫🔬📢🏛️🔊]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
     if (txt) {
-      sentences.push(txt);
+      fullText += txt + ". ";
     }
   });
 
-  var fullText = sentences.join(" ");
-
-  // 3. Create Speech Utterance
   var utterance = new SpeechSynthesisUtterance(fullText);
-  utterance.lang = 'te-IN';
-  utterance.rate = 0.88;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
 
-  // 4. Voice match if available
-  var voices = window.speechSynthesis.getVoices() || [];
-  if (voices.length > 0) {
-    var teVoice = voices.find(function(v) {
+  // అందుబాటులో ఉన్న వాయిస్‌లను పొందడం
+  var voices = window.speechSynthesis.getVoices();
+  if (voices && voices.length > 0) {
+    var targetVoice = voices.find(function(v) {
       return (v.lang && (v.lang === 'te-IN' || v.lang.startsWith('te'))) ||
              (v.name && v.name.toLowerCase().includes('telugu'));
+    }) || voices.find(function(v) {
+      return v.lang && (v.lang === 'en-IN' || v.lang.includes('IN'));
     });
-    if (teVoice) {
-      utterance.voice = teVoice;
+
+    if (targetVoice) {
+      utterance.voice = targetVoice;
     }
   }
 
-  // 5. Mobile Chrome pause bug fix
+  utterance.lang = 'te-IN';
+  utterance.rate = 0.9;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+
+  // మొబైల్ పాజ్ సమస్యను క్లియర్ చేసి ప్లే చేయడం
   if (window.speechSynthesis.paused) {
     window.speechSynthesis.resume();
   }
 
-  // 6. Speak
   window.speechSynthesis.speak(utterance);
 };
