@@ -332,10 +332,8 @@ window.renderWeatherWidget = async function() {
           </div>
         </div>
 
-        <div class="advisory-box ${alertClass}">
-          <div class="advisory-heading">💡 ${sprayTitle}</div>
-          <div class="advisory-text">${sprayDesc}</div>
-        </div>
+        ${sprayBoxHtml}
+
             <!-- Main Weather: Sun Progress Tracker -->
             <div class="sun-tracker-container">
               <div class="sun-tracker-header">
