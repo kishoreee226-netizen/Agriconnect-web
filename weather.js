@@ -1372,33 +1372,3 @@ window.saveCurrentFarmLocation = function() {
   localStorage.setItem("agriSavedFarms", JSON.stringify(savedFarms));
   alert(`✅ "${farmCustomName}" విజయవంతంగా సేవ్ అయింది!`);
 };
-
-// File chivarana idi okkate unchandi
-window.readAgriBulletins = function() {
-  if (!('speechSynthesis' in window)) {
-    alert("Voice support ledu");
-    return;
-  }
-
-  window.speechSynthesis.cancel();
-
-  var rows = document.querySelectorAll('.agri-bulletin-row');
-  var fullText = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సాగు సలహాలు. ";
-
-  rows.forEach(function(r) {
-    var txt = (r.innerText || r.textContent || "")
-      .replace(/[⚠️✅🌧️🌾💧🚫🔬📢🏛️🔊]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (txt) {
-      fullText += txt + ". ";
-    }
-  });
-
-  var msg = new SpeechSynthesisUtterance(fullText);
-  msg.lang = 'te-IN';
-  msg.rate = 0.9;
-  msg.pitch = 1.0;
-
-  window.speechSynthesis.speak(msg);
-};
