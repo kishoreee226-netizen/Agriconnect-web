@@ -246,7 +246,8 @@ window.renderWeatherWidget = async function() {
       <div class="agri-bulletin-card">
         <div class="agri-bulletin-top">
           <div class="agri-bulletin-header-title">
-            <span>📢</span>
+           <span onclick="speakFarmAdvisory('bulletin')" style="cursor: pointer; padding: 2px 4px;" title="సలహా వినండి">📢</span>
+
             <span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span>
           </div>
           <span class="agri-bulletin-live-badge">Live</span>
