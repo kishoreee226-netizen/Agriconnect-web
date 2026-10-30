@@ -74,7 +74,7 @@
   </div>
 </section>
 
-<!-- UNIVERSAL POPUP CONTAINER (HTML ONLY) -->
+<!-- UNIVERSAL POPUP CONTAINER -->
 <div id="agriToolModal" class="agri-modal-overlay" onclick="hideToolModal(event)">
   <div class="agri-modal-container" onclick="event.stopPropagation()">
     <div class="agri-modal-header">
@@ -86,55 +86,8 @@
       <!-- 1. MARKET VIEW -->
       <div id="view-market" class="tool-view-panel">
         <div class="modal-subtitle">తెలంగాణ & ఏపీ ప్రధాన మార్కెట్ లైవ్ సమాచారం</div>
-        
-        <div class="demo-card-item">
-          <div class="card-row-between">
-            <b>పత్తి (Cotton)</b>
-            <span class="price-pill-up">▲ +₹120 పెరిగింది</span>
-          </div>
-          <div class="card-location-text">📍 వరంగల్ / జమ్మికుంట • ఈ రోజు</div>
-          <div class="card-row-between">
-            <span>క్వింటాల్ రేటు:</span>
-            <b class="card-rate-text">₹7,450 - ₹7,820</b>
-          </div>
-        </div>
-
-        <div class="demo-card-item">
-          <div class="card-row-between">
-            <b>సన్న రకం వరి (Paddy RNR)</b>
-            <span class="price-pill-up">▲ +₹30 పెరిగింది</span>
-          </div>
-          <div class="card-location-text">📍 మిర్యాలగూడ • నిన్న</div>
-          <div class="card-row-between">
-            <span>క్వింటాల్ రేటు:</span>
-            <b class="card-rate-text">₹2,320 - ₹2,550</b>
-          </div>
-        </div>
-
-        <div class="demo-card-item">
-          <div class="card-row-between">
-            <b>మొక్కజొన్న (Maize)</b>
-            <span class="price-pill-same">స్థిరంగా ఉంది</span>
-          </div>
-          <div class="card-location-text">📍 నిజామాబాద్ • ఈ రోజు</div>
-          <div class="card-row-between">
-            <span>క్వింటాల్ రేటు:</span>
-            <b class="card-rate-text">₹2,100 - ₹2,240</b>
-          </div>
-        </div>
-
-        <div class="demo-card-item">
-          <div class="card-row-between">
-            <b>ఎర్ర కందులు (Red Gram)</b>
-            <span class="price-pill-up">▲ +₹200 పెరిగింది</span>
-          </div>
-          <div class="card-location-text">📍 తాండూర్ (Tandur) • ఈ రోజు</div>
-          <div class="card-row-between">
-            <span>క్వింటాల్ రేటు:</span>
-            <b class="card-rate-text">₹10,200 - ₹10,850</b>
-          </div>
-        </div>
-        <div class="modal-subtitle text-center">* అగ్రికనెక్ట్ మండి విభాగం ద్వారా లైవ్ అప్‌డేట్ చేయబడింది.</div>
+        <div id="marketLiveCardsList"></div>
+        <div class="modal-subtitle text-center mt-12">* అగ్రికనెక్ట్ మండి విభాగం ద్వారా లైవ్ అప్‌డేట్ చేయబడింది.</div>
       </div>
 
       <!-- 2. MEASURE VIEW -->
@@ -169,37 +122,37 @@
       <div id="view-calendar" class="tool-view-panel">
         <div class="demo-card-item">
           <div class="card-row-between mb-8">
-            <b class="tool-title" id="calCurrentDateText">📅 నేటి తిథి & ముహూర్తం</b>
+            <b class="tool-title" id="calCurrentDateText">📅 నేటి వ్యవసాయ తిథి</b>
             <span class="badge-tag badge-amber">పంచాంగం</span>
           </div>
           <div class="stat-grid-3 grid-cols-2">
             <div class="stat-box">
-              <span class="stat-lbl">పక్షం:</span>
-              <div class="font-bold">శుక్ల / కృష్ణ పక్షం</div>
+              <span class="stat-lbl">పక్షం & తిథి:</span>
+              <div id="calTithiVal" class="font-bold">-</div>
             </div>
             <div class="stat-box">
               <span class="stat-lbl">అమృత ఘడియలు:</span>
-              <div class="clr-green font-bold">ఉ. 08:30 - 10:15</div>
+              <div id="calAmruthaVal" class="clr-green font-bold">-</div>
             </div>
             <div class="stat-box">
               <span class="stat-lbl">వర్జ్యం:</span>
-              <div class="clr-red font-bold">సా. 03:20 - 05:00</div>
+              <div id="calVarjyamVal" class="clr-red font-bold">-</div>
             </div>
             <div class="stat-box">
               <span class="stat-lbl">విత్తే పనులకు:</span>
-              <div class="stat-val fs-small">అనుకూల సమయం</div>
+              <div id="calStatusVal" class="stat-val fs-small">-</div>
             </div>
           </div>
         </div>
 
-        <div class="tool-title my-8">వ్యవసాయ పనుల సిఫారసులు:</div>
+        <div class="tool-title my-8">నేటి వ్యవసాయ పనుల సిఫారసులు:</div>
         <div class="demo-card-item border-left-blue">
-          <b>మందుల పిచికారీ అనుకూల సమయం</b>
-          <p class="card-location-text mt-4">ఉదయం పూట గాలి వేగం తక్కువగా ఉన్నప్పుడు (ఉ. 7:00 - 10:30) పిచికారీ చేయడం వల్ల మందు ఆకులపై బాగా పడుతుంది.</p>
+          <b>మందుల పిచికారీ సమయం</b>
+          <p id="calSprayRec" class="card-location-text mt-4"></p>
         </div>
         <div class="demo-card-item border-left-green">
           <b>నీటి తడులు & ఎరువులు</b>
-          <p class="card-location-text mt-4">భూమిలో తగినంత పదును ఉన్నప్పుడు మాత్రమే యూరియా లేదా కాంప్లెక్స్ ఎరువులను చల్లుకోవాలి.</p>
+          <p id="calWaterRec" class="card-location-text mt-4"></p>
         </div>
       </div>
 
@@ -219,67 +172,56 @@
           </div>
           <div>
             <label class="stat-lbl">ఎకరాలు:</label>
-            <input type="number" id="calcAcresInput" value="2" min="0.5" step="0.5" oninput="runFertilizerCalc()" class="action-input">
+            <input type="number" id="calcAcresInput" value="1" min="0.5" step="0.5" oninput="runFertilizerCalc()" class="action-input">
           </div>
         </div>
 
         <div class="stat-grid-3">
           <div class="stat-box">
             <div class="stat-lbl">DAP బస్తాలు</div>
-            <div class="stat-val clr-red" id="dapVal">2.0</div>
+            <div class="stat-val clr-red" id="dapVal">0.0</div>
             <div class="stat-lbl">(50 kg బస్తాలు)</div>
           </div>
           <div class="stat-box">
             <div class="stat-lbl">యూరియా</div>
-            <div class="stat-val clr-green" id="ureaVal">4.4</div>
+            <div class="stat-val clr-green" id="ureaVal">0.0</div>
             <div class="stat-lbl">(45 kg బస్తాలు)</div>
           </div>
           <div class="stat-box">
             <div class="stat-lbl">పొటాష్ (MOP)</div>
-            <div class="stat-val clr-amber" id="potashVal">1.6</div>
+            <div class="stat-val clr-amber" id="potashVal">0.0</div>
             <div class="stat-lbl">(50 kg బస్తాలు)</div>
           </div>
         </div>
 
         <div class="tool-title my-8">ఎరువులు వేయవలసిన దశలు:</div>
         <div class="demo-card-item">
-          <b id="stage1Title">దశ 1: నాట్లకు ముందు (Basal)</b>
-          <p id="stage1Desc" class="card-location-text">పూర్తి DAP + సగం పొటాష్ వేయాలి.</p>
+          <b id="stage1Title">దశ 1</b>
+          <p id="stage1Desc" class="card-location-text"></p>
         </div>
         <div class="demo-card-item">
-          <b id="stage2Title">దశ 2: 25 రోజుల తర్వాత</b>
-          <p id="stage2Desc" class="card-location-text">మొదటి విడత యూరియా వేయాలి.</p>
+          <b id="stage2Title">దశ 2</b>
+          <p id="stage2Desc" class="card-location-text"></p>
         </div>
       </div>
 
       <!-- 5. PEST VIEW -->
       <div id="view-pest" class="tool-view-panel">
-        <div class="modal-subtitle">వర్సిటీ సిఫారసు చేసిన నివారణలు:</div>
-
-        <div class="demo-card-item">
-          <div class="flex-align-gap mb-4">
-            <span class="badge-tag badge-pink">మిర్చి</span>
-            <b>నల్ల తామర పురుగు (Black Thrips)</b>
-          </div>
-          <div class="card-location-text">లక్షణాలు: ఆకులు పైకి ముడుచుకుపోవడం, పూత రాలడం.</div>
-          <div class="treatment-organic">🌿 <b>సహజ నివారణ:</b> వేప నూనె (10,000 PPM) 2 మి.లీ లేదా జీవామృతం పిచికారీ.</div>
-          <div class="treatment-chemical">🧪 <b>మందు మోతాదు:</b> స్పైనోథోరం (డెలిగేట్) 0.9 మి.లీ లీటరు నీటికి కలపండి.</div>
+        <div class="card-row-between mb-8">
+          <div class="modal-subtitle mb-0">పంట తెగుళ్లు & నివారణ చికిత్స:</div>
+          <select id="pestCropSelect" onchange="filterPestDetails(this.value)" class="action-input auto-width-select">
+            <option value="chilli">మిర్చి</option>
+            <option value="paddy">వరి</option>
+            <option value="cotton">పత్తి</option>
+            <option value="maize">మొక్కజొన్న</option>
+          </select>
         </div>
-
-        <div class="demo-card-item">
-          <div class="flex-align-gap mb-4">
-            <span class="badge-tag badge-amber">వరి</span>
-            <b>అగ్గి తెగులు / బెంకి (Blast)</b>
-          </div>
-          <div class="card-location-text">లక్షణాలు: ఆకులపై నూలు కండె ఆకారపు మచ్చలు, మెడ విరుపు.</div>
-          <div class="treatment-organic">🌿 <b>సహజ నివారణ:</b> పుల్లటి మజ్జిగ 100 మి.లీ + ఇంగువ 2 గ్రాములు లీటరు నీటిలో చల్లడం.</div>
-          <div class="treatment-chemical">🧪 <b>మందు మోతాదు:</b> ట్రైసైక్లాజోల్ 75% WP (0.6 గ్రా/లీటర్) పిచికారీ చేయాలి.</div>
-        </div>
+        <div id="pestCardsList"></div>
       </div>
 
       <!-- 6. DIARY VIEW -->
       <div id="view-diary" class="tool-view-panel">
-        <div class="modal-subtitle">మీ వ్యక్తిగత లాభ-నష్టాల లెక్కల పుస్తకం (Real Storage)</div>
+        <div class="modal-subtitle">మీ వ్యక్తిగత సాగు లాభ-నష్టాల లెక్కల పుస్తకం (Live Local Storage)</div>
 
         <div class="stat-grid-3">
           <div class="stat-box">
