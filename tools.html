@@ -1,0 +1,62 @@
+<!-- 6-GRID SMART AGRI TOOLS COMPONENT -->
+<section class="agri-tools-wrapper">
+  <div class="agri-tools-header">
+    <h3>⚡ రైతు ప్రత్యేక సేవలు (Smart Tools)</h3>
+    <span class="agri-badge-free">ఉచితం</span>
+  </div>
+
+  <div class="agri-tools-grid">
+    <!-- 1. మార్కెట్ ధరలు -->
+    <div class="tool-card" onclick="openAgriModal('market')">
+      <div class="tool-icon">🌾</div>
+      <div class="tool-title">మార్కెట్ ధరలు</div>
+      <div class="tool-sub" style="color: #2e7d32;">లైవ్ టెండర్లు</div>
+    </div>
+
+    <!-- 2. పొలం కొలత -->
+    <div class="tool-card" onclick="openAgriModal('measure')">
+      <div class="tool-icon">📐</div>
+      <div class="tool-title">పొలం కొలత</div>
+      <div class="tool-sub" style="color: #0288d1;">GPS ఎకరాలు & గుంటలు</div>
+    </div>
+
+    <!-- 3. రైతు క్యాలెండర్ -->
+    <div class="tool-card" onclick="openAgriModal('calendar')">
+      <div class="tool-icon">🗓️</div>
+      <div class="tool-title">రైతు క్యాలెండర్</div>
+      <div class="tool-sub" style="color: #f57f17;">తిథులు & ముహూర్తాలు</div>
+    </div>
+
+    <!-- 4. ఎరువుల మోతాదు -->
+    <div class="tool-card" onclick="openAgriModal('fertilizer')">
+      <div class="tool-icon">🧪</div>
+      <div class="tool-title">ఎరువుల లెక్క</div>
+      <div class="tool-sub" style="color: #c2185b;">ఖచ్చితమైన డోస్</div>
+    </div>
+
+    <!-- 5. పంట తెగుళ్లు -->
+    <div class="tool-card" onclick="openAgriModal('pest')">
+      <div class="tool-icon">🔬</div>
+      <div class="tool-title">పంట తెగుళ్లు</div>
+      <div class="tool-sub" style="color: #e65100;">నివారణ & మందులు</div>
+    </div>
+
+    <!-- 6. ఖర్చుల డైరీ -->
+    <div class="tool-card" onclick="openAgriModal('diary')">
+      <div class="tool-icon">📝</div>
+      <div class="tool-title">ఖర్చుల డైరీ</div>
+      <div class="tool-sub" style="color: #6a1b9a;">ఆదాయం - వ్యయం</div>
+    </div>
+  </div>
+</section>
+
+<!-- UNIVERSAL POPUP MODAL -->
+<div id="agriToolModal" class="agri-modal-overlay" onclick="closeAgriModal(event)">
+  <div class="agri-modal-container" onclick="event.stopPropagation()">
+    <div class="agri-modal-header">
+      <h4 id="agriModalTitle">టూల్ వివరాలు</h4>
+      <button class="agri-modal-close" onclick="closeAgriModal(null)">✕</button>
+    </div>
+    <div id="agriModalBody" class="agri-modal-body"></div>
+  </div>
+</div>
