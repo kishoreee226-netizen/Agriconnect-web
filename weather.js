@@ -242,14 +242,12 @@ window.renderWeatherWidget = async function() {
       bulletinItemsHtml += `<li class="agri-bulletin-row">${agriBulletins[i]}</li>`;
     }
 
-            let sprayBoxHtml = `
+                let sprayBoxHtml = `
       <div class="agri-bulletin-card">
         <div class="agri-bulletin-top">
           <div class="agri-bulletin-header-title">
-            <button type="button" class="agri-speech-pill-btn" onclick="window.readAgriBulletins()">
-              <span class="agri-speech-icon">🔊</span><span>వినండి</span>
-            </button>
-            <span>ఈ రోజు బులెటిన్ & సలహాలు</span>
+            <span>📢</span>
+            <span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span>
           </div>
           <span class="agri-bulletin-live-badge">Live Advisory</span>
         </div>
@@ -262,6 +260,7 @@ window.renderWeatherWidget = async function() {
         </div>
       </div>
     `;
+
 
 
     let soilBadge = "";
