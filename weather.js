@@ -1376,16 +1376,16 @@ window.saveCurrentFarmLocation = function() {
 
 window.readAgriBulletins = function() {
   if (!('speechSynthesis' in window)) {
-    alert("మీ బ్రౌజర్‌లో వాయిస్ సపోర్ట్ అందుబాటులో లేదు.");
+    alert("మీ ఫోన్ బ్రౌజర్‌లో వాయిస్ సపోర్ట్ అందుబాటులో లేదు.");
     return;
   }
 
-  // Mundhu unna speech ni cancel chesi, engine un-pause cheyadam
+  // 1. Force stop & clear queue
   window.speechSynthesis.cancel();
 
-  // Plain text collect cheyadam
+  // 2. Extract clean text from cards
   var rows = document.querySelectorAll('.agri-bulletin-row');
-  var fullText = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సాగు సలహాలు. ";
+  var sentences = ["ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సాగు సలహాలు."];
 
   rows.forEach(function(r) {
     var txt = (r.innerText || r.textContent || "")
@@ -1393,31 +1393,36 @@ window.readAgriBulletins = function() {
       .replace(/\s+/g, ' ')
       .trim();
     if (txt) {
-      fullText += txt + ". ";
+      sentences.push(txt);
     }
   });
 
+  var fullText = sentences.join(" ");
+
+  // 3. Create Speech Utterance
   var utterance = new SpeechSynthesisUtterance(fullText);
+  utterance.lang = 'te-IN';
+  utterance.rate = 0.88;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
 
-  // Available voices check chesi set cheyadam
-  var voices = window.speechSynthesis.getVoices();
-  if (voices && voices.length > 0) {
-    var targetVoice = voices.find(function(v) {
-      return (v.lang && (v.lang.startsWith('te') || v.lang === 'te-IN')) || 
+  // 4. Voice match if available
+  var voices = window.speechSynthesis.getVoices() || [];
+  if (voices.length > 0) {
+    var teVoice = voices.find(function(v) {
+      return (v.lang && (v.lang === 'te-IN' || v.lang.startsWith('te'))) ||
              (v.name && v.name.toLowerCase().includes('telugu'));
-    }) || voices.find(function(v) {
-      return v.lang && v.lang.includes('IN');
     });
-
-    if (targetVoice) {
-      utterance.voice = targetVoice;
+    if (teVoice) {
+      utterance.voice = teVoice;
     }
   }
 
-  utterance.lang = 'te-IN';
-  utterance.rate = 0.9;
-  utterance.pitch = 1.0;
+  // 5. Mobile Chrome pause bug fix
+  if (window.speechSynthesis.paused) {
+    window.speechSynthesis.resume();
+  }
 
-  // Speak trigger
+  // 6. Speak
   window.speechSynthesis.speak(utterance);
 };
