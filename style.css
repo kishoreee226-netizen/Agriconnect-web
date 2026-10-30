@@ -6097,14 +6097,14 @@ header h1 {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-/* AgriConnect Smart Bulletin Theme Matching Styles */
+/* AgriConnect Smart Bulletin - Clean White Theme */
 .agri-bulletin-card {
   margin: 14px 0;
-  background: #ffffff;
+  background: #ffffff !important;
   border-radius: 14px;
   padding: 12px;
   border: 1px solid #86efac;
-  box-shadow: 0 2px 8px rgba(22, 101, 52, 0.06);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
 }
 
 .agri-bulletin-top {
@@ -6123,27 +6123,8 @@ header h1 {
   color: #14532d;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   white-space: nowrap;
-}
-
-.agri-speech-btn {
-  background: #f0fdf4;
-  border: 1px solid #86efac;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  cursor: pointer;
-  outline: none;
-  flex-shrink: 0;
-}
-
-.agri-speech-btn:active {
-  background: #bbf7d0;
 }
 
 .agri-bulletin-live-badge {
@@ -6176,7 +6157,7 @@ header h1 {
   border: 1px solid #dcfce7;
   border-left: 4px solid #16a34a;
   margin-bottom: 7px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .agri-bulletin-footer {
@@ -6207,30 +6188,4 @@ header h1 {
   border: 1px solid #86efac;
   white-space: nowrap;
   flex-shrink: 0;
-}
-/* Clickable Speech Pill Button */
-.agri-speech-pill-btn {
-  background: #15803d;
-  color: #ffffff;
-  border: none;
-  border-radius: 20px;
-  padding: 3px 8px;
-  font-size: 11px;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-  flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(21, 128, 61, 0.25);
-  transition: transform 0.1s ease, background 0.15s ease;
-}
-
-.agri-speech-pill-btn:active {
-  transform: scale(0.94);
-  background: #166534;
-}
-
-.agri-speech-icon {
-  font-size: 12px;
 }
