@@ -1378,20 +1378,44 @@ window.readAgriBulletins = function() {
     return;
   }
 
+  // Mundhu unna speech ni cancel chesi, engine un-pause cheyadam
   window.speechSynthesis.cancel();
 
+  // Plain text collect cheyadam
   var rows = document.querySelectorAll('.agri-bulletin-row');
-  var speechText = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సలహాలు. ";
+  var fullText = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సాగు సలహాలు. ";
 
   rows.forEach(function(r) {
-    speechText += r.innerText.replace(/[⚠️✅🌧️🌾💧🚫🔬]/g, '') + ". ";
+    var txt = (r.innerText || r.textContent || "")
+      .replace(/[⚠️✅🌧️🌾💧🚫🔬📢🏛️]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (txt) {
+      fullText += txt + ". ";
+    }
   });
 
-  var utterance = new SpeechSynthesisUtterance(speechText);
+  var utterance = new SpeechSynthesisUtterance(fullText);
+
+  // Available voices check chesi set cheyadam
+  var voices = window.speechSynthesis.getVoices();
+  if (voices && voices.length > 0) {
+    var targetVoice = voices.find(function(v) {
+      return (v.lang && (v.lang.startsWith('te') || v.lang === 'te-IN')) || 
+             (v.name && v.name.toLowerCase().includes('telugu'));
+    }) || voices.find(function(v) {
+      return v.lang && v.lang.includes('IN');
+    });
+
+    if (targetVoice) {
+      utterance.voice = targetVoice;
+    }
+  }
+
   utterance.lang = 'te-IN';
-  utterance.rate = 0.95;
+  utterance.rate = 0.9;
   utterance.pitch = 1.0;
 
+  // Speak trigger
   window.speechSynthesis.speak(utterance);
 };
-
