@@ -6100,7 +6100,7 @@ header h1 {
 /* AgriConnect Smart Bulletin Theme Matching Styles */
 .agri-bulletin-card {
   margin: 14px 0;
-  background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf5 100%);
+  background: #ffffff;
   border-radius: 14px;
   padding: 12px;
   border: 1px solid #86efac;
@@ -6125,6 +6125,25 @@ header h1 {
   align-items: center;
   gap: 4px;
   white-space: nowrap;
+}
+
+.agri-speech-btn {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.agri-speech-btn:active {
+  background: #bbf7d0;
 }
 
 .agri-bulletin-live-badge {
