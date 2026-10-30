@@ -787,15 +787,10 @@ window.openFarmMapModal = function() {
 
       farmMap = L.map("leafletMapContainer").setView([initialLat, initialLon], 13);
 
-// 1. Satellite Base Layer (Polālu & Gaṭlu chūḍaḍāniki)
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-          maxZoom: 19,
-          attribution: 'Tiles &copy; Esri'
-        }).addTo(farmMap);
-
-// 2. Reference Labels Layer (Ūrla pērlu & Road pērlu transparent gā paina kanipisthāyi)
-        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-          maxZoom: 19
+        // Google Hybrid Layer (Direct Satellite Photo + All Village/Town Names)
+        L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
         }).addTo(farmMap);
 
 
