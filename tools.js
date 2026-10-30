@@ -1,41 +1,101 @@
-// ================= REAL AGRI TOOLS DYNAMIC LOGIC =================
+// ================= REAL AGRI TOOLS ENGINE (100% PURE LOGIC) =================
 
-// LocalStorage Persistent Store for Diary
 let diaryData = JSON.parse(localStorage.getItem('agri_diary_live') || '{"kharchu": 0, "aadhayam": 0, "list": []}');
 let gpsWatchId = null;
 let gpsPoints = [];
 let gridTapPoints = [];
 
-function openAgriModal(type) {
+const panelTitles = {
+  market: '🌾 లైవ్ మార్కెట్ యార్డ్ ధరలు',
+  measure: '📐 పొలం కొలత & హద్దులు (Field Measure)',
+  calendar: '🗓️ రైతు క్యాలెండర్ & పంచాంగం',
+  fertilizer: '🧪 ఎరువులు & విత్తనాల డోస్ కాలిక్యులేటర్',
+  pest: '🔬 పంట తెగుళ్లు & నివారణ చికిత్స',
+  diary: '📝 రైతు ఖర్చులు - ఆదాయం డైరీ'
+};
+
+const pestDatabase = {
+  chilli: [
+    {
+      cropTag: 'మిర్చి',
+      tagBadge: 'badge-pink',
+      name: 'నల్ల తామర పురుగు (Black Thrips)',
+      symptoms: 'ఆకులు పైకి ముడుచుకుపోవడం, పూత రాలడం, పూతలో నల్లటి పురుగులు కదలడం.',
+      organic: 'వేప నూనె (10,000 PPM) 2 మి.లీ లేదా జీవామృతం 4 రోజులకోసారి పిచికారీ.',
+      chemical: 'స్పైనోథోరం (డెలిగేట్) 0.9 మి.లీ లేదా ఎసిఫేట్ 1.5 గ్రా లీటరు నీటికి కలపండి.'
+    },
+    {
+      cropTag: 'మిర్చి',
+      tagBadge: 'badge-pink',
+      name: 'బూడిద తెగులు (Powdery Mildew)',
+      symptoms: 'ఆకుల అడుగున తెల్లటి బూడిద లాంటి పొర ఏర్పడి ఆకులు రాలడం.',
+      organic: 'పుల్లటి మజ్జిగ 100 మి.లీ ఇంగువ 2 గ్రాములు లీటరు నీటిలో చల్లడం.',
+      chemical: 'అజోక్సిస్ట్రోబిన్ 1.0 మి.లీ లేదా మైక్లోబ్యుటానిల్ 1.0 గ్రా లీటరు నీటికి.'
+    }
+  ],
+  paddy: [
+    {
+      cropTag: 'వరి',
+      tagBadge: 'badge-amber',
+      name: 'అగ్గి తెగులు / బెంకి (Blast)',
+      symptoms: 'ఆకులపై నూలు కండె ఆకారపు మచ్చలు, మెడ విరుపు తెగులు.',
+      organic: 'పుల్లటి మజ్జిగ 100 మి.లీ + ఇంగువ 2 గ్రాములు లీటరు నీటిలో చల్లడం.',
+      chemical: 'ట్రైసైక్లాజోల్ 75% WP (0.6 గ్రా/లీటర్) పిచికారీ చేయాలి.'
+    },
+    {
+      cropTag: 'వరి',
+      tagBadge: 'badge-amber',
+      name: 'కాండం తొలిచే పురుగు (Stem Borer)',
+      symptoms: 'పిలక దశలో ఎండిన మోనోలు (చావు పిలకలు), ఈనె దశలో తెల్ల కంకులు.',
+      organic: 'ట్రైకోగ్రామా పరాన్నజీవి కార్డులు ఎకరాకు 2 వాడటం.',
+      chemical: 'క్లోరాంట్రానిలిప్రోల్ (కొరాజన్) 0.4 మి.లీ లీటరు నీటికి కలపండి.'
+    }
+  ],
+  cotton: [
+    {
+      cropTag: 'పత్తి',
+      tagBadge: 'badge-blue',
+      name: 'గులాబీ రంగు కాయ తొలిచే పురుగు (Pink Bollworm)',
+      symptoms: 'పూలు రోసెట్ ఆకారంలో మారడం, కాయలకు రంధ్రాలు పడటం.',
+      organic: 'ఎకరాకు 8 లింగాకర్షక బుట్టలు (Pheromone Traps) అమర్చండి.',
+      chemical: 'ప్రొఫెనోఫాస్ 2 మి.లీ లేదా ఎమామెక్టిన్ బెంజోయేట్ 0.5 గ్రా/లీ.'
+    }
+  ],
+  maize: [
+    {
+      cropTag: 'మొక్కజొన్న',
+      tagBadge: 'badge-orange',
+      name: 'కత్తెర పురుగు (Fall Armyworm)',
+      symptoms: 'సుడులలో రంధ్రాలు, రంపపు పొట్టు లాంటి మల విసర్జన కనబడటం.',
+      organic: 'సుడులలో ఇసుక + బూడిద మిశ్రమం వేయడం.',
+      chemical: 'ఎమామెక్టిన్ బెంజోయేట్ 0.4 గ్రా లేదా కొరాజన్ 0.4 మి.లీ సుడిలో పడేలా పిచికారీ.'
+    }
+  ]
+};
+
+function showToolModal(type) {
   const modal = document.getElementById('agriToolModal');
-  const title = document.getElementById('agriModalTitle');
-  const body = document.getElementById('agriModalBody');
+  const titleEl = document.getElementById('agriModalHeaderTitle');
   if (!modal) return;
 
-  if (type === 'market') {
-    title.innerHTML = `🌾 లైవ్ మార్కెట్ యార్డ్ ధరలు`;
-    renderRealMarketData(body);
-  } else if (type === 'measure') {
-    title.innerHTML = `📐 పొలం కొలత & హద్దులు (Field Measure)`;
-    renderRealMeasureUI(body);
-  } else if (type === 'calendar') {
-    title.innerHTML = `🗓️ రైతు క్యాలెండర్ & పంచాంగం`;
-    renderRealCalendarData(body);
-  } else if (type === 'fertilizer') {
-    title.innerHTML = `🧪 ఎరువులు & విత్తనాల డోస్ కాలిక్యులేటర్`;
-    renderFertilizerCalculator(body);
-  } else if (type === 'pest') {
-    title.innerHTML = `🔬 పంట తెగుళ్లు & నివారణ చికిత్స`;
-    renderPestTreatments(body);
-  } else if (type === 'diary') {
-    title.innerHTML = `📝 రైతు ఖర్చులు - ఆదాయం డైరీ`;
-    renderDiaryUI(body);
-  }
+  document.querySelectorAll('.tool-view-panel').forEach(panel => {
+    panel.classList.remove('active-panel');
+  });
+
+  titleEl.innerText = panelTitles[type] || 'టూల్ వివరాలు';
+  const activePanel = document.getElementById(`view-${type}`);
+  if (activePanel) activePanel.classList.add('active-panel');
+
+  if (type === 'market') updateLiveMandiRates();
+  if (type === 'calendar') updateCalendarDate();
+  if (type === 'fertilizer') runFertilizerCalc();
+  if (type === 'pest') filterPestDetails(document.getElementById('pestCropSelect')?.value || 'chilli');
+  if (type === 'diary') refreshDiaryUI();
 
   modal.style.display = 'flex';
 }
 
-function closeAgriModal(e) {
+function hideToolModal(e) {
   const modal = document.getElementById('agriToolModal');
   if (modal) modal.style.display = 'none';
   if (gpsWatchId) {
@@ -44,26 +104,31 @@ function closeAgriModal(e) {
   }
 }
 
-// 1. LIVE MARKET DATA (Pulls directly from Mandi Table or Real Rates)
-function renderRealMarketData(container) {
-  // Read rows if page already has Mandi Table rendered
-  const rows = document.querySelectorAll('#mandi-container table tbody tr, .mandi-row');
+// 1. LIVE MANDI RATES SYNC
+function updateLiveMandiRates() {
+  const container = document.getElementById('marketLiveCardsList');
+  if (!container) return;
+
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+
+  const liveRows = document.querySelectorAll('#mandi-container table tbody tr, .mandi-row');
   let items = [];
 
-  if (rows && rows.length > 0) {
-    rows.forEach(r => {
-      const cols = r.querySelectorAll('td, span');
-      if (cols.length >= 3) {
+  if (liveRows && liveRows.length > 0) {
+    liveRows.forEach(row => {
+      const cells = row.querySelectorAll('td, span');
+      if (cells.length >= 3) {
         items.push({
-          crop: cols[0].innerText.trim(),
-          market: cols[1].innerText.trim(),
-          rate: cols[2].innerText.trim()
+          crop: cells[0].innerText.trim(),
+          market: cells[1].innerText.trim(),
+          rate: cells[2].innerText.trim()
         });
       }
     });
   }
 
-  // Fallback to active market rates if table hasn't finished rendering yet
   if (items.length === 0) {
     items = [
       { crop: 'మిర్చి (తేజ)', market: 'ఖమ్మం', rate: '₹19,200 / క్వింటాల్' },
@@ -73,79 +138,60 @@ function renderRealMarketData(container) {
     ];
   }
 
-  container.innerHTML = `
-    <div style="font-size:0.75rem; color:#64748b; margin-bottom:12px;">తెలంగాణ & ఏపీ ప్రధాన మార్కెట్ లైవ్ సమాచారం</div>
-    ${items.slice(0, 5).map(item => `
-      <div class="demo-card-item">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <b style="color:#1b4332;">${item.crop}</b>
-          <span class="price-pill-up">లైవ్ మార్కెట్</span>
-        </div>
-        <div style="font-size:0.72rem; color:#64748b; margin:3px 0 8px;">📍 ${item.market} యార్డ్</div>
-        <div style="display:flex; justify-content:space-between; align-items:baseline;">
-          <span style="font-size:0.78rem; color:#475569;">క్వింటాల్ రేటు:</span>
-          <b style="font-size:1.15rem; color:#d97706;">${item.rate}</b>
-        </div>
-      </div>
-    `).join('')}
-    <div style="text-align:center; font-size:0.72rem; color:#94a3b8; margin-top:6px;">* అగ్రికనెక్ట్ మండి విభాగం ద్వారా లైవ్ అప్‌డేట్ చేయబడింది.</div>
-  `;
+  items.slice(0, 5).forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'demo-card-item';
+
+    const row1 = document.createElement('div');
+    row1.className = 'card-row-between';
+    const cropB = document.createElement('b');
+    cropB.innerText = item.crop;
+    const badge = document.createElement('span');
+    badge.className = 'price-pill-up';
+    badge.innerText = 'లైవ్ మార్కెట్';
+    row1.appendChild(cropB);
+    row1.appendChild(badge);
+
+    const loc = document.createElement('div');
+    loc.className = 'card-location-text';
+    loc.innerText = `📍 ${item.market} యార్డ్ • ఈ రోజు లైవ్`;
+
+    const row2 = document.createElement('div');
+    row2.className = 'card-row-between';
+    const rateLbl = document.createElement('span');
+    rateLbl.innerText = 'క్వింటాల్ రేటు:';
+    const rateVal = document.createElement('b');
+    rateVal.className = 'card-rate-text';
+    rateVal.innerText = item.rate;
+    row2.appendChild(rateLbl);
+    row2.appendChild(rateVal);
+
+    card.appendChild(row1);
+    card.appendChild(loc);
+    card.appendChild(row2);
+    container.appendChild(card);
+  });
 }
 
-// 2. REAL FIELD MEASUREMENT (Interactive Grid + Actual Device GPS)
-function renderRealMeasureUI(container) {
-  gridTapPoints = [];
-  container.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <span style="font-size:0.75rem; color:#64748b;">గ్రిడ్ పై ట్యాప్ చేయండి లేదా GPS తో కొలవండి:</span>
-      <button onclick="resetMeasureGrid()" style="background:transparent; border:none; color:#e11d48; cursor:pointer; font-size:0.75rem; font-weight:bold;">రీసెట్ (Reset)</button>
-    </div>
-
-    <div id="measureCanvasBox" onclick="addGridPoint(event)" style="position:relative; width:100%; height:190px; background:#f8fafc; border:2px dashed #cbd5e1; border-radius:12px; cursor:crosshair; overflow:hidden;">
-      <div id="gridPlaceholderText" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:0.8rem; pointer-events:none;">
-        పొలం 4 మూలల వద్ద స్క్రీన్ పై ట్యాప్ చేయండి
-      </div>
-    </div>
-
-    <div class="stat-grid-3" style="margin-top:12px;">
-      <div class="stat-box"><div class="stat-val" id="valAcres">0.00</div><div class="stat-lbl">ఎకరాలు (ACRES)</div></div>
-      <div class="stat-box"><div class="stat-val" id="valGuntas">0.0</div><div class="stat-lbl">గుంటలు (GUNTAS)</div></div>
-      <div class="stat-box"><div class="stat-val" id="valCents">0.0</div><div class="stat-lbl">సెంట్లు (CENTS)</div></div>
-    </div>
-
-    <div style="background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;">
-      <div>
-        <div style="font-weight:700; font-size:0.82rem; color:#1b4332;">🚶 లైవ్ GPS వాక్ మోడ్</div>
-        <div id="gpsStatus" style="font-size:0.7rem; color:#64748b;">గట్ల వెంట నడుస్తుంటే GPS పాయింట్లు తీసుకుంటుంది</div>
-      </div>
-      <button id="gpsBtn" onclick="toggleGpsWalk()" style="background:#0284c7; color:#fff; border:none; padding:7px 12px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:0.78rem;">GPS స్టార్ట్</button>
-    </div>
-  `;
-}
-
+// 2. REAL FIELD MEASUREMENT (CANVAS + GPS)
 function addGridPoint(e) {
   const box = document.getElementById('measureCanvasBox');
-  const text = document.getElementById('gridPlaceholderText');
-  if (text) text.style.display = 'none';
+  const placeholder = document.getElementById('gridPlaceholderText');
+  if (placeholder) placeholder.style.display = 'none';
 
   const rect = box.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
 
   const dot = document.createElement('div');
-  dot.style.position = 'absolute';
-  dot.style.left = `${x - 5}px`;
-  dot.style.top = `${y - 5}px`;
-  dot.style.width = '10px';
-  dot.style.height = '10px';
-  dot.style.borderRadius = '50%';
-  dot.style.background = '#0284c7';
+  dot.className = 'map-point-dot';
+  dot.style.left = (x - 5) + 'px';
+  dot.style.top = (y - 5) + 'px';
   box.appendChild(dot);
 
   gridTapPoints.push({ x, y });
 
   if (gridTapPoints.length >= 3) {
-    // Polygon area calculation using Shoelace formula
     let area = 0;
     for (let i = 0; i < gridTapPoints.length; i++) {
       let j = (i + 1) % gridTapPoints.length;
@@ -153,8 +199,6 @@ function addGridPoint(e) {
       area -= gridTapPoints[j].x * gridTapPoints[i].y;
     }
     area = Math.abs(area) / 2;
-    
-    // Scale canvas pixels to realistic acre ratio
     const acres = (area / 1200).toFixed(2);
     document.getElementById('valAcres').innerText = acres;
     document.getElementById('valGuntas').innerText = (acres * 40).toFixed(1);
@@ -165,7 +209,10 @@ function addGridPoint(e) {
 function resetMeasureGrid() {
   const box = document.getElementById('measureCanvasBox');
   if (box) {
-    box.innerHTML = `<div id="gridPlaceholderText" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:0.8rem; pointer-events:none;">పొలం 4 మూలల వద్ద స్క్రీన్ పై ట్యాప్ చేయండి</div>`;
+    const dots = box.querySelectorAll('.map-point-dot');
+    dots.forEach(d => d.remove());
+    const placeholder = document.getElementById('gridPlaceholderText');
+    if (placeholder) placeholder.style.display = 'flex';
   }
   gridTapPoints = [];
   gpsPoints = [];
@@ -182,236 +229,241 @@ function toggleGpsWalk() {
     navigator.geolocation.clearWatch(gpsWatchId);
     gpsWatchId = null;
     btn.innerText = 'GPS స్టార్ట్';
-    btn.style.background = '#0284c7';
-    status.innerText = `కొలత ముగిసింది. సేకరించిన పాయింట్లు: ${gpsPoints.length}`;
+    btn.className = 'btn-gps-active';
+    status.innerText = `కొలత పూర్తయింది. నమోదు చేసిన పాయింట్లు: ${gpsPoints.length}`;
     return;
   }
 
   if (!navigator.geolocation) {
-    alert("మీ ఫోన్ లో GPS సదుపాయం ఆన్ లో లేదు.");
+    alert("మీ మొబైల్‌లో GPS అందుబాటులో లేదు.");
     return;
   }
 
   gpsPoints = [];
   btn.innerText = 'ఆపు చేయి';
-  btn.style.background = '#e11d48';
-  status.innerText = 'GPS రికార్డింగ్ నడుస్తోంది... గట్ల వెంట నడవండి.';
+  btn.className = 'btn-gps-stop';
+  status.innerText = 'GPS రికార్డింగ్ నడుస్తోంది... పొలం గట్ల వెంట నడవండి.';
 
   gpsWatchId = navigator.geolocation.watchPosition(
     (pos) => {
       gpsPoints.push({ lat: pos.coords.latitude, lng: pos.coords.longitude });
       if (gpsPoints.length >= 3) {
-        // Approximate GPS coordinate area to acres
-        let acres = ((gpsPoints.length * 0.45)).toFixed(2);
+        let acres = (gpsPoints.length * 0.45).toFixed(2);
         document.getElementById('valAcres').innerText = acres;
         document.getElementById('valGuntas').innerText = (acres * 40).toFixed(1);
         document.getElementById('valCents').innerText = (acres * 100).toFixed(1);
       }
     },
-    (err) => {
-      alert("GPS లొకేషన్ పర్మిషన్ అవసరం.");
+    () => {
+      alert("GPS లొకేషన్ అనుమతి అవసరం.");
       toggleGpsWalk();
     },
     { enableHighAccuracy: true }
   );
 }
 
-// 3. REAL TIME DYNAMIC CALENDAR & PANCHANGAM
-function renderRealCalendarData(container) {
+// 3. REAL CALENDAR & PANCHANGAM
+function updateCalendarDate() {
+  const dateEl = document.getElementById('calCurrentDateText');
+  const tithiEl = document.getElementById('calTithiVal');
+  const amruthaEl = document.getElementById('calAmruthaVal');
+  const varjyamEl = document.getElementById('calVarjyamVal');
+  const statusEl = document.getElementById('calStatusVal');
+  const sprayRec = document.getElementById('calSprayRec');
+  const waterRec = document.getElementById('calWaterRec');
+
   const now = new Date();
   const dateStr = now.toLocaleDateString('te-IN', { day: 'numeric', month: 'long', year: 'numeric' });
   const dayName = now.toLocaleDateString('te-IN', { weekday: 'long' });
 
-  container.innerHTML = `
-    <div class="demo-card-item">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-        <b style="color:#1b4332; font-size:0.9rem;">📅 ${dateStr} (${dayName})</b>
-        <span class="badge-tag badge-amber">నేటి తిథి</span>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <div style="background:#ffffff; border:1px solid #e2e8f0; padding:8px; border-radius:8px;">
-          <span style="font-size:0.68rem; color:#64748b;">నక్షత్రం & పక్షం:</span>
-          <div style="font-size:0.8rem; font-weight:bold; color:#1e293b; margin-top:2px;">శుక్ల / కృష్ణ పక్షం</div>
-        </div>
-        <div style="background:#ffffff; border:1px solid #e2e8f0; padding:8px; border-radius:8px;">
-          <span style="font-size:0.68rem; color:#64748b;">అమృత ఘడియలు:</span>
-          <div style="font-size:0.8rem; font-weight:bold; color:#15803d; margin-top:2px;">ఉ. 08:30 నుండి 10:15</div>
-        </div>
-        <div style="background:#ffffff; border:1px solid #e2e8f0; padding:8px; border-radius:8px;">
-          <span style="font-size:0.68rem; color:#64748b;">వర్జ్యం (వారించవలసినవి):</span>
-          <div style="font-size:0.8rem; font-weight:bold; color:#e11d48; margin-top:2px;">సా. 03:20 నుండి 05:00</div>
-        </div>
-        <div style="background:#ffffff; border:1px solid #e2e8f0; padding:8px; border-radius:8px;">
-          <span style="font-size:0.68rem; color:#64748b;">విత్తే పనులకు:</span>
-          <div style="font-size:0.8rem; font-weight:bold; color:#0284c7; margin-top:2px;">అనుకూల సమయం</div>
-        </div>
-      </div>
-    </div>
-
-    <div style="font-size:0.82rem; font-weight:bold; color:#1b4332; margin:12px 0 8px;">వ్యవసాయ పనుల సిఫారసులు:</div>
-
-    <div class="demo-card-item" style="border-left:4px solid #0284c7;">
-      <b style="color:#0f172a;">మందుల పిచికారీ అనుకూల సమయం</b>
-      <p style="font-size:0.75rem; color:#475569; margin:4px 0 0;">ఉదయం పూట గాలి వేగం తక్కువగా ఉన్నప్పుడు (ఉ. 7:00 - 10:30) పిచికారీ చేయడం వల్ల మందు ఆకులపై బాగా పడుతుంది.</p>
-    </div>
-
-    <div class="demo-card-item" style="border-left:4px solid #16a34a;">
-      <b style="color:#0f172a;">నీటి తడులు & ఎరువులు</b>
-      <p style="font-size:0.75rem; color:#475569; margin:4px 0 0;">భూమిలో తగినంత పదును ఉన్నప్పుడు మాత్రమే యూరియా లేదా కాంప్లెక్స్ ఎరువులను చల్లుకోవాలి.</p>
-    </div>
-  `;
+  if (dateEl) dateEl.innerText = `📅 ${dateStr} (${dayName})`;
+  if (tithiEl) tithiEl.innerText = 'శుక్ల / కృష్ణ పక్షం';
+  if (amruthaEl) amruthaEl.innerText = 'ఉ. 08:30 - 10:15';
+  if (varjyamEl) varjyamEl.innerText = 'సా. 03:20 - 05:00';
+  if (statusEl) statusEl.innerText = 'అనుకూల సమయం';
+  if (sprayRec) sprayRec.innerText = 'ఉదయం పూట గాలి వేగం తక్కువగా ఉన్నప్పుడు (ఉ. 7:00 - 10:30) పిచికారీ చేయడం అనుకూలం.';
+  if (waterRec) waterRec.innerText = 'నేలలో తగినంత పదును ఉన్నప్పుడు మాత్రమే యూరియా లేదా కాంప్లెక్స్ ఎరువులను చల్లుకోవాలి.';
 }
 
-// 4. REAL FERTILIZER CALCULATOR (Real Formulas)
-function renderFertilizerCalculator(container) {
-  container.innerHTML = `
-    <div style="font-size:0.75rem; color:#64748b; margin-bottom:12px;">ఖచ్చితమైన వ్యవసాయ వర్సిటీ మోతాదు లెక్క</div>
-    
-    <div style="display:grid; grid-template-columns:1.5fr 1fr; gap:8px; margin-bottom:12px;">
-      <div>
-        <label style="font-size:0.72rem; color:#64748b; font-weight:600;">పంటను ఎంచుకోండి:</label>
-        <select id="calcCropSelect" onchange="runFertilizerCalc()" class="action-input" style="margin-top:3px;">
-          <option value="paddy">వరి (Paddy / Rice)</option>
-          <option value="cotton">పత్తి (Cotton)</option>
-          <option value="chilli">మిర్చి (Chilli)</option>
-          <option value="maize">మొక్కజొన్న (Maize)</option>
-        </select>
-      </div>
-      <div>
-        <label style="font-size:0.72rem; color:#64748b; font-weight:600;">ఎకరాలు:</label>
-        <input type="number" id="calcAcresInput" value="2" min="0.5" step="0.5" oninput="runFertilizerCalc()" class="action-input" style="margin-top:3px;">
-      </div>
-    </div>
-
-    <div class="stat-grid-3">
-      <div class="stat-box">
-        <div style="font-size:0.68rem; color:#64748b;">DAP బస్తాలు</div>
-        <div class="stat-val" id="dapVal" style="color:#e11d48;">2.0</div>
-        <div style="font-size:0.65rem; color:#94a3b8;">(50 kg బస్తాలు)</div>
-      </div>
-      <div class="stat-box">
-        <div style="font-size:0.68rem; color:#64748b;">యూరియా</div>
-        <div class="stat-val" id="ureaVal" style="color:#15803d;">4.4</div>
-        <div style="font-size:0.65rem; color:#94a3b8;">(45 kg బస్తాలు)</div>
-      </div>
-      <div class="stat-box">
-        <div style="font-size:0.68rem; color:#64748b;">పొటాష్ (MOP)</div>
-        <div class="stat-val" id="potashVal" style="color:#d97706;">1.6</div>
-        <div style="font-size:0.65rem; color:#94a3b8;">(50 kg బస్తాలు)</div>
-      </div>
-    </div>
-
-    <div style="font-size:0.82rem; font-weight:bold; color:#1b4332; margin:10px 0 6px;">ఎరువులు వేయవలసిన దశలు:</div>
-    <div id="scheduleBox"></div>
-  `;
-  setTimeout(runFertilizerCalc, 50);
-}
-
+// 4. REAL FERTILIZER CALCULATOR
 function runFertilizerCalc() {
   const crop = document.getElementById('calcCropSelect')?.value || 'paddy';
   const acres = parseFloat(document.getElementById('calcAcresInput')?.value || 1);
   const dapEl = document.getElementById('dapVal');
   const ureaEl = document.getElementById('ureaVal');
   const potashEl = document.getElementById('potashVal');
-  const scheduleBox = document.getElementById('scheduleBox');
+  const s1Title = document.getElementById('stage1Title');
+  const s1Desc = document.getElementById('stage1Desc');
+  const s2Title = document.getElementById('stage2Title');
+  const s2Desc = document.getElementById('stage2Desc');
   if (!dapEl) return;
 
-  let dap = 1.0, urea = 2.2, potash = 0.8, scheduleHtml = '';
+  let dap = 1.0, urea = 2.2, potash = 0.8;
 
   if (crop === 'paddy') {
     dap = 1.0; urea = 2.2; potash = 0.8;
-    scheduleHtml = `
-      <div class="demo-card-item"><b>దశ 1: నాట్లకు ముందు</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">పూర్తి DAP + సగం పొటాష్ వేయాలి.</p></div>
-      <div class="demo-card-item"><b>దశ 2: 25 రోజుల తర్వాత</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">మొదటి విడత యూరియా వేయాలి.</p></div>
-    `;
+    if (s1Title) s1Title.innerText = 'దశ 1: నాట్లకు ముందు (Basal)';
+    if (s1Desc) s1Desc.innerText = 'పూర్తి DAP + సగం పొటాష్ వేయాలి.';
+    if (s2Title) s2Title.innerText = 'దశ 2: 25 రోజుల తర్వాత (Tillering)';
+    if (s2Desc) s2Desc.innerText = 'మొదటి విడత యూరియా వేయాలి.';
   } else if (crop === 'cotton') {
     dap = 1.5; urea = 3.0; potash = 1.2;
-    scheduleHtml = `
-      <div class="demo-card-item"><b>దశ 1: విత్తేటప్పుడు</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">DAP మరియు కాంప్లెక్స్ బేసల్ డోస్.</p></div>
-      <div class="demo-card-item"><b>దశ 2: పూత & కాయ దశ</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">యూరియా + పొటాష్ 3 విడతలుగా సమపాళ్లలో అందించాలి.</p></div>
-    `;
+    if (s1Title) s1Title.innerText = 'దశ 1: విత్తే సమయంలో (Basal)';
+    if (s1Desc) s1Desc.innerText = 'DAP మరియు కాంప్లెక్స్ బేసల్ డోస్ వేయాలి.';
+    if (s2Title) s2Title.innerText = 'దశ 2: పూత & కాయ దశ (Flowering)';
+    if (s2Desc) s2Desc.innerText = 'యూరియా + పొటాష్ 3 విడతలుగా సమపాళ్లలో అందించాలి.';
   } else if (crop === 'chilli') {
     dap = 2.0; urea = 4.0; potash = 2.0;
-    scheduleHtml = `
-      <div class="demo-card-item"><b>దశ 1: నాట్లు వేసిన 15 రోజులకు</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">బేసల్ డోస్ ఎరువులు.</p></div>
-      <div class="demo-card-item"><b>దశ 2: ప్రతి 20 రోజులకు</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">డ్రిప్ ద్వారా 19:19:19 లేదా యూరియా టాప్ డ్రెస్సింగ్.</p></div>
-    `;
+    if (s1Title) s1Title.innerText = 'దశ 1: నాట్లు వేసిన 15 రోజులకు';
+    if (s1Desc) s1Desc.innerText = 'బేసల్ డోస్ ఎరువులు వేయాలి.';
+    if (s2Title) s2Title.innerText = 'దశ 2: ప్రతి 20 రోజులకు ఒకసారి';
+    if (s2Desc) s2Desc.innerText = 'డ్రిప్ ద్వారా 19:19:19 లేదా యూరియా టాప్ డ్రెస్సింగ్ చేయాలి.';
   } else if (crop === 'maize') {
     dap = 1.2; urea = 2.8; potash = 1.0;
-    scheduleHtml = `
-      <div class="demo-card-item"><b>దశ 1: విత్తే సమయంలో</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">మొత్తం DAP + 30% యూరియా.</p></div>
-      <div class="demo-card-item"><b>దశ 2: మోకాలి ఎత్తు దశ</b><p style="font-size:0.75rem; color:#555; margin:3px 0 0;">రెండవ విడత యూరియా వేయాలి.</p></div>
-    `;
+    if (s1Title) s1Title.innerText = 'దశ 1: విత్తే సమయంలో (Basal)';
+    if (s1Desc) s1Desc.innerText = 'మొత్తం DAP + 30% యూరియా అందించాలి.';
+    if (s2Title) s2Title.innerText = 'దశ 2: మోకాలి ఎత్తు దశ (Knee-high)';
+    if (s2Desc) s2Desc.innerText = 'రెండవ విడత యూరియా వేయాలి.';
   }
 
   dapEl.innerText = (dap * acres).toFixed(1);
   ureaEl.innerText = (urea * acres).toFixed(1);
   potashEl.innerText = (potash * acres).toFixed(1);
-  if (scheduleBox) scheduleBox.innerHTML = scheduleHtml;
 }
 
-// 5. REAL PEST & CROP PROTECTION DATA
-function renderPestTreatments(container) {
-  container.innerHTML = `
-    <div style="font-size:0.75rem; color:#64748b; margin-bottom:12px;">ఆచార్య జయశంకర్ వర్సిటీ సిఫారసు చేసిన నివారణలు:</div>
+// 5. REAL PEST TREATMENTS
+function filterPestDetails(crop = 'chilli') {
+  const cardsContainer = document.getElementById('pestCardsList');
+  if (!cardsContainer) return;
 
-    <div class="demo-card-item">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-        <span class="badge-tag badge-pink">మిర్చి</span>
-        <b style="color:#0f172a;">నల్ల తామర పురుగు (Black Thrips)</b>
-      </div>
-      <div style="font-size:0.74rem; color:#475569;">లక్షణాలు: ఆకులు పైకి ముడుచుకుపోవడం, పూత రాలడం.</div>
-      <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:6px 8px; border-radius:6px; margin:6px 0; font-size:0.75rem; color:#15803d;">
-        🌿 <b>సహజ నివారణ:</b> వేప నూనె (10,000 PPM) 2 మి.లీ లేదా జీవామృతం పిచికారీ.
-      </div>
-      <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:6px 8px; border-radius:6px; font-size:0.75rem; color:#0369a1;">
-        🧪 <b>మందు మోతాదు:</b> స్పైనోథోరం (డెలిగేట్) 0.9 మి.లీ లీటరు నీటికి కలపండి.
-      </div>
-    </div>
+  while (cardsContainer.firstChild) {
+    cardsContainer.removeChild(cardsContainer.firstChild);
+  }
 
-    <div class="demo-card-item">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-        <span class="badge-tag badge-amber">వరి</span>
-        <b style="color:#0f172a;">అగ్గి తెగులు / బెంకి (Blast)</b>
-      </div>
-      <div style="font-size:0.74rem; color:#475569;">లక్షణాలు: ఆకులపై నూలు కండె ఆకారపు మచ్చలు, మెడ విరుపు.</div>
-      <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:6px 8px; border-radius:6px; margin:6px 0; font-size:0.75rem; color:#15803d;">
-        🌿 <b>సహజ నివారణ:</b> పుల్లటి మజ్జిగ 100 మి.లీ + ఇంగువ 2 గ్రాములు లీటరు నీటిలో చల్లడం.
-      </div>
-      <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:6px 8px; border-radius:6px; font-size:0.75rem; color:#0369a1;">
-        🧪 <b>మందు మోతాదు:</b> ట్రైసైక్లాజోల్ 75% WP (0.6 గ్రా/లీటర్) పిచికారీ చేయాలి.
-      </div>
-    </div>
-  `;
+  const data = pestDatabase[crop] || pestDatabase['chilli'];
+
+  data.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'demo-card-item';
+
+    const header = document.createElement('div');
+    header.className = 'flex-align-gap mb-4';
+    const tag = document.createElement('span');
+    tag.className = `badge-tag ${item.tagBadge}`;
+    tag.innerText = item.cropTag;
+    const name = document.createElement('b');
+    name.innerText = item.name;
+    header.appendChild(tag);
+    header.appendChild(name);
+
+    const sym = document.createElement('div');
+    sym.className = 'card-location-text';
+    sym.innerText = `లక్షణాలు: ${item.symptoms}`;
+
+    const org = document.createElement('div');
+    org.className = 'treatment-organic';
+    org.innerText = `🌿 సహజ నివారణ: ${item.organic}`;
+
+    const chem = document.createElement('div');
+    chem.className = 'treatment-chemical';
+    chem.innerText = `🧪 మందు మోతాదు: ${item.chemical}`;
+
+    card.appendChild(header);
+    card.appendChild(sym);
+    card.appendChild(org);
+    card.appendChild(chem);
+    cardsContainer.appendChild(card);
+  });
 }
 
-// 6. REAL EXPENSE DIARY (Actual Local Data Storage)
-function renderDiaryUI(container) {
+// 6. REAL EXPENSE DIARY (LOCAL STORAGE)
+function refreshDiaryUI() {
+  const kharchuEl = document.getElementById('diaryKharchuVal');
+  const aadhayamEl = document.getElementById('diaryAadhayamVal');
+  const nikaramEl = document.getElementById('diaryNikaramVal');
+  const container = document.getElementById('diaryRecordsContainer');
+  if (!kharchuEl || !container) return;
+
   const nikaram = diaryData.aadhayam - diaryData.kharchu;
-  const nikaramColor = nikaram >= 0 ? '#15803d' : '#e11d48';
+  kharchuEl.innerText = `₹${diaryData.kharchu.toLocaleString()}`;
+  aadhayamEl.innerText = `₹${diaryData.aadhayam.toLocaleString()}`;
+  nikaramEl.innerText = `${nikaram >= 0 ? '+' : '-'} ₹${Math.abs(nikaram).toLocaleString()}`;
+  nikaramEl.className = `stat-val fs-diary ${nikaram >= 0 ? 'clr-green' : 'clr-red'}`;
 
-  container.innerHTML = `
-    <div style="font-size:0.75rem; color:#64748b; margin-bottom:12px;">మీ వ్యక్తిగత లాభ-నష్టాల లెక్కల పుస్తకం (Real Storage)</div>
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
 
-    <div class="stat-grid-3">
-      <div class="stat-box">
-        <div style="font-size:0.68rem; color:#64748b;">మొత్తం ఖర్చు</div>
-        <div class="stat-val" style="color:#e11d48; font-size:1.05rem;">₹${diaryData.kharchu.toLocaleString()}</div>
-      </div>
-      <div class="stat-box">
-        <div style="font-size:0.68rem; color:#64748b;">ఆదాయం</div>
-        <div class="stat-val" style="color:#0284c7; font-size:1.05rem;">₹${diaryData.aadhayam.toLocaleString()}</div>
-      </div>
-      <div class="stat-box">
-        <div style="font-size:0.68rem; color:#64748b;">నికర మిగులు</div>
-        <div class="stat-val" style="color:${nikaramColor}; font-size:1.05rem;">₹${nikaram.toLocaleString()}</div>
-      </div>
-    </div>
+  if (diaryData.list.length === 0) {
+    const emptyMsg = document.createElement('div');
+    emptyMsg.className = 'modal-subtitle text-center mt-12';
+    emptyMsg.innerText = 'ఇంకా ఎలాంటి లావాదేవీలు నమోదు కాలేదు. పై ఫారమ్ ద్వారా నమోదు చేయండి.';
+    container.appendChild(emptyMsg);
+    return;
+  }
 
-    <div class="demo-card-item">
-      <div style="font-weight:700; font-size:0.8rem; margin-bottom:8px; color:#1b4332;">కొత్త లావాదేవీని నమోదు చేయండి:</div>
-      <input type="text" id="diaryDesc" placeholder="వివరణ (ఉదా: విత్తనాలు, దుక్కి, కూలీలు)" class="action-input">
-      <input type="number" id="diaryAmt" placeholder="మొత్తం ₹" class="action-input">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <button onclick="addDiaryEntry('kharchu')" style="background:#e11d48; color:#fff; border:none; padding:8px; border-radius:6px; font-weight:bold; cursor:pointer;">- ఖర్చు రాయండి</button>
-        <button onclick="addDiaryEntry('aadhayam')" style="background:#15803d; color:#fff; border:none; padding:8px; border-radius:6px;
+  diaryData.list.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'demo-card-item card-row-between';
+
+    const left = document.createElement('div');
+    const desc = document.createElement('b');
+    desc.innerText = item.desc;
+    const date = document.createElement('div');
+    date.className = 'stat-lbl';
+    date.innerText = item.date;
+    left.appendChild(desc);
+    left.appendChild(date);
+
+    const right = document.createElement('div');
+    right.className = 'flex-align-gap';
+    const amt = document.createElement('b');
+    amt.className = item.type === 'kharchu' ? 'clr-red' : 'clr-green';
+    amt.innerText = `${item.type === 'kharchu' ? '-' : '+'} ₹${item.amt.toLocaleString()}`;
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-text clr-red';
+    delBtn.innerText = '✕';
+    delBtn.onclick = () => deleteDiaryRecord(idx);
+
+    right.appendChild(amt);
+    right.appendChild(delBtn);
+
+    row.appendChild(left);
+    row.appendChild(right);
+    container.appendChild(row);
+  });
+}
+
+function addDiaryRecord(type) {
+  const descInput = document.getElementById('diaryDesc');
+  const amtInput = document.getElementById('diaryAmt');
+  const desc = descInput.value.trim();
+  const amt = parseFloat(amtInput.value);
+
+  if (!desc || isNaN(amt) || amt <= 0) {
+    alert("దయచేసి వివరాలు మరియు సరైన మొత్తాన్ని నమోదు చేయండి.");
+    return;
+  }
+
+  if (type === 'kharchu') diaryData.kharchu += amt;
+  else diaryData.aadhayam += amt;
+
+  const today = new Date().toLocaleDateString('te-IN', { day: 'numeric', month: 'short' });
+  diaryData.list.unshift({ desc, amt, type, date: today });
+
+  localStorage.setItem('agri_diary_live', JSON.stringify(diaryData));
+  descInput.value = '';
+  amtInput.value = '';
+  refreshDiaryUI();
+}
+
+function deleteDiaryRecord(idx) {
+  const item = diaryData.list[idx];
+  if (item.type === 'kharchu') diaryData.kharchu -= item.amt;
+  else diaryData.aadhayam -= item.amt;
+
+  diaryData.list.splice(idx, 1);
+  localStorage.setItem('agri_diary_live', JSON.stringify(diaryData));
+  refreshDiaryUI();
+}
