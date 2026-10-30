@@ -237,23 +237,25 @@ window.renderWeatherWidget = async function() {
       agriBulletins.push(`🔬 <b>తెగుళ్ల ముప్పు:</b> వాతావరణంలో తెగుళ్ల ప్రభావం సాధారణ స్థాయిలోనే ఉంది.`);
     }
 
-    let bulletinItemsHtml = "";
+        let bulletinItemsHtml = "";
     for (let i = 0; i < agriBulletins.length; i++) {
-      bulletinItemsHtml += `<li style="font-size:11.5px;line-height:1.5;background:rgba(0,0,0,0.18);padding:7px 9px;border-radius:8px;border-left:3px solid #34d399;margin-bottom:6px;">${agriBulletins[i]}</li>`;
+      bulletinItemsHtml += `<li class="agri-bulletin-row">${agriBulletins[i]}</li>`;
     }
 
     let sprayBoxHtml = `
-      <div style="margin:12px 0;background:linear-gradient(135deg,#064e3b 0%,#065f46 100%);border-radius:14px;padding:12px;color:#ffffff;box-shadow:0 4px 12px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.12);">
-        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:7px;margin-bottom:8px;">
-          <div style="font-size:13px;font-weight:bold;display:flex;align-items:center;gap:6px;"><span>📢</span><span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span></div>
-          <span style="font-size:10px;background:rgba(255,255,255,0.2);padding:2px 7px;border-radius:6px;font-weight:600;">Live Advisory</span>
+      <div class="agri-bulletin-card">
+        <div class="agri-bulletin-top">
+          <div class="agri-bulletin-header-title">
+            <span>📢</span><span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span>
+          </div>
+          <span class="agri-bulletin-live-badge">Live Advisory</span>
         </div>
-        <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;">
+        <ul class="agri-bulletin-items-box">
           ${bulletinItemsHtml}
         </ul>
-        <div style="margin-top:9px;padding-top:7px;border-top:1px dashed rgba(255,255,255,0.25);display:flex;justify-content:space-between;align-items:center;font-size:10.5px;">
-          <span>🏛️ IMD - గ్రామీణ కృషి మౌసమ్ సేవా (GKMS)</span>
-          <a href="https://agromet.imd.gov.in" target="_blank" style="color:#6ee7b7;text-decoration:none;font-weight:bold;background:rgba(255,255,255,0.1);padding:2px 7px;border-radius:6px;">జిల్లా బులెటిన్ &rarr;</a>
+        <div class="agri-bulletin-footer">
+          <span class="agri-bulletin-imd-title">🏛️ IMD - గ్రామీణ కృషి మౌసమ్ సేవా (GKMS)</span>
+          <a href="https://agromet.imd.gov.in" target="_blank" class="agri-bulletin-imd-btn">జిల్లా బులెటిన్ &rarr;</a>
         </div>
       </div>
     `;
