@@ -1306,7 +1306,7 @@ window.clearSelectedFarm = function() {
   }
 };
 // 1. ఆడియో సలహా చదివి వినిపించే ఫంక్షన్ (Web Speech API)
-window.speakFarmAdvisory = function() {
+window.speakFarmAdvisory = function(type) {
   if (!('speechSynthesis' in window)) {
     alert("మీ బ్రౌజర్ ఆడియోను సపోర్ట్ చేయడం లేదు.");
     return;
@@ -1314,13 +1314,26 @@ window.speakFarmAdvisory = function() {
 
   window.speechSynthesis.cancel();
 
-  const locName = document.getElementById("selectedFarmLocationName")?.innerText || "పొలం";
-  const rainStatus = document.getElementById("farm_rain_status")?.innerText || "";
-  const spray = document.getElementById("farm_spray_advice")?.innerText || "";
-  const water = document.getElementById("farm_water_advice")?.innerText || "";
-  const pest = document.getElementById("farm_pest_advice")?.innerText || "";
+  let textToRead = "";
 
-  const textToRead = `${locName} వివరాలు. ప్రస్తుతం వర్షం: ${rainStatus}. స్ప్రే సలహా: ${spray}. నీటి తడి: ${water}. తెగుళ్ల పరిస్థితి: ${pest}.`;
+  if (type === 'bulletin') {
+    // 4 సలహాల బాక్స్ టెక్స్ట్ ని చదవడం
+    const items = document.querySelectorAll('.agri-bulletin-items-box li');
+    if (!items || items.length === 0) return;
+    textToRead = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సలహాలు. ";
+    items.forEach(item => {
+      textToRead += item.innerText.replace(/[\n\r]+/g, ' ') + ". ";
+    });
+  } else {
+    // డ్రాయర్ లోని పొలం సలహాలు చదవడం
+    const locName = document.getElementById("selectedFarmLocationName")?.innerText || "పొలం";
+    const rainStatus = document.getElementById("farm_rain_status")?.innerText || "";
+    const spray = document.getElementById("farm_spray_advice")?.innerText || "";
+    const water = document.getElementById("farm_water_advice")?.innerText || "";
+    const pest = document.getElementById("farm_pest_advice")?.innerText || "";
+
+    textToRead = `${locName} వివరాలు. ప్రస్తుతం వర్షం: ${rainStatus}. స్ప్రే సలహా: ${spray}. నీటి తడి: ${water}. తెగుళ్ల పరిస్థితి: ${pest}.`;
+  }
 
   const utter = new SpeechSynthesisUtterance(textToRead);
   utter.lang = "te-IN";
