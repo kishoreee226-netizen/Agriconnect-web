@@ -242,11 +242,12 @@ window.renderWeatherWidget = async function() {
       bulletinItemsHtml += `<li class="agri-bulletin-row">${agriBulletins[i]}</li>`;
     }
 
-    let sprayBoxHtml = `
+        let sprayBoxHtml = `
       <div class="agri-bulletin-card">
         <div class="agri-bulletin-top">
           <div class="agri-bulletin-header-title">
-            <span>📢</span><span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span>
+            <button type="button" class="agri-speech-btn" onclick="window.readAgriBulletins()" title="వాయిస్ వినండి">📢</button>
+            <span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span>
           </div>
           <span class="agri-bulletin-live-badge">Live Advisory</span>
         </div>
@@ -259,6 +260,7 @@ window.renderWeatherWidget = async function() {
         </div>
       </div>
     `;
+
 
     let soilBadge = "";
     if (sMoistRoot >= 60) {
@@ -1368,5 +1370,28 @@ window.saveCurrentFarmLocation = function() {
 
   localStorage.setItem("agriSavedFarms", JSON.stringify(savedFarms));
   alert(`✅ "${farmCustomName}" విజయవంతంగా సేవ్ అయింది!`);
+};
+
+window.readAgriBulletins = function() {
+  if (!('speechSynthesis' in window)) {
+    alert("మీ బ్రౌజర్‌లో వాయిస్ సపోర్ట్ అందుబాటులో లేదు.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  var rows = document.querySelectorAll('.agri-bulletin-row');
+  var speechText = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సలహాలు. ";
+
+  rows.forEach(function(r) {
+    speechText += r.innerText.replace(/[⚠️✅🌧️🌾💧🚫🔬]/g, '') + ". ";
+  });
+
+  var utterance = new SpeechSynthesisUtterance(speechText);
+  utterance.lang = 'te-IN';
+  utterance.rate = 0.95;
+  utterance.pitch = 1.0;
+
+  window.speechSynthesis.speak(utterance);
 };
 
