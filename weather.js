@@ -177,11 +177,14 @@ window.renderWeatherWidget = async function() {
 
     // Digital Time
     const now = new Date();
-    const hours = now.getHours();
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
-    const formattedHours = hours % 12 || 12;
-    const liveClock = `${formattedHours}:${minutes} ${ampm}`;
+const targetTz = (typeof data !== "undefined" && data?.timezone) || Intl.DateTimeFormat().resolvedOptions().timeZone;
+const liveClock = now.toLocaleTimeString('en-US', {
+  timeZone: targetTz,
+  hour: 'numeric',
+  minute: '2-digit',
+  hour12: true
+});
+
 
     const moon = getDynamicMoonPhase(now);
     const weatherCond = parseDynamicWMO(c.weather_code, isDay);
