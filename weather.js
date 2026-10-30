@@ -249,7 +249,7 @@ window.renderWeatherWidget = async function() {
             <span>📢</span>
             <span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span>
           </div>
-          <span class="agri-bulletin-live-badge">Live Advisory</span>
+          <span class="agri-bulletin-live-badge">Live</span>
         </div>
         <ul class="agri-bulletin-items-box">
           ${bulletinItemsHtml}
