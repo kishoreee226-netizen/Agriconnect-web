@@ -1,62 +1,314 @@
 <!-- 6-GRID SMART AGRI TOOLS COMPONENT -->
 <section class="agri-tools-wrapper">
   <div class="agri-tools-header">
-    <h3>⚡ రైతు ప్రత్యేక సేవలు (Smart Tools)</h3>
-    <span class="agri-badge-free">ఉచితం</span>
+    <h3>⚡ రైతు స్మార్ట్ సేవలు (6 Power Tools)</h3>
+    <span class="agri-badge-free">⚡ లైవ్ డెమో</span>
   </div>
 
   <div class="agri-tools-grid">
     <!-- 1. మార్కెట్ ధరలు -->
-    <div class="tool-card" onclick="openAgriModal('market')">
-      <div class="tool-icon">🌾</div>
+    <div class="tool-card" onclick="showToolModal('market')">
+      <div class="tool-card-top">
+        <div class="tool-icon-box">🌾</div>
+        <span class="live-pulse-dot"></span>
+      </div>
       <div class="tool-title">మార్కెట్ ధరలు</div>
-      <div class="tool-sub" style="color: #2e7d32;">లైవ్ టెండర్లు</div>
+      <div class="tool-sub-primary clr-green">లైవ్ యార్డ్ టెండర్లు</div>
+      <div class="tool-sub-desc">వరి, మిర్చి, పత్తి రేట్లు</div>
     </div>
 
     <!-- 2. పొలం కొలత -->
-    <div class="tool-card" onclick="openAgriModal('measure')">
-      <div class="tool-icon">📐</div>
+    <div class="tool-card" onclick="showToolModal('measure')">
+      <div class="tool-card-top">
+        <div class="tool-icon-box">📐</div>
+        <span class="badge-tag badge-blue">GPS</span>
+      </div>
       <div class="tool-title">పొలం కొలత</div>
-      <div class="tool-sub" style="color: #0288d1;">GPS ఎకరాలు & గుంటలు</div>
+      <div class="tool-sub-primary clr-blue">ఎకరాలు & గుంటలు</div>
+      <div class="tool-sub-desc">మ్యాప్ & గట్ల కొలత</div>
     </div>
 
     <!-- 3. రైతు క్యాలెండర్ -->
-    <div class="tool-card" onclick="openAgriModal('calendar')">
-      <div class="tool-icon">🗓️</div>
+    <div class="tool-card" onclick="showToolModal('calendar')">
+      <div class="tool-card-top">
+        <div class="tool-icon-box">🗓️</div>
+        <span class="badge-tag badge-amber">తిథులు</span>
+      </div>
       <div class="tool-title">రైతు క్యాలెండర్</div>
-      <div class="tool-sub" style="color: #f57f17;">తిథులు & ముహూర్తాలు</div>
+      <div class="tool-sub-primary clr-amber">విత్తే సమయం & ముహూర్తం</div>
+      <div class="tool-sub-desc">వ్యవసాయ పనుల డైరీ</div>
     </div>
 
     <!-- 4. ఎరువుల మోతాదు -->
-    <div class="tool-card" onclick="openAgriModal('fertilizer')">
-      <div class="tool-icon">🧪</div>
+    <div class="tool-card" onclick="showToolModal('fertilizer')">
+      <div class="tool-card-top">
+        <div class="tool-icon-box">🧪</div>
+        <span class="badge-tag badge-pink">బస్తాలు</span>
+      </div>
       <div class="tool-title">ఎరువుల లెక్క</div>
-      <div class="tool-sub" style="color: #c2185b;">ఖచ్చితమైన డోస్</div>
+      <div class="tool-sub-primary clr-pink">ఖచ్చితమైన మోతాదు</div>
+      <div class="tool-sub-desc">DAP, యూరియా డోస్</div>
     </div>
 
     <!-- 5. పంట తెగుళ్లు -->
-    <div class="tool-card" onclick="openAgriModal('pest')">
-      <div class="tool-icon">🔬</div>
+    <div class="tool-card" onclick="showToolModal('pest')">
+      <div class="tool-card-top">
+        <div class="tool-icon-box">🔬</div>
+        <span class="badge-tag badge-orange">నివారణ</span>
+      </div>
       <div class="tool-title">పంట తెగుళ్లు</div>
-      <div class="tool-sub" style="color: #e65100;">నివారణ & మందులు</div>
+      <div class="tool-sub-primary clr-orange">లక్షణాలు & మందులు</div>
+      <div class="tool-sub-desc">దేశీ కషాయాలు</div>
     </div>
 
     <!-- 6. ఖర్చుల డైరీ -->
-    <div class="tool-card" onclick="openAgriModal('diary')">
-      <div class="tool-icon">📝</div>
+    <div class="tool-card" onclick="showToolModal('diary')">
+      <div class="tool-card-top">
+        <div class="tool-icon-box">📝</div>
+        <span class="badge-tag badge-purple">లాభం</span>
+      </div>
       <div class="tool-title">ఖర్చుల డైరీ</div>
-      <div class="tool-sub" style="color: #6a1b9a;">ఆదాయం - వ్యయం</div>
+      <div class="tool-sub-primary clr-purple">ఆదాయం - వ్యయం ఆడిట్</div>
+      <div class="tool-sub-desc">నికర మిగులు లెక్క</div>
     </div>
   </div>
 </section>
 
-<!-- UNIVERSAL POPUP MODAL -->
-<div id="agriToolModal" class="agri-modal-overlay" onclick="closeAgriModal(event)">
+<!-- UNIVERSAL POPUP CONTAINER (HTML ONLY) -->
+<div id="agriToolModal" class="agri-modal-overlay" onclick="hideToolModal(event)">
   <div class="agri-modal-container" onclick="event.stopPropagation()">
     <div class="agri-modal-header">
-      <h4 id="agriModalTitle">టూల్ వివరాలు</h4>
-      <button class="agri-modal-close" onclick="closeAgriModal(null)">✕</button>
+      <h4 id="agriModalHeaderTitle">టూల్ వివరాలు</h4>
+      <button class="agri-modal-close" onclick="hideToolModal(null)">✕</button>
     </div>
-    <div id="agriModalBody" class="agri-modal-body"></div>
+
+    <div class="agri-modal-body">
+      <!-- 1. MARKET VIEW -->
+      <div id="view-market" class="tool-view-panel">
+        <div class="modal-subtitle">తెలంగాణ & ఏపీ ప్రధాన మార్కెట్ లైవ్ సమాచారం</div>
+        
+        <div class="demo-card-item">
+          <div class="card-row-between">
+            <b>పత్తి (Cotton)</b>
+            <span class="price-pill-up">▲ +₹120 పెరిగింది</span>
+          </div>
+          <div class="card-location-text">📍 వరంగల్ / జమ్మికుంట • ఈ రోజు</div>
+          <div class="card-row-between">
+            <span>క్వింటాల్ రేటు:</span>
+            <b class="card-rate-text">₹7,450 - ₹7,820</b>
+          </div>
+        </div>
+
+        <div class="demo-card-item">
+          <div class="card-row-between">
+            <b>సన్న రకం వరి (Paddy RNR)</b>
+            <span class="price-pill-up">▲ +₹30 పెరిగింది</span>
+          </div>
+          <div class="card-location-text">📍 మిర్యాలగూడ • నిన్న</div>
+          <div class="card-row-between">
+            <span>క్వింటాల్ రేటు:</span>
+            <b class="card-rate-text">₹2,320 - ₹2,550</b>
+          </div>
+        </div>
+
+        <div class="demo-card-item">
+          <div class="card-row-between">
+            <b>మొక్కజొన్న (Maize)</b>
+            <span class="price-pill-same">స్థిరంగా ఉంది</span>
+          </div>
+          <div class="card-location-text">📍 నిజామాబాద్ • ఈ రోజు</div>
+          <div class="card-row-between">
+            <span>క్వింటాల్ రేటు:</span>
+            <b class="card-rate-text">₹2,100 - ₹2,240</b>
+          </div>
+        </div>
+
+        <div class="demo-card-item">
+          <div class="card-row-between">
+            <b>ఎర్ర కందులు (Red Gram)</b>
+            <span class="price-pill-up">▲ +₹200 పెరిగింది</span>
+          </div>
+          <div class="card-location-text">📍 తాండూర్ (Tandur) • ఈ రోజు</div>
+          <div class="card-row-between">
+            <span>క్వింటాల్ రేటు:</span>
+            <b class="card-rate-text">₹10,200 - ₹10,850</b>
+          </div>
+        </div>
+        <div class="modal-subtitle text-center">* అగ్రికనెక్ట్ మండి విభాగం ద్వారా లైవ్ అప్‌డేట్ చేయబడింది.</div>
+      </div>
+
+      <!-- 2. MEASURE VIEW -->
+      <div id="view-measure" class="tool-view-panel">
+        <div class="card-row-between mb-8">
+          <span class="modal-subtitle mb-0">గ్రిడ్ పై ట్యాప్ చేయండి లేదా GPS తో కొలవండి:</span>
+          <button onclick="resetMeasureGrid()" class="clr-red btn-text">రీసెట్</button>
+        </div>
+
+        <div id="measureCanvasBox" onclick="addGridPoint(event)" class="canvas-wrapper">
+          <div id="gridPlaceholderText" class="canvas-placeholder">
+            పొలం 4 మూలల వద్ద స్క్రీన్ పై ట్యాప్ చేయండి
+          </div>
+        </div>
+
+        <div class="stat-grid-3 mt-12">
+          <div class="stat-box"><div class="stat-val" id="valAcres">0.00</div><div class="stat-lbl">ఎకరాలు (ACRES)</div></div>
+          <div class="stat-box"><div class="stat-val" id="valGuntas">0.0</div><div class="stat-lbl">గుంటలు (GUNTAS)</div></div>
+          <div class="stat-box"><div class="stat-val" id="valCents">0.0</div><div class="stat-lbl">సెంట్లు (CENTS)</div></div>
+        </div>
+
+        <div class="gps-box">
+          <div>
+            <div class="font-bold">🚶 లైవ్ GPS వాక్ మోడ్</div>
+            <div id="gpsStatus" class="card-location-text">గట్ల వెంట నడుస్తుంటే GPS పాయింట్లు తీసుకుంటుంది</div>
+          </div>
+          <button id="gpsBtn" onclick="toggleGpsWalk()" class="btn-gps-active">GPS స్టార్ట్</button>
+        </div>
+      </div>
+
+      <!-- 3. CALENDAR VIEW -->
+      <div id="view-calendar" class="tool-view-panel">
+        <div class="demo-card-item">
+          <div class="card-row-between mb-8">
+            <b class="tool-title" id="calCurrentDateText">📅 నేటి తిథి & ముహూర్తం</b>
+            <span class="badge-tag badge-amber">పంచాంగం</span>
+          </div>
+          <div class="stat-grid-3 grid-cols-2">
+            <div class="stat-box">
+              <span class="stat-lbl">పక్షం:</span>
+              <div class="font-bold">శుక్ల / కృష్ణ పక్షం</div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-lbl">అమృత ఘడియలు:</span>
+              <div class="clr-green font-bold">ఉ. 08:30 - 10:15</div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-lbl">వర్జ్యం:</span>
+              <div class="clr-red font-bold">సా. 03:20 - 05:00</div>
+            </div>
+            <div class="stat-box">
+              <span class="stat-lbl">విత్తే పనులకు:</span>
+              <div class="stat-val fs-small">అనుకూల సమయం</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tool-title my-8">వ్యవసాయ పనుల సిఫారసులు:</div>
+        <div class="demo-card-item border-left-blue">
+          <b>మందుల పిచికారీ అనుకూల సమయం</b>
+          <p class="card-location-text mt-4">ఉదయం పూట గాలి వేగం తక్కువగా ఉన్నప్పుడు (ఉ. 7:00 - 10:30) పిచికారీ చేయడం వల్ల మందు ఆకులపై బాగా పడుతుంది.</p>
+        </div>
+        <div class="demo-card-item border-left-green">
+          <b>నీటి తడులు & ఎరువులు</b>
+          <p class="card-location-text mt-4">భూమిలో తగినంత పదును ఉన్నప్పుడు మాత్రమే యూరియా లేదా కాంప్లెక్స్ ఎరువులను చల్లుకోవాలి.</p>
+        </div>
+      </div>
+
+      <!-- 4. FERTILIZER VIEW -->
+      <div id="view-fertilizer" class="tool-view-panel">
+        <div class="modal-subtitle">ఖచ్చితమైన వ్యవసాయ వర్సిటీ మోతాదు లెక్క</div>
+        
+        <div class="grid-form-2 mb-12">
+          <div>
+            <label class="stat-lbl">పంటను ఎంచుకోండి:</label>
+            <select id="calcCropSelect" onchange="runFertilizerCalc()" class="action-input">
+              <option value="paddy">వరి (Paddy / Rice)</option>
+              <option value="cotton">పత్తి (Cotton)</option>
+              <option value="chilli">మిర్చి (Chilli)</option>
+              <option value="maize">మొక్కజొన్న (Maize)</option>
+            </select>
+          </div>
+          <div>
+            <label class="stat-lbl">ఎకరాలు:</label>
+            <input type="number" id="calcAcresInput" value="2" min="0.5" step="0.5" oninput="runFertilizerCalc()" class="action-input">
+          </div>
+        </div>
+
+        <div class="stat-grid-3">
+          <div class="stat-box">
+            <div class="stat-lbl">DAP బస్తాలు</div>
+            <div class="stat-val clr-red" id="dapVal">2.0</div>
+            <div class="stat-lbl">(50 kg బస్తాలు)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">యూరియా</div>
+            <div class="stat-val clr-green" id="ureaVal">4.4</div>
+            <div class="stat-lbl">(45 kg బస్తాలు)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">పొటాష్ (MOP)</div>
+            <div class="stat-val clr-amber" id="potashVal">1.6</div>
+            <div class="stat-lbl">(50 kg బస్తాలు)</div>
+          </div>
+        </div>
+
+        <div class="tool-title my-8">ఎరువులు వేయవలసిన దశలు:</div>
+        <div class="demo-card-item">
+          <b id="stage1Title">దశ 1: నాట్లకు ముందు (Basal)</b>
+          <p id="stage1Desc" class="card-location-text">పూర్తి DAP + సగం పొటాష్ వేయాలి.</p>
+        </div>
+        <div class="demo-card-item">
+          <b id="stage2Title">దశ 2: 25 రోజుల తర్వాత</b>
+          <p id="stage2Desc" class="card-location-text">మొదటి విడత యూరియా వేయాలి.</p>
+        </div>
+      </div>
+
+      <!-- 5. PEST VIEW -->
+      <div id="view-pest" class="tool-view-panel">
+        <div class="modal-subtitle">వర్సిటీ సిఫారసు చేసిన నివారణలు:</div>
+
+        <div class="demo-card-item">
+          <div class="flex-align-gap mb-4">
+            <span class="badge-tag badge-pink">మిర్చి</span>
+            <b>నల్ల తామర పురుగు (Black Thrips)</b>
+          </div>
+          <div class="card-location-text">లక్షణాలు: ఆకులు పైకి ముడుచుకుపోవడం, పూత రాలడం.</div>
+          <div class="treatment-organic">🌿 <b>సహజ నివారణ:</b> వేప నూనె (10,000 PPM) 2 మి.లీ లేదా జీవామృతం పిచికారీ.</div>
+          <div class="treatment-chemical">🧪 <b>మందు మోతాదు:</b> స్పైనోథోరం (డెలిగేట్) 0.9 మి.లీ లీటరు నీటికి కలపండి.</div>
+        </div>
+
+        <div class="demo-card-item">
+          <div class="flex-align-gap mb-4">
+            <span class="badge-tag badge-amber">వరి</span>
+            <b>అగ్గి తెగులు / బెంకి (Blast)</b>
+          </div>
+          <div class="card-location-text">లక్షణాలు: ఆకులపై నూలు కండె ఆకారపు మచ్చలు, మెడ విరుపు.</div>
+          <div class="treatment-organic">🌿 <b>సహజ నివారణ:</b> పుల్లటి మజ్జిగ 100 మి.లీ + ఇంగువ 2 గ్రాములు లీటరు నీటిలో చల్లడం.</div>
+          <div class="treatment-chemical">🧪 <b>మందు మోతాదు:</b> ట్రైసైక్లాజోల్ 75% WP (0.6 గ్రా/లీటర్) పిచికారీ చేయాలి.</div>
+        </div>
+      </div>
+
+      <!-- 6. DIARY VIEW -->
+      <div id="view-diary" class="tool-view-panel">
+        <div class="modal-subtitle">మీ వ్యక్తిగత లాభ-నష్టాల లెక్కల పుస్తకం (Real Storage)</div>
+
+        <div class="stat-grid-3">
+          <div class="stat-box">
+            <div class="stat-lbl">మొత్తం ఖర్చు</div>
+            <div class="stat-val clr-red fs-diary" id="diaryKharchuVal">₹0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">ఆదాయం</div>
+            <div class="stat-val clr-blue fs-diary" id="diaryAadhayamVal">₹0</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-lbl">నికర మిగులు</div>
+            <div class="stat-val clr-green fs-diary" id="diaryNikaramVal">₹0</div>
+          </div>
+        </div>
+
+        <div class="demo-card-item">
+          <div class="tool-title mb-8">కొత్త లావాదేవీని నమోదు చేయండి:</div>
+          <input type="text" id="diaryDesc" placeholder="వివరణ (ఉదా: విత్తనాలు, దుక్కి, కూలీలు)" class="action-input">
+          <input type="number" id="diaryAmt" placeholder="మొత్తం ₹" class="action-input">
+          <div class="grid-cols-2-gap">
+            <button onclick="addDiaryRecord('kharchu')" class="btn-expense">- ఖర్చు రాయండి</button>
+            <button onclick="addDiaryRecord('aadhayam')" class="btn-income">+ ఆదాయం రాయండి</button>
+          </div>
+        </div>
+
+        <div class="tool-title my-8">లావాదేవీల చరిత్ర:</div>
+        <div id="diaryRecordsContainer"></div>
+      </div>
+    </div>
   </div>
 </div>
