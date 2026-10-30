@@ -451,7 +451,7 @@ window.renderWeatherWidget = async function() {
               </button>
             </div>
             <!-- సూర్యోదయం & సూర్యాస్తమయం స్ట్రిప్ -->
-            <div style="display: flex; justify-content: space-around; background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 6px 10px; margin-bottom: 12px; font-size: 11.5px; font-weight: 600; color: #92400e;">
+            <div style="display: flex; justify-content: space-around; background: #ffffff; border: 1px solid #fef3c7; border-radius: 8px; padding: 6px 10px; margin-bottom: 12px; font-size: 11.5px; font-weight: 600; color: #92400e;">
               <span id="farm_sunrise">🌅 సూర్యోదయం: --</span>
               <span style="color: #cbd5e1;">|</span>
               <span id="farm_sunset">🌇 సూర్యాస్తమయం: --</span>
