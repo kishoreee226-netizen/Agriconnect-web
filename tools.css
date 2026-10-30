@@ -79,7 +79,7 @@
 
 @keyframes pulseGreen {
   0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7); }
-  70% { box-shadow: 0 0 0 7px rgba(46, 125, 50, 0); }
+  70% { box-shadow: 0 0 0 8px rgba(46, 125, 50, 0); }
   100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
 }
 
@@ -100,7 +100,6 @@
   font-size: 0.92rem;
   font-weight: 700;
   color: #1b4332;
-  margin-top: 2px;
 }
 
 .tool-sub-primary {
@@ -115,7 +114,7 @@
   margin-top: 1px;
 }
 
-/* ================= MODAL LIGHT THEME ================= */
+/* Modal Popup Engine */
 .agri-modal-overlay {
   display: none;
   position: fixed;
@@ -156,9 +155,6 @@
   margin: 0;
   font-size: 1.05rem;
   color: #1b4332;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   font-weight: 700;
 }
 
@@ -178,11 +174,18 @@
 
 .agri-modal-body {
   padding: 14px;
-  font-size: 0.88rem;
-  color: #334155;
 }
 
-/* Reusable UI Components */
+/* Panel Switcher */
+.tool-view-panel {
+  display: none;
+}
+
+.tool-view-panel.active-panel {
+  display: block;
+}
+
+/* Common UI Elements */
 .modal-subtitle {
   font-size: 0.75rem;
   color: #64748b;
@@ -227,6 +230,15 @@
   font-weight: 700;
 }
 
+.price-pill-same {
+  background: #f1f5f9;
+  color: #64748b;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
 .stat-grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -262,32 +274,13 @@
   border-radius: 8px;
   padding: 8px 10px;
   color: #1e293b;
+  margin-top: 3px;
   margin-bottom: 8px;
   font-size: 0.88rem;
   box-sizing: border-box;
 }
 
-.btn-expense {
-  background: #e11d48;
-  color: #fff;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-income {
-  background: #15803d;
-  color: #fff;
-  border: none;
-  padding: 8px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-/* Polam Canvas & GPS UI */
+/* Polam Canvas & GPS */
 .canvas-wrapper {
   position: relative;
   width: 100%;
@@ -350,7 +343,7 @@
   font-size: 0.78rem;
 }
 
-/* Natural & Chemical Pill Boxes */
+/* Treatments & Buttons */
 .treatment-organic {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
@@ -370,6 +363,53 @@
   color: #0369a1;
 }
 
+.btn-expense {
+  background: #e11d48;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-income {
+  background: #15803d;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Helpers */
 .clr-red { color: #e11d48; }
 .clr-green { color: #15803d; }
+.clr-blue { color: #0284c7; }
 .clr-amber { color: #d97706; }
+.clr-pink { color: #e11d48; }
+.clr-orange { color: #ea580c; }
+.clr-purple { color: #7e22ce; }
+.text-center { text-align: center; }
+.font-bold { font-weight: bold; }
+.mb-0 { margin-bottom: 0; }
+.mb-4 { margin-bottom: 4px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mt-4 { margin-top: 4px; }
+.mt-12 { margin-top: 12px; }
+.my-8 { margin: 8px 0; }
+.fs-small { font-size: 0.88rem; }
+.fs-diary { font-size: 1.05rem; }
+.grid-cols-2 { grid-template-columns: 1fr 1fr; }
+.grid-form-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 8px; }
+.grid-cols-2-gap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.flex-align-gap { display: flex; align-items: center; gap: 8px; }
