@@ -1374,16 +1374,15 @@ window.saveCurrentFarmLocation = function() {
   alert(`✅ "${farmCustomName}" విజయవంతంగా సేవ్ అయింది!`);
 };
 
+// File chivarana idi okkate unchandi
 window.readAgriBulletins = function() {
   if (!('speechSynthesis' in window)) {
-    alert("మీ బ్రౌజర్‌లో వాయిస్ ఫీచర్ సపోర్ట్ లేదు.");
+    alert("Voice support ledu");
     return;
   }
 
-  // మునుపటి వాయిస్‌ను ఆపివేయడం
   window.speechSynthesis.cancel();
 
-  // కార్డుల నుండి టెక్స్ట్ సేకరించడం
   var rows = document.querySelectorAll('.agri-bulletin-row');
   var fullText = "ఈ రోజు వ్యవసాయ బులెటిన్ మరియు సాగు సలహాలు. ";
 
@@ -1397,32 +1396,10 @@ window.readAgriBulletins = function() {
     }
   });
 
-  var utterance = new SpeechSynthesisUtterance(fullText);
+  var msg = new SpeechSynthesisUtterance(fullText);
+  msg.lang = 'te-IN';
+  msg.rate = 0.9;
+  msg.pitch = 1.0;
 
-  // అందుబాటులో ఉన్న వాయిస్‌లను పొందడం
-  var voices = window.speechSynthesis.getVoices();
-  if (voices && voices.length > 0) {
-    var targetVoice = voices.find(function(v) {
-      return (v.lang && (v.lang === 'te-IN' || v.lang.startsWith('te'))) ||
-             (v.name && v.name.toLowerCase().includes('telugu'));
-    }) || voices.find(function(v) {
-      return v.lang && (v.lang === 'en-IN' || v.lang.includes('IN'));
-    });
-
-    if (targetVoice) {
-      utterance.voice = targetVoice;
-    }
-  }
-
-  utterance.lang = 'te-IN';
-  utterance.rate = 0.9;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
-
-  // మొబైల్ పాజ్ సమస్యను క్లియర్ చేసి ప్లే చేయడం
-  if (window.speechSynthesis.paused) {
-    window.speechSynthesis.resume();
-  }
-
-  window.speechSynthesis.speak(utterance);
+  window.speechSynthesis.speak(msg);
 };
