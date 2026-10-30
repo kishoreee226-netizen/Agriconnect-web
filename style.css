@@ -6097,14 +6097,14 @@ header h1 {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-/* AgriConnect Smart Bulletin - Clean White Theme */
+/* AgriConnect Smart Bulletin - Final Clean Style */
 .agri-bulletin-card {
   margin: 14px 0;
   background: #ffffff !important;
   border-radius: 14px;
   padding: 12px;
   border: 1px solid #86efac;
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(22, 101, 52, 0.06);
 }
 
 .agri-bulletin-top {
@@ -6127,16 +6127,49 @@ header h1 {
   white-space: nowrap;
 }
 
+/* Automatic Live Blinking Badge */
 .agri-bulletin-live-badge {
+  background: rgba(34, 197, 94, 0.08) !important;
+  border: 1px solid rgba(34, 197, 94, 0.3) !important;
+  color: #15803d !important;
   font-size: 9.5px;
-  background: #dcfce7;
-  color: #15803d;
-  padding: 2px 7px;
-  border-radius: 10px;
   font-weight: 700;
-  border: 1px solid #86efac;
+  padding: 3px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   white-space: nowrap;
   flex-shrink: 0;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Pulsing Green Beacon Dot */
+.agri-bulletin-live-badge::before {
+  content: "";
+  width: 6.5px;
+  height: 6.5px;
+  background-color: #22c55e;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  animation: liveSignalPulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes liveSignalPulse {
+  0% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 5px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.9);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
 }
 
 .agri-bulletin-items-box {
@@ -6157,7 +6190,7 @@ header h1 {
   border: 1px solid #dcfce7;
   border-left: 4px solid #16a34a;
   margin-bottom: 7px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .agri-bulletin-footer {
@@ -6177,15 +6210,25 @@ header h1 {
   white-space: nowrap;
 }
 
+/* Jilla Bulletin Clickable Button */
 .agri-bulletin-imd-btn {
   font-size: 10px;
-  color: #15803d;
+  color: #ffffff !important;
+  background: #15803d !important;
   text-decoration: none;
   font-weight: 700;
-  background: #ffffff;
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1px solid #86efac;
+  padding: 3px 9px;
+  border-radius: 7px;
+  border: 1px solid #166534;
   white-space: nowrap;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(21, 128, 61, 0.25);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.agri-bulletin-imd-btn:active {
+  transform: scale(0.94);
+  background: #14532d !important;
 }
