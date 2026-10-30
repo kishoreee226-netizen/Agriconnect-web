@@ -202,20 +202,64 @@ window.renderWeatherWidget = async function() {
     const rainProb = (d && d.precipitation_probability_max) ? d.precipitation_probability_max[0] : 0;
     const currentRainRate = Number(c.precipitation || c.rain || 0).toFixed(1);
 
-    // Dynamic Advisory
-    let alertClass = "advisory-safe";
-    let sprayTitle = "రైతు సలహా: మందుల స్ప్రేకి అనుకూలం";
-    let sprayDesc = `గాలి సాధారణంగా ఉంది (${windSpeed} km/h). దిశ: <strong>${windDir}</strong>. పిచికారీ పనులకు అనువైన సమయం.`;
+        // Dynamic Advisory - Smart Farm Bulletins (Live GPS Data)
+    let agriBulletins = [];
+    const curWind = Number(windSpeed) || 0;
+    const curGust = Number(windGusts) || 0;
+    const curRainP = Number(rainProb) || 0;
+    const curRainR = Number(currentRainRate) || 0;
+    const curHumid = Number(c.relative_humidity_2m) || 0;
+    const curSoilM = Number(sMoistRoot) || 30;
 
-    if (Number(currentRainRate) > 0 || c.weather_code >= 51 || rainProb >= 60) {
-      alertClass = "advisory-danger";
-      sprayTitle = "రైతు సలహా: మందులు స్ప్రే చేయవద్దు!";
-      sprayDesc = `వర్షం పడే అవకాశం ఉంది (${rainProb}% - ${currentRainRate} mm). పిచికారీ వెంటనే ఆపండి.`;
-    } else if (Number(windSpeed) > 18 || Number(windGusts) > 25) {
-      alertClass = "advisory-warning";
-      sprayTitle = "రైతు సలహా: స్ప్రే కాసేపు ఆపండి!";
-      sprayDesc = `ఈదురుగాలులు అధికంగా ఉన్నాయి (${windGusts} km/h). మందు పక్కకు వెళ్లిపోతుంది.`;
+    // 1. స్ప్రేయింగ్ సలహా
+    if (curRainR > 0 || c.weather_code >= 51 || curRainP >= 60) {
+      agriBulletins.push("⚠️ <b>స్ప్రేయింగ్:</b> వర్షం పడే అవకాశం ఉంది (" + curRainP + "% - " + curRainR + "mm). పిచికారీ వెంటనే ఆపండి.");
+    } else if (curWind > 18 || curGust > 25) {
+      agriBulletins.push("⚠️ <b>స్ప్రేయింగ్:</b> ఈదురుగాలులు అధికంగా ఉన్నాయి (" + curGust + " km/h). పిచికారీ వాయిదా వేయండి.");
+    } else {
+      agriBulletins.push("✅ <b>స్ప్రేయింగ్:</b> గాలి వేగం, వర్ష సూచన తక్కువగా ఉంది. మందుల పిచికారీకి అనుకూల సమయం.");
     }
+
+    // 2. ఎరువుల యాజమాన్యం
+    if (curRainP >= 50 || curRainR > 2) {
+      agriBulletins.push("🌧️ <b>ఎరువులు:</b> వర్ష సూచన అధికంగా ఉంది (" + curRainP + "%). ఎరువుల వినియోగం వాయిదా వేయండి.");
+    } else {
+      agriBulletins.push("🌾 <b>ఎరువులు:</b> వాతావరణం పొడిగా ఉంది, ఎరువుల వినియోగానికి ఎలాంటి ఆటంకం లేదు.");
+    }
+
+    // 3. నీటిపారుదల సలహా
+    if (curSoilM < 35) {
+      agriBulletins.push("💧 <b>నీటిపారుదల:</b> నేలలో తేమ తక్కువగా ఉంది. పంటకు స్వల్పంగా తడి అందించడం మంచిది.");
+    } else if (curSoilM >= 60) {
+      agriBulletins.push("🚫 <b>నీటిపారుదల:</b> నేలలో సరిపడా తేమ ఉంది, ప్రస్తుతం నీరు పెట్టవలసిన అవసరం లేదు.");
+    } else {
+      agriBulletins.push("💧 <b>నీటిపారుదల:</b> నేలలో తేమ సాధారణ సమతుల్యంగా ఉంది.");
+    }
+
+    // 4. తెగుళ్ల ముప్పు సూచన
+    if (curHumid > 80) {
+      agriBulletins.push("🔬 <b>తెగుళ్ల ముప్పు:</b> గాలిలో తేమ శాతం ఎక్కువ (" + curHumid + "%). బూజు, శిలీంధ్ర తెగుళ్లు ఆశించే అవకాశం ఉంది.");
+    } else {
+      agriBulletins.push("🔬 <b>తెగుళ్ల ముప్పు:</b> వాతావరణంలో తెగుళ్ల ప్రభావం సాధారణ స్థాయిలోనే ఉంది.");
+    }
+
+    let bulletinItemsHtml = "";
+    for (let i = 0; i < agriBulletins.length; i++) {
+      bulletinItemsHtml += "<li style='font-size:11.5px;line-height:1.5;background:rgba(0,0,0,0.18);padding:7px 9px;border-radius:8px;border-left:3px solid #34d399;margin-bottom:6px;'>" + agriBulletins[i] + "</li>";
+    }
+
+    let sprayBoxHtml = 
+      "<div style='margin:12px 0;background:linear-gradient(135deg,#064e3b 0%,#065f46 100%);border-radius:14px;padding:12px;color:#ffffff;box-shadow:0 4px 12px rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.12);'>" +
+        "<div style='display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.2);padding-bottom:7px;margin-bottom:8px;'>" +
+          "<div style='font-size:13px;font-weight:bold;display:flex;align-items:center;gap:6px;'><span>📢</span><span>ఈ రోజు వ్యవసాయ బులెటిన్ & సలహాలు</span></div>" +
+          "<span style='font-size:10px;background:rgba(255,255,255,0.2);padding:2px 7px;border-radius:6px;font-weight:600;'>Live Advisory</span>" +
+        </div>" +
+        "<ul style='list-style:none;padding:0;margin:0;display:flex;flex-direction:column;'>" + bulletinItemsHtml + "</ul>" +
+        "<div style='margin-top:9px;padding-top:7px;border-top:1px dashed rgba(255,255,255,0.25);display:flex;justify-content:space-between;align-items:center;font-size:10.5px;'>" +
+          "<span>🏛️ IMD - గ్రామీణ కృషి మౌసమ్ సేవా (GKMS)</span>" +
+          "<a href='https://agromet.imd.gov.in' target='_blank' style='color:#6ee7b7;text-decoration:none;font-weight:bold;background:rgba(255,255,255,0.1);padding:2px 7px;border-radius:6px;'>జిల్లా బులెటిన్ &rarr;</a>" +
+        </div>" +
+      "</div>";
 
     let soilBadge = "";
     if (sMoistRoot >= 60) {
