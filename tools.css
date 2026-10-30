@@ -9,25 +9,29 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  gap: 8px;
 }
 
 .agri-tools-header h3 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   color: #1b4332;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   font-weight: 700;
+  white-space: nowrap; /* Single line lōnē unchuthundi */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .agri-badge-free {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   background: #e8f5e9;
   color: #2e7d32;
-  padding: 2px 8px;
+  border: 1px solid #c8e6c9;
+  padding: 3px 8px;
   border-radius: 12px;
   font-weight: bold;
+  white-space: nowrap; /* Break avvakundā single line */
+  flex-shrink: 0;
 }
 
 .agri-tools-grid {
