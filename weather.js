@@ -454,45 +454,45 @@ const liveClock = now.toLocaleTimeString('en-US', {
               </button>
             </div>
 
-   <!-- DYNAMIC ARC SUN TRACKER (WHITE LIGHT THEME) -->
-<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; box-sizing: border-box; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+  <!-- DYNAMIC ARC SUN TRACKER (PERFECT ALIGNMENT) -->
+<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px 10px; margin-bottom: 14px; box-sizing: border-box; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
   
   <!-- Header Row -->
   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-    <span style="font-size: 12.5px; font-weight: 700; color: #1b4332;">☀️ సూర్య గమనం & పగటి సమయం</span>
-    <span id="dstDayNightBadge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">రాత్రి</span>
+    <span style="font-size: 12px; font-weight: 700; color: #1b4332;">☀️ సూర్య గమనం & పగటి సమయం</span>
+    <span id="dstDayNightBadge" style="font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">రాత్రి</span>
   </div>
 
   <!-- Semi-Circle Arc Area -->
-  <div style="position: relative; width: 100%; max-width: 240px; height: 86px; margin: 0 auto;">
-    <svg viewBox="0 0 240 100" style="width: 100%; height: 100%; overflow: visible;">
+  <div style="position: relative; width: 100%; max-width: 240px; height: 95px; margin: 0 auto;">
+    <svg viewBox="0 0 240 105" style="width: 100%; height: 100%; overflow: visible;">
       <!-- Background Dashed Track -->
-      <path d="M 25 88 A 95 75 0 0 1 215 88" fill="none" stroke="#e2e8f0" stroke-width="2.5" stroke-dasharray="5,5" />
+      <path d="M 25 90 A 95 75 0 0 1 215 90" fill="none" stroke="#e2e8f0" stroke-width="2.5" stroke-dasharray="5,5" />
       <!-- Progress Track -->
-      <path id="dstProgressArc" d="M 25 88 A 95 75 0 0 1 215 88" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="270" stroke-dashoffset="0" />
+      <path id="dstProgressArc" d="M 25 90 A 95 75 0 0 1 215 90" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="270" stroke-dashoffset="270" />
     </svg>
     
     <!-- Moving Indicator (Sun / Moon) -->
-    <div id="dstSunIcon" style="position: absolute; width: 26px; height: 26px; font-size: 16px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); transition: left 0.4s ease, top 0.4s ease; filter: drop-shadow(0 0 6px rgba(109,40,217,0.3)); left: 89%; top: 85px;">🌙</div>
+    <div id="dstSunIcon" style="position: absolute; width: 24px; height: 24px; font-size: 15px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); transition: left 0.4s ease, top 0.4s ease; left: 215px; top: 90px; z-index: 2;">🌙</div>
     
-    <!-- Base Horizon Line -->
-    <div style="position: absolute; bottom: 0; left: 10px; right: 10px; height: 1.5px; background: linear-gradient(90deg, transparent, #cbd5e1, transparent);"></div>
+    <!-- Horizon Base Line -->
+    <div style="position: absolute; bottom: 5px; left: 15px; right: 15px; height: 1px; background: #e2e8f0;"></div>
   </div>
 
-  <!-- Footer Info Row (Horizontal) -->
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
-    <div style="display: flex; flex-direction: column; text-align: left;">
-      <span style="font-size: 10.5px; color: #64748b;">సూర్యోదయం</span>
-      <b id="farm_sunrise" style="font-size: 12.5px; color: #1e293b;">--</b>
+  <!-- Footer Info Row -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px; padding: 0 4px;">
+    <div style="text-align: left; min-width: 70px;">
+      <div style="font-size: 10px; color: #64748b;">సూర్యోదయం</div>
+      <b id="farm_sunrise" style="font-size: 12px; color: #1e293b;">--</b>
     </div>
 
-    <div id="dstStatusText" style="font-size: 11px; font-weight: 700; color: #6d28d9; background: #f5f3ff; border: 1px solid #ddd6fe; padding: 3px 10px; border-radius: 12px; text-align: center;">
+    <div id="dstStatusText" style="font-size: 10.5px; font-weight: 700; color: #6d28d9; background: #f5f3ff; border: 1px solid #ddd6fe; padding: 3px 8px; border-radius: 12px; text-align: center; white-space: nowrap;">
       రాత్రి సమయం (చంద్రుడు)
     </div>
 
-    <div style="display: flex; flex-direction: column; text-align: right;">
-      <span style="font-size: 10.5px; color: #64748b;">సూర్యాస్తమయం</span>
-      <b id="farm_sunset" style="font-size: 12.5px; color: #1e293b;">--</b>
+    <div style="text-align: right; min-width: 70px;">
+      <div style="font-size: 10px; color: #64748b;">సూర్యాస్తమయం</div>
+      <b id="farm_sunset" style="font-size: 12px; color: #1e293b;">--</b>
     </div>
   </div>
 
@@ -965,7 +965,7 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       
       const angle = Math.PI * (1 - ratio);
       const posX = 120 + 95 * Math.cos(angle);
-      const posY = 88 - 75 * Math.sin(angle);
+      const posY = 90 - 75 * Math.sin(angle);
 
       sunIcon.innerText = "☀️";
       sunIcon.style.left = `${(posX / 240) * 100}%`;
@@ -992,9 +992,12 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
     } else {
       // 🌙 RAATRI (Night Time)
       sunIcon.innerText = "🌙";
-      sunIcon.style.left = "89%";
-      sunIcon.style.top = "85px";
-      arcEl.style.strokeDashoffset = 0;
+      // Exact arc ending position
+      sunIcon.style.left = "89.5%";
+      sunIcon.style.top = "80px";
+      
+      // Rātri vēlalo progress zero (lēdā completed gray)
+      arcEl.style.strokeDashoffset = 270;
 
       if (badgeEl) {
         badgeEl.innerText = "రాత్రి";
