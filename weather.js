@@ -925,65 +925,69 @@ window.applySelectedFarmLocation = async function() {
     const res = await fetch(url);
     const d = await res.json();
 
-  // DUAL CYCLE: ACCURATE PINNED LOCATION TIMEZONE CONTROLLER
+  // DUAL CYCLE & CENTER DATA CONTROLLER (NO EXTRA STYLES IN JS)
 if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   const formatTime = (isoStr) => {
     if (!isoStr) return "--";
-    // ISO string lo direct gā unde 'YYYY-MM-DDTHH:MM' nunchi time teesukundham
-    const timePart = isoStr.split('T')[1];
-    if (!timePart) return "--";
-    let [h, m] = timePart.split(':').map(Number);
+    const dt = new Date(isoStr);
+    let h = dt.getHours();
+    const m = dt.getMinutes().toString().padStart(2, '0');
     const ampm = h >= 12 ? 'PM' : 'AM';
     h = h % 12 || 12;
-    return `${h}:${m.toString().padStart(2, '0')} ${ampm}`;
+    return `${h}:${m} ${ampm}`;
   };
 
+  // 1. Sunrise & Sunset Footer Values
   const sunriseElem = document.getElementById("farm_sunrise");
   const sunsetElem = document.getElementById("farm_sunset");
   if (sunriseElem) sunriseElem.innerText = formatTime(d.daily.sunrise[0]);
   if (sunsetElem) sunsetElem.innerText = formatTime(d.daily.sunset[0]);
 
+  // 2. Arc Center Elements (Time -> Temp -> Date)
+  const centerTimeEl = document.getElementById("dstCenterTime");
+  const centerTempEl = document.getElementById("dstCenterTemp");
+  const centerDateEl = document.getElementById("dstCenterDate");
+
+  const targetDate = (d && d.current && d.current.time) ? new Date(d.current.time) : new Date();
+
+  if (centerTimeEl) {
+    let ch = targetDate.getHours();
+    const cm = targetDate.getMinutes().toString().padStart(2, '0');
+    const campm = ch >= 12 ? 'PM' : 'AM';
+    ch = ch % 12 || 12;
+    centerTimeEl.innerText = `${ch}:${cm} ${campm}`;
+  }
+
+  if (centerTempEl) {
+    centerTempEl.innerText = (d && d.current && d.current.temperature_2m !== undefined)
+      ? `${Math.round(d.current.temperature_2m)}°C`
+      : "--°C";
+  }
+
+  if (centerDateEl) {
+    const monthsTelugu = ["జన", "ఫిబ్ర", "మార్చి", "ఏప్రి", "మే", "జూన్", "జూలై", "ఆగ", "సెప్టెం", "అక్టో", "నవం", "డిసెం"];
+    centerDateEl.innerText = `📅 ${targetDate.getDate()} ${monthsTelugu[targetDate.getMonth()]}, ${targetDate.getFullYear()}`;
+  }
+
+  // 3. Sun/Moon Arc Math & Motion
   const sunIcon = document.getElementById('dstSunIcon');
   const arcEl = document.getElementById('dstProgressArc');
   const badgeEl = document.getElementById('dstDayNightBadge');
   const statusEl = document.getElementById('dstStatusText');
 
   if (sunIcon && arcEl) {
-    // 1. PINNED LOCATION TIME CALCULATION:
-    // API lo d.current.time unte adi direct gā ā location local time!
-    let locHours, locMinutes;
-    if (d.current && d.current.time) {
-      const locTimePart = d.current.time.split('T')[1];
-      [locHours, locMinutes] = locTimePart.split(':').map(Number);
-    } else if (typeof d.utc_offset_seconds === 'number') {
-      // Offset leda UTC tho calculate cheddam
-      const nowUtc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
-      const locDate = new Date(nowUtc + (d.utc_offset_seconds * 1000));
-      locHours = locDate.getHours();
-      locMinutes = locDate.getMinutes();
-    } else {
-      const now = new Date();
-      locHours = now.getHours();
-      locMinutes = now.getMinutes();
-    }
+    const riseDate = new Date(d.daily.sunrise[0]);
+    const setDate = new Date(d.daily.sunset[0]);
 
-    const currentMins = locHours * 60 + locMinutes;
-
-    // 2. SUNRISE & SUNSET MINUTES (FROM ISO STRING)
-    const getMinsFromIso = (isoStr) => {
-      const t = isoStr.split('T')[1];
-      const [h, m] = t.split(':').map(Number);
-      return h * 60 + m;
-    };
-
-    const riseMins = getMinsFromIso(d.daily.sunrise[0]);
-    const setMins = getMinsFromIso(d.daily.sunset[0]);
+    const riseMins = riseDate.getHours() * 60 + riseDate.getMinutes();
+    const setMins = setDate.getHours() * 60 + setDate.getMinutes();
+    const currentMins = targetDate.getHours() * 60 + targetDate.getMinutes();
 
     let ratio = 0;
     const pathLength = 260;
 
     if (currentMins >= riseMins && currentMins <= setMins) {
-      // ☀️ 1. PAGALU (Pin Location lo Pagalu unte Sun & Yellow Arc)
+      // ☀️ DAY TIME
       const totalDaylight = setMins - riseMins;
       ratio = Math.min(Math.max((currentMins - riseMins) / totalDaylight, 0), 1);
 
@@ -991,20 +995,15 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       arcEl.setAttribute("stroke", "#f59e0b");
       arcEl.style.strokeDashoffset = pathLength - (pathLength * ratio);
 
-      if (badgeEl) {
-        badgeEl.innerText = "పగలు";
-        badgeEl.className = "dst-badge-pill dst-badge-day";
-      }
-
+      if (badgeEl) badgeEl.innerText = "పగలు";
       const minsLeft = setMins - currentMins;
       if (statusEl) {
         statusEl.innerText = minsLeft > 0 
           ? `అస్తమయానికి ${minsLeft > 60 ? Math.floor(minsLeft / 60) + 'గం ' : ''}${minsLeft % 60}ని॥` 
           : "సూర్యాస్తమయం";
-        statusEl.className = "dst-status-badge dst-status-day";
       }
     } else {
-      // 🌙 2. RAATRI (Pin Location lo Rātri unte Moon & Indigo Arc)
+      // 🌙 NIGHT TIME
       const totalNightMinutes = (24 * 60 - setMins) + riseMins;
       const elapsedNight = currentMins > setMins 
         ? currentMins - setMins 
@@ -1016,22 +1015,16 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       arcEl.setAttribute("stroke", "#818cf8");
       arcEl.style.strokeDashoffset = pathLength - (pathLength * ratio);
 
-      if (badgeEl) {
-        badgeEl.innerText = "రాత్రి";
-        badgeEl.className = "dst-badge-pill dst-badge-night";
-      }
-
+      if (badgeEl) badgeEl.innerText = "రాత్రి";
       const minsToRise = currentMins < riseMins 
         ? riseMins - currentMins 
         : (24 * 60 - currentMins) + riseMins;
-
       if (statusEl) {
         statusEl.innerText = `ఉదయానికి ఇంకా ${Math.floor(minsToRise / 60)}గం ${minsToRise % 60}ని॥`;
-        statusEl.className = "dst-status-badge dst-status-night";
       }
     }
 
-    // Arc Path Movement (Left -> Up -> Right)
+    // Arc Curve Coordinates
     const angle = Math.PI * (1 - ratio);
     const posX = 120 + 95 * Math.cos(angle);
     const posY = 85 - 70 * Math.sin(angle);
@@ -1040,7 +1033,6 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
     sunIcon.style.top = `${posY}px`;
   }
 }
-
 
     // 3-Day Rain Forecast for Farm
     const rainContainer = document.getElementById("farm_3day_rain");
