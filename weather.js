@@ -466,7 +466,7 @@ const liveClock = now.toLocaleTimeString('en-US', {
   <!-- Semi-Circle Arc Area -->
   <div style="position: relative; width: 100%; max-width: 230px; height: 92px; margin: 0 auto;">
     <svg viewBox="0 0 240 95" style="width: 100%; height: 100%; overflow: visible;">
-      <line x1="15" y1="85" x2="225" y2="85" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,3" />
+      
       <path id="dstBaseTrack" d="M 25 85 A 95 70 0 0 1 215 85" fill="none" stroke="#cbd5e1" stroke-width="2.5" />
       <path id="dstProgressArc" d="M 25 85 A 95 70 0 0 1 215 85" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-dasharray="260" stroke-dashoffset="0" />
     </svg>
@@ -477,7 +477,7 @@ const liveClock = now.toLocaleTimeString('en-US', {
     <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; width: 100%;">
       <div id="dstCenterTime" style="font-size: 13.5px; font-weight: 800; color: #1e293b; line-height: 1.1;">--:--</div>
       <div id="dstCenterTemp" style="font-size: 12px; font-weight: 700; color: #2563eb; line-height: 1.1; margin-top: 1px;">--°C</div>
-      <div id="dstCenterDate" style="font-size: 9px; font-weight: 600; color: #64748b; line-height: 1.1; margin-top: 2px;">--</div>
+      <div id="dstCenterDate" style="font-size: 11px; font-weight: 600; color: #334155; line-height: 1.1; margin-top: 2px;">--</div>
     </div>
   </div>
 
