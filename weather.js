@@ -454,33 +454,48 @@ const liveClock = now.toLocaleTimeString('en-US', {
               </button>
             </div>
 
-   <!-- DYNAMIC ARC SUN TRACKER -->
-<div class="drawer-sun-tracker">
-  <div class="dst-header">
-    <span class="dst-title">☀️ సూర్య గమనం & పగటి సమయం</span>
-    <span id="dstDayNightBadge" class="dst-badge badge-day">పగలు</span>
+   <!-- DYNAMIC ARC SUN TRACKER (WHITE LIGHT THEME) -->
+<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; box-sizing: border-box; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+  
+  <!-- Header Row -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+    <span style="font-size: 12.5px; font-weight: 700; color: #1b4332;">☀️ సూర్య గమనం & పగటి సమయం</span>
+    <span id="dstDayNightBadge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">రాత్రి</span>
   </div>
 
-  <div class="dst-arc-box">
-    <svg viewBox="0 0 240 100" class="dst-svg">
+  <!-- Semi-Circle Arc Area -->
+  <div style="position: relative; width: 100%; max-width: 240px; height: 86px; margin: 0 auto;">
+    <svg viewBox="0 0 240 100" style="width: 100%; height: 100%; overflow: visible;">
+      <!-- Background Dashed Track -->
       <path d="M 25 88 A 95 75 0 0 1 215 88" fill="none" stroke="#e2e8f0" stroke-width="2.5" stroke-dasharray="5,5" />
-      <path id="dstProgressArc" d="M 25 88 A 95 75 0 0 1 215 88" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="270" stroke-dashoffset="270" />
+      <!-- Progress Track -->
+      <path id="dstProgressArc" d="M 25 88 A 95 75 0 0 1 215 88" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="270" stroke-dashoffset="0" />
     </svg>
-    <div id="dstSunIcon" class="dst-sun-glow">☀️</div>
-    <div class="dst-horizon-line"></div>
+    
+    <!-- Moving Indicator (Sun / Moon) -->
+    <div id="dstSunIcon" style="position: absolute; width: 26px; height: 26px; font-size: 16px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); transition: left 0.4s ease, top 0.4s ease; filter: drop-shadow(0 0 6px rgba(109,40,217,0.3)); left: 89%; top: 85px;">🌙</div>
+    
+    <!-- Base Horizon Line -->
+    <div style="position: absolute; bottom: 0; left: 10px; right: 10px; height: 1.5px; background: linear-gradient(90deg, transparent, #cbd5e1, transparent);"></div>
   </div>
 
-  <div class="dst-footer">
-    <div class="dst-time-col">
-      <span class="dst-lbl">సూర్యోదయం</span>
-      <b id="farm_sunrise">--</b>
+  <!-- Footer Info Row (Horizontal) -->
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
+    <div style="display: flex; flex-direction: column; text-align: left;">
+      <span style="font-size: 10.5px; color: #64748b;">సూర్యోదయం</span>
+      <b id="farm_sunrise" style="font-size: 12.5px; color: #1e293b;">--</b>
     </div>
-    <div id="dstStatusText" class="dst-status-pill">--</div>
-    <div class="dst-time-col text-right">
-      <span class="dst-lbl">సూర్యాస్తమయం</span>
-      <b id="farm_sunset">--</b>
+
+    <div id="dstStatusText" style="font-size: 11px; font-weight: 700; color: #6d28d9; background: #f5f3ff; border: 1px solid #ddd6fe; padding: 3px 10px; border-radius: 12px; text-align: center;">
+      రాత్రి సమయం (చంద్రుడు)
+    </div>
+
+    <div style="display: flex; flex-direction: column; text-align: right;">
+      <span style="font-size: 10.5px; color: #64748b;">సూర్యాస్తమయం</span>
+      <b id="farm_sunset" style="font-size: 12.5px; color: #1e293b;">--</b>
     </div>
   </div>
+
 </div>
 
             <div class="agri-drawer-grid">
@@ -907,7 +922,7 @@ window.applySelectedFarmLocation = async function() {
     const res = await fetch(url);
     const d = await res.json();
 
-  // // సూర్యోదయం & సూర్యాస్తమయం డైనమిక్ సన్ ట్రాకర్
+  // సూర్యోదయం & సూర్యాస్తమయం డైనమిక్ సన్ ట్రాకర్ (White Theme)
 if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   const formatTime = (isoStr) => {
     if (!isoStr) return "--";
@@ -927,7 +942,6 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   if (sunriseElem) sunriseElem.innerText = sunriseFormatted;
   if (sunsetElem) sunsetElem.innerText = sunsetFormatted;
 
-  // Pin point pettina location ISO time prakarame Arc Sun Position calculation
   const sunIcon = document.getElementById('dstSunIcon');
   const arcEl = document.getElementById('dstProgressArc');
   const badgeEl = document.getElementById('dstDayNightBadge');
@@ -936,9 +950,8 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   if (sunIcon && arcEl) {
     const riseDate = new Date(d.daily.sunrise[0]);
     const setDate = new Date(d.daily.sunset[0]);
-
-    // Pinpoint location yokka local current time offset match avvalante
     const now = new Date();
+
     const riseMins = riseDate.getHours() * 60 + riseDate.getMinutes();
     const setMins = setDate.getHours() * 60 + setDate.getMinutes();
     const currentMins = now.getHours() * 60 + now.getMinutes();
@@ -950,7 +963,6 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       // ☀️ PAGALU (Day Time)
       const ratio = Math.min(Math.max(elapsed / totalDaylight, 0), 1);
       
-      // Arc formula (Center: 120, 88; Radius X: 95, Radius Y: 75)
       const angle = Math.PI * (1 - ratio);
       const posX = 120 + 95 * Math.cos(angle);
       const posY = 88 - 75 * Math.sin(angle);
@@ -963,7 +975,9 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
 
       if (badgeEl) {
         badgeEl.innerText = "పగలు";
-        badgeEl.className = "dst-badge badge-day";
+        badgeEl.style.background = "#fef3c7";
+        badgeEl.style.color = "#d97706";
+        badgeEl.style.borderColor = "#fde68a";
       }
 
       const minsLeft = setMins - currentMins;
@@ -971,6 +985,9 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
         statusEl.innerText = minsLeft > 0 
           ? `అస్తమయానికి ${minsLeft > 60 ? Math.floor(minsLeft / 60) + 'గం ' : ''}${minsLeft % 60}ని॥` 
           : "సూర్యాస్తమయం";
+        statusEl.style.background = "#fffbeb";
+        statusEl.style.color = "#d97706";
+        statusEl.style.borderColor = "#fde68a";
       }
     } else {
       // 🌙 RAATRI (Night Time)
@@ -981,15 +998,19 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
 
       if (badgeEl) {
         badgeEl.innerText = "రాత్రి";
-        badgeEl.className = "dst-badge badge-night";
+        badgeEl.style.background = "#ede9fe";
+        badgeEl.style.color = "#6d28d9";
+        badgeEl.style.borderColor = "#ddd6fe";
       }
       if (statusEl) {
         statusEl.innerText = "రాత్రి సమయం (చంద్రుడు)";
+        statusEl.style.background = "#f5f3ff";
+        statusEl.style.color = "#6d28d9";
+        statusEl.style.borderColor = "#ddd6fe";
       }
     }
   }
 }
-
 
     // 3-Day Rain Forecast for Farm
     const rainContainer = document.getElementById("farm_3day_rain");
