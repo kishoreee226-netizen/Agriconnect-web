@@ -1076,7 +1076,7 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
     if (d && d.hourly) {
       const h = d.hourly;
       const cur = d.current || {};
-      const idx = 0;
+      const idx = new Date().getHours();
 
       // 1 to 8 Soil Metrics
       const sm0_1 = h.soil_moisture_0_to_1cm ? Math.round(h.soil_moisture_0_to_1cm[idx] * 100) : "--";
