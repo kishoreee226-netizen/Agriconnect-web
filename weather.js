@@ -907,23 +907,89 @@ window.applySelectedFarmLocation = async function() {
     const res = await fetch(url);
     const d = await res.json();
 
-    // సూర్యోదయం & సూర్యాస్తమయం
-    if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
-      const formatTime = (isoStr) => {
-        if (!isoStr) return "--";
-        const dt = new Date(isoStr);
-        let h = dt.getHours();
-        const m = dt.getMinutes().toString().padStart(2, '0');
-        const ampm = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12;
-        return `${h}:${m} ${ampm}`;
-      };
+  // // సూర్యోదయం & సూర్యాస్తమయం డైనమిక్ సన్ ట్రాకర్
+if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
+  const formatTime = (isoStr) => {
+    if (!isoStr) return "--";
+    const dt = new Date(isoStr);
+    let h = dt.getHours();
+    const m = dt.getMinutes().toString().padStart(2, '0');
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${m} ${ampm}`;
+  };
 
-      const sunriseElem = document.getElementById("farm_sunrise");
-      const sunsetElem = document.getElementById("farm_sunset");
-      if (sunriseElem) sunriseElem.innerText = `🌅 సూర్యోదయం: ${formatTime(d.daily.sunrise[0])}`;
-      if (sunsetElem) sunsetElem.innerText = `🌇 సూర్యాస్తమయం: ${formatTime(d.daily.sunset[0])}`;
+  const sunriseFormatted = formatTime(d.daily.sunrise[0]);
+  const sunsetFormatted = formatTime(d.daily.sunset[0]);
+
+  const sunriseElem = document.getElementById("farm_sunrise");
+  const sunsetElem = document.getElementById("farm_sunset");
+  if (sunriseElem) sunriseElem.innerText = sunriseFormatted;
+  if (sunsetElem) sunsetElem.innerText = sunsetFormatted;
+
+  // Pin point pettina location ISO time prakarame Arc Sun Position calculation
+  const sunIcon = document.getElementById('dstSunIcon');
+  const arcEl = document.getElementById('dstProgressArc');
+  const badgeEl = document.getElementById('dstDayNightBadge');
+  const statusEl = document.getElementById('dstStatusText');
+
+  if (sunIcon && arcEl) {
+    const riseDate = new Date(d.daily.sunrise[0]);
+    const setDate = new Date(d.daily.sunset[0]);
+
+    // Pinpoint location yokka local current time offset match avvalante
+    const now = new Date();
+    const riseMins = riseDate.getHours() * 60 + riseDate.getMinutes();
+    const setMins = setDate.getHours() * 60 + setDate.getMinutes();
+    const currentMins = now.getHours() * 60 + now.getMinutes();
+
+    const totalDaylight = setMins - riseMins;
+    const elapsed = currentMins - riseMins;
+
+    if (currentMins >= riseMins && currentMins <= setMins && totalDaylight > 0) {
+      // ☀️ PAGALU (Day Time)
+      const ratio = Math.min(Math.max(elapsed / totalDaylight, 0), 1);
+      
+      // Arc formula (Center: 120, 88; Radius X: 95, Radius Y: 75)
+      const angle = Math.PI * (1 - ratio);
+      const posX = 120 + 95 * Math.cos(angle);
+      const posY = 88 - 75 * Math.sin(angle);
+
+      sunIcon.innerText = "☀️";
+      sunIcon.style.left = `${(posX / 240) * 100}%`;
+      sunIcon.style.top = `${posY}px`;
+
+      arcEl.style.strokeDashoffset = 270 - (270 * ratio);
+
+      if (badgeEl) {
+        badgeEl.innerText = "పగలు";
+        badgeEl.className = "dst-badge badge-day";
+      }
+
+      const minsLeft = setMins - currentMins;
+      if (statusEl) {
+        statusEl.innerText = minsLeft > 0 
+          ? `అస్తమయానికి ${minsLeft > 60 ? Math.floor(minsLeft / 60) + 'గం ' : ''}${minsLeft % 60}ని॥` 
+          : "సూర్యాస్తమయం";
+      }
+    } else {
+      // 🌙 RAATRI (Night Time)
+      sunIcon.innerText = "🌙";
+      sunIcon.style.left = "89%";
+      sunIcon.style.top = "85px";
+      arcEl.style.strokeDashoffset = 0;
+
+      if (badgeEl) {
+        badgeEl.innerText = "రాత్రి";
+        badgeEl.className = "dst-badge badge-night";
+      }
+      if (statusEl) {
+        statusEl.innerText = "రాత్రి సమయం (చంద్రుడు)";
+      }
     }
+  }
+}
+
 
     // 3-Day Rain Forecast for Farm
     const rainContainer = document.getElementById("farm_3day_rain");
