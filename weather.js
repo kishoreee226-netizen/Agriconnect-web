@@ -1079,9 +1079,9 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       const idx = new Date().getHours();
 
       // 1 to 8 Soil Metrics
-      const sm0_1 = h.soil_moisture_0_to_1cm ? Math.round(h.soil_moisture_0_to_1cm[idx] * 100) : "--";
-      const sm3_9 = h.soil_moisture_3_to_9cm ? Math.round(h.soil_moisture_3_to_9cm[idx] * 100) : "--";
-      const sm9_27 = h.soil_moisture_9_to_27cm ? Math.round(h.soil_moisture_9_to_27cm[idx] * 100) : "--";
+      const sm0_1 = h.soil_moisture_0_to_1cm ? Math.round(h.soil_moisture_0_to_1cm[idx] * 200) : "--";
+      const sm3_9 = h.soil_moisture_3_to_9cm ? Math.round(h.soil_moisture_3_to_9cm[idx] * 200) : "--";
+      const sm9_27 = h.soil_moisture_9_to_27cm ? Math.round(h.soil_moisture_9_to_27cm[idx] * 200) : "--";
       const sTemp = cur.soil_temperature_0cm !== undefined ? Math.round(cur.soil_temperature_0cm) : "--";
       const et0 = h.et0_fao_evapotranspiration ? h.et0_fao_evapotranspiration[idx].toFixed(1) : "--";
       const vpd = h.vapour_pressure_deficit ? h.vapour_pressure_deficit[idx].toFixed(2) : "--";
