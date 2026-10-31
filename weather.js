@@ -922,7 +922,7 @@ window.applySelectedFarmLocation = async function() {
     const res = await fetch(url);
     const d = await res.json();
 
-  // సూర్యోదయం & సూర్యాస్తమయం డైనమిక్ సన్ ట్రాకర్ (White Theme)
+  // DUAL CYCLE: DAY SUN (YELLOW) & NIGHT MOON (BLUE/VIOLET)
 if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   const formatTime = (isoStr) => {
     if (!isoStr) return "--";
@@ -934,13 +934,10 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
     return `${h}:${m} ${ampm}`;
   };
 
-  const sunriseFormatted = formatTime(d.daily.sunrise[0]);
-  const sunsetFormatted = formatTime(d.daily.sunset[0]);
-
   const sunriseElem = document.getElementById("farm_sunrise");
   const sunsetElem = document.getElementById("farm_sunset");
-  if (sunriseElem) sunriseElem.innerText = sunriseFormatted;
-  if (sunsetElem) sunsetElem.innerText = sunsetFormatted;
+  if (sunriseElem) sunriseElem.innerText = formatTime(d.daily.sunrise[0]);
+  if (sunsetElem) sunsetElem.innerText = formatTime(d.daily.sunset[0]);
 
   const sunIcon = document.getElementById('dstSunIcon');
   const arcEl = document.getElementById('dstProgressArc');
@@ -956,22 +953,17 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
     const setMins = setDate.getHours() * 60 + setDate.getMinutes();
     const currentMins = now.getHours() * 60 + now.getMinutes();
 
-    const totalDaylight = setMins - riseMins;
-    const elapsed = currentMins - riseMins;
+    let ratio = 0;
+    const pathLength = 260;
 
-    if (currentMins >= riseMins && currentMins <= setMins && totalDaylight > 0) {
-      // ☀️ PAGALU (Day Time)
-      const ratio = Math.min(Math.max(elapsed / totalDaylight, 0), 1);
-      
-      const angle = Math.PI * (1 - ratio);
-      const posX = 120 + 95 * Math.cos(angle);
-      const posY = 90 - 75 * Math.sin(angle);
+    if (currentMins >= riseMins && currentMins <= setMins) {
+      // ☀️ 1. PAGALU (Day Mode - Left to Right with Yellow Fill)
+      const totalDaylight = setMins - riseMins;
+      ratio = Math.min(Math.max((currentMins - riseMins) / totalDaylight, 0), 1);
 
       sunIcon.innerText = "☀️";
-      sunIcon.style.left = `${(posX / 240) * 100}%`;
-      sunIcon.style.top = `${posY}px`;
-
-      arcEl.style.strokeDashoffset = 270 - (270 * ratio);
+      arcEl.setAttribute("stroke", "#f59e0b"); // Pasupu Rangu
+      arcEl.style.strokeDashoffset = pathLength - (pathLength * ratio);
 
       if (badgeEl) {
         badgeEl.innerText = "పగలు";
@@ -990,14 +982,17 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
         statusEl.style.borderColor = "#fde68a";
       }
     } else {
-      // 🌙 RAATRI (Night Time)
+      // 🌙 2. RAATRI (Night Mode - Moon Starts Left, Fills Cool Moonlight Blue to Right)
+      const totalNightMinutes = (24 * 60 - setMins) + riseMins;
+      const elapsedNight = currentMins > setMins 
+        ? currentMins - setMins 
+        : (24 * 60 - setMins) + currentMins;
+
+      ratio = Math.min(Math.max(elapsedNight / totalNightMinutes, 0), 1);
+
       sunIcon.innerText = "🌙";
-      // Exact arc ending position
-      sunIcon.style.left = "89.5%";
-      sunIcon.style.top = "80px";
-      
-      // Rātri vēlalo progress zero (lēdā completed gray)
-      arcEl.style.strokeDashoffset = 270;
+      arcEl.setAttribute("stroke", "#818cf8"); // Vennela Neeli Rangu (Cool Indigo/Blue)
+      arcEl.style.strokeDashoffset = pathLength - (pathLength * ratio);
 
       if (badgeEl) {
         badgeEl.innerText = "రాత్రి";
@@ -1005,15 +1000,29 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
         badgeEl.style.color = "#6d28d9";
         badgeEl.style.borderColor = "#ddd6fe";
       }
+
+      const minsToRise = currentMins < riseMins 
+        ? riseMins - currentMins 
+        : (24 * 60 - currentMins) + riseMins;
+
       if (statusEl) {
-        statusEl.innerText = "రాత్రి సమయం (చంద్రుడు)";
+        statusEl.innerText = `ఉదయానికి ఇంకా ${Math.floor(minsToRise / 60)}గం ${minsToRise % 60}ని॥`;
         statusEl.style.background = "#f5f3ff";
         statusEl.style.color = "#6d28d9";
         statusEl.style.borderColor = "#ddd6fe";
       }
     }
+
+    // Arc Curve Coordinates Math (Both Move Smoothly from Left -> Up -> Right)
+    const angle = Math.PI * (1 - ratio);
+    const posX = 120 + 95 * Math.cos(angle);
+    const posY = 85 - 70 * Math.sin(angle);
+
+    sunIcon.style.left = `${(posX / 240) * 100}%`;
+    sunIcon.style.top = `${posY}px`;
   }
 }
+
 
     // 3-Day Rain Forecast for Farm
     const rainContainer = document.getElementById("farm_3day_rain");
