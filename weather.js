@@ -922,16 +922,17 @@ window.applySelectedFarmLocation = async function() {
     const res = await fetch(url);
     const d = await res.json();
 
-  // DUAL CYCLE: DAY SUN (YELLOW) & NIGHT MOON (BLUE/VIOLET)
+  // DUAL CYCLE: ACCURATE PINNED LOCATION TIMEZONE CONTROLLER
 if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   const formatTime = (isoStr) => {
     if (!isoStr) return "--";
-    const dt = new Date(isoStr);
-    let h = dt.getHours();
-    const m = dt.getMinutes().toString().padStart(2, '0');
+    // ISO string lo direct gā unde 'YYYY-MM-DDTHH:MM' nunchi time teesukundham
+    const timePart = isoStr.split('T')[1];
+    if (!timePart) return "--";
+    let [h, m] = timePart.split(':').map(Number);
     const ampm = h >= 12 ? 'PM' : 'AM';
     h = h % 12 || 12;
-    return `${h}:${m} ${ampm}`;
+    return `${h}:${m.toString().padStart(2, '0')} ${ampm}`;
   };
 
   const sunriseElem = document.getElementById("farm_sunrise");
@@ -945,31 +946,51 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   const statusEl = document.getElementById('dstStatusText');
 
   if (sunIcon && arcEl) {
-    const riseDate = new Date(d.daily.sunrise[0]);
-    const setDate = new Date(d.daily.sunset[0]);
-    const now = new Date();
+    // 1. PINNED LOCATION TIME CALCULATION:
+    // API lo d.current.time unte adi direct gā ā location local time!
+    let locHours, locMinutes;
+    if (d.current && d.current.time) {
+      const locTimePart = d.current.time.split('T')[1];
+      [locHours, locMinutes] = locTimePart.split(':').map(Number);
+    } else if (typeof d.utc_offset_seconds === 'number') {
+      // Offset leda UTC tho calculate cheddam
+      const nowUtc = new Date().getTime() + (new Date().getTimezoneOffset() * 60000);
+      const locDate = new Date(nowUtc + (d.utc_offset_seconds * 1000));
+      locHours = locDate.getHours();
+      locMinutes = locDate.getMinutes();
+    } else {
+      const now = new Date();
+      locHours = now.getHours();
+      locMinutes = now.getMinutes();
+    }
 
-    const riseMins = riseDate.getHours() * 60 + riseDate.getMinutes();
-    const setMins = setDate.getHours() * 60 + setDate.getMinutes();
-    const currentMins = now.getHours() * 60 + now.getMinutes();
+    const currentMins = locHours * 60 + locMinutes;
+
+    // 2. SUNRISE & SUNSET MINUTES (FROM ISO STRING)
+    const getMinsFromIso = (isoStr) => {
+      const t = isoStr.split('T')[1];
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    };
+
+    const riseMins = getMinsFromIso(d.daily.sunrise[0]);
+    const setMins = getMinsFromIso(d.daily.sunset[0]);
 
     let ratio = 0;
     const pathLength = 260;
 
     if (currentMins >= riseMins && currentMins <= setMins) {
-      // ☀️ 1. PAGALU (Day Mode - Left to Right with Yellow Fill)
+      // ☀️ 1. PAGALU (Pin Location lo Pagalu unte Sun & Yellow Arc)
       const totalDaylight = setMins - riseMins;
       ratio = Math.min(Math.max((currentMins - riseMins) / totalDaylight, 0), 1);
 
       sunIcon.innerText = "☀️";
-      arcEl.setAttribute("stroke", "#f59e0b"); // Pasupu Rangu
+      arcEl.setAttribute("stroke", "#f59e0b");
       arcEl.style.strokeDashoffset = pathLength - (pathLength * ratio);
 
       if (badgeEl) {
         badgeEl.innerText = "పగలు";
-        badgeEl.style.background = "#fef3c7";
-        badgeEl.style.color = "#d97706";
-        badgeEl.style.borderColor = "#fde68a";
+        badgeEl.className = "dst-badge-pill dst-badge-day";
       }
 
       const minsLeft = setMins - currentMins;
@@ -977,12 +998,10 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
         statusEl.innerText = minsLeft > 0 
           ? `అస్తమయానికి ${minsLeft > 60 ? Math.floor(minsLeft / 60) + 'గం ' : ''}${minsLeft % 60}ని॥` 
           : "సూర్యాస్తమయం";
-        statusEl.style.background = "#fffbeb";
-        statusEl.style.color = "#d97706";
-        statusEl.style.borderColor = "#fde68a";
+        statusEl.className = "dst-status-badge dst-status-day";
       }
     } else {
-      // 🌙 2. RAATRI (Night Mode - Moon Starts Left, Fills Cool Moonlight Blue to Right)
+      // 🌙 2. RAATRI (Pin Location lo Rātri unte Moon & Indigo Arc)
       const totalNightMinutes = (24 * 60 - setMins) + riseMins;
       const elapsedNight = currentMins > setMins 
         ? currentMins - setMins 
@@ -991,14 +1010,12 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       ratio = Math.min(Math.max(elapsedNight / totalNightMinutes, 0), 1);
 
       sunIcon.innerText = "🌙";
-      arcEl.setAttribute("stroke", "#818cf8"); // Vennela Neeli Rangu (Cool Indigo/Blue)
+      arcEl.setAttribute("stroke", "#818cf8");
       arcEl.style.strokeDashoffset = pathLength - (pathLength * ratio);
 
       if (badgeEl) {
         badgeEl.innerText = "రాత్రి";
-        badgeEl.style.background = "#ede9fe";
-        badgeEl.style.color = "#6d28d9";
-        badgeEl.style.borderColor = "#ddd6fe";
+        badgeEl.className = "dst-badge-pill dst-badge-night";
       }
 
       const minsToRise = currentMins < riseMins 
@@ -1007,13 +1024,11 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
 
       if (statusEl) {
         statusEl.innerText = `ఉదయానికి ఇంకా ${Math.floor(minsToRise / 60)}గం ${minsToRise % 60}ని॥`;
-        statusEl.style.background = "#f5f3ff";
-        statusEl.style.color = "#6d28d9";
-        statusEl.style.borderColor = "#ddd6fe";
+        statusEl.className = "dst-status-badge dst-status-night";
       }
     }
 
-    // Arc Curve Coordinates Math (Both Move Smoothly from Left -> Up -> Right)
+    // Arc Path Movement (Left -> Up -> Right)
     const angle = Math.PI * (1 - ratio);
     const posX = 120 + 95 * Math.cos(angle);
     const posY = 85 - 70 * Math.sin(angle);
