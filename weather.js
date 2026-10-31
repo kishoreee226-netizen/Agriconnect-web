@@ -454,34 +454,36 @@ const liveClock = now.toLocaleTimeString('en-US', {
               </button>
             </div>
 
-  <!-- DYNAMIC ARC SUN TRACKER (PERFECT ALIGNMENT) -->
+  <!-- DYNAMIC ARC SUN TRACKER (TIME -> TEMP -> DATE STACK) -->
 <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 12px 14px 10px; margin-bottom: 14px; box-sizing: border-box; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
   
   <!-- Header Row -->
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
     <span style="font-size: 12px; font-weight: 700; color: #1b4332;">☀️ సూర్య గమనం & పగటి సమయం</span>
     <span id="dstDayNightBadge" style="font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #ede9fe; color: #6d28d9; border: 1px solid #ddd6fe;">రాత్రి</span>
   </div>
 
   <!-- Semi-Circle Arc Area -->
-  <div style="position: relative; width: 100%; max-width: 240px; height: 95px; margin: 0 auto;">
-    <svg viewBox="0 0 240 105" style="width: 100%; height: 100%; overflow: visible;">
-      <!-- Background Dashed Track -->
-      <path d="M 25 90 A 95 75 0 0 1 215 90" fill="none" stroke="#e2e8f0" stroke-width="2.5" stroke-dasharray="5,5" />
-      <!-- Progress Track -->
-      <path id="dstProgressArc" d="M 25 90 A 95 75 0 0 1 215 90" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="270" stroke-dashoffset="270" />
+  <div style="position: relative; width: 100%; max-width: 230px; height: 92px; margin: 0 auto;">
+    <svg viewBox="0 0 240 95" style="width: 100%; height: 100%; overflow: visible;">
+      <line x1="15" y1="85" x2="225" y2="85" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="3,3" />
+      <path id="dstBaseTrack" d="M 25 85 A 95 70 0 0 1 215 85" fill="none" stroke="#cbd5e1" stroke-width="2.5" />
+      <path id="dstProgressArc" d="M 25 85 A 95 70 0 0 1 215 85" fill="none" stroke="#f59e0b" stroke-width="3" stroke-linecap="round" stroke-dasharray="260" stroke-dashoffset="0" />
     </svg>
     
-    <!-- Moving Indicator (Sun / Moon) -->
-    <div id="dstSunIcon" style="position: absolute; width: 24px; height: 24px; font-size: 15px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); transition: left 0.4s ease, top 0.4s ease; left: 215px; top: 90px; z-index: 2;">🌙</div>
-    
-    <!-- Horizon Base Line -->
-    <div style="position: absolute; bottom: 5px; left: 15px; right: 15px; height: 1px; background: #e2e8f0;"></div>
+    <div id="dstSunIcon" style="position: absolute; width: 24px; height: 24px; font-size: 16px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); transition: left 0.4s ease, top 0.4s ease; left: 215px; top: 72px; z-index: 2;">🌙</div>
+
+    <!-- 3-LINE VERTICAL STACK (TIME -> TEMP -> DATE) -->
+    <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; width: 100%;">
+      <div id="dstCenterTime" style="font-size: 13.5px; font-weight: 800; color: #1e293b; line-height: 1.1;">--:--</div>
+      <div id="dstCenterTemp" style="font-size: 12px; font-weight: 700; color: #2563eb; line-height: 1.1; margin-top: 1px;">--°C</div>
+      <div id="dstCenterDate" style="font-size: 9px; font-weight: 600; color: #64748b; line-height: 1.1; margin-top: 2px;">--</div>
+    </div>
   </div>
 
   <!-- Footer Info Row -->
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px; padding: 0 4px;">
-    <div style="text-align: left; min-width: 70px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; padding: 0 4px;">
+    <div style="text-align: left; min-width: 65px;">
       <div style="font-size: 10px; color: #64748b;">సూర్యోదయం</div>
       <b id="farm_sunrise" style="font-size: 12px; color: #1e293b;">--</b>
     </div>
@@ -490,13 +492,14 @@ const liveClock = now.toLocaleTimeString('en-US', {
       రాత్రి సమయం (చంద్రుడు)
     </div>
 
-    <div style="text-align: right; min-width: 70px;">
+    <div style="text-align: right; min-width: 65px;">
       <div style="font-size: 10px; color: #64748b;">సూర్యాస్తమయం</div>
       <b id="farm_sunset" style="font-size: 12px; color: #1e293b;">--</b>
     </div>
   </div>
 
 </div>
+
 
             <div class="agri-drawer-grid">
               <div class="agri-metric-tile">
