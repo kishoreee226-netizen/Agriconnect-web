@@ -453,12 +453,35 @@ const liveClock = now.toLocaleTimeString('en-US', {
                 ⭐ పొలం సేవ్ చేయి
               </button>
             </div>
-            <!-- సూర్యోదయం & సూర్యాస్తమయం స్ట్రిప్ -->
-            <div style="display: flex; justify-content: space-around; background: #ffffff; border: 1px solid #fef3c7; border-radius: 8px; padding: 6px 10px; margin-bottom: 12px; font-size: 11.5px; font-weight: 600; color: #92400e;">
-              <span id="farm_sunrise">🌅 సూర్యోదయం: --</span>
-              <span style="color: #cbd5e1;">|</span>
-              <span id="farm_sunset">🌇 సూర్యాస్తమయం: --</span>
-            </div>
+
+   <!-- DYNAMIC ARC SUN TRACKER -->
+<div class="drawer-sun-tracker">
+  <div class="dst-header">
+    <span class="dst-title">☀️ సూర్య గమనం & పగటి సమయం</span>
+    <span id="dstDayNightBadge" class="dst-badge badge-day">పగలు</span>
+  </div>
+
+  <div class="dst-arc-box">
+    <svg viewBox="0 0 240 100" class="dst-svg">
+      <path d="M 25 88 A 95 75 0 0 1 215 88" fill="none" stroke="#e2e8f0" stroke-width="2.5" stroke-dasharray="5,5" />
+      <path id="dstProgressArc" d="M 25 88 A 95 75 0 0 1 215 88" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="270" stroke-dashoffset="270" />
+    </svg>
+    <div id="dstSunIcon" class="dst-sun-glow">☀️</div>
+    <div class="dst-horizon-line"></div>
+  </div>
+
+  <div class="dst-footer">
+    <div class="dst-time-col">
+      <span class="dst-lbl">సూర్యోదయం</span>
+      <b id="farm_sunrise">--</b>
+    </div>
+    <div id="dstStatusText" class="dst-status-pill">--</div>
+    <div class="dst-time-col text-right">
+      <span class="dst-lbl">సూర్యాస్తమయం</span>
+      <b id="farm_sunset">--</b>
+    </div>
+  </div>
+</div>
 
             <div class="agri-drawer-grid">
               <div class="agri-metric-tile">
