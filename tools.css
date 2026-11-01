@@ -811,4 +811,18 @@
   justify-content: space-between;
   align-items: center;
 }
+/* Empty list message */
+.mandi-empty-msg {
+  text-align: center;
+  padding: 20px 10px;
+  color: #6b7280;
+  font-size: 12.5px;
+}
+
+/* "ఈ రోజు లైవ్" text styling */
+.mandi-badge-live {
+  font-size: 11px;
+  color: #16a34a;
+  font-weight: 600;
+}
 
