@@ -80,14 +80,18 @@ function showToolModal(type) {
   const modal = document.getElementById('agriToolModal');
   const titleEl = document.getElementById('agriModalHeaderTitle');
   if (!modal) return;
+     document.querySelectorAll('.tool-view-panel').forEach(panel => {
+      panel.classList.remove('active-panel');
+      panel.style.display = 'none';
+    });
 
-  document.querySelectorAll('.tool-view-panel').forEach(panel => {
-    panel.classList.remove('active-panel');
-  });
+    titleEl.innerText = panelTitles[type] || 'టూల్ వివరాలు';
 
-  titleEl.innerText = panelTitles[type] || 'టూల్ వివరాలు';
-  const activePanel = document.getElementById(`view-${type}`);
-  if (activePanel) activePanel.classList.add('active-panel');
+    const activePanel = document.getElementById(`view-${type}`);
+    if (activePanel) {
+      activePanel.classList.add('active-panel');
+      activePanel.style.display = 'block';
+    }
 
   if (type === 'market') updateLiveMandiRates();
   if (type === 'calendar') updateCalendarDate();
