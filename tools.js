@@ -330,6 +330,87 @@ function runFertilizerCalc() {
   ureaEl.innerText = (urea * acres).toFixed(1);
   potashEl.innerText = (potash * acres).toFixed(1);
 }
+// --- 4.1 FERTILIZER SUB-TABS CONTROLLER ---
+function switchFertSubTab(subTab) {
+  const panes = document.querySelectorAll('.fert-subtab-pane');
+  panes.forEach(p => {
+    p.style.display = 'none';
+    p.classList.remove('active');
+  });
+
+  const tabs = document.querySelectorAll('.hub-tabs .hub-tab');
+  tabs.forEach(t => t.classList.remove('active'));
+
+  if (subTab === 'fert') {
+    const p = document.getElementById('subtab-fert');
+    if (p) { p.style.display = 'block'; p.classList.add('active'); }
+    if (tabs[0]) tabs[0].classList.add('active');
+    runFertilizerCalc();
+  } else if (subTab === 'seed') {
+    const p = document.getElementById('subtab-seed');
+    if (p) { p.style.display = 'block'; p.classList.add('active'); }
+    if (tabs[1]) tabs[1].classList.add('active');
+    runSeedCalc();
+  } else if (subTab === 'spray') {
+    const p = document.getElementById('subtab-spray');
+    if (p) { p.style.display = 'block'; p.classList.add('active'); }
+    if (tabs[2]) tabs[2].classList.add('active');
+    runSprayCalc();
+  }
+}
+
+// --- 4.2 REAL SEED RATE CALCULATOR ---
+function runSeedCalc() {
+  const crop = document.getElementById('seedCropSelect')?.value || 'paddy';
+  const acres = parseFloat(document.getElementById('seedAcresInput')?.value || 1);
+  const resVal = document.getElementById('seedResultVal');
+  const resDesc = document.getElementById('seedResultDesc');
+  if (!resVal) return;
+
+  if (acres <= 0) {
+    resVal.innerText = '--';
+    if (resDesc) resDesc.innerText = 'ఎకరాల విస్తీర్ణం నమోదు చేయండి.';
+    return;
+  }
+
+  let amount = '';
+  let note = '';
+
+  if (crop === 'paddy') {
+    amount = `${(acres * 25).toFixed(1)} - ${(acres * 30).toFixed(1)} కేజీలు`;
+    note = 'వరి: సన్న రకాలు 20-25 kg, లావు రకాలు 25-30 kg/ఎకరానికి';
+  } else if (crop === 'cotton') {
+    const pkts = Math.round(acres * 2);
+    amount = `${pkts} ప్యాకెట్లు (సుమారు ${(acres * 0.9).toFixed(1)} kg)`;
+    note = 'పత్తి: ఎకరానికి 2 ప్యాకెట్లు (BG-II హైబ్రిడ్ 450 గ్రా/ప్యాకెట్)';
+  } else if (crop === 'chilli') {
+    amount = `${Math.round(acres * 80)} - ${Math.round(acres * 100)} గ్రాములు`;
+    note = 'మిర్చి: నారు పోసే హైబ్రిడ్ విత్తనాలు 80-100 గ్రా/ఎకరానికి';
+  } else if (crop === 'maize') {
+    amount = `${(acres * 7.5).toFixed(1)} - ${(acres * 8).toFixed(1)} కేజీలు`;
+    note = 'మొక్కజొన్న: సింగిల్ క్రాస్ హైబ్రిడ్లు 7.5-8 kg/ఎకరానికి';
+  }
+
+  resVal.innerText = amount;
+  if (resDesc) resDesc.innerText = note;
+}
+
+// --- 4.3 REAL SPRAY TANK DILUTION CALCULATOR ---
+function runSprayCalc() {
+  const tank = parseFloat(document.getElementById('sprayTankSize')?.value || 16);
+  const dose = parseFloat(document.getElementById('sprayDosePerLiter')?.value || 0);
+  const unit = document.getElementById('sprayUnitSelect')?.value || 'ml';
+  const resVal = document.getElementById('sprayResultVal');
+  if (!resVal) return;
+
+  if (dose <= 0) {
+    resVal.innerText = '--';
+    return;
+  }
+
+  const total = (tank * dose).toFixed(1);
+  resVal.innerText = `${total} ${unit}`;
+}
 
 // 5. REAL PEST TREATMENTS
 function filterPestDetails(crop = 'chilli') {
