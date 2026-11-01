@@ -485,4 +485,137 @@
 .btn-save-labor:hover {
   opacity: 0.9;
 }
+/* ==========================================
+   CROP DOCTOR & SCHEMES MODAL STYLES
+   ========================================== */
+
+/* Upload & Camera Box */
+.crop-upload-box {
+  border: 2px dashed #16a34a;
+  background: #f0fdf4;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.crop-upload-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.btn-upload-trigger {
+  width: auto;
+  padding: 8px 18px;
+  font-size: 13px;
+  margin: 0 auto;
+}
+
+.crop-preview-img {
+  display: none;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #d1d5db;
+}
+
+.scan-loading-box {
+  display: none;
+  text-align: center;
+  padding: 12px;
+  color: #166534;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+/* Diagnosis Result Card */
+.diag-res-card {
+  display: none;
+  margin-top: 12px;
+}
+
+.diag-title {
+  color: #b91c1c;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.diag-desc {
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+/* Treatment Detail Boxes */
+.treatment-box {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.treatment-chem {
+  background: #f0fdf4;
+  border-left: 4px solid #16a34a;
+}
+
+.treatment-chem-title {
+  color: #166534;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.treatment-organic {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+}
+
+.treatment-organic-title {
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.treatment-text {
+  font-size: 12px;
+  color: #1f2937;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Schemes Specific Layouts */
+.scheme-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.scheme-card-title {
+  color: #166534;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.scheme-desc-text {
+  font-size: 12px;
+  color: #374151;
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.scheme-status-lbl {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #d97706;
+}
+
+.subsidy-info-banner {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 12px;
+}
 
