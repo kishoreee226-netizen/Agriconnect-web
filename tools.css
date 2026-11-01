@@ -969,4 +969,28 @@ body.modal-open-freeze {
 .tool-view-panel {
   position: relative;
 }
+/* =========================================================
+   DIARY TOOL: ONLY HISTORY LISTS SCROLL
+   ========================================================= */
+
+/* Diary main panel overflow lock */
+#view-diary {
+  overflow: hidden !important;
+}
+
+/* Tab 1: ఖర్చులు & ఆదాయం లావాదేవీల చరిత్ర స్క్రోలింగ్ */
+#diaryRecordsContainer {
+  max-height: 200px; /* Mobile screen ki saripoye height */
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
+
+/* Tab 2: కూలీల చెల్లింపుల చరిత్ర స్క్రోలింగ్ */
+#laborRecordsContainer {
+  max-height: 200px;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 4px;
+}
 
