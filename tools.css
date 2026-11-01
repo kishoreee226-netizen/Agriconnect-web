@@ -825,4 +825,51 @@
   color: #16a34a;
   font-weight: 600;
 }
+/* 1. Modal open ayinappudu venakala background scroll freeze cheyadaniki */
+body.modal-open-freeze {
+  overflow: hidden !important;
+  height: 100vh !important;
+  touch-action: none;
+}
+
+/* 2. Modal Body mariyu Scroll Control */
+.agri-modal-body {
+  overflow-y: hidden !important; /* Modal body scroll kakunda lopala list scroll avvali */
+  display: flex;
+  flex-direction: column;
+}
+
+#view-market {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 70vh;
+}
+
+/* 3. Subtitle & Dropdown Filters Paina Solid White tho Sticky ga undadaniki */
+#view-market .modal-subtitle:first-child {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  z-index: 12;
+  padding: 4px 0 6px 0;
+}
+
+.mandi-filter-grid {
+  position: sticky;
+  top: 28px;
+  background: #ffffff;
+  z-index: 12;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* 4. Cards Container Matrame Smooth ga Scroll Avvali */
+#marketLiveCardsList {
+  flex: 1;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 8px;
+  padding-right: 2px;
+}
 
