@@ -993,4 +993,53 @@ body.modal-open-freeze {
   -webkit-overflow-scrolling: touch;
   padding-right: 4px;
 }
+/* =========================================================
+   DIARY TOOL: COMPACT TOP & FULL VISIBLE SCROLL FIX
+   ========================================================= */
+
+/* Diary modal body inside safe height */
+#view-diary {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 1. Paina unna 3 stat-boxes mariyu form ni konchem compact cheyadam */
+#subtab-ledger .stat-grid-3,
+#subtab-labor .stat-grid-3 {
+  margin-bottom: 6px !important;
+}
+
+#subtab-ledger .stat-box,
+#subtab-labor .stat-box {
+  padding: 6px 4px !important;
+}
+
+#subtab-ledger .demo-card-item,
+#subtab-labor .demo-card-item {
+  padding: 8px 10px !important;
+  margin-bottom: 6px !important;
+}
+
+#subtab-ledger .action-input,
+#subtab-labor .action-input {
+  margin-bottom: 6px !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+}
+
+#subtab-ledger .tool-title,
+#subtab-labor .tool-title {
+  margin: 4px 0 !important;
+  font-size: 13px !important;
+}
+
+/* 2. History List: Kinda space perigi last card poorthiga paiki scroll avvadaniki */
+#diaryRecordsContainer,
+#laborRecordsContainer {
+  max-height: 230px !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 60px !important; /* Last card clear ga kanipinchadaniki critical */
+  padding-right: 4px;
+}
 
