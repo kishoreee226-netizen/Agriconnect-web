@@ -72,6 +72,27 @@
           <div class="tool-sub-primary clr-purple">ఆదాయం - వ్యయం & కూలీలు</div>
           <div class="tool-sub-desc">పెట్టుబడి, కూలీల హాజరు & నికర లాభం</div>
         </div>
+        <!-- 7. క్రాప్ డాక్టర్ (పంట తెగుళ్లు & ఫోటో స్కాన్) -->
+        <div class="tool-card" onclick="showToolModal('crop_doctor')">
+          <div class="tool-card-top">
+            <div class="tool-icon-box">🩺</div>
+            <span class="badge-tag badge-green">AI స్కాన్</span>
+          </div>
+          <div class="tool-title">క్రాప్ డాక్టర్ (పంట తెగుళ్లు)</div>
+          <div class="tool-sub-primary clr-green">ఫోటో స్కాన్ & నివారణ</div>
+          <div class="tool-sub-desc">కెమెరా పరీక్ష, మందులు & దేశీ కషాయాలు</div>
+        </div>
+
+        <!-- 8. ప్రభుత్వ పథకాలు & సబ్సిడీ అలర్ట్స్ -->
+        <div class="tool-card" onclick="showToolModal('schemes')">
+          <div class="tool-card-top">
+            <div class="tool-icon-box">🏛️</div>
+            <span class="badge-tag badge-purple">లైవ్ అలర్ట్స్</span>
+          </div>
+          <div class="tool-title">ప్రభుత్వ పథకాలు & సబ్సిడీ</div>
+          <div class="tool-sub-primary clr-purple">రాయితీ & అర్హతల గైడ్</div>
+          <div class="tool-sub-desc">రైతు భరోసా, డ్రిప్ & సోలార్ సబ్సిడీ</div>
+        </div>
 
 </section>
 
@@ -374,3 +395,131 @@
       </div>
 
     </div>
+    <!-- 7. VIEW: CROP DOCTOR -->
+    <div id="view-crop_doctor" class="tool-view-panel" style="display:none;">
+      <div class="hub-tabs mb-12">
+        <button type="button" class="hub-tab active" onclick="switchCropDocTab('camera')">📸 కెమెరా స్కాన్</button>
+        <button type="button" class="hub-tab" onclick="switchCropDocTab('manual')">📋 లక్షణాల ఎంపిక</button>
+      </div>
+
+      <!-- Tab 1: Camera Photo Upload -->
+      <div id="subtab-crop-camera" class="crop-doc-pane">
+        <div class="modal-subtitle">పంట తెగులు/ఆకు ఫోటో తీసి అప్‌లోడ్ చేయండి:</div>
+        
+        <div class="crop-upload-box">
+          <input type="file" id="cropPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleCropPhotoSelect(event)">
+          <div class="crop-upload-icon">📷</div>
+          <button type="button" class="action-btn btn-save-labor btn-upload-trigger" onclick="document.getElementById('cropPhotoInput').click()">
+            ఫోటో తీయండి / అప్‌లోడ్ చేయండి
+          </button>
+          <div class="stat-lbl mt-4">మొబైల్ కెమెరా లేదా గ్యాలరీ నుండి ఎంచుకోండి</div>
+          <img id="cropPhotoPreview" class="crop-preview-img" alt="Crop preview" />
+        </div>
+
+        <button type="button" id="btnScanPhoto" class="action-btn btn-save-labor" style="display:none;" onclick="analyzeCropPhoto()">
+          🔍 తెగులును స్కాన్ చేసి గుర్తించండి
+        </button>
+        <div id="scanLoadingIndicator" class="scan-loading-box">
+          ⏳ AI ఫోటోను విశ్లేషిస్తోంది, దయచేసి వేచి ఉండండి...
+        </div>
+      </div>
+
+      <!-- Tab 2: Manual Select -->
+      <div id="subtab-crop-manual" class="crop-doc-pane" style="display:none;">
+        <div class="demo-card-item mb-8">
+          <label class="stat-lbl">పంట రకం:</label>
+          <select id="docCropSelect" class="action-input mb-8" onchange="onCropSelectChange()">
+            <option value="chilli">మిరప (Chilli)</option>
+            <option value="cotton">పత్తి (Cotton)</option>
+            <option value="paddy">వరి (Paddy)</option>
+          </select>
+
+          <label class="stat-lbl">కనిపిస్తున్న సమస్య / లక్షణం:</label>
+          <select id="docIssueSelect" class="action-input mb-8" onchange="diagnoseCropIssue()"></select>
+
+          <button type="button" onclick="diagnoseCropIssue()" class="action-btn btn-save-labor">
+            🩺 నివారణ వివరాలు చూడండి
+          </button>
+        </div>
+      </div>
+
+      <!-- Diagnosis Result -->
+      <div id="cropDoctorResult" class="demo-card-item diag-res-card">
+        <div class="card-row-between mb-4">
+          <b id="docDiagName" class="diag-title">తెగులు పేరు</b>
+          <span class="badge-tag badge-red" id="docDiagSeverity">తీవ్రత</span>
+        </div>
+        <div id="docDiagDesc" class="diag-desc"></div>
+        
+        <div class="treatment-box treatment-chem">
+          <div class="treatment-chem-title">🧪 రసాయన మందు (Chemical):</div>
+          <div id="docChemDose" class="treatment-text"></div>
+        </div>
+
+        <div class="treatment-box treatment-organic">
+          <div class="treatment-organic-title">🌿 దేశీ సేంద్రియ పద్ధతి (Organic/Desi):</div>
+          <div id="docOrganicDose" class="treatment-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. VIEW: GOVT SCHEMES -->
+    <div id="view-schemes" class="tool-view-panel" style="display:none;">
+      <div class="hub-tabs mb-12">
+        <button type="button" class="hub-tab active" onclick="switchSchemesSubTab('alerts')">📢 పథకాల అలర్ట్స్</button>
+        <button type="button" class="hub-tab" onclick="switchSchemesSubTab('calc')">🧮 సబ్సిడీ క్యాలిక్యులేటర్</button>
+      </div>
+
+      <div id="subtab-schemes-alerts" class="scheme-subtab-pane">
+        <div class="modal-subtitle">రైతుల కోసం తాజా ప్రభుత్వ పథకాలు & అర్హతలు:</div>
+        <div id="schemesListContainer"></div>
+      </div>
+
+      <div id="subtab-schemes-calc" class="scheme-subtab-pane" style="display:none;">
+        <div class="modal-subtitle">డ్రిప్, స్ప్రింక్లర్ & యంత్రాల సబ్సిడీ అంచనా లెక్క:</div>
+        <div class="demo-card-item">
+          <div class="mb-8">
+            <label class="stat-lbl">రైతు కేటగిరీ:</label>
+            <select id="subFarmerCat" class="action-input" onchange="calcSubsidyEstimate()">
+              <option value="sc_st">SC / ST రైతులు (100% / 90% సబ్సిడీ)</option>
+              <option value="small" selected>చిన్న / సన్నకారు రైతులు (SF/MF - 90%)</option>
+              <option value="general">ఇతర రైతులు (General - 80%)</option>
+            </select>
+          </div>
+
+          <div class="mb-8">
+            <label class="stat-lbl">పరికరాల రకం:</label>
+            <select id="subEquipType" class="action-input" onchange="calcSubsidyEstimate()">
+              <option value="drip">మైక్రో ఇరిగేషన్ (బిందు సేద్యం / Drip)</option>
+              <option value="sprinkler">స్ప్రింక్లర్ సెట్లు (Sprinklers)</option>
+              <option value="tarpaulin">రైతు టార్పాలిన్ షీట్లు</option>
+              <option value="rotavator">ట్రాక్టర్ రోటవేటర్ / ఇంప్లిమెంట్స్</option>
+            </select>
+          </div>
+
+          <div class="mb-8">
+            <label class="stat-lbl">ఎకరాలు / యూనిట్లు:</label>
+            <input type="number" id="subAcres" value="1" min="1" max="10" class="action-input" oninput="calcSubsidyEstimate()">
+          </div>
+
+          <div class="stat-grid-3 mt-8">
+            <div class="stat-box">
+              <div class="stat-lbl">మొత్తం ఖర్చు</div>
+              <div class="stat-val fs-diary clr-blue" id="subTotalCost">₹55,000</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">ప్రభుత్వ సబ్సిడీ</div>
+              <div class="stat-val fs-diary clr-green" id="subGovtShare">₹49,500</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-lbl">రైతు వాటా</div>
+              <div class="stat-val fs-diary clr-red" id="subFarmerShare">₹5,500</div>
+            </div>
+          </div>
+          <div class="card-location-text subsidy-info-banner" id="subPercentBadge">
+            రైతు చెల్లించాల్సిన వాటా కేవలం సుమారు <b>10%</b> మాత్రమే.
+          </div>
+        </div>
+      </div>
+    </div>
+
