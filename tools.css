@@ -937,4 +937,36 @@ body.modal-open-freeze {
 #marketLiveCardsList {
   padding-top: 8px;
 }
+/* =========================================================
+   UNIVERSAL TABS & SUB-TITLES STICKY FREEZE (FOR ALL 8 TOOLS)
+   ========================================================= */
+
+/* 1. Anni tool view panels lō top nav tabs container sticky ga freeze avvali */
+.tool-view-panel .tool-tab-nav,
+.tool-view-panel .tabs-header,
+.tool-view-panel .sub-tab-group,
+.tool-view-panel > div:first-child:has(button) {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 25;
+  margin: 0 !important;
+  padding: 6px 0 6px 0 !important;
+}
+
+/* 2. Sub-titles (రైతుల కోసం తాజా ప్రభుత్వ పథకాలు, etc.) tabs kinda sticky ga undali */
+.tool-view-panel .modal-subtitle {
+  position: sticky;
+  top: 42px; /* Tabs kinda direct ga attach avtundi */
+  background-color: #ffffff;
+  z-index: 24;
+  margin: 0 !important;
+  padding: 4px 0 8px 0 !important;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* 3. Crop Doctor, Schemes, Diary panels content safe padding */
+.tool-view-panel {
+  position: relative;
+}
 
