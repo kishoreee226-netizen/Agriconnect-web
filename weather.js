@@ -1140,7 +1140,7 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       if (windSpeedElem) windSpeedElem.innerText = `${wSpeed} km/h (${wDirText})`;
 
       // 14. మంచు బిందువు
-      const dewPt = h.dew_point_2m ? Math.round(h.dew_point_2m[idx]) : "--";
+      const dewPt = cur.dew_point_2m !== undefined ? Math.round(cur.dew_point_2m) : "--";
       const dewElem = document.getElementById("farm_dew_point");
       if (dewElem) dewElem.innerText = `${dewPt}°C`;
 
