@@ -711,4 +711,104 @@
   outline: none;
   text-align: center;
 }
+/* Market View Sticky Header & Filters Setup */
+#view-market {
+  display: flex;
+  flex-direction: column;
+  max-height: 72vh; /* Modal height ki anuguṇangā */
+}
+
+#view-market .modal-subtitle:first-child,
+#view-market .mandi-filter-grid {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff; /* Scroll ayyinappuḍu kinda cards venuka kanipinchakunda */
+  z-index: 10;
+}
+
+#view-market .modal-subtitle:first-child {
+  padding-bottom: 6px;
+}
+
+#view-market .mandi-filter-grid {
+  top: 32px; /* Subtitle kinda kurchōvaḍāniki */
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f3f4f6;
+  margin-bottom: 10px;
+}
+
+/* Rate Cards Scrollable Container */
+#marketLiveCardsList {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 2px;
+  flex: 1;
+}
+/* Compact Mandi Rate Cards */
+#marketLiveCardsList .demo-card-item {
+  padding: 8px 12px !important;
+  margin-bottom: 8px !important;
+  border-radius: 10px;
+}
+
+.mandi-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.mandi-crop-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1f2937;
+  line-height: 1.2;
+}
+
+.mandi-price-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mandi-rate-val {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* Compact Inline Trend Badge (Banam & Percentage pakka pakkane) */
+.mandi-trend-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 5px;
+  display: inline-flex;
+  flex-direction: row; /* Single horizontal line */
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.trend-up {
+  background-color: #16a34a; /* Green */
+}
+
+.trend-down {
+  background-color: #dc2626; /* Red */
+}
+
+.trend-stable {
+  background-color: #d97706; /* Amber */
+}
+
+.mandi-loc-sub {
+  font-size: 11.5px;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
