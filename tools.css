@@ -872,4 +872,42 @@ body.modal-open-freeze {
   padding-top: 8px;
   padding-right: 2px;
 }
+/* 1. Body Scroll Lock (touch-action తీసేసి సురక్షితమైన overflow మాత్రమే) */
+body.modal-open-freeze {
+  overflow: hidden !important;
+}
+
+/* 2. Modal Body ని స్క్రోలబుల్ కంటైనర్‌గా మార్చడం */
+.agri-modal-body {
+  max-height: 72vh;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 20px;
+}
+
+/* 3. Subtitle & Filters టాప్‌లో Sticky గా ఉంచడం */
+#view-market .modal-subtitle:first-child {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 20;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.mandi-filter-grid {
+  position: sticky;
+  top: 26px;
+  background-color: #ffffff;
+  z-index: 20;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+/* 4. Cards container */
+#marketLiveCardsList {
+  display: flex;
+  flex-direction: column;
+}
 
