@@ -1086,4 +1086,41 @@ body.modal-open-freeze {
   padding-bottom: 50px !important; /* Chivari card clear ga kanipinchadaniki */
   padding-right: 4px;
 }
+/* =========================================================
+   CROP DISEASES TOOL: STICKY FILTER & SCROLLABLE CARDS
+   ========================================================= */
+
+/* 1. Subtitle mariyu Crop Filter dropdown paina freeze avvadaniki */
+#view-disease .modal-subtitle,
+#view-crop-doctor .modal-subtitle {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 22;
+  margin: 0 !important;
+  padding: 6px 0 2px 0 !important;
+}
+
+#view-disease .disease-filter-wrap,
+#view-crop-doctor .disease-filter-wrap,
+#view-disease select,
+#view-crop-doctor select {
+  position: sticky;
+  top: 26px;
+  background-color: #ffffff;
+  z-index: 22;
+  margin-bottom: 8px !important;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* 2. Tegulla Cards List Container Scroll Boundary */
+#diseaseCardsContainer,
+#view-disease .disease-cards-list,
+#view-crop-doctor .cards-container {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 50px !important; /* Chivari card clear ga kanipinchadaniki */
+  padding-top: 6px;
+}
 
