@@ -257,7 +257,7 @@ function renderMandiCardsModern(container, items) {
 
   if (!items || items.length === 0) {
     container.innerHTML = `
-      <div style="text-align:center; padding: 25px 15px; color: #6b7280; font-size: 13px;">
+      <div class="mandi-empty-msg">
         ఈ ఎంపికకు సంబంధించిన మార్కెట్ ధరలు అందుబాటులో లేవు.
       </div>
     `;
@@ -288,7 +288,7 @@ function renderMandiCardsModern(container, items) {
       </div>
       <div class="mandi-loc-sub">
         <span>📍 ${item.market} యార్డ్ • ${item.variety}</span>
-        <span style="font-size:11px; color:#16a34a; font-weight:600;">ఈ రోజు లైవ్</span>
+        <span class="mandi-badge-live">ఈ రోజు లైవ్</span>
       </div>
     `;
     container.appendChild(card);
