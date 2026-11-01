@@ -414,3 +414,40 @@
 .grid-form-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 8px; }
 .grid-cols-2-gap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .flex-align-gap { display: flex; align-items: center; gap: 8px; }
+/* --- Hub Sub-Tabs (Fertilizer, Seed, Spray) --- */
+.hub-tabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.hub-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hub-tab.active {
+  background: #ffffff;
+  color: #166534;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.fert-subtab-pane {
+  animation: fadeInPane 0.25s ease-in-out;
+}
+
+@keyframes fadeInPane {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
