@@ -118,71 +118,129 @@ function hideToolModal(e) {
   }
 }
 
-// 1. LIVE MANDI RATES SYNC
+// ==========================================
+// 1. LIVE MANDI RATES (TRENDS & AGRIDB SYNC)
+// ==========================================
 function updateLiveMandiRates() {
   const container = document.getElementById('marketLiveCardsList');
   if (!container) return;
 
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
+  const defaultMandiRates = [
+    {
+      crop: 'మిరప (తేజ / రెడ్)',
+      variety: 'మధ్యస్థం / నాణ్యమైనది',
+      market: 'వరంగల్',
+      rate: '₹18,500',
+      unit: '/ క్వింటాల్',
+      trend: 'up',
+      change: '+4.5%'
+    },
+    {
+      crop: 'పత్తి (Cotton)',
+      variety: 'మధ్యస్థ రకం',
+      market: 'వరంగల్',
+      rate: '₹7,420',
+      unit: '/ క్వింటాల్',
+      trend: 'down',
+      change: '-1.8%'
+    },
+    {
+      crop: 'వరి (RNR 15048)',
+      variety: 'సన్న రకం',
+      market: 'వరంగల్',
+      rate: '₹2,360',
+      unit: '/ క్వింటాల్',
+      trend: 'stable',
+      change: '0.0%'
+    },
+    {
+      crop: 'మొక్కజొన్న (Maize)',
+      variety: 'హైబ్రిడ్ పసుపు',
+      market: 'వరంగల్',
+      rate: '₹2,280',
+      unit: '/ క్వింటాల్',
+      trend: 'down',
+      change: '-0.9%'
+    },
+    {
+      crop: 'టమాటా (Tomato)',
+      variety: 'నాటు రకం',
+      market: 'వరంగల్',
+      rate: '₹2,250',
+      unit: '/ క్వింటాల్',
+      trend: 'stable',
+      change: '0.0%'
+    },
+    {
+      crop: 'జామ (Guava)',
+      variety: 'మధ్యస్థం',
+      market: 'వరంగల్',
+      rate: '₹6,000',
+      unit: '/ క్వింటాల్',
+      trend: 'down',
+      change: '-14.29%'
+    }
+  ];
+
+  // 1. AgriDB (Firestore) నుంచి డేటా ఉంటే తీసుకోవడం
+  if (window.db && navigator.onLine) {
+    window.db.collection('mandi_rates').orderBy('timestamp', 'desc').limit(10).get()
+      .then(snapshot => {
+        if (!snapshot.empty) {
+          const liveItems = [];
+          snapshot.forEach(doc => {
+            const d = doc.data();
+            liveItems.push({
+              crop: d.cropName || d.crop || 'పంట',
+              variety: d.variety || 'లైవ్',
+              market: d.market || 'వరంగల్',
+              rate: d.price ? `₹${Number(d.price).toLocaleString('en-IN')}` : (d.rate || '₹0'),
+              unit: d.unit || '/ క్వింటాల్',
+              trend: d.trend || 'stable',
+              change: d.change || '0%'
+            });
+          });
+          renderMandiCardsModern(container, liveItems);
+        } else {
+          renderMandiCardsModern(container, defaultMandiRates);
+        }
+      })
+      .catch(() => renderMandiCardsModern(container, defaultMandiRates));
+  } else {
+    renderMandiCardsModern(container, defaultMandiRates);
   }
+}
 
-  const liveRows = document.querySelectorAll('#mandi-container table tbody tr, .mandi-row');
-  let items = [];
+function renderMandiCardsModern(container, items) {
+  container.innerHTML = '';
 
-  if (liveRows && liveRows.length > 0) {
-    liveRows.forEach(row => {
-      const cells = row.querySelectorAll('td, span');
-      if (cells.length >= 3) {
-        items.push({
-          crop: cells[0].innerText.trim(),
-          market: cells[1].innerText.trim(),
-          rate: cells[2].innerText.trim()
-        });
-      }
-    });
-  }
+  items.forEach(item => {
+    let trendClass = 'trend-stable';
+    let trendIcon = '↔';
 
-  if (items.length === 0) {
-    items = [
-      { crop: 'మిర్చి (తేజ)', market: 'ఖమ్మం', rate: '₹19,200 / క్వింటాల్' },
-      { crop: 'పత్తి (Cotton)', market: 'వరంగల్', rate: '₹7,450 / క్వింటాల్' },
-      { crop: 'వరి (RNR 15048)', market: 'మిర్యాలగూడ', rate: '₹2,360 / క్వింటాల్' },
-      { crop: 'మొక్కజొన్న (Maize)', market: 'వరంగల్', rate: '₹2,280 / క్వింటాల్' }
-    ];
-  }
+    if (item.trend === 'up' || (item.change && item.change.startsWith('+'))) {
+      trendClass = 'trend-up';
+      trendIcon = '↑';
+    } else if (item.trend === 'down' || (item.change && item.change.startsWith('-'))) {
+      trendClass = 'trend-down';
+      trendIcon = '↓';
+    }
 
-  items.slice(0, 5).forEach(item => {
     const card = document.createElement('div');
-    card.className = 'demo-card-item';
-
-    const row1 = document.createElement('div');
-    row1.className = 'card-row-between';
-    const cropB = document.createElement('b');
-    cropB.innerText = item.crop;
-    const badge = document.createElement('span');
-    badge.className = 'price-pill-up';
-    badge.innerText = 'లైవ్ మార్కెట్';
-    row1.appendChild(cropB);
-    row1.appendChild(badge);
-
-    const loc = document.createElement('div');
-    loc.className = 'card-location-text';
-    loc.innerText = `📍 ${item.market} యార్డ్ • ఈ రోజు లైవ్`;
-
-    const row2 = document.createElement('div');
-    row2.className = 'card-row-between';
-    const rateLbl = document.createElement('span');
-    rateLbl.innerText = 'క్వింటాల్ రేటు:';
-    const rateVal = document.createElement('b');
-    rateVal.className = 'card-rate-text';
-    rateVal.innerText = item.rate;
-    row2.appendChild(rateLbl);
-    row2.appendChild(rateVal);
-
-    card.appendChild(row1);
-    card.appendChild(loc);
-    card.appendChild(row2);
+    card.className = 'demo-card-item mb-8';
+    card.innerHTML = `
+      <div class="mandi-card-header">
+        <div class="mandi-crop-title">${item.crop}</div>
+        <div class="mandi-price-box">
+          <span class="mandi-rate-val">${item.rate} ${item.unit}</span>
+          <span class="mandi-trend-pill ${trendClass}">${trendIcon} ${item.change}</span>
+        </div>
+      </div>
+      <div class="mandi-loc-sub">
+        <span>📍 ${item.market} యార్డ్ • ${item.variety}</span>
+        <span style="font-size:11px; color:#16a34a; font-weight:600;">ఈ రోజు లైవ్</span>
+      </div>
+    `;
     container.appendChild(card);
   });
 }
