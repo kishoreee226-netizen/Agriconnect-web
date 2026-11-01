@@ -1078,17 +1078,16 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       const cur = d.current || {};
       const idx = new Date().getHours();
 
-      // 1 to 8 Soil Metrics
-      const sm0_1 = h.soil_moisture_0_to_1cm ? Math.round(h.soil_moisture_0_to_1cm[idx] * 200) : "--";
-      const sm3_9 = h.soil_moisture_3_to_9cm ? Math.round(h.soil_moisture_3_to_9cm[idx] * 200) : "--";
-      const sm9_27 = h.soil_moisture_9_to_27cm ? Math.round(h.soil_moisture_9_to_27cm[idx] * 200) : "--";
-      const sTemp = cur.soil_temperature_0cm !== undefined ? Math.round(cur.soil_temperature_0cm) : "--";
-      const et0 = h.et0_fao_evapotranspiration ? h.et0_fao_evapotranspiration[idx].toFixed(1) : "--";
-      const vpd = h.vapour_pressure_deficit ? h.vapour_pressure_deficit[idx].toFixed(2) : "--";
-      const gusts = cur.wind_gusts_10m !== undefined ? Math.round(cur.wind_gusts_10m) : "--";
-      const solar = d.daily && d.daily.shortwave_radiation_sum ? Math.round(d.daily.shortwave_radiation_sum[0] / 3.6) : "410";
-
-      document.getElementById("farm_soil_0_1").innerText = `${sm0_1}%`;
+              // 1 to 8 Soil Metrics
+        const sm0_1 = cur.soil_moisture_0_to_1cm !== undefined ? Math.round(cur.soil_moisture_0_to_1cm * 200) : "--";
+        const sm3_9 = cur.soil_moisture_3_to_9cm !== undefined ? Math.round(cur.soil_moisture_3_to_9cm * 200) : "--";
+        const sm9_27 = cur.soil_moisture_9_to_27cm !== undefined ? Math.round(cur.soil_moisture_9_to_27cm * 200) : "--";
+        const sTemp = cur.soil_temperature_0cm !== undefined ? Math.round(cur.soil_temperature_0cm) : "--";
+        const et0 = cur.et0_fao_evapotranspiration !== undefined ? Number(cur.et0_fao_evapotranspiration).toFixed(1) : "--";
+        const vpd = cur.vapour_pressure_deficit !== undefined ? Number(cur.vapour_pressure_deficit).toFixed(2) : "--";
+        const gusts = cur.wind_gusts_10m !== undefined ? Math.round(cur.wind_gusts_10m) : "--";
+        const solar = d.daily && d.daily.shortwave_radiation_sum ? Math.round(d.daily.shortwave_radiation_sum[0] / 3.6) : "410";
+ document.getElementById("farm_soil_0_1").innerText = `${sm0_1}%`;
       document.getElementById("farm_soil_3_9").innerText = `${sm3_9}%`;
       document.getElementById("farm_soil_9_27").innerText = `${sm9_27}%`;
       document.getElementById("farm_soil_temp").innerText = `${sTemp}°C`;
