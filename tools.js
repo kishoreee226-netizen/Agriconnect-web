@@ -119,8 +119,11 @@ function hideToolModal(e) {
 }
 
 // ==========================================
-// 1. LIVE MANDI RATES (TRENDS & AGRIDB SYNC)
+// 1. LIVE MANDI RATES (TRENDS, FILTERS & AGRIDB SYNC)
 // ==========================================
+
+let activeMandiDataset = [];
+
 function updateLiveMandiRates() {
   const container = document.getElementById('marketLiveCardsList');
   if (!container) return;
@@ -128,8 +131,10 @@ function updateLiveMandiRates() {
   const defaultMandiRates = [
     {
       crop: 'మిరప (తేజ / రెడ్)',
+      category: 'commercial',
       variety: 'మధ్యస్థం / నాణ్యమైనది',
       market: 'వరంగల్',
+      state: 'telangana',
       rate: '₹18,500',
       unit: '/ క్వింటాల్',
       trend: 'up',
@@ -137,8 +142,10 @@ function updateLiveMandiRates() {
     },
     {
       crop: 'పత్తి (Cotton)',
+      category: 'commercial',
       variety: 'మధ్యస్థ రకం',
       market: 'వరంగల్',
+      state: 'telangana',
       rate: '₹7,420',
       unit: '/ క్వింటాల్',
       trend: 'down',
@@ -146,8 +153,10 @@ function updateLiveMandiRates() {
     },
     {
       crop: 'వరి (RNR 15048)',
+      category: 'grains',
       variety: 'సన్న రకం',
       market: 'వరంగల్',
+      state: 'telangana',
       rate: '₹2,360',
       unit: '/ క్వింటాల్',
       trend: 'stable',
@@ -155,8 +164,10 @@ function updateLiveMandiRates() {
     },
     {
       crop: 'మొక్కజొన్న (Maize)',
+      category: 'grains',
       variety: 'హైబ్రిడ్ పసుపు',
       market: 'వరంగల్',
+      state: 'telangana',
       rate: '₹2,280',
       unit: '/ క్వింటాల్',
       trend: 'down',
@@ -164,8 +175,10 @@ function updateLiveMandiRates() {
     },
     {
       crop: 'టమాటా (Tomato)',
+      category: 'vegetables',
       variety: 'నాటు రకం',
       market: 'వరంగల్',
+      state: 'telangana',
       rate: '₹2,250',
       unit: '/ క్వింటాల్',
       trend: 'stable',
@@ -173,8 +186,10 @@ function updateLiveMandiRates() {
     },
     {
       crop: 'జామ (Guava)',
+      category: 'fruits',
       variety: 'మధ్యస్థం',
       market: 'వరంగల్',
+      state: 'telangana',
       rate: '₹6,000',
       unit: '/ క్వింటాల్',
       trend: 'down',
@@ -184,35 +199,70 @@ function updateLiveMandiRates() {
 
   // 1. AgriDB (Firestore) నుంచి డేటా ఉంటే తీసుకోవడం
   if (window.db && navigator.onLine) {
-    window.db.collection('mandi_rates').orderBy('timestamp', 'desc').limit(10).get()
+    window.db.collection('mandi_rates').orderBy('timestamp', 'desc').limit(25).get()
       .then(snapshot => {
         if (!snapshot.empty) {
-          const liveItems = [];
+          activeMandiDataset = [];
           snapshot.forEach(doc => {
             const d = doc.data();
-            liveItems.push({
+            activeMandiDataset.push({
               crop: d.cropName || d.crop || 'పంట',
+              category: d.category || 'all',
               variety: d.variety || 'లైవ్',
               market: d.market || 'వరంగల్',
+              state: d.state || 'telangana',
               rate: d.price ? `₹${Number(d.price).toLocaleString('en-IN')}` : (d.rate || '₹0'),
               unit: d.unit || '/ క్వింటాల్',
               trend: d.trend || 'stable',
               change: d.change || '0%'
             });
           });
-          renderMandiCardsModern(container, liveItems);
         } else {
-          renderMandiCardsModern(container, defaultMandiRates);
+          activeMandiDataset = defaultMandiRates;
         }
+        filterMandiList();
       })
-      .catch(() => renderMandiCardsModern(container, defaultMandiRates));
+      .catch(() => {
+        activeMandiDataset = defaultMandiRates;
+        filterMandiList();
+      });
   } else {
-    renderMandiCardsModern(container, defaultMandiRates);
+    activeMandiDataset = defaultMandiRates;
+    filterMandiList();
   }
 }
 
+// 2. లైవ్ డ్రాప్‌డౌన్ ఫిల్టరింగ్ ఫంక్షన్
+function filterMandiList() {
+  const container = document.getElementById('marketLiveCardsList');
+  if (!container) return;
+
+  const catVal = document.getElementById('mandiCategoryFilter')?.value || 'all';
+  const cropVal = document.getElementById('mandiCropFilter')?.value || 'all';
+  const stateVal = document.getElementById('mandiStateFilter')?.value || 'all';
+
+  const filtered = activeMandiDataset.filter(item => {
+    const matchCat = (catVal === 'all') || (item.category === catVal);
+    const matchCrop = (cropVal === 'all') || (item.crop && item.crop.includes(cropVal));
+    const matchState = (stateVal === 'all') || (item.state === stateVal);
+    return matchCat && matchCrop && matchState;
+  });
+
+  renderMandiCardsModern(container, filtered);
+}
+
+// 3. ట్రెండ్ కార్డుల రెండరింగ్ లాజిక్
 function renderMandiCardsModern(container, items) {
   container.innerHTML = '';
+
+  if (!items || items.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center; padding: 25px 15px; color: #6b7280; font-size: 13px;">
+        ఈ ఎంపికకు సంబంధించిన మార్కెట్ ధరలు అందుబాటులో లేవు.
+      </div>
+    `;
+    return;
+  }
 
   items.forEach(item => {
     let trendClass = 'trend-stable';
