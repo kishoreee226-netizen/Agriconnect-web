@@ -111,7 +111,6 @@ document.body.classList.add('modal-open-freeze'); // background scroll freeze
 
 function hideToolModal(e) {
   const modal = document.getElementById('agriToolModal');
-  if (modal) modal.style.display = 'none';
 
   if (modal) {
     modal.style.display = 'none';  document.body.classList.remove('modal-open-freeze'); // background unfreeze
