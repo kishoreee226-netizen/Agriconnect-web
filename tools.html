@@ -293,8 +293,17 @@
         <div id="pestCardsList"></div>
       </div>
 
-      <!-- 6. DIARY VIEW -->
-      <div id="view-diary" class="tool-view-panel">
+      <!-- 6. DIARY & LABOR VIEW -->
+    <div id="view-diary" class="tool-view-panel">
+
+      <!-- Sub-Tabs Switcher -->
+      <div class="hub-tabs mb-12">
+        <button type="button" class="hub-tab active" onclick="switchDiarySubTab('ledger')">📊 ఖర్చులు & ఆదాయం</button>
+        <button type="button" class="hub-tab" onclick="switchDiarySubTab('labor')">👷 కూలీల లెక్కలు</button>
+      </div>
+
+      <!-- TAB 1: ఖర్చులు & ఆదాయం (Your Existing Ledger) -->
+      <div id="subtab-ledger" class="diary-subtab-pane active">
         <div class="modal-subtitle">మీ వ్యక్తిగత సాగు లాభ-నష్టాల లెక్కల పుస్తకం (Live Local Storage)</div>
 
         <div class="stat-grid-3">
@@ -314,7 +323,7 @@
 
         <div class="demo-card-item">
           <div class="tool-title mb-8">కొత్త లావాదేవీని నమోదు చేయండి:</div>
-          <input type="text" id="diaryDesc" placeholder="వివరణ (ఉదా: విత్తనాలు, దుక్కి, కూలీలు)" class="action-input">
+          <input type="text" id="diaryDesc" placeholder="వివరణ (ఉదా: విత్తనాలు, దుక్కి, మందులు)" class="action-input">
           <input type="number" id="diaryAmt" placeholder="మొత్తం ₹" class="action-input">
           <div class="grid-cols-2-gap">
             <button onclick="addDiaryRecord('kharchu')" class="btn-expense">- ఖర్చు రాయండి</button>
@@ -325,6 +334,43 @@
         <div class="tool-title my-8">లావాదేవీల చరిత్ర:</div>
         <div id="diaryRecordsContainer"></div>
       </div>
+
+      <!-- TAB 2: కూలీల లెక్కల డైరీ -->
+      <div id="subtab-labor" class="diary-subtab-pane hidden">
+        <div class="modal-subtitle">రోజువారీ కూలీల సంఖ్య, పనులు & చెల్లింపులు</div>
+
+        <div class="demo-card-item labor-form-card">
+          <div class="tool-title mb-8">👷 కూలీ నమోదు ఫారం:</div>
+          
+          <div class="grid-form-2 mb-8">
+            <div>
+              <label class="stat-lbl">పని వివరాలు:</label>
+              <input type="text" id="laborWorkDesc" placeholder="ఉదా: కలుపు తీత, కోత" class="action-input">
+            </div>
+            <div>
+              <label class="stat-lbl">కూలీల సంఖ్య:</label>
+              <input type="number" id="laborCount" placeholder="మంది (ఉదా: 5)" class="action-input" oninput="calcLaborTotal()">
+            </div>
+          </div>
+
+          <div class="grid-form-2 mb-8">
+            <div>
+              <label class="stat-lbl">ఒక్కరికి కూలీ (₹):</label>
+              <input type="number" id="laborRate" placeholder="₹ రేటు (ఉదా: 350)" class="action-input" oninput="calcLaborTotal()">
+            </div>
+            <div>
+              <label class="stat-lbl">మొత్తం కూలీ లెక్క:</label>
+              <div id="laborTotalPreview" class="stat-val clr-amber labor-total-val">₹0</div>
+            </div>
+          </div>
+
+          <button onclick="saveLaborEntry()" class="action-btn btn-save-labor">
+            + కూలీ నమోదు చేసి ఖర్చులకు జతచేయి
+          </button>
+        </div>
+
+        <div class="tool-title my-8">కూలీల చెల్లింపుల చరిత్ర:</div>
+        <div id="laborRecordsContainer"></div>
+      </div>
+
     </div>
-  </div>
-</div>
