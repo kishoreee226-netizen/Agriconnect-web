@@ -211,6 +211,33 @@ window.AgriDB = {
   }
 };
 
+  // 8. Farm Diary & Labour Entry Save (Cloud Sync)
+  async addDiaryEntry(entryData) {
+    if (!window.db) throw new Error("Database not ready!");
+    return window.db.collection('farm_diary').add({
+      ...entryData,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+  },
+
+  // 9. Farm Diary Live Sync (Real-time Audit Ledger)
+  listenToDiary(phone, callback) {
+    if (!window.db) return;
+    let query = window.db.collection('farm_diary');
+    if (phone) {
+      query = query.where('phone', '==', phone);
+    }
+    return query.orderBy('createdAt', 'desc').onSnapshot(snapshot => {
+      const records = [];
+      snapshot.forEach(doc => {
+        records.push({ id: doc.id, ...doc.data() });
+      });
+      callback(records);
+    }, error => {
+      console.error("Diary sync error:", error);
+    });
+  }
+
 // Freeze AgriDB to prevent tampering from console
 Object.freeze(window.AgriDB);
 console.log("⚡ Central AgriDB Engine loaded into firebase-db.js!");
