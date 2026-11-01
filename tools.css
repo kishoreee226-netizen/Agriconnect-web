@@ -910,4 +910,31 @@ body.modal-open-freeze {
   display: flex;
   flex-direction: column;
 }
+/* Gaps motham tholaginchi, header venaka cards kanipinchakunda chese code */
+.agri-modal-body {
+  padding-top: 0 !important;
+}
+
+#view-market .modal-subtitle:first-child {
+  position: sticky;
+  top: 0;
+  margin: 0 !important;
+  padding: 6px 0 4px 0 !important;
+  background-color: #ffffff;
+  z-index: 20;
+}
+
+#view-market .mandi-filter-grid {
+  position: sticky;
+  top: 28px;
+  margin: 0 !important;
+  padding: 2px 0 8px 0 !important;
+  background-color: #ffffff;
+  z-index: 20;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+#marketLiveCardsList {
+  padding-top: 8px;
+}
 
