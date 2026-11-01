@@ -457,7 +457,48 @@ function filterPestDetails(crop = 'chilli') {
   });
 }
 
-// 6. REAL EXPENSE DIARY (LOCAL STORAGE)
+// ==========================================
+// 6. REAL EXPENSE & LABOR DIARY (HYBRID CLOUD + LOCAL)
+// ==========================================
+
+// Global state initialization
+window.diaryData = JSON.parse(localStorage.getItem('agri_diary_live')) || {
+  kharchu: 0,
+  aadhayam: 0,
+  list: []
+};
+
+// --- 6.1 SUB-TABS SWITCHER ---
+function switchDiarySubTab(tab) {
+  const ledgerPane = document.getElementById('subtab-ledger');
+  const laborPane = document.getElementById('subtab-labor');
+  const tabs = document.querySelectorAll('#view-diary .hub-tabs .hub-tab');
+
+  if (tab === 'ledger') {
+    ledgerPane?.classList.remove('hidden');
+    laborPane?.classList.add('hidden');
+    tabs[0]?.classList.add('active');
+    tabs[1]?.classList.remove('active');
+  } else {
+    ledgerPane?.classList.add('hidden');
+    laborPane?.classList.remove('hidden');
+    tabs[0]?.classList.remove('active');
+    tabs[1]?.classList.add('active');
+  }
+}
+
+// --- 6.2 LIVE WAGE ESTIMATOR ---
+function calcLaborTotal() {
+  const count = parseFloat(document.getElementById('laborCount')?.value) || 0;
+  const rate = parseFloat(document.getElementById('laborRate')?.value) || 0;
+  const total = count * rate;
+  const preview = document.getElementById('laborTotalPreview');
+  if (preview) {
+    preview.innerText = `₹${total.toLocaleString('en-IN')}`;
+  }
+}
+
+// --- 6.3 MAIN DIARY UI REFRESH ---
 function refreshDiaryUI() {
   const kharchuEl = document.getElementById('diaryKharchuVal');
   const aadhayamEl = document.getElementById('diaryAadhayamVal');
@@ -466,9 +507,9 @@ function refreshDiaryUI() {
   if (!kharchuEl || !container) return;
 
   const nikaram = diaryData.aadhayam - diaryData.kharchu;
-  kharchuEl.innerText = `₹${diaryData.kharchu.toLocaleString()}`;
-  aadhayamEl.innerText = `₹${diaryData.aadhayam.toLocaleString()}`;
-  nikaramEl.innerText = `${nikaram >= 0 ? '+' : '-'} ₹${Math.abs(nikaram).toLocaleString()}`;
+  kharchuEl.innerText = `₹${diaryData.kharchu.toLocaleString('en-IN')}`;
+  aadhayamEl.innerText = `₹${diaryData.aadhayam.toLocaleString('en-IN')}`;
+  nikaramEl.innerText = `${nikaram >= 0 ? '+' : '-'} ₹${Math.abs(nikaram).toLocaleString('en-IN')}`;
   nikaramEl.className = `stat-val fs-diary ${nikaram >= 0 ? 'clr-green' : 'clr-red'}`;
 
   while (container.firstChild) {
@@ -500,7 +541,7 @@ function refreshDiaryUI() {
     right.className = 'flex-align-gap';
     const amt = document.createElement('b');
     amt.className = item.type === 'kharchu' ? 'clr-red' : 'clr-green';
-    amt.innerText = `${item.type === 'kharchu' ? '-' : '+'} ₹${item.amt.toLocaleString()}`;
+    amt.innerText = `${item.type === 'kharchu' ? '-' : '+'} ₹${item.amt.toLocaleString('en-IN')}`;
 
     const delBtn = document.createElement('button');
     delBtn.className = 'btn-text clr-red';
@@ -516,6 +557,46 @@ function refreshDiaryUI() {
   });
 }
 
+// --- 6.4 RECORD CREATION CORE (SYNCED WITH CENTRAL AGRI-DB) ---
+async function commitDiaryRecord(desc, amt, type, extraMeta = {}) {
+  const phone = localStorage.getItem('userPhone') || 'guest_farmer';
+  const today = new Date().toLocaleDateString('te-IN', { day: 'numeric', month: 'short' });
+
+  // 1. Local state update
+  if (type === 'kharchu') diaryData.kharchu += amt;
+  else diaryData.aadhayam += amt;
+
+  const record = {
+    desc,
+    amt,
+    type,
+    date: today,
+    createdAtIso: new Date().toISOString(),
+    ...extraMeta
+  };
+
+  diaryData.list.unshift(record);
+  localStorage.setItem('agri_diary_live', JSON.stringify(diaryData));
+  refreshDiaryUI();
+
+  // 2. Central Cloud Sync via window.AgriDB
+  try {
+    if (window.AgriDB?.addDiaryEntry) {
+      await window.AgriDB.addDiaryEntry({
+        phone: phone,
+        desc: desc,
+        amount: amt,
+        type: type,
+        category: extraMeta.category || 'general',
+        ...extraMeta
+      });
+    }
+  } catch (err) {
+    console.warn("AgriDB cloud sync delayed (offline/network):", err);
+  }
+}
+
+// --- 6.5 ADD EXPENSE / INCOME VIA FORM ---
 function addDiaryRecord(type) {
   const descInput = document.getElementById('diaryDesc');
   const amtInput = document.getElementById('diaryAmt');
@@ -527,18 +608,13 @@ function addDiaryRecord(type) {
     return;
   }
 
-  if (type === 'kharchu') diaryData.kharchu += amt;
-  else diaryData.aadhayam += amt;
+  commitDiaryRecord(desc, amt, type, { category: 'manual_entry' });
 
-  const today = new Date().toLocaleDateString('te-IN', { day: 'numeric', month: 'short' });
-  diaryData.list.unshift({ desc, amt, type, date: today });
-
-  localStorage.setItem('agri_diary_live', JSON.stringify(diaryData));
   descInput.value = '';
   amtInput.value = '';
-  refreshDiaryUI();
 }
 
+// --- 6.6 DELETE DIARY RECORD ---
 function deleteDiaryRecord(idx) {
   const item = diaryData.list[idx];
   if (item.type === 'kharchu') diaryData.kharchu -= item.amt;
@@ -547,4 +623,65 @@ function deleteDiaryRecord(idx) {
   diaryData.list.splice(idx, 1);
   localStorage.setItem('agri_diary_live', JSON.stringify(diaryData));
   refreshDiaryUI();
+}
+
+// --- 6.7 SAVE LABOR & COMBINE INTO DIARY ---
+async function saveLaborEntry() {
+  const desc = document.getElementById('laborWorkDesc')?.value.trim();
+  const count = parseFloat(document.getElementById('laborCount')?.value) || 0;
+  const rate = parseFloat(document.getElementById('laborRate')?.value) || 0;
+  const totalAmt = count * rate;
+
+  if (!desc || totalAmt <= 0) {
+    alert('దయచేసి పని వివరాలు మరియు సరైన కూలీల రేటు నమోదు చేయండి.');
+    return;
+  }
+
+  const laborDesc = `👷 కూలీ: ${desc} (${count} మంది @ ₹${rate})`;
+
+  // Commit directly into Diary and Cloud Database as a 'kharchu'
+  await commitDiaryRecord(laborDesc, totalAmt, 'kharchu', {
+    category: 'labor',
+    laborCount: count,
+    wageRate: rate
+  });
+
+  // Render entry in the Labor Tab History list
+  renderLaborHistoryRow({
+    desc: laborDesc,
+    amt: totalAmt,
+    date: new Date().toLocaleDateString('te-IN', { day: 'numeric', month: 'short' })
+  });
+
+  // Reset Labor form
+  document.getElementById('laborWorkDesc').value = '';
+  document.getElementById('laborCount').value = '';
+  document.getElementById('laborRate').value = '';
+  document.getElementById('laborTotalPreview').innerText = '₹0';
+
+  alert('కూలీల లెక్క ఖర్చుల డైరీలో విజయవంతంగా నమోదయింది!');
+}
+
+function renderLaborHistoryRow(item) {
+  const container = document.getElementById('laborRecordsContainer');
+  if (!container) return;
+  const row = document.createElement('div');
+  row.className = 'demo-card-item card-row-between mb-8';
+
+  const left = document.createElement('div');
+  const desc = document.createElement('b');
+  desc.innerText = item.desc;
+  const date = document.createElement('div');
+  date.className = 'stat-lbl';
+  date.innerText = item.date;
+  left.appendChild(desc);
+  left.appendChild(date);
+
+  const amt = document.createElement('b');
+  amt.className = 'clr-red';
+  amt.innerText = `- ₹${item.amt.toLocaleString('en-IN')}`;
+
+  row.appendChild(left);
+  row.appendChild(amt);
+  container.prepend(row);
 }
