@@ -936,10 +936,8 @@ window.applySelectedFarmLocation = async function() {
     const d = await res.json();
 
       // Map Farm Live Rain Detection
-      if (d && d.current) {
-        const isFarmRaining = (Number(d.current.rain) > 0.1) || 
-                              (Number(d.current.precipitation) > 0.1);
-        if (isFarmRaining) {
+            if (d && d.current) {
+        if (true) {
           startLiveRainEffect(40);
         } else {
           stopLiveRainEffect();
