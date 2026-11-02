@@ -179,7 +179,7 @@ window.renderWeatherWidget = async function() {
     const isRainingNow = (c.rain > 0.1) || (c.precipitation > 0.1) || 
                          [51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(c.weather_code);
 
-    if (isRainingNow) {
+    if (true) {
       startLiveRainEffect(40);
     } else {
       stopLiveRainEffect();
