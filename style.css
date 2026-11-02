@@ -6232,3 +6232,35 @@ header h1 {
   transform: scale(0.94);
   background: #14532d !important;
 }
+/* =========================================================
+   LIVE RAIN EFFECT (LIGHTWEIGHT CSS)
+   ========================================================= */
+.rain-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none; /* App lo buttons, cards touch avvadaniki */
+  z-index: 99999;
+  overflow: hidden;
+}
+
+.raindrop {
+  position: absolute;
+  top: -40px;
+  width: 1.5px;
+  height: 28px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(147, 197, 253, 0.95));
+  opacity: 0.8;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(105vh);
+  }
+}
