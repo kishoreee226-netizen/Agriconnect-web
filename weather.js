@@ -927,7 +927,7 @@ window.applySelectedFarmLocation = async function() {
 
   try {
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${selectedFarmLat}&longitude=${selectedFarmLon}` +
-      `&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,cape,soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,dew_point_2m` +
+      `&current=temperature_2m,relative_humidity_2m,precipitation,rain,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,cape,soil_temperature_0cm,soil_moisture_0_to_1cm,soil_moisture_3_to_9cm,soil_moisture_9_to_27cm,et0_fao_evapotranspiration,vapour_pressure_deficit,dew_point_2m,weather_code` +
       `&hourly=temperature_2m,relative_humidity_2m,precipitation_probability,precipitation,weather_code` +
       `&daily=shortwave_radiation_sum,sunrise,sunset,precipitation_probability_max,precipitation_sum,temperature_2m_max,temperature_2m_min,snowfall_sum` +
       `&past_days=1&timezone=auto`;
@@ -935,11 +935,18 @@ window.applySelectedFarmLocation = async function() {
     const res = await fetch(url);
     const d = await res.json();
 
-                if (d && d.current && d.current.rain > 0.1) {
+// Farm live rain effect 
+                     const fc = d.current;
+      const isFarmRainingNow = (fc.rain > 0.1) || 
+                               (fc.precipitation > 0.1) || 
+                               [51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(fc.weather_code);
+
+      if (isFarmRainingNow) {
         startLiveRainEffect(40);
       } else {
         stopLiveRainEffect();
       }
+
 
   // DUAL CYCLE & CENTER DATA CONTROLLER (NO EXTRA STYLES IN JS)
 if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
