@@ -1535,10 +1535,8 @@ window.saveCurrentFarmLocation = function() {
   alert(`✅ "${farmCustomName}" విజయవంతంగా సేవ్ అయింది!`);
 };
 
-//---Live rain display function---- 
+//---Live rain display function----
 function startLiveRainEffect(dropCount = 40) {
-document.body.classList.add('monsoon-dark-sky');
-
   let container = document.getElementById('liveRainContainer');
   if (!container) {
     container = document.createElement('div');
@@ -1560,8 +1558,6 @@ document.body.classList.add('monsoon-dark-sky');
 }
 
 function stopLiveRainEffect() {
-document.body.classList.remove('monsoon-dark-sky');
-
   const container = document.getElementById('liveRainContainer');
   if (container) {
     container.innerHTML = '';
