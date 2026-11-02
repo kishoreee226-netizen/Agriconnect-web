@@ -1537,6 +1537,8 @@ window.saveCurrentFarmLocation = function() {
 
 //---Live rain display function---- 
 function startLiveRainEffect(dropCount = 40) {
+document.body.classList.add('monsoon-dark-sky');
+
   let container = document.getElementById('liveRainContainer');
   if (!container) {
     container = document.createElement('div');
@@ -1558,6 +1560,8 @@ function startLiveRainEffect(dropCount = 40) {
 }
 
 function stopLiveRainEffect() {
+document.body.classList.remove('monsoon-dark-sky');
+
   const container = document.getElementById('liveRainContainer');
   if (container) {
     container.innerHTML = '';
