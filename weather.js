@@ -1534,3 +1534,33 @@ window.saveCurrentFarmLocation = function() {
   localStorage.setItem("agriSavedFarms", JSON.stringify(savedFarms));
   alert(`✅ "${farmCustomName}" విజయవంతంగా సేవ్ అయింది!`);
 };
+
+//---Live rain display function---- 
+function startLiveRainEffect(dropCount = 40) {
+  let container = document.getElementById('liveRainContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'liveRainContainer';
+    container.className = 'rain-container';
+    document.body.appendChild(container);
+  }
+  container.innerHTML = '';
+  container.style.display = 'block';
+
+  for (let i = 0; i < dropCount; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'raindrop';
+    drop.style.left = Math.random() * 100 + '%';
+    drop.style.animationDuration = (0.55 + Math.random() * 0.45) + 's';
+    drop.style.animationDelay = (Math.random() * 2) + 's';
+    container.appendChild(drop);
+  }
+}
+
+function stopLiveRainEffect() {
+  const container = document.getElementById('liveRainContainer');
+  if (container) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+  }
+}
