@@ -934,17 +934,16 @@ window.applySelectedFarmLocation = async function() {
 
     const res = await fetch(url);
     const d = await res.json();
-
-            // Map Farm Live Rain Detection
+      // Map Farm Live Rain Detection
       if (d && d.current) {
-        const isFarmRaining = (Number(d.current.rain || 0) > 0.1) || (Number(d.current.precipitation || 0) > 0.1);
-        if (isFarmRaining) {
+        const r = parseFloat(d.current.rain) || 0;
+        const p = parseFloat(d.current.precipitation) || 0;
+        if (r > 0.1 || p > 0.1) {
           startLiveRainEffect(40);
         } else {
           stopLiveRainEffect();
         }
       }
-
 
   // DUAL CYCLE & CENTER DATA CONTROLLER (NO EXTRA STYLES IN JS)
 if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
