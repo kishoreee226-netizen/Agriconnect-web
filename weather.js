@@ -935,13 +935,10 @@ window.applySelectedFarmLocation = async function() {
     const res = await fetch(url);
     const d = await res.json();
 
-          if (d && d.current) {
-        var isFarmRaining = (Number(d.current.rain) > 0.1) || (Number(d.current.precipitation) > 0.1);
-        if (isFarmRaining) {
-          startLiveRainEffect(40);
-        } else {
-          stopLiveRainEffect();
-        }
+                if (d && d.current && d.current.rain > 0.1) {
+        startLiveRainEffect(40);
+      } else {
+        stopLiveRainEffect();
       }
 
   // DUAL CYCLE & CENTER DATA CONTROLLER (NO EXTRA STYLES IN JS)
