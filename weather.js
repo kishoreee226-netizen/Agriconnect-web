@@ -934,7 +934,8 @@ window.applySelectedFarmLocation = async function() {
 
     const res = await fetch(url);
     const d = await res.json();
-      // Map Farm Live Rain Detection (rain & precipitation aadharamga)
+
+      // Map Farm Live Rain Detection
       if (d && d.current) {
         const isFarmRaining = (Number(d.current.rain) > 0.1) || 
                               (Number(d.current.precipitation) > 0.1);
