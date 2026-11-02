@@ -6233,8 +6233,15 @@ header h1 {
   background: #14532d !important;
 }
 /* =========================================================
-   LIVE RAIN EFFECT (LIGHTWEIGHT CSS)
+   LIVE RAIN EFFECT (LIGHTWEIGHT CSS + MONSOON NAVY SKY)
    ========================================================= */
+
+/* Varsham unnappudu Dark Navy Blue Sky Background */
+body.monsoon-dark-sky {
+  background: linear-gradient(180deg, #0b1329 0%, #172554 100%) !important;
+  transition: background 0.8s ease-in-out;
+}
+
 .rain-container {
   position: fixed;
   top: 0;
@@ -6249,10 +6256,11 @@ header h1 {
 .raindrop {
   position: absolute;
   top: -40px;
-  width: 1.5px;
-  height: 28px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(147, 197, 253, 0.95));
-  opacity: 0.8;
+  width: 1.8px;
+  height: 32px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), #ffffff);
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+  opacity: 0.9;
   animation: fall linear infinite;
 }
 
