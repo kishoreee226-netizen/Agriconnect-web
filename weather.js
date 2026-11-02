@@ -988,7 +988,7 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
   }
 
   if (centerDateEl) {
-    const monthsTelugu = ["జన", "ఫిబ్ర", "మార్చి", "ఏప్రి", "మే", "జూన్", "జూలై", "ఆగ", "సెప్టెం", "అక్టో", "నవం", "డిసెం"];
+    const monthsTelugu = ["జన", "ఫిబ్ర", "మార్చి", "ఏప్రి", "మే", "జూన్", "జూలై", "ఆగ", "సెప్టెం", "అక్టో", "Nov", "డిసెం"];
     centerDateEl.innerText = `📅 ${targetDate.getDate()} ${monthsTelugu[targetDate.getMonth()]}, ${targetDate.getFullYear()}`;
   }
 
