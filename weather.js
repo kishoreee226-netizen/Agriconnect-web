@@ -1603,8 +1603,8 @@ function stopLiveRainEffect() {
     container.style.display = 'none';
   }
 }
-// 9 & 10 Cards Click Detail Popup
-function openAgriDetailModal(type) {
+// Function ni global window ki assign cheyyandi:
+window.openAgriDetailModal = function(type) {
   const currentHour = new Date().getHours();
   const isPwr = (currentHour >= 6 && currentHour < 12) || (currentHour >= 20 || currentHour < 2);
   const gwVal = document.getElementById('drawerWaterTableVal')?.innerText || '50-65 అడుగులు';
@@ -1620,4 +1620,4 @@ function openAgriDetailModal(type) {
   else if (type === 'groundwater') {
     alert(`💧 భూగర్భ జల మట్టం & బోరు అంచనా:\n\nసగటు నీటి లోతు: ${gwVal} (సేఫ్ జోన్)\n\nగమనిక: ఈ అంచనా నేలలో లోతు తేమ మరియు ఇంకుడు రేటు ఆధారంగా లెక్కించబడింది. పొలంలో ఖచ్చితమైన పాయింట్ కొరకు భూభౌతిక సర్వే (Resistivity Survey) నిపుణులను సంప్రదించండి.`);
   }
-}
+};
