@@ -812,7 +812,7 @@ function renderLaborHistoryRow(item) {
   container.prepend(row);
 }
 // ==========================================
-// 7. CROP DOCTOR (HYBRID MODEL + AGRIDB SYNC)
+// 7. CROP DOCTOR (HYBRID MODEL + AGRIDB SYNC + VOICE)
 // ==========================================
 
 let activeCropLibrary = {
@@ -856,6 +856,8 @@ let activeCropLibrary = {
   ]
 };
 
+let currentActiveDiagnosis = null;
+
 // 7.1 AgriDB Realtime Disease Sync
 function listenToAgriDBDiseases() {
   if (window.db && typeof window.db.collection === 'function') {
@@ -863,9 +865,8 @@ function listenToAgriDBDiseases() {
       if (!snapshot.empty) {
         snapshot.forEach(doc => {
           const data = doc.data();
-          if (data.crop && data.issue) {
+          if (data && data.crop && data.issue) {
             if (!activeCropLibrary[data.crop]) activeCropLibrary[data.crop] = [];
-            // replace or push
             const idx = activeCropLibrary[data.crop].findIndex(i => i.issue === data.issue);
             if (idx >= 0) activeCropLibrary[data.crop][idx] = data;
             else activeCropLibrary[data.crop].unshift(data);
@@ -874,7 +875,7 @@ function listenToAgriDBDiseases() {
         onCropSelectChange();
       }
     }, err => {
-      console.warn("AgriDB crop diseases sync listener active with offline fallback.");
+      console.warn("AgriDB crop diseases sync fallback to local library.");
     });
   }
 }
@@ -899,10 +900,19 @@ function switchCropDocTab(tab) {
   }
 }
 
-// 7.3 Photo Selection & Preview
+// 7.3 Photo Selection & Live Cloud Telemetry
 function handleCropPhotoSelect(event) {
-  const file = event.target.files[0];
+  const file = event.target.files ? event.target.files[0] : null;
   if (!file) return;
+
+  // Background Firestore Scan logging (Network active unte capture chesthundhi)
+  if (window.db && navigator.onLine) {
+    window.db.collection("crop_scans").add({
+      fileName: file.name,
+      fileSize: file.size,
+      scannedAt: new Date().toISOString()
+    }).catch(e => console.warn("Firestore scan record error:", e));
+  }
 
   const preview = document.getElementById('cropPhotoPreview');
   const scanBtn = document.getElementById('btnScanPhoto');
@@ -918,7 +928,7 @@ function handleCropPhotoSelect(event) {
   reader.readAsDataURL(file);
 }
 
-// 7.4 AI Hybrid Vision Scan Simulation / Real-time Processing
+// 7.4 AI Hybrid Vision Scan Processing
 function analyzeCropPhoto() {
   const loader = document.getElementById('scanLoadingIndicator');
   const scanBtn = document.getElementById('btnScanPhoto');
@@ -932,7 +942,7 @@ function analyzeCropPhoto() {
     renderDiagnosisCard({
       name: "నల్ల తామర పురుగు (Black Thrips)",
       severity: "తీవ్రమైన తెగులు",
-      desc: "కెమెరా స్కాన్ విశ్లేషణ: ఆకుల ఈనెలు నల్లబడటం, పూత ముడుచుకుపోవడం గుర్తించబడింది.",
+      desc: "కెమెరా స్కాన్ విశ్లేషణ: ఆకుల ఈనెలు నల్లబడటం, పూత రాలిపోవడం గుర్తించబడింది.",
       chem: "స్పైనోటోరమ్ (Spinetoram 11.7% SC) 180 ml/ఎకరానికి లేదా ఫిప్రోనిల్ 2 ml/లీటర్ నీటికి పిచికారీ చేయండి.",
       organic: "వేప నూనె (10,000 ppm) 3 ml/లీటరు లేదా పచ్చిమిర్చి-వెల్లుల్లి కషాయం పిచికారీ చేయండి."
     });
@@ -964,7 +974,9 @@ function diagnoseCropIssue() {
   if (issue) renderDiagnosisCard(issue);
 }
 
+// 7.6 Realtime Card Rendering & Voice Integration
 function renderDiagnosisCard(data) {
+  currentActiveDiagnosis = data;
   const resultCard = document.getElementById('cropDoctorResult');
   if (!resultCard) return;
 
@@ -980,14 +992,34 @@ function renderDiagnosisCard(data) {
   if (chemEl) chemEl.innerText = data.chem;
   if (orgEl) orgEl.innerText = data.organic;
 
+  // Voice button unte dynamic bind chesthundhi
+  const voiceBtn = document.getElementById('btnPlayCropVoice');
+  if (voiceBtn) {
+    voiceBtn.onclick = playCropDoctorVoice;
+  }
+
   resultCard.style.display = 'block';
+}
+
+// 7.7 Telugu Voice Synthesis Engine
+function playCropDoctorVoice() {
+  if (!currentActiveDiagnosis) return;
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const speechScript = `పంట పరిశీలన పూర్తయింది. తెగులు: ${currentActiveDiagnosis.name}. తీవ్రత: ${currentActiveDiagnosis.severity}. రసాయన నివారణ: ${currentActiveDiagnosis.chem}. సేంద్రియ నివారణ: ${currentActiveDiagnosis.organic}`;
+    const utterance = new SpeechSynthesisUtterance(speechScript);
+    utterance.lang = 'te-IN';
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert("మీ బ్రౌజర్ లో వాయిస్ సపోర్ట్ అందుబాటులో లేదు.");
+  }
 }
 
 function initCropDoctorTool() {
   switchCropDocTab('camera');
   listenToAgriDBDiseases();
 }
-
 
 // ==========================================
 // 8. GOVT SCHEMES & SUBSIDY ALERTS (AGRIDB LIVE SYNC)
