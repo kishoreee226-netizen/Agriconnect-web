@@ -1129,6 +1129,20 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
       document.getElementById("farm_gusts").innerText = `${gusts} km/h`;
       document.getElementById("farm_solar").innerText = `${solar} W/m²`;
 
+    // main weather 9 & 10 Cards Live Text Update
+    const currentHour = new Date().getHours();
+    const isPwr = (currentHour >= 6 && currentHour < 12) || (currentHour >= 20 || currentHour < 2);
+    const pwrEl = document.getElementById('drawerPwrStatus');
+    if (pwrEl) {
+      pwrEl.innerText = isPwr ? '3-ఫేస్ ఆన్' : 'పవర్ ఆఫ్';
+      pwrEl.className = isPwr ? 'agri-metric-value text-green' : 'agri-metric-value text-red';
+    }
+
+    const gwEl = document.getElementById('drawerWaterTableVal');
+    if (gwEl) {
+      gwEl.innerText = (sm9_27 && sm9_27 !== '--' && sm9_27 > 50) ? '45-60 అడుగులు' : '65-80 అడుగులు';
+    }
+
       // 9. వర్ష సూచన
       const rainProb = h.precipitation_probability ? h.precipitation_probability[idx] : 0;
       const rainMm = h.precipitation ? h.precipitation[idx] : 0;
