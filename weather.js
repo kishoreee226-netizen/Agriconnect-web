@@ -1605,21 +1605,3 @@ function stopLiveRainEffect() {
     container.style.display = 'none';
   }
 }
-// Function ni global window ki assign cheyyandi:
-window.openAgriDetailModal = function(type) {
-  const currentHour = new Date().getHours();
-  const isPwr = (currentHour >= 6 && currentHour < 12) || (currentHour >= 20 || currentHour < 2);
-  const gwVal = document.getElementById('drawerWaterTableVal')?.innerText || '50-65 అడుగులు';
-
-  if (type === 'power') {
-    const statusText = isPwr ? '🟢 3-ఫేస్ విద్యుత్ అందుబాటులో ఉంది' : '🔴 ప్రస్తుతం పవర్ కట్ / సింగిల్ ఫేస్';
-    const advisory = isPwr 
-      ? 'ఇప్పుడు మోటార్లు వేయడానికి అనుకూల సమయం. 5 HP మోటార్‌తో 1 ఎకరానికి సుమారు 4 నుండి 5 గంటల తడి సమయం పడుతుంది.' 
-      : 'తదుపరి 3-ఫేస్ స్లాట్ షెడ్యూల్ వరకు వేచి చూడండి.';
-
-    alert(`⚡ వ్యవసాయ విద్యుత్ & తడి సమాచారం:\n\nస్థితి: ${statusText}\n\nసూచన: ${advisory}`);
-  } 
-  else if (type === 'groundwater') {
-    alert(`💧 భూగర్భ జల మట్టం & బోరు అంచనా:\n\nసగటు నీటి లోతు: ${gwVal} (సేఫ్ జోన్)\n\nగమనిక: ఈ అంచనా నేలలో లోతు తేమ మరియు ఇంకుడు రేటు ఆధారంగా లెక్కించబడింది. పొలంలో ఖచ్చితమైన పాయింట్ కొరకు భూభౌతిక సర్వే (Resistivity Survey) నిపుణులను సంప్రదించండి.`);
-  }
-};
