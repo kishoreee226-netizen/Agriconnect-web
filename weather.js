@@ -410,14 +410,15 @@ const liveClock = now.toLocaleTimeString('en-US', {
               <div class="agri-metric-label">ఈదురుగాలులు (Gusts)</div>
               <div class="agri-metric-value text-dark">${windGusts} km/h</div>
             </div>
-                    <div class='agri-metric-tile'>
+         
+           <div class='agri-metric-tile'>
             <div class='agri-metric-label'>⚡ వ్యవసాయ విద్యుత్</div>
-            <div class='agri-metric-value text-green' id='drawerPwrStatus'>--</div>
+            <div class='agri-metric-value ${pwrClass}' id='drawerPwrStatus'>${pwrText}</div>
           </div>
 
           <div class='agri-metric-tile'>
             <div class='agri-metric-label'>💧 భూగర్భ జల మట్టం</div>
-            <div class='agri-metric-value text-blue' id='drawerWaterTableVal'>--</div>
+            <div class='agri-metric-value text-blue' id='drawerWaterTableVal'>${gwText}</div>
           </div>
 
           </div>
