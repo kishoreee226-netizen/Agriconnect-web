@@ -410,6 +410,16 @@ const liveClock = now.toLocaleTimeString('en-US', {
               <div class="agri-metric-label">ఈదురుగాలులు (Gusts)</div>
               <div class="agri-metric-value text-dark">${windGusts} km/h</div>
             </div>
+          <div class='agri-metric-tile' onclick='openAgriPowerModal()' style='cursor:pointer;'>
+            <div class='agri-metric-label'>⚡ వ్యవసాయ విద్యుత్</div>
+            <div class='agri-metric-value text-green'>3-ఫేస్ ఆన్</div>
+          </div>
+
+          <div class='agri-metric-tile' onclick='openGroundwaterModal()' style='cursor:pointer;'>
+            <div class='agri-metric-label'>💧 భూగర్భ జల మట్టం</div>
+            <div class='agri-metric-value text-blue'>50-65 అడుగులు</div>
+          </div>
+
           </div>
 
           <!-- కొత్త ఫీచర్: పొలాన్ని మ్యాప్‌లో ఎంచుకునే బటన్ -->
