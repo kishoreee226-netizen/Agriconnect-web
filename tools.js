@@ -1003,17 +1003,24 @@ function renderDiagnosisCard(data) {
 
 // 7.7 Telugu Voice Synthesis Engine
 function playCropDoctorVoice() {
-  if (!currentActiveDiagnosis) return;
-  if ('speechSynthesis' in window) {
-    window.speechSynthesis.cancel();
-    const speechScript = `పంట పరిశీలన పూర్తయింది. తెగులు: ${currentActiveDiagnosis.name}. తీవ్రత: ${currentActiveDiagnosis.severity}. రసాయన నివారణ: ${currentActiveDiagnosis.chem}. సేంద్రియ నివారణ: ${currentActiveDiagnosis.organic}`;
-    const utterance = new SpeechSynthesisUtterance(speechScript);
-    utterance.lang = 'te-IN';
-    utterance.rate = 0.9;
-    window.speechSynthesis.speak(utterance);
-  } else {
+  if (!('speechSynthesis' in window)) {
     alert("మీ బ్రౌజర్ లో వాయిస్ సపోర్ట్ అందుబాటులో లేదు.");
+    return;
   }
+
+  // Sound vastunte ventane akkaditho aagipothundi
+  if (window.speechSynthesis.speaking) {
+    window.speechSynthesis.cancel();
+    return;
+  }
+
+  if (!currentActiveDiagnosis) return;
+
+  const speechScript = `పంట పరిశీలన పూర్తయింది. తెగులు: ${currentActiveDiagnosis.name}. తీవ్రత: ${currentActiveDiagnosis.severity}. రసాయన నివారణ: ${currentActiveDiagnosis.chem}. సేంద్రియ నివారణ: ${currentActiveDiagnosis.organic}`;
+  const utterance = new SpeechSynthesisUtterance(speechScript);
+  utterance.lang = 'te-IN';
+  utterance.rate = 0.9;
+  window.speechSynthesis.speak(utterance);
 }
 
 function initCropDoctorTool() {
