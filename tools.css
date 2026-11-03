@@ -584,6 +584,29 @@
   margin-top: 4px;
   line-height: 1.4;
 }
+/* Voice Advice Button & Audio Ripple */
+.btn-voice-crop {
+  width: 100%;
+  background: #1b5e20;
+  color: #ffffff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 3px 6px rgba(27, 94, 32, 0.25);
+  margin-top: 8px;
+}
+
+.btn-voice-crop:active {
+  background: #2e7d32;
+  transform: scale(0.98);
+}
 
 /* Schemes Specific Layouts */
 .scheme-card-header {
