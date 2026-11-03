@@ -439,71 +439,88 @@
 
     </div>
     <!-- 7. VIEW: CROP DOCTOR -->
-    <div id="view-crop_doctor" class="tool-view-panel" style="display:none;">
-      <div class="hub-tabs mb-12">
-        <button type="button" class="hub-tab active" onclick="switchCropDocTab('camera')">📸 కెమెరా స్కాన్</button>
-        <button type="button" class="hub-tab" onclick="switchCropDocTab('manual')">📋 లక్షణాల ఎంపిక</button>
-      </div>
+<div id="view-crop_doctor" class="tool-view-panel" style="display:none;">
+  <div class="hub-tabs mb-12">
+    <button type="button" class="hub-tab active" onclick="switchCropDocTab('camera')">
+      📷 కెమెరా స్కాన్
+    </button>
+    <button type="button" class="hub-tab" onclick="switchCropDocTab('manual')">
+      📋 లక్షణాల ఎంపిక
+    </button>
+  </div>
 
-      <!-- Tab 1: Camera Photo Upload -->
-      <div id="subtab-crop-camera" class="crop-doc-pane">
-        <div class="modal-subtitle">పంట తెగులు/ఆకు ఫోటో తీసి అప్‌లోడ్ చేయండి:</div>
-        
-        <div class="crop-upload-box">
-          <input type="file" id="cropPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleCropPhotoSelect(event)">
-          <div class="crop-upload-icon">📷</div>
-          <button type="button" class="action-btn btn-save-labor btn-upload-trigger" onclick="document.getElementById('cropPhotoInput').click()">
-            ఫోటో తీయండి / అప్‌లోడ్ చేయండి
-          </button>
-          <div class="stat-lbl mt-4">మొబైల్ కెమెరా లేదా గ్యాలరీ నుండి ఎంచుకోండి</div>
-          <img id="cropPhotoPreview" class="crop-preview-img" alt="Crop preview" />
-        </div>
+  <!-- Tab 1: Camera Photo Upload -->
+  <div id="subtab-crop-camera" class="crop-doc-pane">
+    <div class="modal-subtitle">పంట తెగులు/ఆకు ఫోటో తీసి అప్‌లోడ్ చేయండి:</div>
 
-        <button type="button" id="btnScanPhoto" class="action-btn btn-save-labor" style="display:none;" onclick="analyzeCropPhoto()">
-          🔍 తెగులును స్కాన్ చేసి గుర్తించండి
-        </button>
-        <div id="scanLoadingIndicator" class="scan-loading-box">
-          ⏳ AI ఫోటోను విశ్లేషిస్తోంది, దయచేసి వేచి ఉండండి...
-        </div>
-      </div>
+    <div class="crop-upload-box">
+      <input type="file" id="cropPhotoInput" accept="image/*" capture="environment" style="display:none;" onchange="handleCropPhotoSelect(event)">
+      <div class="crop-upload-icon">📷</div>
+      <button type="button" class="action-btn btn-save-labor btn-upload-trigger" onclick="document.getElementById('cropPhotoInput').click()">
+        ఫోటో తీయండి / అప్‌లోడ్ చేయండి
+      </button>
+      <div class="stat-lbl mt-4">స్పష్టమైన కెమెరా ఫోటో క్యాప్చర్ మంచి ఫలితాలనిస్తుంది</div>
+      <img id="cropPhotoPreview" class="crop-preview-img" alt="Crop preview" style="display:none;" />
+    </div>
 
-      <!-- Tab 2: Manual Select -->
-      <div id="subtab-crop-manual" class="crop-doc-pane" style="display:none;">
-        <div class="demo-card-item mb-8">
-          <label class="stat-lbl">పంట రకం:</label>
-          <select id="docCropSelect" class="action-input mb-8" onchange="onCropSelectChange()">
-            <option value="chilli">మిరప (Chilli)</option>
-            <option value="cotton">పత్తి (Cotton)</option>
-            <option value="paddy">వరి (Paddy)</option>
-          </select>
+    <button type="button" id="btnScanPhoto" class="action-btn btn-save-labor" style="display:none; margin-top:12px;" onclick="analyzeCropPhoto()">
+      🔍 తెగులు స్కాన్ చేసి గుర్తించండి
+    </button>
 
-          <label class="stat-lbl">కనిపిస్తున్న సమస్య / లక్షణం:</label>
-          <select id="docIssueSelect" class="action-input mb-8" onchange="diagnoseCropIssue()"></select>
+    <div id="scanLoadingIndicator" class="scan-loading-box" style="display:none;">
+      ⏳ AI పంటల నిపుణుడు ఆకును పరీక్షిస్తోంది...
+    </div>
+  </div>
 
-          <button type="button" onclick="diagnoseCropIssue()" class="action-btn btn-save-labor">
-            🩺 నివారణ వివరాలు చూడండి
-          </button>
-        </div>
-      </div>
+  <!-- Tab 2: Manual Select -->
+  <div id="subtab-crop-manual" class="crop-doc-pane" style="display:none;">
+    <div class="demo-card-item mb-8">
+      <label class="stat-lbl">పంట రకం:</label>
+      <select id="docCropSelect" class="action-input mb-8" onchange="onCropSelectChange()">
+        <option value="chilli">మిరప (Chilli)</option>
+        <option value="cotton">పత్తి (Cotton)</option>
+        <option value="paddy">వరి (Paddy)</option>
+      </select>
 
-      <!-- Diagnosis Result -->
-      <div id="cropDoctorResult" class="demo-card-item diag-res-card">
-        <div class="card-row-between mb-4">
-          <b id="docDiagName" class="diag-title">తెగులు పేరు</b>
-          <span class="badge-tag badge-red" id="docDiagSeverity">తీవ్రత</span>
-        </div>
-        <div id="docDiagDesc" class="diag-desc"></div>
-        
-        <div class="treatment-box treatment-chem">
-          <div class="treatment-chem-title">🧪 రసాయన మందు (Chemical):</div>
-          <div id="docChemDose" class="treatment-text"></div>
-        </div>
+      <label class="stat-lbl">కనిపిస్తున్న సమస్య / లక్షణం:</label>
+      <select id="docIssueSelect" class="action-input mb-8" onchange="diagnoseCropIssue()">
+      </select>
 
-        <div class="treatment-box treatment-organic">
-          <div class="treatment-organic-title">🌿 దేశీ సేంద్రియ పద్ధతి (Organic/Desi):</div>
-          <div id="docOrganicDose" class="treatment-text"></div>
-        </div>
-      </div>
+      <button type="button" onclick="diagnoseCropIssue()" class="action-btn btn-save-labor">
+        🔍 నివారణ వివరాలు చూడండి
+      </button>
+    </div>
+  </div>
+
+  <!-- Diagnosis Result -->
+  <div id="cropDoctorResult" class="demo-card-item diag-res-card" style="display:none; margin-top:12px;">
+    <div class="card-row between mb-4">
+      <b id="docDiagName" class="diag-title">తెగులు పేరు</b>
+      <span class="badge-tag badge-red" id="docDiagSeverity">తీవ్రత</span>
+    </div>
+    
+    <div id="docDiagDesc" class="diag-desc mb-8">వివరణ</div>
+
+    <!-- Chemical Remedies Box -->
+    <div class="treatment-box treatment-chem mb-8">
+      <div class="treatment-chem-title">💊 రసాయన మందు (Chemical):</div>
+      <div id="docChemDose" class="treatment-text"></div>
+    </div>
+
+    <!-- Organic Remedies Box -->
+    <div class="treatment-box treatment-organic mb-8">
+      <div class="treatment-organic-title">🍃 దేశీ/సేంద్రియ పద్ధతి (Organic/Desi):</div>
+      <div id="docOrganicDose" class="treatment-text"></div>
+    </div>
+
+   <!-- Voice Play Button -->
+<button type="button" id="btnPlayCropVoice" class="btn-voice-crop">
+  🔊 తెలుగు వాయిస్ సలహా వినండి
+</button>
+
+  </div>
+</div>
+
     </div>
 
     <!-- 8. VIEW: GOVT SCHEMES -->
