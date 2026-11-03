@@ -5766,12 +5766,15 @@ header h1 {
 .text-dark { color: #475569; }
 
 .badge {
-  padding: 2px 6px;
+  padding: 2px 4px;
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   margin-left: 4px;
+  white-space: nowrap;
+  display: inline-block;
 }
+
 .badge-success { background: #dcfce7; color: #15803d; }
 .badge-neutral { background: #fef9c3; color: #854d0e; }
 .badge-danger { background: #fee2e2; color: #b91c1c; }
