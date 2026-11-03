@@ -1134,7 +1134,8 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
     const isPwr = (currentHour >= 6 && currentHour < 12) || (currentHour >= 20 || currentHour < 2);
     const pwrEl = document.getElementById('drawerPwrStatus');
     if (pwrEl) {
-      pwrEl.innerText = isPwr ? '3-ఫేస్ ఆన్' : 'పవర్ ఆఫ్';
+            pwrEl.innerText = isPwr ? '🟢 3-ఫేస్ ఆన్' : '🔴 పవర్ ఆఫ్';
+
       pwrEl.className = isPwr ? 'agri-metric-value text-green' : 'agri-metric-value text-red';
     }
 
