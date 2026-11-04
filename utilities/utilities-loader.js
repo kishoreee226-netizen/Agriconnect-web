@@ -1,43 +1,21 @@
 // utilities/utilities-loader.js
 (function () {
-  // 1. Utilities Container DOM lo inject cheyadam
-  let utilBox = document.getElementById('agriUtilitiesBox');
-  if (!utilBox) {
-    utilBox = document.createElement('section');
-    utilBox.id = 'agriUtilitiesBox';
-    utilBox.style.cssText = 'padding: 12px 16px; margin-top: 10px;';
-    
-    utilBox.innerHTML = `
-      <div style="font-size: 15px; font-weight: 700; color: #1b5e20; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
-        <span>🛠️ రైతు పరికరాలు & సేవలు</span>
-      </div>
-      <div id="agriUtilitiesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;"></div>
-    `;
+  // 1. Box container ni injection cheyadam
+  const box = document.createElement('div');
+  box.id = 'agriUtilitiesBox';
+  box.innerHTML = `
+    <h3 style="font-size:15px; color:#1b5e20; margin:10px 0;">🛠️ రైతు పరికరాలు & సేవలు</h3>
+    <div id="agriUtilitiesGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px;"></div>
+  `;
+  document.currentScript.parentNode.insertBefore(box, document.currentScript);
 
-    // Tools container kindha inject cheyadam
-    const toolsTarget = document.querySelector('.tools-box') || 
-                        document.getElementById('toolsContainer') || 
-                        document.body;
+  // 2. Kothavi add chesinappudu kevalam peru matrame rayali (sub-loader lines avasaram ledu)
+  const features = ['dharani', 'pmfby', 'warehouse', 'chc_rental', 'kvk_scientist'];
 
-    if (toolsTarget && toolsTarget.parentNode && toolsTarget !== document.body) {
-      toolsTarget.parentNode.insertBefore(utilBox, toolsTarget.nextSibling);
-    } else {
-      document.body.appendChild(utilBox);
-    }
-  }
-
-  // 2. Active Utility Features Sub-loaders List
-  const activeFeatures = [
-    'utilities/dharani/dharani-loader.js'
-    // Kothhavi add chesetappudu ikkada link chestham:
-    // 'utilities/pmfby/pmfby-loader.js',
-    // 'utilities/warehouse/warehouse-loader.js'
-  ];
-
-  // 3. Sub-loaders execute cheyadam
-  activeFeatures.forEach(src => {
+  // 3. Automatic ga anni sub-loaders ni call cheyadam
+  features.forEach(name => {
     const s = document.createElement('script');
-    s.src = `${src}?v=${Date.now()}`;
+    s.src = `utilities/${name}/${name}-loader.js?v=${Date.now()}`;
     document.body.appendChild(s);
   });
 })();
