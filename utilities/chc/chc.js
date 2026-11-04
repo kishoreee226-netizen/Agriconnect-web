@@ -1,8 +1,9 @@
+// utilities/chc/chc.js
 (function setupChcLogic() {
   document.addEventListener('click', function (e) {
     if (e.target && e.target.id === 'chcFarmsBtn') {
-      // Official Central Govt FARMS Portal
-      window.open('https://farms.dac.gov.in/', '_blank');
+      // Official Central Govt Farm Machinery & CHC portal
+      window.open('https://agrimachinery.nic.in/', '_blank');
     }
   });
 })();
