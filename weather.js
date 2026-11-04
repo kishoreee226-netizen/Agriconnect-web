@@ -176,8 +176,7 @@ window.renderWeatherWidget = async function() {
     const isDay = c.is_day === 1;
    
  // Live Rain Detection (Automatic Effect)
-    const isRainingNow = (c.rain > 0.1) || (c.precipitation > 0.1) || 
-                         [51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(c.weather_code);
+        const isRainingNow = (Number(c.rain || 0) >= 0.1) || (Number(c.precipitation || 0) >= 0.1);
 
     if (isRainingNow) {
       startLiveRainEffect(40);
