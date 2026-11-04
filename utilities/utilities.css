@@ -1,0 +1,26 @@
+#agriUtilitiesBox {
+  padding: 8px 12px;
+  margin: 8px 0;
+}
+
+.agri-util-header {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1b5e20;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#agriUtilitiesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 340px) {
+  #agriUtilitiesGrid {
+    grid-template-columns: 1fr;
+  }
+}
