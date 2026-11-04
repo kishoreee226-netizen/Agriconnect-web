@@ -1,21 +1,41 @@
 // utilities/utilities-loader.js
-(function () {
-  // 1. Box container ni injection cheyadam
-  const box = document.createElement('div');
-  box.id = 'agriUtilitiesBox';
-  box.innerHTML = `
-    <h3 style="font-size:15px; color:#1b5e20; margin:10px 0;">🛠️ రైతు పరికరాలు & సేవలు</h3>
-    <div id="agriUtilitiesGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:10px;"></div>
-  `;
-  document.currentScript.parentNode.insertBefore(box, document.currentScript);
+(async function initUtilities() {
+  const dir = 'utilities/';
+  const thisScript = document.currentScript;
 
-  // 2. Kothavi add chesinappudu kevalam peru matrame rayali (sub-loader lines avasaram ledu)
+  // 1. CSS Injection
+  if (!document.getElementById('utilities-style')) {
+    const link = document.createElement('link');
+    link.id = 'utilities-style';
+    link.rel = 'stylesheet';
+    link.href = `${dir}utilities.css?v=${Date.now()}`;
+    document.head.appendChild(link);
+  }
+
+  // 2. HTML Injection
+  try {
+    const res = await fetch(`${dir}utilities.html?v=${Date.now()}`);
+    if (res.ok) {
+      const htmlText = await res.text();
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = htmlText.trim();
+      const boxNode = tempDiv.firstElementChild;
+
+      if (thisScript && thisScript.parentNode) {
+        thisScript.parentNode.insertBefore(boxNode, thisScript);
+      } else {
+        document.body.appendChild(boxNode);
+      }
+    }
+  } catch (err) {
+    console.error('Utilities layout loading failed:', err);
+  }
+
+  // 3. Sub-loaders Calling
   const features = ['dharani', 'pmfby', 'warehouse', 'chc', 'kvk'];
-
-  // 3. Automatic ga anni sub-loaders ni call cheyadam
   features.forEach(name => {
     const s = document.createElement('script');
-    s.src = `utilities/${name}/${name}-loader.js?v=${Date.now()}`;
+    s.src = `${dir}${name}/${name}-loader.js?v=${Date.now()}`;
     document.body.appendChild(s);
   });
 })();
