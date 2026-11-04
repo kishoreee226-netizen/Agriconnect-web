@@ -410,9 +410,12 @@ const liveClock = now.toLocaleTimeString('en-US', {
               <div class="agri-metric-value text-dark">${windGusts} km/h</div>
             </div>
          
-         <div class='agri-metric-tile'>
+        <!-- 9. వ్యవసాయ విద్యుత్ -->
+          <div class='agri-metric-tile'>
             <div class='agri-metric-label'>⚡ వ్యవసాయ విద్యుత్</div>
-            <div class='agri-metric-value text-green' id='drawerPwrStatus'>🟢 3-ఫేస్ ఆన్</div>
+            <div class='agri-metric-value ${((new Date().getHours() >= 6 && new Date().getHours() < 12) || (new Date().getHours() >= 20 || new Date().getHours() < 2)) ? "text-green" : "text-red"}'>
+              ${((new Date().getHours() >= 6 && new Date().getHours() < 12) || (new Date().getHours() >= 20 || new Date().getHours() < 2)) ? "🟢 3-ఫేస్ ఆన్" : "🔴 పవర్ ఆఫ్"}
+            </div>
           </div>
 
           <div class='agri-metric-tile'>
