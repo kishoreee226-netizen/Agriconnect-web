@@ -1,5 +1,5 @@
 (async function loadChc() {
-  const dir = 'utilities/chc_rental/';
+  const dir = 'utilities/chc/';
 
   if (!document.getElementById('chc-style')) {
     const link = document.createElement('link');
