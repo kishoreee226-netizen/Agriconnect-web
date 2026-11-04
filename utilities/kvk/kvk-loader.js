@@ -1,5 +1,5 @@
 (async function loadKvk() {
-  const dir = 'utilities/kvk_scientist/';
+  const dir = 'utilities/kvk/';
 
   if (!document.getElementById('kvk-style')) {
     const link = document.createElement('link');
