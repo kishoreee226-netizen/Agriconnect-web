@@ -1142,7 +1142,8 @@ if (d && d.daily && d.daily.sunrise && d.daily.sunset) {
 
     const gwEl = document.getElementById('drawerWaterTableVal');
     if (gwEl) {
-      gwEl.innerText = (sm9_27 && sm9_27 !== '--' && sm9_27 > 50) ? '45-60 అడుగులు' : '65-80 అడుగులు';
+      gwEl.innerText = ((typeof sm27_100 !== 'undefined' && sm27_100 > 45) || (sm9_27 && sm9_27 !== '--' && sm9_27 > 50)) ? '45-60 అడుగులు' : '65-80 అడుగులు';
+
     }
 
       // 9. వర్ష సూచన
