@@ -1,8 +1,9 @@
+// utilities/kvk/kvk.js
 (function setupKvkLogic() {
   document.addEventListener('click', function (e) {
     if (e.target && e.target.id === 'kvkPortalBtn') {
-      // Official ICAR KVK Portal
-      window.open('https://kvk.icar.gov.in/', '_blank');
+      // ICAR Krishi Vigyan Kendra Portal
+      window.open('https://icar.org.in/krishi-vigyan-kendras', '_blank');
     }
   });
 })();
