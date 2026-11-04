@@ -10,7 +10,7 @@
   document.currentScript.parentNode.insertBefore(box, document.currentScript);
 
   // 2. Kothavi add chesinappudu kevalam peru matrame rayali (sub-loader lines avasaram ledu)
-  const features = ['dharani', 'pmfby', 'warehouse', 'chc_rental', 'kvk_scientist'];
+  const features = ['dharani', 'pmfby', 'warehouse', 'chc', 'kvk'];
 
   // 3. Automatic ga anni sub-loaders ni call cheyadam
   features.forEach(name => {
