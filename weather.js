@@ -175,8 +175,8 @@ window.renderWeatherWidget = async function() {
     const d = data.daily;
     const isDay = c.is_day === 1;
    
- // Live Rain Detection (Automatic Effect)
-        const isRainingNow = (Number(c.rain || 0) >= 0.1) || (Number(c.precipitation || 0) >= 0.1);
+     // Live Rain Detection (Kevalam nijamga ground rain padithe ne ON avvali)
+    const isRainingNow = Number(c.rain || 0) > 0.1;
 
     if (isRainingNow) {
       startLiveRainEffect(40);
