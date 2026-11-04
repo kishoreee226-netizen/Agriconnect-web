@@ -1,26 +1,117 @@
 #agriUtilitiesBox {
   padding: 8px 12px;
-  margin: 8px 0;
+  margin: 10px 0;
 }
 
 .agri-util-header {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #1b5e20;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
+/* 2x3 Uniform Grid */
 #agriUtilitiesGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 8px;
 }
 
-@media (max-width: 340px) {
-  #agriUtilitiesGrid {
-    grid-template-columns: 1fr;
-  }
+/* Prathi card oke size mariyu uniform look kosam common styles */
+#agriUtilitiesGrid > div {
+  height: 100%;
+  display: flex;
+}
+
+#agriUtilitiesGrid .dharani-card,
+#agriUtilitiesGrid .pmfby-card,
+#agriUtilitiesGrid .warehouse-card,
+#agriUtilitiesGrid .chc-card,
+#agriUtilitiesGrid .kvk-card {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  min-height: 125px;
+  max-height: 135px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Card titles compact ga undadaniki */
+#agriUtilitiesGrid h4,
+#agriUtilitiesGrid .chc-title,
+#agriUtilitiesGrid .kvk-title,
+#agriUtilitiesGrid .util-title {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Sub-text ni single line / compact cheyadam */
+#agriUtilitiesGrid p,
+#agriUtilitiesGrid .chc-desc,
+#agriUtilitiesGrid .kvk-desc {
+  font-size: 10px !important;
+  color: #64748b !important;
+  margin: 4px 0 !important;
+  line-height: 1.2 !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Buttons container - horizontal row ga compact ga undadaniki */
+#agriUtilitiesGrid .chc-actions,
+#agriUtilitiesGrid .kvk-actions,
+#agriUtilitiesGrid .util-actions,
+#agriUtilitiesGrid .btn-group {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 4px !important;
+  margin-top: auto !important;
+}
+
+/* Buttons size smart tools laga compact ga cheyadam */
+#agriUtilitiesGrid button,
+#agriUtilitiesGrid a.chc-btn,
+#agriUtilitiesGrid a.kvk-btn,
+#agriUtilitiesGrid .util-btn {
+  font-size: 10px !important;
+  padding: 5px 6px !important;
+  border-radius: 6px !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  overflow: hidden !important;
+  text-align: center !important;
+  flex: 1 !important;
+}
+
+/* Dharani input box layout fix */
+#agriUtilitiesGrid .dharani-input-group {
+  display: flex !important;
+  gap: 4px !important;
+  margin-top: auto !important;
+}
+
+#agriUtilitiesGrid .dharani-input-group input {
+  font-size: 10px !important;
+  padding: 4px 6px !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  border-radius: 6px !important;
+}
+
+#agriUtilitiesGrid .dharani-input-group button {
+  padding: 4px 8px !important;
+  flex: 0 0 auto !important;
 }
