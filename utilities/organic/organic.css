@@ -1,13 +1,11 @@
 .organic-card {
   box-sizing: border-box;
 }
-
 .organic-btn.btn-primary {
   background: #2e7d32;
   color: #ffffff;
   border: none;
 }
-
 .organic-btn.btn-secondary {
   background: #f1f8e9;
   color: #1b5e20;
