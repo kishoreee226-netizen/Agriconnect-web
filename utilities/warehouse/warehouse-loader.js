@@ -20,8 +20,8 @@
       wrapper.className = 'warehouse-card-wrapper';
       wrapper.innerHTML = htmlText;
 
-      const grid = document.getElementById('agriUtilitiesGrid');
-      if (grid) grid.appendChild(wrapper);
+      const slot = document.getElementById('slot-warehouse');
+      if (slot) slot.appendChild(wrapper);
     }
   } catch (err) {
     console.error('Warehouse HTML load failed:', err);
