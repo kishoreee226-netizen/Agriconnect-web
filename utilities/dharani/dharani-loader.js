@@ -20,8 +20,9 @@
       wrapper.className = 'dharani-card-wrapper';
       wrapper.innerHTML = htmlText;
 
-      const grid = document.getElementById('agriUtilitiesGrid');
-      if (grid) grid.appendChild(wrapper);
+      // Dharani Slot లోకి నేరుగా అటాచ్ చేయడం
+      const slot = document.getElementById('slot-dharani');
+      if (slot) slot.appendChild(wrapper);
     }
   } catch (err) {
     console.error('Dharani HTML load failed:', err);
