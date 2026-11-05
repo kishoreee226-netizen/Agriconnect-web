@@ -1,6 +1,7 @@
 (async function loadKcc() {
   const dir = 'utilities/kcc/';
 
+  // 1. CSS Injection
   if (!document.getElementById('kcc-style')) {
     const link = document.createElement('link');
     link.id = 'kcc-style';
@@ -9,6 +10,7 @@
     document.head.appendChild(link);
   }
 
+  // 2. HTML Injection
   try {
     const res = await fetch(`${dir}kcc.html?v=${Date.now()}`);
     if (res.ok) {
@@ -17,9 +19,11 @@
       wrapper.className = 'kcc-card-wrapper';
       wrapper.innerHTML = htmlText;
 
-      const grid = document.getElementById('agriUtilitiesGrid');
-      if (grid) grid.appendChild(wrapper);
+      // Slot Injection
+      const slot = document.getElementById('slot-kcc');
+      if (slot) slot.appendChild(wrapper);
 
+      // 3. JS Injection
       const s = document.createElement('script');
       s.src = `${dir}kcc.js?v=${Date.now()}`;
       document.body.appendChild(s);
