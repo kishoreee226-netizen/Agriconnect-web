@@ -1,6 +1,7 @@
 (async function loadChc() {
   const dir = 'utilities/chc/';
 
+  // 1. CSS Injection
   if (!document.getElementById('chc-style')) {
     const link = document.createElement('link');
     link.id = 'chc-style';
@@ -9,6 +10,7 @@
     document.head.appendChild(link);
   }
 
+  // 2. HTML Injection
   try {
     const res = await fetch(`${dir}chc.html?v=${Date.now()}`);
     if (res.ok) {
@@ -17,13 +19,15 @@
       wrapper.className = 'chc-card-wrapper';
       wrapper.innerHTML = htmlText;
 
-      const grid = document.getElementById('agriUtilitiesGrid');
-      if (grid) grid.appendChild(wrapper);
+      // Slot Injection
+      const slot = document.getElementById('slot-chc');
+      if (slot) slot.appendChild(wrapper);
     }
   } catch (err) {
     console.error('CHC HTML load failed:', err);
   }
 
+  // 3. JS Injection
   const script = document.createElement('script');
   script.src = `${dir}chc.js?v=${Date.now()}`;
   document.body.appendChild(script);
