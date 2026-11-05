@@ -31,11 +31,32 @@
     console.error('Utilities layout loading failed:', err);
   }
 
-  // 3. Sub-loaders Calling
-  const features = ['dharani', 'pmfby', 'warehouse', 'chc', 'kvk', 'soil',  'pmkisan', 'dealers', 'pashu', 'kcc', 'farmerid', 'mandi'];
-  features.forEach(name => {
-    const s = document.createElement('script');
-    s.src = `${dir}${name}/${name}-loader.js?v=${Date.now()}`;
-    document.body.appendChild(s);
-  });
+  // 3. Sub-loaders Calling (Fixed Order Loading)
+  const features = [
+    'dharani',
+    'pmfby',
+    'warehouse',
+    'chc',
+    'kvk',
+    'soil',
+    'pmkisan',
+    'dealers',
+    'pashu',
+    'kcc',
+    'farmerid',
+    'mandi'
+  ];
+
+  for (const name of features) {
+    await new Promise((resolve) => {
+      const s = document.createElement('script');
+      s.src = `${dir}${name}/${name}-loader.js?v=${Date.now()}`;
+      s.onload = () => resolve();
+      s.onerror = () => {
+        console.error(`Failed to load module: ${name}`);
+        resolve(); // ఒకటి లోడ్ కాకపోయినా నెక్స్ట్ కార్డు ఆగిపోకుండా ముందుకు వెళ్తుంది
+      };
+      document.body.appendChild(s);
+    });
+  }
 })();
