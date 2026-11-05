@@ -44,7 +44,9 @@
     'pashu',
     'kcc',
     'farmerid',
-    'mandi'
+    'mandi',
+    'kusum',
+    'organic'
   ];
 
   for (const name of features) {
