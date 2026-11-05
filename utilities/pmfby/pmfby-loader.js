@@ -20,8 +20,9 @@
       wrapper.className = 'pmfby-card-wrapper';
       wrapper.innerHTML = htmlText;
 
-      const grid = document.getElementById('agriUtilitiesGrid');
-      if (grid) grid.appendChild(wrapper);
+      // PMFBY Slot లోకి నేరుగా అటాచ్ చేయడం
+      const slot = document.getElementById('slot-pmfby');
+      if (slot) slot.appendChild(wrapper);
     }
   } catch (err) {
     console.error('PMFBY HTML load failed:', err);
