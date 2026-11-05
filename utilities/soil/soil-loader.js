@@ -1,6 +1,7 @@
 (async function loadSoil() {
   const dir = 'utilities/soil/';
 
+  // 1. CSS Injection
   if (!document.getElementById('soil-style')) {
     const link = document.createElement('link');
     link.id = 'soil-style';
@@ -9,6 +10,7 @@
     document.head.appendChild(link);
   }
 
+  // 2. HTML Injection
   try {
     const res = await fetch(`${dir}soil.html?v=${Date.now()}`);
     if (res.ok) {
@@ -17,9 +19,11 @@
       wrapper.className = 'soil-card-wrapper';
       wrapper.innerHTML = htmlText;
 
-      const grid = document.getElementById('agriUtilitiesGrid');
-      if (grid) grid.appendChild(wrapper);
+      // Soil Slot loki inject cheyadam
+      const slot = document.getElementById('slot-soil');
+      if (slot) slot.appendChild(wrapper);
 
+      // 3. JS Injection (Card attach aina tarvathe run avuthundhi)
       const s = document.createElement('script');
       s.src = `${dir}soil.js?v=${Date.now()}`;
       document.body.appendChild(s);
