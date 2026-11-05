@@ -1,30 +1,12 @@
 (function setupDharaniLogic() {
-  function handleSearch() {
-    const input = document.getElementById('dharaniSearchInput');
-    const notice = document.getElementById('dharaniNotice');
-    if (!input) return;
-
-    const query = input.value.trim();
-    if (!query) {
-      if (notice) notice.innerText = 'దయచేసి సర్వే లేదా ఖాతా నంబరు నమోదు చేయండి';
-      return;
-    }
-
-    if (notice) notice.innerText = '';
-    // Official Dharani Portal launch
-    window.open(`https://dharani.telangana.gov.in/knowLandStatus?query=${encodeURIComponent(query)}`, '_blank');
-  }
-
-  // Event Listeners (Event delegation to ensure elements are loaded)
   document.addEventListener('click', function (e) {
-    if (e.target && e.target.id === 'dharaniSearchBtn') {
-      handleSearch();
+    // 1. Telangana Land Records (CCLA Official Portal)
+    if (e.target && e.target.id === 'dharaniTelanganaBtn') {
+      window.open('https://ccla.telangana.gov.in/', '_blank', 'noopener,noreferrer');
     }
-  });
-
-  document.addEventListener('keypress', function (e) {
-    if (e.target && e.target.id === 'dharaniSearchInput' && e.key === 'Enter') {
-      handleSearch();
+    // 2. All India Central Land Records Directory (Digital India Land Records)
+    if (e.target && e.target.id === 'dharaniAllStatesBtn') {
+      window.open('https://dilrmp.gov.in/', '_blank', 'noopener,noreferrer');
     }
   });
 })();
