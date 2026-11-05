@@ -32,7 +32,7 @@
   }
 
   // 3. Sub-loaders Calling
-  const features = ['dharani', 'pmfby', 'warehouse', 'chc', 'kvk', 'soil',  'pmkisan', 'dealers', 'pashu', 'kcc', 'farmerid'];
+  const features = ['dharani', 'pmfby', 'warehouse', 'chc', 'kvk', 'soil',  'pmkisan', 'dealers', 'pashu', 'kcc', 'farmerid', 'mandi'];
   features.forEach(name => {
     const s = document.createElement('script');
     s.src = `${dir}${name}/${name}-loader.js?v=${Date.now()}`;
