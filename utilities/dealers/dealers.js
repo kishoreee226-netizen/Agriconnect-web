@@ -1,13 +1,13 @@
 // utilities/dealers/dealers.js
 (function setupDealersLogic() {
   document.addEventListener('click', function (e) {
-    // 1. Department of Fertilizers - Working Official Portal (.gov.in)
+    // 1. Direct Dealer Directory (Kisan Suvidha Dealer Locator)
     if (e.target && e.target.id === 'dealersFindBtn') {
-      window.open('https://fert.gov.in/', '_blank', 'noopener,noreferrer');
+      window.open('https://kisansuvidha.gov.in/dealer.aspx', '_blank', 'noopener,noreferrer');
     }
-    // 2. Public DBT Fertilizer Report & Stock Availability Dashboard
+    // 2. Official Fertilizer Booking (IFFCO Bazar)
     if (e.target && e.target.id === 'dealersStockBtn') {
-      window.open('https://urvarak.nic.in/opendata', '_blank', 'noopener,noreferrer');
+      window.open('https://www.iffcobazar.in/', '_blank', 'noopener,noreferrer');
     }
   });
 })();
