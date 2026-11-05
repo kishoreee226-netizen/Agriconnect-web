@@ -1,0 +1,77 @@
+/* utilities/organic/organic.css */
+
+.organic-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.organic-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.organic-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.organic-desc {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  flex-grow: 1;
+}
+
+.organic-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.organic-btn {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+  text-align: center;
+}
+
+/* Primary Button - Jaivik Kheti (Organic Forest Green) */
+.organic-btn.btn-primary {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.organic-btn.btn-primary:hover {
+  background-color: #166534;
+}
+
+/* Secondary Button - Natural Farming */
+.organic-btn.btn-secondary {
+  background-color: #f1f5f9;
+  color: #334155;
+  border: 1px solid #cbd5e1;
+}
+
+.organic-btn.btn-secondary:hover {
+  background-color: #e2e8f0;
+}
