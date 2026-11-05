@@ -1,0 +1,15 @@
+.mandi-card {
+  box-sizing: border-box;
+}
+
+.mandi-btn.btn-primary {
+  background: #2e7d32;
+  color: #ffffff;
+  border: none;
+}
+
+.mandi-btn.btn-secondary {
+  background: #f1f8e9;
+  color: #1b5e20;
+  border: 1px solid #c8e6c9;
+}
