@@ -1,11 +1,11 @@
 // utilities/mandi/mandi.js
 (function setupMandiLogic() {
   document.addEventListener('click', function (e) {
-    // 1. కేంద్ర ప్రభుత్వ నిత్యావసర & పంట ధరల పర్యవేక్షణ పోర్టల్ (Mobile Friendly)
+    // 1. కేంద్ర వ్యవసాయ & రైతు సంక్షేమ శాఖ అధికారిక పోర్టల్ (100% Working)
     if (e.target && e.target.id === 'mandiLiveBtn') {
-      window.open('https://consumeraffairs.nic.in/en/price-monitoring-cell', '_blank', 'noopener,noreferrer');
+      window.open('https://farmer.gov.in/', '_blank', 'noopener,noreferrer');
     }
-    // 2. Agmarknet 2.0 Live Price Search Portal (Working)
+    // 2. Agmarknet 2.0 లైవ్ మార్కెట్ ధరల శోధన (Working)
     if (e.target && e.target.id === 'mandiAgmarkBtn') {
       window.open('https://agmarknet.gov.in/', '_blank', 'noopener,noreferrer');
     }
