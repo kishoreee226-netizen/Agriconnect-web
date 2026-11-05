@@ -5,9 +5,9 @@
     if (e.target && e.target.id === 'mandiLiveBtn') {
       window.open('https://agmarknet.gov.in/', '_blank', 'noopener,noreferrer');
     }
-    // 2. భారత ప్రభుత్వ అధికారిక అగ్రికల్చర్ పోర్టల్ (India.gov.in - Guaranteed Working)
-    if (e.target && e.target.id === 'mandiAgmarkBtn') {
-      window.open('https://www.india.gov.in/topics/agriculture', '_blank', 'noopener,noreferrer');
+    // 2. PM కిసాన్ మాన్‌ధన్ యోజన అధికారిక పోర్టల్
+    if (e.target && e.target.id === 'mandiMandhanBtn') {
+      window.open('https://maandhan.in/', '_blank', 'noopener,noreferrer');
     }
   });
 })();
