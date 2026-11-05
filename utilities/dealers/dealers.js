@@ -1,13 +1,13 @@
 // utilities/dealers/dealers.js
 (function setupDealersLogic() {
   document.addEventListener('click', function (e) {
-    // 1. Direct Dealer Directory (Kisan Suvidha Dealer Locator)
+    // 1. Kisan Suvidha Central Agriculture Portal (Working Root)
     if (e.target && e.target.id === 'dealersFindBtn') {
-      window.open('https://kisansuvidha.gov.in/dealer.aspx', '_blank', 'noopener,noreferrer');
+      window.open('https://kisansuvidha.gov.in/', '_blank', 'noopener,noreferrer');
     }
-    // 2. Official Fertilizer Booking (IFFCO Bazar)
+    // 2. IFFCO Bazar Official Farmer Portal (Without www)
     if (e.target && e.target.id === 'dealersStockBtn') {
-      window.open('https://www.iffcobazar.in/', '_blank', 'noopener,noreferrer');
+      window.open('https://iffcobazar.in/', '_blank', 'noopener,noreferrer');
     }
   });
 })();
