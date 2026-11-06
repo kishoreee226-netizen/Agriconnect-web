@@ -1,0 +1,24 @@
+<!-- 1. గ్రిడ్ కార్డ్ -->
+<div class="pest-card-content tool-card" onclick="showToolModal('pest')">
+  <div class="tool-card-top">
+    <div class="tool-icon-box">🔬</div>
+    <span class="badge-tag badge-orange">నివారణ</span>
+  </div>
+  <div class="tool-title">పంట తెగుళ్లు</div>
+  <div class="tool-sub-primary clr-orange">లక్షణాలు & మందులు</div>
+  <div class="tool-sub-desc">దేశీ కషాయాలు</div>
+</div>
+
+<!-- 2. మోడల్ ప్యానెల్ -->
+<div class="pest-modal-panel">
+  <div class="card-row-between mb-8">
+    <div class="modal-subtitle mb-0">పంట తెగుళ్లు & నివారణ చికిత్స:</div>
+    <select id="pestCropSelect" onchange="filterPestDetails(this.value)" class="action-input auto-width-select">
+      <option value="chilli">మిర్చి</option>
+      <option value="paddy">వరి</option>
+      <option value="cotton">పత్తి</option>
+      <option value="maize">మొక్కజొన్న</option>
+    </select>
+  </div>
+  <div id="pestCardsList"></div>
+</div>
