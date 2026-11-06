@@ -1,0 +1,116 @@
+/* Crop Doctor Module Specific Styles */
+.crop-upload-box {
+  border: 2px dashed #16a34a;
+  background: #f0fdf4;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.crop-upload-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.btn-upload-trigger {
+  width: auto;
+  padding: 8px 18px;
+  font-size: 13px;
+  margin: 0 auto;
+}
+
+.crop-preview-img {
+  display: none;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #d1d5db;
+}
+
+.scan-loading-box {
+  display: none;
+  text-align: center;
+  padding: 12px;
+  color: #166534;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.diag-res-card {
+  display: none;
+  margin-top: 12px;
+}
+
+.diag-title {
+  color: #b91c1c;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.diag-desc {
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.treatment-box {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.treatment-chem {
+  background: #f0fdf4;
+  border-left: 4px solid #16a34a;
+}
+
+.treatment-chem-title {
+  color: #166534;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.treatment-organic {
+  background: #fffbeb;
+  border-left: 4px solid #f59e0b;
+}
+
+.treatment-organic-title {
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.treatment-text {
+  font-size: 12px;
+  color: #1f2937;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.btn-voice-crop {
+  width: 100%;
+  background: #1b5e20;
+  color: #ffffff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 3px 6px rgba(27, 94, 32, 0.25);
+  margin-top: 8px;
+}
+
+.btn-voice-crop:active {
+  background: #2e7d32;
+  transform: scale(0.98);
+}
