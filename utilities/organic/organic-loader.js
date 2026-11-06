@@ -11,18 +11,14 @@
     document.head.appendChild(link);
   }
 
-  // 2. HTML Injection
+  // 2. HTML Injection (Direct Slot Injection)
   try {
     const res = await fetch(`${dir}organic.html?v=${Date.now()}`);
     if (res.ok) {
-      const htmlText = await res.text();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'organic-card-wrapper';
-      wrapper.innerHTML = htmlText;
-
-      // Slot Injection
       const slot = document.getElementById('slot-organic');
-      if (slot) slot.appendChild(wrapper);
+      if (slot) {
+        slot.innerHTML = await res.text();
+      }
 
       // 3. JS Injection
       const script = document.createElement('script');
