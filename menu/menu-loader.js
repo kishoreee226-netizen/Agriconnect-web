@@ -16,7 +16,7 @@
     document.head.appendChild(link);
   }
 
-  // 2. Fetch & Mount menu.html
+  // 2. Fetch & Mount menu components
   async function mountMenu() {
     try {
       const res = await fetch(`${basePath}menu.html?v=${Date.now()}`);
@@ -28,12 +28,31 @@
       container.innerHTML = html;
       document.body.appendChild(container);
 
-      // 3. Load menu.js logic
+      // 3. Inject Hamburger Button directly into existing Header
+      const targetHeader = document.querySelector('header') || 
+                           document.querySelector('.header') || 
+                           document.querySelector('#app-header') ||
+                           document.querySelector('.container');
+
+      if (targetHeader && !document.getElementById('agriMenuTriggerBtn')) {
+        const btn = document.createElement('button');
+        btn.id = 'agriMenuTriggerBtn';
+        btn.type = 'button';
+        btn.className = 'header-menu-btn';
+        btn.setAttribute('onclick', 'openAgriMenu()');
+        btn.setAttribute('aria-label', 'Open Menu');
+        btn.innerHTML = '☰';
+        
+        // Header lopala right side ki button ni append chesthundi
+        targetHeader.appendChild(btn);
+      }
+
+      // 4. Load menu.js logic
       const script = document.createElement('script');
       script.src = `${basePath}menu.js?v=${Date.now()}`;
       document.body.appendChild(script);
 
-      console.log("✅ AgriConnect Hamburger Menu Mounted.");
+      console.log("✅ AgriConnect Hamburger Button & Drawer Auto-Mounted successfully.");
     } catch (err) {
       console.error("Menu loading error:", err);
     }
