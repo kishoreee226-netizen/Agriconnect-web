@@ -1,0 +1,38 @@
+<!-- 1. గ్రిడ్ కార్డ్ -->
+<div class="measure-card-content tool-card" onclick="showToolModal('measure')">
+  <div class="tool-card-top">
+    <div class="tool-icon-box">📐</div>
+    <span class="badge-tag badge-blue">GPS</span>
+  </div>
+  <div class="tool-title">పొలం కొలత</div>
+  <div class="tool-sub-primary clr-blue">ఎకరాలు & గుంటలు</div>
+  <div class="tool-sub-desc">మ్యాప్ & గట్ల కొలత</div>
+</div>
+
+<!-- 2. మోడల్ ప్యానెల్ -->
+<div class="measure-modal-panel">
+  <div class="card-row-between mb-8">
+    <span class="modal-subtitle mb-0">గ్రిడ్ పై ట్యాప్ చేయండి లేదా GPS తో కొలవండి:</span>
+    <button onclick="resetMeasureGrid()" class="clr-red btn-text">రీసెట్</button>
+  </div>
+
+  <div id="measureCanvasBox" onclick="addGridPoint(event)" class="canvas-wrapper">
+    <div id="gridPlaceholderText" class="canvas-placeholder">
+      పొలం 4 మూలల వద్ద స్క్రీన్ పై ట్యాప్ చేయండి
+    </div>
+  </div>
+
+  <div class="stat-grid-3 mt-12">
+    <div class="stat-box"><div class="stat-val" id="valAcres">0.00</div><div class="stat-lbl">ఎకరాలు (ACRES)</div></div>
+    <div class="stat-box"><div class="stat-val" id="valGuntas">0.0</div><div class="stat-lbl">గుంటలు (GUNTAS)</div></div>
+    <div class="stat-box"><div class="stat-val" id="valCents">0.0</div><div class="stat-lbl">సెంట్లు (CENTS)</div></div>
+  </div>
+
+  <div class="gps-box">
+    <div>
+      <div class="font-bold">🚶 లైవ్ GPS వాక్ మోడ్</div>
+      <div id="gpsStatus" class="card-location-text">గట్ల వెంట నడుస్తుంటే GPS పాయింట్లు తీసుకుంటుంది</div>
+    </div>
+    <button id="gpsBtn" onclick="toggleGpsWalk()" class="btn-gps-active">GPS స్టార్ట్</button>
+  </div>
+</div>
