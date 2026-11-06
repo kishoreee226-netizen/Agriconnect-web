@@ -19,7 +19,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  align-items: stretch; /* రో లోని రెండు కార్డులు ఒకే ఎత్తులో సాగడానికి */
+  align-items: stretch;
 }
 
 /* 1. స్లాట్ div లు గ్రిడ్ సెల్ పూర్తి ఎత్తును తీసుకోవాలి */
@@ -44,7 +44,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-/* 3. టైటిల్స్ అన్నీ ఖచ్చితంగా 2 లైన్ల ఎత్తును స్థిరంగా రిజర్వ్ చేసుకుంటాయి */
+/* 3. టైటిల్స్ అన్నీ ఖచ్చితంగా ఒకే స్థిరమైన ఎత్తులో ఉంటాయి */
 #agriUtilitiesGrid h4,
 #agriUtilitiesGrid [class*="-title"] {
   font-size: 11px !important;
@@ -52,19 +52,19 @@
   color: #1e293b !important;
   margin: 0 0 4px 0 !important;
   line-height: 1.25 !important;
-  min-height: 28px !important; /* 1 లైన్ అయినా 2 లైన్లు అయినా ఒకే ఎత్తు */
+  min-height: 30px !important;
   display: flex;
   align-items: flex-start;
 }
 
-/* 4. డిస్క్రిప్షన్ ఎత్తు స్థిరీకరణ (2 లైన్లకు ఫిక్స్) */
+/* 4. డిస్క్రిప్షన్ ఎత్తు స్థిరీకరణ */
 #agriUtilitiesGrid p,
 #agriUtilitiesGrid [class*="-desc"] {
   font-size: 9.5px !important;
   color: #64748b !important;
   margin: 0 0 8px 0 !important;
   line-height: 1.3 !important;
-  height: 25px !important; /* అన్ని కార్డులలో టెక్స్ట్ బాక్స్ ఎత్తు సమానం */
+  min-height: 25px !important;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -81,20 +81,20 @@
   flex-direction: column !important;
   gap: 5px !important;
   width: 100% !important;
-  margin-top: auto !important; /* పైన టెక్స్ట్ తక్కువ ఉన్నా బటన్లు కిందకే ఉంటాయి */
+  margin-top: auto !important;
 }
 
-/* 6. బటన్ల సైజులు & ఎత్తు స్థిరీకరణ */
+/* 6. బటన్లు సహజమైన ప్యాడింగ్‌తో విశాలంగా, సమానంగా కనిపించే అమరిక */
 #agriUtilitiesGrid button,
 #agriUtilitiesGrid a[class*="-btn"],
 #agriUtilitiesGrid .util-btn,
 #agriUtilitiesGrid [class*="-btn"] {
   width: 100% !important;
-  height: 28px !important; /* అన్ని బటన్లు ఒకే హైట్ */
+  min-height: 32px !important; /* సన్నగా నొక్కుకుపోకుండా స్థిరమైన ఎత్తు */
   box-sizing: border-box !important;
   font-size: 10px !important;
   font-weight: 600 !important;
-  padding: 0 4px !important;
+  padding: 6px 4px !important;  /* తగినంత నిలువు స్థలం ఇస్తుంది */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -105,12 +105,13 @@
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
+  flex-shrink: 0 !important;   /* ఎట్టి పరిస్థితుల్లోనూ బటన్ కుదించబడదు */
 }
 
 /* Dharani Input బాక్స్ బటన్ల వరుసకు సరిపోయేలా అమరిక */
 #agriUtilitiesGrid .dharani-input-group input {
   width: 100% !important;
-  height: 28px !important;
+  min-height: 32px !important;
   box-sizing: border-box !important;
   font-size: 9.5px !important;
   padding: 4px 6px !important;
