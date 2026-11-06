@@ -1,0 +1,25 @@
+/* Pest Module Specific Styles */
+.auto-width-select {
+  width: auto;
+  margin: 0;
+  padding: 4px 8px;
+}
+
+.treatment-organic {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin: 6px 0;
+  font-size: 0.75rem;
+  color: #15803d;
+}
+
+.treatment-chemical {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: #0369a1;
+}
