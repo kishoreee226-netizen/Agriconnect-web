@@ -10,18 +10,14 @@
     document.head.appendChild(link);
   }
 
-  // 2. HTML Injection
+  // 2. HTML Injection (Direct Slot Injection)
   try {
     const res = await fetch(`${dir}soil.html?v=${Date.now()}`);
     if (res.ok) {
-      const htmlText = await res.text();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'soil-card-wrapper';
-      wrapper.innerHTML = htmlText;
-
-      // Soil Slot loki inject cheyadam
       const slot = document.getElementById('slot-soil');
-      if (slot) slot.appendChild(wrapper);
+      if (slot) {
+        slot.innerHTML = await res.text();
+      }
 
       // 3. JS Injection (Card attach aina tarvathe run avuthundhi)
       const s = document.createElement('script');
