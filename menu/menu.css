@@ -1,4 +1,10 @@
-/* ================= HEADER TRIGGER BUTTON ================= */
+/* ==========================================================================
+   AGRICONNECT - HAMBURGER DRAWER & BOTTOM SHEET MODULE STYLES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   SECTION 1: HEADER TRIGGER BUTTON (మెయిన్ హెడర్‌లోని ☰ బటన్)
+   -------------------------------------------------------------------------- */
 .header-menu-btn {
   background: transparent;
   border: none;
@@ -7,6 +13,7 @@
   cursor: pointer;
   line-height: 1;
   padding: 4px 8px;
+  margin-left: auto; /* హెడర్‌లో కుడివైపు చివరకు నెడుతుంది */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -18,9 +25,9 @@
   transform: scale(0.92);
 }
 
-/* ================= HAMBURGER DRAWER & BOTTOM SHEET STYLES ================= */
-
-/* Drawer Overlay */
+/* --------------------------------------------------------------------------
+   SECTION 2: DRAWER OVERLAY (వెనుక వైపు వచ్చే డార్క్ బ్లర్ స్క్రీన్)
+   -------------------------------------------------------------------------- */
 .menu-overlay {
   display: none;
   position: fixed;
@@ -37,7 +44,9 @@
   opacity: 1;
 }
 
-/* Sliding Drawer */
+/* --------------------------------------------------------------------------
+   SECTION 3: SLIDING DRAWER PANEL (కుడి నుండి ఎడమకు స్లైడ్ అయ్యే ప్యానెల్)
+   -------------------------------------------------------------------------- */
 .drawer-panel {
   position: fixed;
   top: 0;
@@ -58,7 +67,9 @@
   right: 0;
 }
 
-/* Drawer Header */
+/* --------------------------------------------------------------------------
+   SECTION 4: DRAWER HEADER (డ్రాయర్ లోపలి గ్రీన్ హెడర్ బార్)
+   -------------------------------------------------------------------------- */
 .drawer-header {
   background-color: #1b4332;
   color: #ffffff;
@@ -93,11 +104,13 @@
   line-height: 1;
 }
 
-/* Clean Minimal Text List (No Cards, No Backgrounds) */
+/* --------------------------------------------------------------------------
+   SECTION 5: COMPACT APP NAVIGATION LIST (ఆప్షన్ల మధ్య గ్యాప్ తగ్గించిన లిస్ట్)
+   -------------------------------------------------------------------------- */
 .drawer-nav-list {
-  padding: 10px 18px;
+  padding: 6px 12px;
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* ఎక్కువ ఆప్షన్లు వస్తే సులభంగా స్క్రోల్ అవుతుంది */
   display: flex;
   flex-direction: column;
 }
@@ -106,18 +119,20 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 15px 4px;
+  padding: 9px 8px; /* 15px నుండి 9px కి తగ్గించి కాంపాక్ట్ చేసాము */
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
   background: transparent !important;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+  border-radius: 8px;
+  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
 }
 
 .drawer-nav-item:active {
-  opacity: 0.6;
-  transform: translateX(4px);
+  background-color: #f8fafc !important;
+  opacity: 0.7;
+  transform: translateX(3px);
 }
 
 .drawer-nav-item:last-child {
@@ -125,9 +140,11 @@
 }
 
 .nav-icon-text {
-  font-size: 19px;
+  font-size: 18px;
   line-height: 1;
   flex-shrink: 0;
+  width: 24px;
+  text-align: center;
 }
 
 .nav-text-col {
@@ -136,31 +153,37 @@
 }
 
 .nav-label {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #1e293b;
+  line-height: 1.2;
 }
 
 .nav-sub {
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
   margin-top: 2px;
+  line-height: 1.2;
 }
 
 .legal-link {
   color: inherit;
 }
 
-/* Drawer Footer */
+/* --------------------------------------------------------------------------
+   SECTION 6: DRAWER FOOTER (డ్రాయర్ అడుగు భాగంలోని సమాచారం)
+   -------------------------------------------------------------------------- */
 .drawer-footer {
-  padding: 16px;
+  padding: 14px 16px;
   border-top: 1px solid #f1f5f9;
   text-align: center;
   font-size: 11.5px;
   color: #94a3b8;
 }
 
-/* ================= BOTTOM SHEET POPUP STYLES ================= */
+/* --------------------------------------------------------------------------
+   SECTION 7: BOTTOM SHEET OVERLAY (బాటమ్ షీట్ వెనుక వైపు డార్క్ బ్లర్)
+   -------------------------------------------------------------------------- */
 .bottom-sheet-overlay {
   display: none;
   position: fixed;
@@ -168,7 +191,7 @@
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
   z-index: 100000;
-  align-items: flex-end; /* Bottom nunchi ravali */
+  align-items: flex-end; /* కింద నుండి రావడానికి */
   justify-content: center;
   opacity: 0;
   transition: opacity 0.25s ease;
@@ -179,12 +202,15 @@
   opacity: 1;
 }
 
+/* --------------------------------------------------------------------------
+   SECTION 8: BOTTOM SHEET CONTAINER (పైకి లేచే బాటమ్ కార్డు)
+   -------------------------------------------------------------------------- */
 .bottom-sheet-container {
   background: #ffffff;
   width: 100%;
   max-width: 500px;
   max-height: 80vh;
-  border-radius: 20px 20px 0 0; /* Rounded top corners */
+  border-radius: 20px 20px 0 0; /* గుండ్రటి పై మూలలు */
   box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
@@ -194,10 +220,10 @@
 }
 
 .bottom-sheet-overlay.active .bottom-sheet-container {
-  transform: translateY(0); /* Bottom nunchi pai ki slide avthundi */
+  transform: translateY(0); /* కింద నుండి పైకి స్లైడ్ అవుతుంది */
 }
 
-/* Little touch pill handle on top */
+/* పైభాగంలో ఉండే చిన్న టచ్ హ్యాండిల్ బార్ */
 .bottom-sheet-handle-bar {
   width: 40px;
   height: 4px;
@@ -206,6 +232,9 @@
   margin: 10px auto 4px auto;
 }
 
+/* --------------------------------------------------------------------------
+   SECTION 9: BOTTOM SHEET HEADER & CLOSE BUTTON (బాటమ్ షీట్ హెడర్ & క్లోజ్)
+   -------------------------------------------------------------------------- */
 .bottom-sheet-header {
   padding: 10px 18px 12px 18px;
   border-bottom: 1px solid #e2e8f0;
@@ -235,6 +264,9 @@
   color: #475569;
 }
 
+/* --------------------------------------------------------------------------
+   SECTION 10: BOTTOM SHEET BODY (వివరణలు స్క్రోల్ అయ్యే భాగం)
+   -------------------------------------------------------------------------- */
 .bottom-sheet-body {
   padding: 16px 18px 24px 18px;
   font-size: 13.5px;
