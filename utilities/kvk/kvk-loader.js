@@ -10,18 +10,14 @@
     document.head.appendChild(link);
   }
 
-  // 2. HTML Injection
+  // 2. HTML Injection (Direct Slot Injection)
   try {
     const res = await fetch(`${dir}kvk.html?v=${Date.now()}`);
     if (res.ok) {
-      const htmlText = await res.text();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'kvk-card-wrapper';
-      wrapper.innerHTML = htmlText;
-
-      // KVK Slot lo inject cheyadam
       const slot = document.getElementById('slot-kvk');
-      if (slot) slot.appendChild(wrapper);
+      if (slot) {
+        slot.innerHTML = await res.text();
+      }
     }
   } catch (err) {
     console.error('KVK HTML load failed:', err);
