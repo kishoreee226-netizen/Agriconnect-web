@@ -1,0 +1,130 @@
+<!-- 1. గ్రిడ్ కార్డ్ (గ్రిడ్ స్లాట్ లోకి వెళ్తుంది) -->
+<div class="fertilizer-card-content tool-card" onclick="showToolModal('fertilizer')">
+  <div class="tool-card-top">
+    <div class="tool-icon-box">🧪</div>
+    <span class="badge-tag badge-pink">మోతాదు</span>
+  </div>
+  <div class="tool-title">ఎరువులు & విత్తనాలు</div>
+  <div class="tool-sub-primary clr-pink">ఖచ్చితమైన మోతాదు</div>
+  <div class="tool-sub-desc">ఎరువులు, విత్తనాలు & స్ప్రే ట్యాంక్</div>
+</div>
+
+<!-- 2. మోడల్ ప్యానెల్ (మోడల్ పాప్-అప్ లోకి వెళ్తుంది) -->
+<div class="fertilizer-modal-panel">
+  <!-- 3 Sub-Tabs Control -->
+  <div class="hub-tabs mb-12">
+    <button type="button" class="hub-tab active" onclick="switchFertSubTab('fert')">🌿 ఎరువులు</button>
+    <button type="button" class="hub-tab" onclick="switchFertSubTab('seed')">🌾 విత్తనాలు</button>
+    <button type="button" class="hub-tab" onclick="switchFertSubTab('spray')">💧 స్ప్రే ట్యాంక్</button>
+  </div>
+
+  <!-- TAB 1: ఎరువుల లెక్క -->
+  <div id="subtab-fert" class="fert-subtab-pane active">
+    <div class="modal-subtitle">ఖచ్చితమైన వ్యవసాయ ఎరువుల మోతాదు లెక్క</div>
+
+    <div class="grid-form-2 mb-12">
+      <div>
+        <label class="stat-lbl">పంటను ఎంచుకోండి:</label>
+        <select id="calcCropSelect" onchange="runFertilizerCalc()" class="action-input">
+          <option value="paddy">వరి (Paddy / Rice)</option>
+          <option value="cotton">పత్తి (Cotton)</option>
+          <option value="chilli">మిర్చి (Chilli)</option>
+          <option value="maize">మొక్కజొన్న (Maize)</option>
+        </select>
+      </div>
+      <div>
+        <label class="stat-lbl">ఎకరాలు:</label>
+        <input type="number" id="calcAcresInput" value="1" min="0.5" step="0.5" oninput="runFertilizerCalc()" class="action-input">
+      </div>
+    </div>
+
+    <div class="stat-grid-3">
+      <div class="stat-box">
+        <div class="stat-lbl">DAP బస్తాలు</div>
+        <div class="stat-val clr-red" id="dapVal">0.0</div>
+        <div class="stat-lbl">(50 kg బస్తాలు)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-lbl">యూరియా</div>
+        <div class="stat-val clr-green" id="ureaVal">0.0</div>
+        <div class="stat-lbl">(45 kg బస్తాలు)</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-lbl">పొటాష్ (MOP)</div>
+        <div class="stat-val clr-amber" id="potashVal">0.0</div>
+        <div class="stat-lbl">(50 kg బస్తాలు)</div>
+      </div>
+    </div>
+
+    <div class="tool-title my-8">ఎరువులు వేయవలసిన దశలు:</div>
+    <div class="demo-card-item">
+      <b id="stage1Title">దశ 1</b>
+      <p id="stage1Desc" class="card-location-text"></p>
+    </div>
+    <div class="demo-card-item">
+      <b id="stage2Title">దశ 2</b>
+      <p id="stage2Desc" class="card-location-text"></p>
+    </div>
+  </div>
+
+  <!-- TAB 2: విత్తనాల లెక్క -->
+  <div id="subtab-seed" class="fert-subtab-pane" style="display:none;">
+    <div class="modal-subtitle">ఎకరానికి సరిపడా విత్తనాల మోతాదు లెక్క</div>
+
+    <div class="grid-form-2 mb-12">
+      <div>
+        <label class="stat-lbl">పంటను ఎంచుకోండి:</label>
+        <select id="seedCropSelect" onchange="runSeedCalc()" class="action-input">
+          <option value="paddy">వరి (Paddy / Rice)</option>
+          <option value="cotton">పత్తి (Cotton)</option>
+          <option value="chilli">మిర్చి (Chilli)</option>
+          <option value="maize">మొక్కజొన్న (Maize)</option>
+        </select>
+      </div>
+      <div>
+        <label class="stat-lbl">ఎకరాలు:</label>
+        <input type="number" id="seedAcresInput" value="1" min="0.5" step="0.5" oninput="runSeedCalc()" class="action-input">
+      </div>
+    </div>
+
+    <div class="demo-card-item" style="text-align: center; background: #f1f8e9; border-left: 4px solid #43a047;">
+      <div class="stat-lbl">కావలసిన విత్తనాల పరిమాణం:</div>
+      <div class="stat-val clr-green" id="seedResultVal" style="font-size: 20px; margin: 6px 0;">--</div>
+      <small id="seedResultDesc" class="card-location-text"></small>
+    </div>
+  </div>
+
+  <!-- TAB 3: స్ప్రే ట్యాంక్ డోస్ -->
+  <div id="subtab-spray" class="fert-subtab-pane" style="display:none;">
+    <div class="modal-subtitle">స్ప్రే ట్యాంకుకు సరిపడా మందు మోతాదు లెక్క</div>
+
+    <div class="grid-form-2 mb-12">
+      <div>
+        <label class="stat-lbl">ట్యాంక్ సామర్థ్యం:</label>
+        <select id="sprayTankSize" onchange="runSprayCalc()" class="action-input">
+          <option value="16">16 లీటర్ల ట్యాంక్</option>
+          <option value="20">20 లీటర్ల ట్యాంక్</option>
+          <option value="10">10 లీటర్ల ట్యాంక్</option>
+        </select>
+      </div>
+      <div>
+        <label class="stat-lbl">లీటరుకు మోతాదు:</label>
+        <input type="number" id="sprayDosePerLiter" value="2" min="0.1" step="0.5" oninput="runSprayCalc()" class="action-input">
+      </div>
+    </div>
+
+    <div class="mb-12">
+      <label class="stat-lbl">యూనిట్ రకం:</label>
+      <select id="sprayUnitSelect" onchange="runSprayCalc()" class="action-input">
+        <option value="ml">మిల్లీలీటర్లు (ml - లిక్విడ్ మందులు)</option>
+        <option value="గ్రాములు">గ్రాములు (gm - పొడి మందులు)</option>
+      </select>
+    </div>
+
+    <div class="demo-card-item" style="text-align: center; background: #e0f2fe; border-left: 4px solid #0284c7;">
+      <div class="stat-lbl">ఒక ట్యాంకుకు కలపాల్సిన మందు:</div>
+      <div class="stat-val clr-blue" id="sprayResultVal" style="font-size: 20px; margin: 6px 0;">--</div>
+      <small class="card-location-text">ముందుగా చిన్న డబ్బాలో మందు బాగా కలిపిన తర్వాతే ట్యాంకులో నింపండి.</small>
+    </div>
+  </div>
+</div>
