@@ -11,17 +11,14 @@
     document.head.appendChild(link);
   }
 
-  // 2. HTML Injection
+  // 2. HTML Injection (Direct Slot Injection)
   try {
     const res = await fetch(`${dir}warehouse.html?v=${Date.now()}`);
     if (res.ok) {
-      const htmlText = await res.text();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'warehouse-card-wrapper';
-      wrapper.innerHTML = htmlText;
-
       const slot = document.getElementById('slot-warehouse');
-      if (slot) slot.appendChild(wrapper);
+      if (slot) {
+        slot.innerHTML = await res.text();
+      }
     }
   } catch (err) {
     console.error('Warehouse HTML load failed:', err);
