@@ -1,3 +1,23 @@
+/* ================= HEADER TRIGGER BUTTON ================= */
+.header-menu-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+}
+
+.header-menu-btn:active {
+  opacity: 0.7;
+  transform: scale(0.92);
+}
+
 /* ================= HAMBURGER DRAWER & BOTTOM SHEET STYLES ================= */
 
 /* Drawer Overlay */
