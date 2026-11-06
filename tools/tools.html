@@ -15,7 +15,7 @@
     <!-- 3. రైతు క్యాలెండర్ Slot -->
     <div id="slot-tool-calendar"></div>
 
-    <!-- 4. ఎరువులు, విత్తనాలు Slot -->
+    <!-- 4. ఎరువులు & విత్తనాలు Slot -->
     <div id="slot-tool-fertilizer"></div>
 
     <!-- 5. పంట తెగుళ్లు Slot -->
@@ -33,23 +33,22 @@
 </section>
 
 <!-- UNIVERSAL POPUP CONTAINER -->
-<div id="agriToolModal" class="agri-modal-overlay">
+<div id="agriToolModal" class="agri-modal-overlay" onclick="hideToolModal(event)">
   <div class="agri-modal-container" onclick="event.stopPropagation()">
     <div class="agri-modal-header">
       <h4 id="agriModalHeaderTitle">టూల్ వివరాలు</h4>
-      <button class="agri-modal-close" onclick="hideToolModal()">✕</button>
+      <button class="agri-modal-close" onclick="hideToolModal(null)">✕</button>
     </div>
 
     <div class="agri-modal-body" id="agriModalBody">
-      <!-- 8 టూల్స్ యొక్క వ్యూ ప్యానెల్స్ ఇక్కడ సంబంధిత సబ్-లోడర్స్ ద్వారా లేదా డైనమిక్ గా రెండర్ అవుతాయి -->
-      <div id="modal-view-market" class="tool-view-panel" style="display:none;"></div>
-      <div id="modal-view-measure" class="tool-view-panel" style="display:none;"></div>
-      <div id="modal-view-calendar" class="tool-view-panel" style="display:none;"></div>
-      <div id="modal-view-fertilizer" class="tool-view-panel" style="display:none;"></div>
-      <div id="modal-view-pest" class="tool-view-panel" style="display:none;"></div>
-      <div id="modal-view-diary" class="tool-view-panel" style="display:none;"></div>
-      <div id="modal-view-crop_doctor" class="tool-view-panel" style="display:none;"></div>
-      <div id="modal-view-schemes" class="tool-view-panel" style="display:none;"></div>
+      <div id="view-market" class="tool-view-panel"></div>
+      <div id="view-measure" class="tool-view-panel"></div>
+      <div id="view-calendar" class="tool-view-panel"></div>
+      <div id="view-fertilizer" class="tool-view-panel"></div>
+      <div id="view-pest" class="tool-view-panel"></div>
+      <div id="view-diary" class="tool-view-panel"></div>
+      <div id="view-crop_doctor" class="tool-view-panel"></div>
+      <div id="view-schemes" class="tool-view-panel"></div>
     </div>
   </div>
 </div>
