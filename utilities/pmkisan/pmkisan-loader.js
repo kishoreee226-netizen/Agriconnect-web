@@ -10,18 +10,14 @@
     document.head.appendChild(link);
   }
 
-  // 2. HTML & Slot Injection
+  // 2. HTML & Slot Injection (Direct Slot Injection)
   try {
     const res = await fetch(`${dir}pmkisan.html?v=${Date.now()}`);
     if (res.ok) {
-      const htmlText = await res.text();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'pmkisan-card-wrapper';
-      wrapper.innerHTML = htmlText;
-
-// Slot Injection
       const slot = document.getElementById('slot-pmkisan');
-      if (slot) slot.appendChild(wrapper);
+      if (slot) {
+        slot.innerHTML = await res.text();
+      }
 
       // 3. JS Injection
       const s = document.createElement('script');
