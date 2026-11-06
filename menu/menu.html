@@ -1,0 +1,74 @@
+<!-- HAMBURGER DRAWER & BOTTOM POPUP COMPONENT -->
+
+<!-- Overlay Background -->
+<div id="agriMenuOverlay" class="menu-overlay" onclick="closeAgriMenu()"></div>
+
+<!-- Slide-out Drawer Panel -->
+<aside id="agriDrawerPanel" class="drawer-panel" aria-hidden="true">
+  <!-- Drawer Header -->
+  <div class="drawer-header">
+    <div class="drawer-brand">
+      <span class="drawer-logo">🌾</span>
+      <span class="drawer-title">AgriConnect</span>
+    </div>
+    <button type="button" class="btn-drawer-close" onclick="closeAgriMenu()" aria-label="Close menu">✕</button>
+  </div>
+
+  <!-- Minimal Text-Only Navigation List -->
+  <nav class="drawer-nav-list">
+    <!-- 1. About Us (Bottom Pop-up) -->
+    <div class="drawer-nav-item" onclick="openMenuBottomPopup('about')">
+      <span class="nav-icon-text">ℹ️</span>
+      <div class="nav-text-col">
+        <span class="nav-label">About Us</span>
+        <span class="nav-sub">Maa lakshyam & samacharam</span>
+      </div>
+    </div>
+
+    <!-- 2. Why Choose Us (Bottom Pop-up) -->
+    <div class="drawer-nav-item" onclick="openMenuBottomPopup('why_us')">
+      <span class="nav-icon-text">⭐</span>
+      <div class="nav-text-col">
+        <span class="nav-label">Why Choose Us</span>
+        <span class="nav-sub">Maa prathyekathalu</span>
+      </div>
+    </div>
+
+    <!-- 3. Privacy Policy (Separate Page & Dedicated URL) -->
+    <a href="privacy.html" class="drawer-nav-item legal-link" target="_blank" rel="noopener noreferrer">
+      <span class="nav-icon-text">🔒</span>
+      <div class="nav-text-col">
+        <span class="nav-label">Privacy Policy ↗</span>
+        <span class="nav-sub">Data surakshitha vidhanam</span>
+      </div>
+    </a>
+
+    <!-- 4. Terms & Conditions (Separate Page & Dedicated URL) -->
+    <a href="terms.html" class="drawer-nav-item legal-link" target="_blank" rel="noopener noreferrer">
+      <span class="nav-icon-text">📜</span>
+      <div class="nav-text-col">
+        <span class="nav-label">Terms & Conditions ↗</span>
+        <span class="nav-sub">Niyamalu & sharathulu</span>
+      </div>
+    </a>
+  </nav>
+
+  <!-- Drawer Footer -->
+  <div class="drawer-footer">
+    <span>© 2026 AgriConnect. Smart Farming.</span>
+  </div>
+</aside>
+
+<!-- Smooth Bottom Sheet Modal (About & Why Choose Us kosam) -->
+<div id="agriBottomPopupOverlay" class="bottom-sheet-overlay" onclick="closeMenuBottomPopup(event)">
+  <div class="bottom-sheet-container" onclick="event.stopPropagation()">
+    <div class="bottom-sheet-handle-bar"></div>
+    <div class="bottom-sheet-header">
+      <h4 id="bottomPopupTitle">వివరాలు</h4>
+      <button type="button" class="btn-bottom-close" onclick="closeMenuBottomPopup(null)">✕</button>
+    </div>
+    <div class="bottom-sheet-body" id="bottomPopupBody">
+      <!-- Dynamic detailed content -->
+    </div>
+  </div>
+</div>
