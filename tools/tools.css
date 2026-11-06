@@ -1,184 +1,333 @@
-/* SMART Tools Wrapper & Header */
+/* ================= 8-GRID AGRI TOOLS BASE & MODAL STYLES ================= */
 .agri-tools-wrapper {
-  padding: 6px 12px;
-  margin: 8px 0;
+  padding: 12px;
+  margin: 15px 0;
 }
 
 .agri-tools-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 8px;
 }
 
 .agri-tools-header h3 {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1b5e20;
   margin: 0;
-}
-
-.agri-badge-free {
-  font-size: 10px;
+  font-size: 0.95rem;
+  color: #1b4332;
   font-weight: 700;
-  color: #16a34a;
-  background: #dcfce7;
-  padding: 2px 8px;
-  border-radius: 12px;
-}
-
-/* 2 Columns Grid Layout */
-#agriToolsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  align-items: stretch;
-}
-
-#agriToolsGrid > div {
-  width: 100%;
-  display: flex;
-  height: 100%;
-}
-
-/* Standard Tool Card Base */
-.tool-card {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 10px 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.tool-card:active {
-  transform: scale(0.98);
-}
-
-.tool-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.tool-icon-box {
-  font-size: 18px;
-}
-
-/* Badge Tags inside Cards */
-.badge-tag {
-  font-size: 9px;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 6px;
-}
-.badge-blue { background: #e0f2fe; color: #0284c7; }
-.badge-amber { background: #fef3c7; color: #d97706; }
-.badge-pink { background: #fce7f3; color: #db2777; }
-.badge-orange { background: #ffedd5; color: #ea580c; }
-.badge-purple { background: #f3e8ff; color: #9333ea; }
-.badge-red { background: #fee2e2; color: #dc2626; }
-
-.live-pulse-dot {
-  width: 8px;
-  height: 8px;
-  background: #22c55e;
-  border-radius: 50%;
-  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
-}
-
-.tool-title {
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  color: #1e293b !important;
-  margin: 0 0 4px 0 !important;
-  line-height: 1.25 !important;
-  min-height: 28px !important;
-  display: flex;
-  align-items: flex-start;
-}
-
-.tool-sub-primary {
-  font-size: 9.5px !important;
-  font-weight: 600 !important;
-  margin-bottom: 3px !important;
-}
-
-.tool-sub-desc {
-  font-size: 9px !important;
-  color: #64748b !important;
-  line-height: 1.3 !important;
-  min-height: 24px !important;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Modal Popup Framework */
+.agri-badge-free {
+  font-size: 0.72rem;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: bold;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.agri-tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.agri-tools-grid > div {
+  width: 100%;
+  display: flex;
+}
+
+.tool-card {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #c8e6c9;
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: left;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.tool-card:active {
+  transform: scale(0.97);
+}
+
+.tool-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.tool-icon-box {
+  background: #f4fbf6;
+  border: 1px solid #e2f2e5;
+  border-radius: 8px;
+  padding: 4px 6px;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.live-pulse-dot {
+  width: 9px;
+  height: 9px;
+  background-color: #2e7d32;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 0 rgba(46, 125, 50, 0.4);
+  animation: pulseGreen 1.8s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7); }
+  70% { box-shadow: 0 0 0 7px rgba(46, 125, 50, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+}
+
+.badge-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+.badge-blue   { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+.badge-amber  { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+.badge-pink   { background: #ffe4e6; color: #e11d48; border: 1px solid #fecdd3; }
+.badge-orange { background: #ffedd5; color: #ea580c; border: 1px solid #fed7aa; }
+.badge-purple { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+.badge-red    { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+
+.tool-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1b4332;
+}
+
+.tool-sub-primary {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.tool-sub-desc {
+  font-size: 0.68rem;
+  color: #666;
+  margin-top: 1px;
+}
+
+/* Modal Popup Engine */
 .agri-modal-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.6);
-  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 99999;
+  align-items: center;
   justify-content: center;
-  align-items: flex-end;
-}
-
-.agri-modal-overlay.active {
-  display: flex;
+  padding: 12px;
 }
 
 .agri-modal-container {
-  width: 100%;
-  max-width: 480px;
   background: #ffffff;
-  border-radius: 16px 16px 0 0;
-  max-height: 85vh;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 88vh;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
+  color: #1f2937;
   overflow: hidden;
-  animation: slideUp 0.25s ease-out;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
 }
 
 .agri-modal-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.agri-modal-header h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #1b4332;
+  font-weight: 700;
+}
+
+.agri-modal-close {
+  background: #e2e8f0;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #475569;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.agri-modal-body {
+  padding: 14px;
+  max-height: 72vh;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 20px;
+  padding-top: 0 !important;
+}
+
+body.modal-open-freeze {
+  overflow: hidden !important;
+}
+
+.tool-view-panel {
+  display: none;
+}
+
+.tool-view-panel.active-panel {
+  display: block;
+}
+
+/* Shared UI Components */
+.modal-subtitle {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.demo-card-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.card-row-between {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.agri-modal-header h4 {
-  margin: 0;
-  font-size: 14px;
-  color: #1b5e20;
-}
-
-.agri-modal-close {
-  background: transparent;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
+.card-location-text {
+  font-size: 0.72rem;
   color: #64748b;
+  margin: 3px 0 8px;
 }
 
-.agri-modal-body {
-  padding: 14px 16px;
-  overflow-y: auto;
+.stat-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+  text-align: center;
 }
+
+.stat-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 4px;
+}
+
+.stat-val {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #0284c7;
+}
+
+.stat-lbl {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.action-input {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #1e293b;
+  margin-top: 3px;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+  box-sizing: border-box;
+}
+
+.hub-tabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+  position: sticky;
+  top: 0;
+  background-color: #ffffff;
+  z-index: 25;
+  margin: 0 !important;
+  padding: 6px 0 6px 0 !important;
+}
+
+.hub-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hub-tab.active {
+  background: #ffffff;
+  color: #166534;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.clr-red { color: #e11d48; }
+.clr-green { color: #15803d; }
+.clr-blue { color: #0284c7; }
+.clr-amber { color: #d97706; }
+.clr-pink { color: #e11d48; }
+.clr-orange { color: #ea580c; }
+.clr-purple { color: #7e22ce; }
+.text-center { text-align: center; }
+.font-bold { font-weight: bold; }
+.mb-0 { margin-bottom: 0; }
+.mb-4 { margin-bottom: 4px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mt-4 { margin-top: 4px; }
+.mt-12 { margin-top: 12px; }
+.my-8 { margin: 8px 0; }
+.fs-small { font-size: 0.88rem; }
+.fs-diary { font-size: 1.05rem; }
+.grid-cols-2 { grid-template-columns: 1fr 1fr; }
+.grid-form-2 { display: grid; grid-template-columns: 1.5fr 1fr; gap: 8px; }
+.grid-cols-2-gap { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.flex-align-gap { display: flex; align-items: center; gap: 8px; }
+.btn-text { background: none; border: none; cursor: pointer; font-weight: bold; }
