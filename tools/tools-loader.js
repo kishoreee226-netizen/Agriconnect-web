@@ -1,29 +1,44 @@
 // tools/tools-loader.js
 (function initAgriToolsBridge() {
-  const dir = 'tools/';
-
-  // 1. tools.css ని ఆటోమేటిక్‌గా <head> లోకి చేరుస్తుంది
-  const cssLink = document.createElement("link");
-  cssLink.rel = "stylesheet";
-  cssLink.href = `${dir}tools.css?v=${Date.now()}`;
-  document.head.appendChild(cssLink);
-
-  // 2. tools.html ఉంచడానికి ఒక ఖాళీ Box ని తయారు చేస్తుంది
-  const containerBox = document.createElement("div");
-  containerBox.id = "agri-tools-box";
-
+  // పాత్ లొకేషన్ డైనమిక్ గా డిటెక్ట్ చేయడం
   const currentScript = document.currentScript;
-  if (currentScript && currentScript.parentNode) {
-    currentScript.parentNode.insertBefore(containerBox, currentScript);
+  let basePath = 'tools/';
+  if (currentScript && currentScript.src) {
+    const url = new URL(currentScript.src);
+    basePath = url.pathname.substring(0, url.pathname.lastIndexOf('/') + 1);
   }
 
-  // 3. tools.html ని తీసుకొచ్చి ఆ బాక్స్‌లో పెడుతుంది
-  fetch(`${dir}tools.html?v=${Date.now()}`)
-    .then(res => res.text())
-    .then(html => {
-      containerBox.innerHTML = html;
+  // 1. tools.css ని ఇంజెక్ట్ చేయడం
+  if (!document.getElementById('agri-tools-base-css')) {
+    const cssLink = document.createElement("link");
+    cssLink.id = 'agri-tools-base-css';
+    cssLink.rel = "stylesheet";
+    cssLink.href = `${basePath}tools.css?v=${Date.now()}`;
+    document.head.appendChild(cssLink);
+  }
 
-      // 4. 8 Sub-loaders ని డైనమిక్ గా లోడ్ చేయడం
+  async function mountTools() {
+    let containerBox = document.getElementById("agri-tools-box");
+    if (!containerBox) {
+      console.warn("⚠️ #agri-tools-box నాట్ ఫౌండ్! బాడీ చివర ఆటో-మౌంట్ చేస్తున్నాం...");
+      containerBox = document.createElement("div");
+      containerBox.id = "agri-tools-box";
+      document.body.appendChild(containerBox);
+    }
+
+    try {
+      // 2. tools.html ఫెచ్ చేయడం
+      console.log(`[Tools Loader] Fetching: ${basePath}tools.html`);
+      const res = await fetch(`${basePath}tools.html?v=${Date.now()}`);
+      if (!res.ok) {
+        throw new Error(`tools.html లోడ్ కాలేదు (Status: ${res.status}). పాత్ సరిచూడండి: ${basePath}tools.html`);
+      }
+      
+      const html = await res.text();
+      containerBox.innerHTML = html;
+      console.log("✅ [Tools Loader] tools.html సక్సెస్‌ఫుల్ గా మౌంట్ అయింది.");
+
+      // 3. 8 సబ్-టూల్స్ లోడర్లను రన్ చేయడం
       const toolSubModules = [
         'market', 'measure', 'calendar', 'fertilizer',
         'pest', 'diary', 'crop-doctor', 'schemes'
@@ -31,11 +46,28 @@
 
       toolSubModules.forEach(mod => {
         const scriptTag = document.createElement("script");
-        scriptTag.src = `${dir}${mod}/${mod}-loader.js?v=${Date.now()}`;
+        scriptTag.src = `${basePath}${mod}/${mod}-loader.js?v=${Date.now()}`;
+        scriptTag.onerror = () => console.error(`❌ సబ్-లోడర్ మిస్ అయింది: ${basePath}${mod}/${mod}-loader.js`);
         document.body.appendChild(scriptTag);
       });
-    })
-    .catch(err => console.error("Tools Component Loading Error:", err));
+
+    } catch (err) {
+      console.error("❌ Tools Loading Failure:", err);
+      // స్క్రీన్ మీద క్లియర్ గా ఎర్రర్ చూపించడం (రైతుకి ఖాళీగా కనిపించకుండా)
+      containerBox.innerHTML = `
+        <div style="padding:15px; background:#fff3cd; color:#856404; border-radius:8px; margin:10px 0; font-size:13px;">
+          ⚠️ <b>Smart Agri Tools Load Error:</b> ${err.message}<br/>
+          దయచేసి <code>tools/</code> ఫోల్డర్ లో <code>tools.html</code> ఉందో లేదో సరిచూడండి.
+        </div>
+      `;
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountTools);
+  } else {
+    mountTools();
+  }
 })();
 
 // మోడల్ టైటిల్స్ మ్యాపింగ్
@@ -50,7 +82,7 @@ const panelTitles = {
   schemes: '🏛️ ప్రభుత్వ పథకాలు & సబ్సిడీ'
 };
 
-// గ్లోబల్ మోడల్ హ్యాండ్లర్స్
+// మోడల్ హ్యాండ్లర్స్
 window.showToolModal = function(type) {
   const modal = document.getElementById('agriToolModal');
   const titleEl = document.getElementById('agriModalHeaderTitle');
@@ -69,7 +101,6 @@ window.showToolModal = function(type) {
     activePanel.style.display = 'block';
   }
 
-  // టూల్ స్పెసిఫిక్ లైవ్ ట్రిగ్గర్స్
   if (type === 'market' && window.updateLiveMandiRates) updateLiveMandiRates();
   if (type === 'calendar' && window.updateCalendarDate) updateCalendarDate();
   if (type === 'fertilizer' && window.runFertilizerCalc) runFertilizerCalc();
