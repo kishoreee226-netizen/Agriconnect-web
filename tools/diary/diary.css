@@ -1,0 +1,99 @@
+/* Diary Module Specific Styles */
+#view-diary {
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.diary-subtab-pane {
+  animation: fadeInPane 0.25s ease-in-out;
+}
+
+.diary-subtab-pane.hidden {
+  display: none;
+}
+
+.labor-form-card {
+  background-color: #fffbeb;
+  border-left: 4px solid #f59e0b;
+  margin-bottom: 12px;
+}
+
+.labor-total-val {
+  font-size: 16px;
+  padding: 6px 0;
+}
+
+.btn-save-labor {
+  background-color: #f59e0b;
+  color: #ffffff;
+  width: 100%;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-save-labor:hover {
+  opacity: 0.9;
+}
+
+.btn-expense {
+  background: #e11d48;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-income {
+  background: #15803d;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#subtab-ledger .stat-grid-3,
+#subtab-labor .stat-grid-3 {
+  margin-bottom: 6px !important;
+}
+
+#subtab-ledger .stat-box,
+#subtab-labor .stat-box {
+  padding: 6px 4px !important;
+}
+
+#subtab-ledger .demo-card-item,
+#subtab-labor .demo-card-item {
+  padding: 8px 10px !important;
+  margin-bottom: 6px !important;
+}
+
+#subtab-ledger .action-input,
+#subtab-labor .action-input {
+  margin-bottom: 6px !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+}
+
+#subtab-ledger .tool-title,
+#subtab-labor .tool-title {
+  margin: 4px 0 !important;
+  font-size: 13px !important;
+}
+
+#diaryRecordsContainer,
+#laborRecordsContainer {
+  max-height: 230px !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 60px !important;
+  padding-right: 4px;
+}
