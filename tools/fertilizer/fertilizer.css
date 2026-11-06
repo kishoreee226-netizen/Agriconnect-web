@@ -1,0 +1,9 @@
+/* Fertilizer Module Specific Styles */
+.fert-subtab-pane {
+  animation: fadeInPane 0.25s ease-in-out;
+}
+
+@keyframes fadeInPane {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
