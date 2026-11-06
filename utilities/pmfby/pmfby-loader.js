@@ -11,18 +11,14 @@
     document.head.appendChild(link);
   }
 
-  // 2. HTML Injection
+  // 2. HTML Injection (Direct Slot Injection)
   try {
     const res = await fetch(`${dir}pmfby.html?v=${Date.now()}`);
     if (res.ok) {
-      const htmlText = await res.text();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'pmfby-card-wrapper';
-      wrapper.innerHTML = htmlText;
-
-      // PMFBY Slot లోకి నేరుగా అటాచ్ చేయడం
       const slot = document.getElementById('slot-pmfby');
-      if (slot) slot.appendChild(wrapper);
+      if (slot) {
+        slot.innerHTML = await res.text();
+      }
     }
   } catch (err) {
     console.error('PMFBY HTML load failed:', err);
