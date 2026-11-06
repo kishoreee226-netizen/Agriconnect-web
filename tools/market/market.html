@@ -1,0 +1,57 @@
+<!-- 1. GRID CARD (గ్రిడ్ లో కనిపించే కార్డు) -->
+<div class="market-card-content tool-card" onclick="showToolModal('market')">
+  <div class="tool-card-top">
+    <div class="tool-icon-box">🌾</div>
+    <span class="live-pulse-dot"></span>
+  </div>
+  <div class="tool-title">మార్కెట్ ధరలు</div>
+  <div class="tool-sub-primary clr-green">లైవ్ యార్డ్ టెండర్లు</div>
+  <div class="tool-sub-desc">వరి, మిర్చి, పత్తి రేట్లు</div>
+</div>
+
+<!-- 2. MODAL VIEW (క్లిక్ చేసినప్పుడు మోడల్ లో కనిపించే వ్యూ) -->
+<div class="market-modal-panel">
+  <div class="modal-subtitle">తెలంగాణ & ఏపీ ప్రధాన మార్కెట్ లైవ్ సమాచారం</div>
+
+  <!-- 3 Live Filters Grid -->
+  <div class="mandi-filter-grid">
+    <div class="filter-box">
+      <label>విభాగం</label>
+      <select id="mandiCategoryFilter" onchange="filterMandiList()">
+        <option value="all">అన్ని</option>
+        <option value="commercial">వాణిజ్య</option>
+        <option value="grains">ధాన్యాలు</option>
+        <option value="vegetables">కూరగాయలు</option>
+        <option value="fruits">పండ్లు</option>
+      </select>
+    </div>
+
+    <div class="filter-box">
+      <label>పంట</label>
+      <select id="mandiCropFilter" onchange="filterMandiList()">
+        <option value="all">అన్ని</option>
+        <option value="మిరప">మిరప</option>
+        <option value="పత్తి">పత్తి</option>
+        <option value="వరి">వరి</option>
+        <option value="మొక్కజొన్న">మొక్కజొన్న</option>
+        <option value="టమాటా">టమాటా</option>
+        <option value="జామ">జామ</option>
+      </select>
+    </div>
+
+    <div class="filter-box">
+      <label>రాష్ట్రం</label>
+      <select id="mandiStateFilter" onchange="filterMandiList()">
+        <option value="all">అన్ని</option>
+        <option value="telangana" selected>తెలంగాణ</option>
+        <option value="ap">ఆంధ్రప్రదేశ్</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="marketLiveCardsList"></div>
+
+  <div class="modal-subtitle text-center mt-12">
+    * అగ్రికనెక్ట్ మండి విభాగం ద్వారా లైవ్ అప్‌డేట్ చేయబడింది.
+  </div>
+</div>
