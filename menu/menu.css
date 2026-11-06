@@ -105,12 +105,12 @@
 }
 
 /* --------------------------------------------------------------------------
-   SECTION 5: COMPACT APP NAVIGATION LIST (ఆప్షన్ల మధ్య గ్యాప్ తగ్గించిన లిస్ట్)
+   SECTION 5: COMPACT APP NAVIGATION LIST (Ultra Sleek Native List)
    -------------------------------------------------------------------------- */
 .drawer-nav-list {
-  padding: 6px 12px;
+  padding: 4px 10px;
   flex: 1;
-  overflow-y: auto; /* ఎక్కువ ఆప్షన్లు వస్తే సులభంగా స్క్రోల్ అవుతుంది */
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }
@@ -118,21 +118,22 @@
 .drawer-nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 9px 8px; /* 15px నుండి 9px కి తగ్గించి కాంపాక్ట్ చేసాము */
+  gap: 10px;
+  padding: 6px 6px; /* Row height ni chālā compact ga kudinchamu */
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
   background: transparent !important;
   text-decoration: none;
   color: inherit;
-  border-radius: 8px;
-  transition: transform 0.15s ease, opacity 0.15s ease, background-color 0.15s ease;
+  border-radius: 6px;
+  min-height: 40px; /* Touch target padavvakunda clean limit */
+  transition: transform 0.12s ease, opacity 0.12s ease, background-color 0.12s ease;
 }
 
 .drawer-nav-item:active {
-  background-color: #f8fafc !important;
-  opacity: 0.7;
-  transform: translateX(3px);
+  background-color: #f1f5f9 !important;
+  opacity: 0.75;
+  transform: translateX(2px);
 }
 
 .drawer-nav-item:last-child {
@@ -140,30 +141,31 @@
 }
 
 .nav-icon-text {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1;
   flex-shrink: 0;
-  width: 24px;
+  width: 22px;
   text-align: center;
 }
 
 .nav-text-col {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .nav-label {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 600;
   color: #1e293b;
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 .nav-sub {
-  font-size: 11px;
+  font-size: 10.5px;
   color: #64748b;
-  margin-top: 2px;
-  line-height: 1.2;
+  margin-top: 1px;
+  line-height: 1.1;
 }
 
 .legal-link {
