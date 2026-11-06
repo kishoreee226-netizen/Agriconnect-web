@@ -1,0 +1,71 @@
+/* Market Module Specific Styles */
+.clr-green {
+  color: #16a34a !important;
+}
+
+.mandi-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.filter-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-box label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.filter-box select {
+  width: 100%;
+  padding: 6px 4px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 11px;
+  background-color: #f8fafc;
+  color: #1e293b;
+  outline: none;
+}
+
+.mandi-item-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mandi-item-info b {
+  font-size: 13px;
+  color: #1e293b;
+  display: block;
+}
+
+.mandi-item-info span {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.mandi-item-price {
+  text-align: right;
+}
+
+.mandi-price-val {
+  font-size: 14px;
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.mandi-price-unit {
+  font-size: 9.5px;
+  color: #94a3b8;
+}
