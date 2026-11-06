@@ -1,5 +1,5 @@
 // utilities/dharani/dharani-loader.js
-(async function initDharani() {
+(async function() {
   const dir = 'utilities/dharani/';
 
   // 1. CSS Injection
@@ -11,20 +11,17 @@
     document.head.appendChild(link);
   }
 
-  // 2. HTML Injection
+  // 2. Direct HTML Injection (No extra wrapper div)
   try {
     const res = await fetch(`${dir}dharani.html?v=${Date.now()}`);
     if (res.ok) {
-      const htmlText = await res.text();
-      
       const slot = document.getElementById('slot-dharani');
       if (slot) {
-        slot.className = 'dharani-card-wrapper';
-        slot.innerHTML = htmlText;
+        slot.innerHTML = await res.text();
       }
     }
   } catch (err) {
-    console.error('Dharani HTML load failed:', err);
+    console.error('Dharani load failed:', err);
   }
 
   // 3. JS Injection
