@@ -1,0 +1,48 @@
+<!-- 1. గ్రిడ్ కార్డ్ (గ్రిడ్ స్లాట్ లోకి వెళ్తుంది) -->
+<div class="calendar-card-content tool-card" onclick="showToolModal('calendar')">
+  <div class="tool-card-top">
+    <div class="tool-icon-box">🗓️</div>
+    <span class="badge-tag badge-amber">తిథులు</span>
+  </div>
+  <div class="tool-title">రైతు క్యాలెండర్</div>
+  <div class="tool-sub-primary clr-amber">విత్తే సమయం & ముహూర్తం</div>
+  <div class="tool-sub-desc">వ్యవసాయ పనుల డైరీ</div>
+</div>
+
+<!-- 2. మోడల్ ప్యానెల్ (మోడల్ పాప్-అప్ లోకి వెళ్తుంది) -->
+<div class="calendar-modal-panel">
+  <div class="demo-card-item">
+    <div class="card-row-between mb-8">
+      <b class="tool-title" id="calCurrentDateText">📅 నేటి వ్యవసాయ తిథి</b>
+      <span class="badge-tag badge-amber">పంచాంగం</span>
+    </div>
+    <div class="stat-grid-3 grid-cols-2">
+      <div class="stat-box">
+        <span class="stat-lbl">పక్షం & తిథి:</span>
+        <div id="calTithiVal" class="font-bold">-</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-lbl">అమృత ఘడియలు:</span>
+        <div id="calAmruthaVal" class="clr-green font-bold">-</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-lbl">వర్జ్యం:</span>
+        <div id="calVarjyamVal" class="clr-red font-bold">-</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-lbl">విత్తే పనులకు:</span>
+        <div id="calStatusVal" class="stat-val fs-small">-</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-title my-8">నేటి వ్యవసాయ పనుల సిఫారసులు:</div>
+  <div class="demo-card-item border-left-blue">
+    <b>మందుల పిచికారీ సమయం</b>
+    <p id="calSprayRec" class="card-location-text mt-4"></p>
+  </div>
+  <div class="demo-card-item border-left-green">
+    <b>నీటి తడులు & ఎరువులు</b>
+    <p id="calWaterRec" class="card-location-text mt-4"></p>
+  </div>
+</div>
