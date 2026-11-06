@@ -1,0 +1,70 @@
+<!-- 1. గ్రిడ్ కార్డ్ -->
+<div class="schemes-card-content tool-card" onclick="showToolModal('schemes')">
+  <div class="tool-card-top">
+    <div class="tool-icon-box">🏛️</div>
+    <span class="badge-tag badge-purple">లైవ్ అలర్ట్స్</span>
+  </div>
+  <div class="tool-title">ప్రభుత్వ పథకాలు & సబ్సిడీ</div>
+  <div class="tool-sub-primary clr-purple">రాయితీ & అర్హతల గైడ్</div>
+  <div class="tool-sub-desc">రైతు భరోసా, డ్రిప్ & సోలార్ సబ్సిడీ</div>
+</div>
+
+<!-- 2. మోడల్ ప్యానెల్ -->
+<div class="schemes-modal-panel">
+  <div class="hub-tabs mb-12">
+    <button type="button" class="hub-tab active" onclick="switchSchemesSubTab('alerts')">📢 పథకాల అలర్ట్స్</button>
+    <button type="button" class="hub-tab" onclick="switchSchemesSubTab('calc')">🧮 సబ్సిడీ క్యాలిక్యులేటర్</button>
+  </div>
+
+  <div id="subtab-schemes-alerts" class="scheme-subtab-pane">
+    <div class="modal-subtitle">రైతుల కోసం తాజా ప్రభుత్వ పథకాలు & అర్హతలు:</div>
+    <div id="schemesListContainer"></div>
+  </div>
+
+  <div id="subtab-schemes-calc" class="scheme-subtab-pane" style="display:none;">
+    <div class="modal-subtitle">డ్రిప్, స్ప్రింక్లర్ & యంత్రాల సబ్సిడీ అంచనా లెక్క:</div>
+    <div class="demo-card-item">
+      <div class="mb-8">
+        <label class="stat-lbl">రైతు కేటగిరీ:</label>
+        <select id="subFarmerCat" class="action-input" onchange="calcSubsidyEstimate()">
+          <option value="sc_st">SC / ST రైతులు (100% / 90% సబ్సిడీ)</option>
+          <option value="small" selected>చిన్న / సన్నకారు రైతులు (SF/MF - 90%)</option>
+          <option value="general">ఇతర రైతులు (General - 80%)</option>
+        </select>
+      </div>
+
+      <div class="mb-8">
+        <label class="stat-lbl">పరికరాల రకం:</label>
+        <select id="subEquipType" class="action-input" onchange="calcSubsidyEstimate()">
+          <option value="drip">మైక్రో ఇరిగేషన్ (బిందు సేద్యం / Drip)</option>
+          <option value="sprinkler">స్ప్రింక్లర్ సెట్లు (Sprinklers)</option>
+          <option value="tarpaulin">రైతు టార్పాలిన్ షీట్లు</option>
+          <option value="rotavator">ట్రాక్టర్ రోటవేటర్ / ఇంప్లిమెంట్స్</option>
+        </select>
+      </div>
+
+      <div class="mb-8">
+        <label class="stat-lbl">ఎకరాలు / యూనిట్లు:</label>
+        <input type="number" id="subAcres" value="1" min="1" max="10" class="action-input" oninput="calcSubsidyEstimate()">
+      </div>
+
+      <div class="stat-grid-3 mt-8">
+        <div class="stat-box">
+          <div class="stat-lbl">మొత్తం ఖర్చు</div>
+          <div class="stat-val fs-diary clr-blue" id="subTotalCost">₹55,000</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">ప్రభుత్వ సబ్సిడీ</div>
+          <div class="stat-val fs-diary clr-green" id="subGovtShare">₹49,500</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">రైతు వాటా</div>
+          <div class="stat-val fs-diary clr-red" id="subFarmerShare">₹5,500</div>
+        </div>
+      </div>
+      <div class="card-location-text subsidy-info-banner" id="subPercentBadge">
+        రైతు చెల్లించాల్సిన వాటా కేవలం సుమారు <b>10%</b> మాత్రమే.
+      </div>
+    </div>
+  </div>
+</div>
