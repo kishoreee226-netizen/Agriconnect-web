@@ -16,13 +16,12 @@
     const res = await fetch(`${dir}dharani.html?v=${Date.now()}`);
     if (res.ok) {
       const htmlText = await res.text();
-      const wrapper = document.createElement('div');
-      wrapper.className = 'dharani-card-wrapper';
-      wrapper.innerHTML = htmlText;
-
-      // Dharani Slot లోకి నేరుగా అటాచ్ చేయడం
+      
       const slot = document.getElementById('slot-dharani');
-      if (slot) slot.appendChild(wrapper);
+      if (slot) {
+        slot.className = 'dharani-card-wrapper';
+        slot.innerHTML = htmlText;
+      }
     }
   } catch (err) {
     console.error('Dharani HTML load failed:', err);
