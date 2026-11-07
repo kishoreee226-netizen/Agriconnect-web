@@ -1,0 +1,61 @@
+<!-- auth/auth.html - Universal Auth View -->
+<div id="agriAuthModal" class="agri-auth-overlay role-theme-farmer">
+  <div class="agri-auth-card">
+    
+    <div id="authRoleBadge" class="auth-header-badge">
+      <span id="authBadgeIcon">🌾</span>
+      <span id="authBadgeText">రైతు లాగిన్</span>
+    </div>
+
+    <h2 id="authCardTitle" class="auth-modal-title">4-డిజిట్ పిన్ వెరిఫికేషన్</h2>
+    <p id="authCardSub" class="auth-modal-sub">కొనసాగడానికి మీ భద్రతా పిన్ నమోదు చేయండి</p>
+
+    <!-- 1. Fast PIN Verification Box -->
+    <div id="authPinFlow">
+      <div class="auth-input-group" id="authPhoneRow" style="display: none;">
+        <label class="auth-label">మొబైల్ నంబర్</label>
+        <input type="tel" id="authMobileInput" class="auth-text-field" maxlength="10" placeholder="10 అంకెల నంబర్" inputmode="numeric">
+      </div>
+
+      <div class="auth-input-group">
+        <label class="auth-label">4 అంకెల సెక్యూరిటీ పిన్</label>
+        <input type="password" id="authPinInput" class="auth-text-field auth-pin-field" maxlength="4" placeholder="••••" inputmode="numeric">
+      </div>
+
+      <div class="auth-btn-row">
+        <button type="button" class="auth-btn auth-btn-cancel" onclick="window.AuthModule.close()">రద్దు</button>
+        <button type="button" class="auth-btn auth-btn-submit" onclick="window.AuthModule.submitLogin()">లాగిన్</button>
+      </div>
+
+      <div class="auth-switch-link" id="authSwitchLink" onclick="window.AuthModule.toggleView('REGISTER')">
+        కొత్త ఖాతా నమోదు చేసుకోండి (New Registration)
+      </div>
+    </div>
+
+    <!-- 2. Fast Register Box -->
+    <div id="authRegisterFlow" style="display: none;">
+      <div class="auth-input-group">
+        <label class="auth-label">పూర్తి పేరు</label>
+        <input type="text" id="regNameInput" class="auth-text-field" placeholder="మీ పేరు">
+      </div>
+      <div class="auth-input-group">
+        <label class="auth-label">మొబైల్ నంబర్</label>
+        <input type="tel" id="regPhoneInput" class="auth-text-field" maxlength="10" placeholder="10 అంకెల మొబైల్" inputmode="numeric">
+      </div>
+      <div class="auth-input-group">
+        <label class="auth-label">గ్రామం / ఊరు</label>
+        <input type="text" id="regVillageInput" class="auth-text-field" placeholder="గ్రామం పేరు">
+      </div>
+      <div class="auth-input-group">
+        <label class="auth-label">కొత్త 4 అంకెల పిన్ సెట్ చేయండి</label>
+        <input type="password" id="regPinInput" class="auth-text-field auth-pin-field" maxlength="4" placeholder="••••" inputmode="numeric">
+      </div>
+
+      <div class="auth-btn-row">
+        <button type="button" class="auth-btn auth-btn-cancel" onclick="window.AuthModule.toggleView('PIN')">వెనుకకు</button>
+        <button type="button" class="auth-btn auth-btn-submit" onclick="window.AuthModule.submitRegister()">నమోదు</button>
+      </div>
+    </div>
+
+  </div>
+</div>
