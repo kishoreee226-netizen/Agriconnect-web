@@ -298,7 +298,7 @@
 /* --------------------------------------------------------------------------
  SECTION 11: Smart power tools HEADER & CLOSE BUTTON direct fill screen app view
    -------------------------------------------------------------------------- */
-/* Direct Fullscreen App View for Tools */
+/* కేవలం స్క్రీన్ మీద డైరెక్ట్‌గా ఓపెన్ అవ్వడానికి మాత్రమే (కార్డ్స్ రూల్స్ ఏవీ టచ్ చేయదు) */
 #agri-tools-box.tools-view-fullscreen {
   position: fixed !important;
   inset: 0 !important;
@@ -308,12 +308,11 @@
   z-index: 99990 !important;
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
-  padding: 68px 16px 24px 16px !important;
+  padding-top: 64px !important;
   box-sizing: border-box !important;
-  display: block !important;
 }
 
-/* Dedicated Top Bar */
+/* టాప్ యాప్ హెడర్ బార్ */
 .tools-view-header {
   position: fixed;
   top: 0;
@@ -364,8 +363,8 @@
 .tools-view-close-btn:active {
   background: rgba(255, 255, 255, 0.35);
 }
-/* కేవలం ఫుల్‌స్క్రీన్ వ్యూ ఓపెన్ అయినప్పుడు మాత్రమే లోపలి డూప్లికేట్ టైటిల్ హైడ్ అవుతుంది */
+
+/* కేవలం ఈ వ్యూలో మాత్రమే డూప్లికేట్ టైటిల్ కనిపించకుండా ఉండటానికి */
 #agri-tools-box.tools-view-fullscreen .agri-tools-header {
   display: none !important;
 }
-
