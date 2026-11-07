@@ -106,7 +106,7 @@ window.closeMenuBottomPopup = function(e) {
     headerBar.innerHTML = `
       <div class="tools-header-left">
         <span class="tools-header-icon">🛠️</span>
-        <span class="tools-header-title">8 Smart Power Tools</span>
+        <span class="tools-header-title">Smart Power Tools</span>
       </div>
       <button type="button" class="tools-view-close-btn" onclick="window.closeDirectToolsPopup()" aria-label="Close">✕</button>
     `;
