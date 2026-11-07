@@ -1,4 +1,4 @@
-// role.js - AgriConnect Smart Role Cards, Registration Modal & Profile Dashboard Controller
+// role.js - AgriConnect Smart Role Cards, Module Bridge & Profile Dashboard Controller
 
 // ===================================================
 // Helper Functions: Containers for Dashboards
@@ -80,7 +80,7 @@ function applyUserRoleView() {
     if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
     if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
 
-        // 1. Rithu Login Card
+    // 1. Rithu Login Card
     if (farmerContainer) {
       farmerContainer.style.setProperty('display', 'block', 'important');
       farmerContainer.innerHTML = `
@@ -101,7 +101,7 @@ function applyUserRoleView() {
       `;
     }
 
-        // 2. Kooli Login Card
+    // 2. Kooli Login Card
     if (labourContainer) {
       labourContainer.style.setProperty('display', 'block', 'important');
       labourContainer.innerHTML = `
@@ -115,14 +115,14 @@ function applyUserRoleView() {
             <li>రోజువారీ కూలీ వివరాలు, డైరెక్ట్ ఫోన్ / వాట్సాప్ కాలింగ్.</li>
             <li>మీ వేతనాల లెక్కల కోసం సులభమైన వ్యక్తిగత వాలెట్.</li>
           </ul>
-          <button onclick="openLoginModal('LABOUR_ONLY')" class="agri-landing-btn labour-btn-bg">
+          <button onclick="openLoginModal('LABOUR')" class="agri-landing-btn labour-btn-bg">
             కూలీగా Login / నమోదు అవ్వండి ➔
           </button>
         </div>
       `;
     }
 
-        // 3. Yajamanula Seva Kendram Card
+    // 3. Yajamanula Seva Kendram Card
     if (providerContainer) {
       providerContainer.style.setProperty('display', 'block', 'important');
       providerContainer.innerHTML = `
@@ -139,7 +139,7 @@ function applyUserRoleView() {
             <li>మీ పరికరాలు, రవాణా రేట్లు మీరే నిర్ణయించుకోండి.</li>
             <li>కమిషన్ లేకుండా నేరుగా కస్టమర్‌తో ఫోన్ / వాట్సాప్ సంప్రదింపులు.</li>
           </ul>
-          <button onclick="openProviderModal()" class="agri-landing-btn provider-btn-bg">
+          <button onclick="openLoginModal('PROVIDER')" class="agri-landing-btn provider-btn-bg">
             యజమానిగా Login / సేవలను జోడించండి ➔
           </button>
         </div>
@@ -154,7 +154,7 @@ function applyUserRoleView() {
   renderUserProfileBanner();
 
   // A. Kevalam Kooli Login (LABOUR ONLY)
-  if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
+  if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.userType === "LABOUR") {
     removeRoleSwitchBar();
 
     if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
@@ -250,7 +250,7 @@ function renderUserProfileBanner() {
   let roleText = "రైతు (Farmer)";
   let badgeColor = "#2e7d32";
 
-  if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.currentRole === "LABOUR") {
+  if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.userType === "LABOUR" || state.currentRole === "LABOUR") {
     roleText = "కూలీ (Labour)";
     badgeColor = "#e65100";
   } else if (state.userType === "PROVIDER") {
@@ -267,21 +267,21 @@ function renderUserProfileBanner() {
     }
   }
 
-      banner.className = 'user-profile-banner';
-    banner.style.setProperty('--badge-color', badgeColor);
+  banner.className = 'user-profile-banner';
+  banner.style.setProperty('--badge-color', badgeColor);
 
-    banner.innerHTML = `
-      <div>
-        <div class="profile-banner-name">
-          👤 ${user.name}
-          <span class="profile-banner-badge">${roleText}</span>
-        </div>
-        <div class="profile-banner-details">
-          📞 ${user.phone} &nbsp;|&nbsp; 📍 <b>${user.village}</b>
-        </div>
+  banner.innerHTML = `
+    <div>
+      <div class="profile-banner-name">
+        👤 ${user.name}
+        <span class="profile-banner-badge">${roleText}</span>
       </div>
-      <button onclick="logoutUser()" class="profile-banner-logout-btn">Logout</button>
-    `;
+      <div class="profile-banner-details">
+        📞 ${user.phone} &nbsp;|&nbsp; 📍 <b>${user.village}</b>
+      </div>
+    </div>
+    <button onclick="logoutUser()" class="profile-banner-logout-btn">Logout</button>
+  `;
 }
 
 function removeProfileHeader() {
@@ -296,27 +296,27 @@ function renderRoleSwitchBar() {
   let switchContainer = document.getElementById("role-switch-container");
   if (!switchContainer) {
     switchContainer = document.createElement("div");
-          switchContainer.id = "role-switch-container";
-      switchContainer.className = "role-switch-container";
+    switchContainer.id = "role-switch-container";
+    switchContainer.className = "role-switch-container";
 
-      const userBanner = document.getElementById('user-profile-banner');
-      if (userBanner && userBanner.parentNode) {
-        userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
-      } else {
-        document.body.prepend(switchContainer);
-      }
+    const userBanner = document.getElementById('user-profile-banner');
+    if (userBanner && userBanner.parentNode) {
+      userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
+    } else {
+      document.body.prepend(switchContainer);
     }
+  }
 
-    const isFarmerRole = (state.currentRole !== 'LABOUR');
+  const isFarmerRole = (state.currentRole !== 'LABOUR');
 
-    switchContainer.innerHTML = `
-      <button type="button" onclick="switchRoleMode('FARMER')" class="role-switch-btn role-switch-farmer ${isFarmerRole ? 'active' : ''}">
-        🌾 Farmer mode (రైతు)
-      </button>
-      <button type="button" onclick="switchRoleMode('LABOUR')" class="role-switch-btn role-switch-labour ${!isFarmerRole ? 'active' : ''}">
-        👷 Labour mode (కూలీ)
-      </button>
-    `;
+  switchContainer.innerHTML = `
+    <button type="button" onclick="switchRoleMode('FARMER')" class="role-switch-btn role-switch-farmer ${isFarmerRole ? 'active' : ''}">
+      🌾 Farmer mode (రైతు)
+    </button>
+    <button type="button" onclick="switchRoleMode('LABOUR')" class="role-switch-btn role-switch-labour ${!isFarmerRole ? 'active' : ''}">
+      👷 Labour mode (కూలీ)
+    </button>
+  `;
 }
 
 function removeRoleSwitchBar() {
@@ -380,6 +380,9 @@ window.switchRoleMode = function(targetRole) {
 };
 
 window.logoutUser = function() {
+  if (window.AuthModule && typeof window.AuthModule.close === 'function') {
+    window.AuthModule.close();
+  }
   window.AppState.isLoggedIn = false;
   window.AppState.userProfile = null;
   localStorage.removeItem("agri_user_profile");
@@ -397,15 +400,15 @@ function prefillFarmerFormDefaults() {
   const phoneInput = document.getElementById("f-phone");
   const villageBtn = document.getElementById("f-village-btn");
 
-        if (nameInput && !nameInput.value) {
-        nameInput.value = profile.name;
-        nameInput.classList.add('input-autofilled');
-      }
+  if (nameInput && !nameInput.value) {
+    nameInput.value = profile.name;
+    nameInput.classList.add('input-autofilled');
+  }
 
-      if (phoneInput && !phoneInput.value) {
-        phoneInput.value = profile.phone;
-        phoneInput.classList.add('input-autofilled');
-      }
+  if (phoneInput && !phoneInput.value) {
+    phoneInput.value = profile.phone;
+    phoneInput.classList.add('input-autofilled');
+  }
 
   if (villageBtn && profile.village) {
     villageBtn.textContent = "🏛️ " + profile.village;
@@ -413,7 +416,7 @@ function prefillFarmerFormDefaults() {
 }
 
 // ===================================================
-// Filter Jobs & Role Login Modal with Direct 4-Digit PIN
+// Filter Jobs by Location & Unified Auth Bridge
 // ===================================================
 function filterLabourJobsByLocation() {
   const profile = window.AppState?.userProfile;
@@ -428,323 +431,32 @@ function filterLabourJobsByLocation() {
   });
 }
 
+// Dedicated AuthModule కి బ్రిడ్జ్ (పాత మోడల్ డ్రాప్‌లు తొలగించబడ్డాయి)
 window.openLoginModal = function(roleType) {
-  let modal = document.getElementById("role-login-modal");
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "role-login-modal";
-    modal.className = "agri-modal-overlay";
-    document.body.appendChild(modal);
-  }
+  let normalizedRole = 'FARMER';
+  if (roleType === 'LABOUR_ONLY' || roleType === 'LABOUR') normalizedRole = 'LABOUR';
+  if (roleType === 'PROVIDER') normalizedRole = 'PROVIDER';
 
-  const isFarmer = roleType === "FARMER";
-  const themeColor = isFarmer ? "#2e7d32" : "#e65100";
-  modal.style.setProperty("--modal-theme", themeColor);
-
-  // గతంలో రిజిస్టర్ అయిన యూజర్ డేటా ఉందో లేదో తనిఖీ
-  let savedUser = null;
-  try {
-    const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
-    if (saved) savedUser = JSON.parse(saved);
-  } catch (e) {}
-
-  // 1. ఇప్పటికే యూజర్ ఉంటే: డైరెక్ట్ 4-Digit PIN స్క్రీన్
-  if (savedUser && savedUser.phone) {
-    modal.innerHTML = `
-      <div class="agri-modal-card fast-pin">
-        <div class="agri-modal-icon">🔒</div>
-        <h3 class="agri-modal-title">స్వాగతం, ${savedUser.name || 'రైతు'} గారు!</h3>
-        <p class="agri-modal-phone-text">మొబైల్: <b>${savedUser.phone}</b></p>
-
-        <div class="agri-pin-box">
-          <label class="agri-pin-label">మీ 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి:</label>
-          <input type="password" id="fast-login-pin" maxlength="4" placeholder="••••" inputmode="numeric" class="agri-pin-input">
-        </div>
-
-        <div class="agri-modal-btn-row">
-          <button onclick="closeLoginModal()" class="agri-modal-btn cancel">రద్దు</button>
-          <button onclick="submitDirectPinLogin('${roleType}')" class="agri-modal-btn submit">లాగిన్ ➔</button>
-        </div>
-
-        <a href="javascript:void(0)" onclick="switchToFullRegister('${roleType}')" class="agri-modal-link">
-          వేరే నంబర్‌తో నమోదు చేసుకోవాలా? క్లిక్ చేయండి
-        </a>
-      </div>
-    `;
+  if (window.AuthModule && typeof window.AuthModule.open === 'function') {
+    window.AuthModule.open({ role: normalizedRole });
   } else {
-    // 2. కొత్త యూజర్ అయితే: పూర్తి రిజిస్ట్రేషన్ ఫారమ్ (PIN ఫీల్డ్‌తో సహా)
-    renderRegisterForm(modal, roleType, themeColor);
-  }
-
-  modal.style.display = "flex";
-};
-
-// కొత్త రిజిస్ట్రేషన్ వ్యూ చూపించే హెల్పర్ ఫంక్షన్
-function renderRegisterForm(modal, roleType, themeColor) {
-  const isFarmer = roleType === "FARMER";
-  const title = isFarmer ? "🌾 రైతు ప్రొఫైల్ నమోదు" : "👷 కూలీ ప్రొఫైల్ నమోదు";
-
-  modal.innerHTML = `
-    <div class="agri-modal-card register-form">
-      <h3 class="agri-modal-title center">${title}</h3>
-      
-      <div class="agri-form-group">
-        <label class="agri-form-label">మీ పూర్తి పేరు:</label>
-        <input type="text" id="reg-name" placeholder="ఉదా: కిషోర్ రెడ్డి" class="agri-form-input">
-      </div>
-
-      <div class="agri-form-group">
-        <label class="agri-form-label">మొబైల్ నంబర్ (10 అంకెలు):</label>
-        <input type="tel" id="reg-phone" placeholder="9876543210" maxlength="10" inputmode="numeric" class="agri-form-input">
-      </div>
-
-      <div class="agri-form-group">
-        <label class="agri-form-label">గ్రామం / ఊరు (Village):</label>
-        <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి" class="agri-form-input">
-      </div>
-
-      <div class="agri-form-group highlight">
-        <label class="agri-form-label secure">భద్రతా పిన్ సెట్ చేయండి (4-Digit PIN):</label>
-        <input type="password" id="reg-pin" placeholder="1234" maxlength="4" inputmode="numeric" class="agri-form-input pin-style">
-        <span class="agri-form-hint">తర్వాతిసారి లాగిన్ అవ్వడానికి ఈ 4 అంకెల పిన్ వాడవచ్చు.</span>
-      </div>
-
-      <div class="agri-modal-btn-row no-margin">
-        <button onclick="closeLoginModal()" class="agri-modal-btn cancel">రద్దు</button>
-        <button onclick="submitUserRegistration('${roleType}')" class="agri-modal-btn submit">నమోదు చేసుకోండి</button>
-      </div>
-    </div>
-  `;
-}
-
-// అవసరమైనప్పుడు రిజిస్ట్రేషన్ స్క్రీన్‌కు మారడం
-window.switchToFullRegister = function(roleType) {
-  const modal = document.getElementById("role-login-modal");
-  const themeColor = roleType === "FARMER" ? "#2e7d32" : "#e65100";
-  if (modal) renderRegisterForm(modal, roleType, themeColor);
-};
-
-// డైరెక్ట్ 4-Digit PIN తో మాత్రమే లాగిన్ అయ్యే లాజిక్
-window.submitDirectPinLogin = async function(roleType) {
-  const pinInput = document.getElementById("fast-login-pin");
-  const pin = pinInput ? pinInput.value.trim() : "";
-
-  if (!pin || pin.length !== 4) {
-    alert("దయచేసి 4 అంకెల పిన్ ఎంటర్ చేయండి.");
-    return;
-  }
-
-  let savedPhone = "";
-  try {
-    const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
-    if (saved) savedPhone = JSON.parse(saved).phone;
-  } catch (e) {}
-
-  if (typeof window.loginWithPin === 'function') {
-    const user = await window.loginWithPin(savedPhone, pin);
-    if (!user) return;
-  }
-
-  closeLoginModal();
-  if (typeof applyUserRoleView === 'function') {
-    applyUserRoleView();
+    console.warn("AuthModule is loading or not initialized yet.");
   }
 };
 
 window.closeLoginModal = function() {
-  const modal = document.getElementById("role-login-modal");
-  if (modal) modal.style.display = "none";
-};
-
-// పూర్తి వివరాలతో కొత్త యూజర్ రిజిస్ట్రేషన్ లాజిక్
-window.submitUserRegistration = function(roleType) {
-  const name = document.getElementById("reg-name")?.value || "";
-  const phone = document.getElementById("reg-phone")?.value || "";
-  const village = document.getElementById("reg-village")?.value || "";
-  const pin = document.getElementById("reg-pin")?.value || "";
-
-  // 1. Central auth.js ఇంజిన్ ద్వారా యూజర్ రిజిస్ట్రేషన్ & క్లౌడ్ సేవ్
-  if (typeof window.registerUniversalUser === 'function') {
-    const isSuccess = window.registerUniversalUser({ 
-      name, 
-      phone, 
-      village, 
-      roleType,
-      pin 
-    });
-    if (!isSuccess) return;
-  } else {
-    // auth.js లోడ్ కాకపోతే ఫాల్‌బ్యాక్ సేవ్
-    if (!name.trim()) return alert("దయచేసి మీ పేరు నమోదు చేయండి.");
-    if (!phone || phone.trim().length !== 10) return alert("దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
-    if (!village.trim()) return alert("దయచేసి మీ గ్రామం పేరు నమోదు చేయండి.");
-    if (pin && !/^[0-9]{4}$/.test(pin.trim())) return alert("దయచేసి 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి.");
-
-    const profile = { 
-      name: name.trim(), 
-      phone: phone.trim(), 
-      village: village.trim(), 
-      roleType: roleType,
-      pin: pin.trim() || "1234"
-    };
-    window.AppState.isLoggedIn = true;
-    window.AppState.userType = roleType;
-    window.AppState.currentRole = (roleType === 'LABOUR_ONLY') ? 'LABOUR' : 'FARMER';
-    window.AppState.userProfile = profile;
-    try {
-      localStorage.setItem("agri_user_profile", JSON.stringify(profile));
-      localStorage.setItem("agri_last_user", JSON.stringify(profile));
-    } catch (e) {}
-  }
-
-  // 2. మోడల్ క్లోజ్ చేసి వ్యూ ని అప్‌డేట్ చేయడం
-  closeLoginModal();
-  if (typeof applyUserRoleView === 'function') {
-    applyUserRoleView();
-  }
-
-  // 3. స్వాగత వాయిస్ ప్రకటన
-  if (typeof speakTeluguText === 'function') {
-    if (roleType === 'LABOUR_ONLY') {
-      speakTeluguText(`${name} గారు, కూలీ ఖాతాలోకి స్వాగతం.`);
-    } else {
-      speakTeluguText(`${name} గారు, రైతు ఖాతాలోకి స్వాగతం.`);
-    }
+  if (window.AuthModule && typeof window.AuthModule.close === 'function') {
+    window.AuthModule.close();
   }
 };
 
 // ===================================================
-// Provider Modal: 3 Pill Tabs & Login Controller
+// Provider Dashboard View & Controller
 // ===================================================
 let selectedProviderType = 'equipment';
 
 window.openProviderModal = function() {
-  let modal = document.getElementById('provider-auth-modal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'provider-auth-modal';
-    modal.className = 'provider-modal-overlay';
-
-    modal.innerHTML = `
-      <div class="provider-modal-card">
-        <button onclick="closeProviderModal()" class="provider-close-btn">✕</button>
-        
-        <div class="provider-modal-header">
-          <h3 class="provider-modal-title">🤝 యజమానుల సేవా కేంద్రం</h3>
-          <p class="provider-modal-subtitle">మీ కేటగిరీని ఎంచుకొని వివరాలు నమోదు చేయండి</p>
-        </div>
-
-        <div class="provider-tab-row">
-          <button id="p-tab-equipment" type="button" onclick="selectProviderTab('equipment')" class="provider-tab-btn tab-eq">
-            🚜 పరికరాలు
-          </button>
-          <button id="p-tab-transport" type="button" onclick="selectProviderTab('transport')" class="provider-tab-btn tab-tr">
-            🚚 రవాణా
-          </button>
-          <button id="p-tab-seeds" type="button" onclick="selectProviderTab('seeds')" class="provider-tab-btn tab-sd">
-            🌱 విత్తనాలు
-          </button>
-        </div>
-
-        <form onsubmit="handleProviderLogin(event)">
-          <div class="provider-form-group">
-            <label class="provider-form-label">యజమాని / డీలర్ పేరు:</label>
-            <input type="text" id="prov-name" placeholder="ఉదా: రామయ్య / బాలాజీ ఫెర్టిలైజర్స్" required class="provider-form-input" />
-          </div>
-
-          <div class="provider-form-group">
-            <label class="provider-form-label">మొబైల్ నంబర్:</label>
-            <input type="tel" id="prov-phone" pattern="[0-9]{10}" placeholder="10 అంకెల ఫోన్ నంబర్" required class="provider-form-input" />
-          </div>
-
-          <div class="provider-form-group last">
-            <label class="provider-form-label">గ్రామం / పట్టణం:</label>
-            <input type="text" id="prov-village" placeholder="ఉదా: పరకాల, వరంగల్" required class="provider-form-input" />
-          </div>
-
-          <button id="prov-submit-btn" type="submit" class="provider-submit-btn">
-            🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔
-          </button>
-        </form>
-      </div>
-    `;
-    document.body.appendChild(modal);
-  }
-  selectedProviderType = 'equipment';
-  selectProviderTab('equipment');
-  modal.style.display = 'flex';
-};
-
-window.closeProviderModal = function() {
-  const modal = document.getElementById('provider-auth-modal');
-  if (modal) modal.style.display = 'none';
-};
-
-window.selectProviderTab = function(type) {
-  selectedProviderType = type;
-  const eqBtn = document.getElementById('p-tab-equipment');
-  const trBtn = document.getElementById('p-tab-transport');
-  const sdBtn = document.getElementById('p-tab-seeds');
-  const submitBtn = document.getElementById('prov-submit-btn');
-
-  if (eqBtn) eqBtn.classList.remove('active');
-  if (trBtn) trBtn.classList.remove('active');
-  if (sdBtn) sdBtn.classList.remove('active');
-
-  if (type === 'equipment') {
-    if (eqBtn) eqBtn.classList.add('active');
-    if (submitBtn) {
-      submitBtn.style.setProperty('--provider-theme', '#f57c00');
-      submitBtn.innerHTML = '🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔';
-    }
-  } else if (type === 'transport') {
-    if (trBtn) trBtn.classList.add('active');
-    if (submitBtn) {
-      submitBtn.style.setProperty('--provider-theme', '#7b1fa2');
-      submitBtn.innerHTML = '🚚 రవాణా ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔';
-    }
-  } else if (type === 'seeds') {
-    if (sdBtn) sdBtn.classList.add('active');
-    if (submitBtn) {
-      submitBtn.style.setProperty('--provider-theme', '#2e7d32');
-      submitBtn.innerHTML = '🌱 విత్తనాల డీలర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔';
-    }
-  }
-};
-
-window.handleProviderLogin = function(e) {
-  if (e && e.preventDefault) e.preventDefault();
-  const name = document.getElementById('prov-name')?.value.trim() || "";
-  const phone = document.getElementById('prov-phone')?.value.trim() || "";
-  const village = document.getElementById('prov-village')?.value.trim() || "";
-
-  // 10 digits strict check
-  if (!/^[0-9]{10}$/.test(phone)) {
-    alert("Dayachesi saraina 10 ankela mobile number namodu cheyandi!");
-    return;
-  }
-
-  // auth.js register helper call
-  if (typeof window.registerUniversalUser === 'function') {
-    const isSuccess = window.registerUniversalUser({
-      name: name,
-      phone: phone,
-      village: village,
-      roleType: 'PROVIDER'
-    });
-    if (!isSuccess) return;
-  }
-
-  // Provider specific properties update
-  if (window.AppState) {
-    window.AppState.providerType = selectedProviderType;
-  }
-
-  closeProviderModal();
-
-  if (typeof applyUserRoleView === 'function') {
-    applyUserRoleView();
-  }
+  window.openLoginModal('PROVIDER');
 };
 
 function renderProviderDashboardView(container, type) {
@@ -885,7 +597,6 @@ window.handleSaveProviderItem = async function(e, type) {
                   JSON.parse(localStorage.getItem('agri_user_profile')) || 
                   JSON.parse(localStorage.getItem('agri_profile')) || {};
 
-  // ఖచ్చితమైన లాగిన్ యూజర్ వివరాలను తీసుకోవడం (డమ్మీ డేటా తొలగించబడింది)
   const ownerName = profile.name || profile.ownerName || profile.userName || 'యజమాని';
   const ownerPhone = profile.phone || profile.mobile || '';
   const ownerVillage = profile.village || '';
@@ -895,7 +606,6 @@ window.handleSaveProviderItem = async function(e, type) {
     return;
   }
 
-  // 1. Live Data Object
   const newItem = {
     name: val1,
     rate: '₹' + val2 + ' / గంట',
@@ -910,7 +620,6 @@ window.handleSaveProviderItem = async function(e, type) {
     createdAt: new Date().toISOString()
   };
 
-  // 2. Central AgriDB ద్వారా Live Firestore లో సేవ్ చేయడం
   if (window.AgriDB) {
     try {
       await window.AgriDB.addProviderItem(newItem);
@@ -921,7 +630,6 @@ window.handleSaveProviderItem = async function(e, type) {
     }
   }
 
-  // 3. Local fallback & UI Refresh
   let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
   items.unshift(newItem);
   localStorage.setItem('agri_provider_items', JSON.stringify(items));
@@ -943,7 +651,6 @@ window.renderProviderItemsList = async function(type) {
   try {
     let items = [];
 
-    // Firestore లోని provider_items కలెక్షన్ నుండి యూజర్ ఫోన్ నంబర్‌తో ఫిల్టర్ చేయడం
     if (typeof db !== 'undefined' && db.collection && currentUserPhone) {
       const snapshot = await db.collection("provider_items")
         .where("phone", "==", currentUserPhone)
@@ -954,7 +661,6 @@ window.renderProviderItemsList = async function(type) {
       });
     }
 
-    // Firestore లేకపోతే LocalStorage ఫాల్‌బ్యాక్
     if (items.length === 0) {
       const local = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
       items = local.filter(it => !currentUserPhone || it.phone === currentUserPhone);
@@ -1229,14 +935,11 @@ window.renderIncomingBookingsForProvider = function(containerId) {
   const box = document.getElementById(containerId);
   if (!box) return;
 
-  // 1. లాగిన్ అయిన ప్రొవైడర్ ఫోన్ నంబర్ పొందడం
   const currentProviderPhone = (typeof window.getActiveUserPhone === 'function')
     ? window.getActiveUserPhone()
     : (window.AppState?.userProfile?.phone || "");
 
-  // UI రెండరింగ్ అంతర్గత హెల్పర్ ఫంక్షన్
   function renderUI(rawBookings) {
-    // ఫోన్ ఐసోలేషన్ ఫిల్టర్: కేవలం లాగిన్ అయిన ప్రొవైడర్ ఫోన్ నంబర్ ఉన్న ఆర్డర్లు మాత్రమే
     const bookings = (rawBookings || []).filter(b => {
       const bPhone = String(b.providerPhone || b.targetPhone || b.ownerPhone || "").trim();
       return !bPhone || (currentProviderPhone && bPhone === currentProviderPhone);
@@ -1307,13 +1010,11 @@ window.renderIncomingBookingsForProvider = function(containerId) {
     `;
   }
 
-  // 2. సెంట్రల్ క్లౌడ్ AgriDB లిజనర్ (Live Firestore Sync)
   if (window.AgriDB && typeof window.AgriDB.listenToBookings === 'function') {
     window.AgriDB.listenToBookings((liveBookings) => {
       renderUI(liveBookings);
     });
   } else {
-    // AgriDB లేకపోతే లోకల్ స్టోరేజ్ ఫాల్‌బ్యాక్
     const localBookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
     renderUI(localBookings);
   }
@@ -1328,7 +1029,6 @@ window.acceptBookingOrder = async function(bookingId) {
   const providerPhone = (user && user.phone) || (typeof window.getActiveUserPhone === 'function' ? window.getActiveUserPhone() : '');
 
   try {
-    // 1. Firebase Firestore లో ఆర్డర్ స్టేటస్‌ను 'ACCEPTED' గా అప్‌డేట్ చేయడం
     if (typeof db !== 'undefined' && db.collection) {
       await db.collection("bookings").doc(bookingId).update({
         status: 'ACCEPTED',
@@ -1337,7 +1037,6 @@ window.acceptBookingOrder = async function(bookingId) {
       });
     }
 
-    // 2. LocalStorage బ్యాకప్ లో కూడా స్టేటస్ అప్‌డేట్ చేయడం
     let bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
     const index = bookings.findIndex(b => b.id === bookingId);
     if (index !== -1) {
@@ -1348,7 +1047,6 @@ window.acceptBookingOrder = async function(bookingId) {
 
     alert("ఆర్డర్ విజయవంతంగా స్వీకరించబడింది (Confirmed)!");
 
-    // 3. డాష్‌బోర్డ్ లిస్ట్‌ను రీఫ్రెష్ చేయడం
     if (typeof renderIncomingBookingsForProvider === 'function') {
       renderIncomingBookingsForProvider('provider-incoming-requests');
     }
@@ -1358,14 +1056,14 @@ window.acceptBookingOrder = async function(bookingId) {
     alert("ఆర్డర్ స్వీకరించడంలో సమస్య వచ్చింది: " + error.message);
   }
 };
+
 // ===================================================
-// Sync Provider Items into Farmer Dashboard & Live Requests (With Scroll & Font Fix)
+// Sync Provider Items into Farmer Dashboard & Live Requests
 // ===================================================
 window.renderFarmerWidgetWithLiveProviders = function() {
   const farmerContainer = document.getElementById("farmer-post-container") || document.getElementById("farmer-container") || document.getElementById("farmer-dashboard");
   if (!farmerContainer) return;
 
-  // 1. Quick Request Banner
   let reqBanner = document.getElementById("farmer-quick-req-banner");
   if (!reqBanner) {
     reqBanner = document.createElement("div");
@@ -1385,7 +1083,6 @@ window.renderFarmerWidgetWithLiveProviders = function() {
     }
   }
 
-  // 2. Real Items List from localStorage (Scrollable Box)
   const savedItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
   let liveList = document.getElementById("farmer-live-provider-items");
   if (!liveList) {
@@ -1451,7 +1148,7 @@ document.addEventListener("DOMContentLoaded", function() {
         window.AppState.userProfile = user;
         window.AppState.userType = user.userType || user.roleType || "PROVIDER";
         window.AppState.providerType = user.providerType || "equipment";
-        window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+        window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY" || window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
       }
     } catch (e) {
       console.error("Session restore error:", e);
