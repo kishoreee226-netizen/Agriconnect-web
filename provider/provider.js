@@ -368,28 +368,32 @@ window.acceptBookingOrder = function(bId) { window.ProviderModule.acceptOrder(bI
 // Provider Landing Card Injection
 // ===================================================
 window.injectProviderLandingCard = function() {
-  if (document.getElementById('provider-landing-card')) return;
+  const container = document.getElementById('provider-container') || document.getElementById('provider-hub-container');
+  if (!container) return;
 
-  const targetParent = document.querySelector('.roles-container') ||
-                       document.querySelector('.role-cards') ||
-                       (document.getElementById('farmer-container') ? document.getElementById('farmer-container').parentElement : null);
-
-  if (!targetParent) return;
-
-  const card = document.createElement('div');
-  card.id = 'provider-landing-card';
-  card.className = 'role-card provider-landing-card';
-
-  card.innerHTML = `
-    <div class="provider-landing-icon">🚜</div>
-    <div class="provider-landing-title">వాహనాలు & యంత్రాల యజమాని</div>
-    <p class="provider-landing-desc">ట్రాక్టర్లు, హార్వెస్టర్లు, రవాణా వాహనాలు అద్దెకు ఇవ్వడానికి ఇక్కడ నమోదు చేసుకోండి</p>
-    <button onclick="window.AuthModule.open({ role: 'PROVIDER' })" class="provider-landing-btn">
-      యజమానిగా లాగిన్ / రిజిస్టర్ ➔
-    </button>
-  `;
-
-  targetParent.appendChild(card);
+  // యూజర్ లాగిన్ అయి ఉండకపోతే మాత్రమే ల్యాండింగ్ కార్డ్ చూపిస్తుంది
+  if (!window.AppState || !window.AppState.isLoggedIn) {
+    container.innerHTML = `
+      <div class="agri-landing-card provider-border">
+        <div class="agri-card-header">
+          <span class="agri-icon">🤝</span>
+          <strong class="agri-title-provider">పరికరాలు, రవాణా & విత్తనాల యజమానుల సేవా కేంద్రం</strong>
+        </div>
+        <p class="agri-card-subtext">
+          ట్రాక్టర్లు, హార్వెస్టర్లు, రవాణా వాహనాలు లేదా విత్తనాలు/ఎరువుల యజమానులు తమ సేవలను అద్దెకు/అమ్ముకానికి ఇక్కడ సులభంగా జోడించవచ్చు.
+        </p>
+        <ul class="agri-card-desc-list">
+          <li>రైతుల నుండి నేరుగా బుకింగ్‌లు & ఆర్డర్‌లు పొందండి.</li>
+          <li>మీ పరికరాలు, రవాణా రేట్లు మీరే నిర్ణయించుకోండి.</li>
+          <li>కమిషన్ లేకుండా నేరుగా కస్టమర్‌తో ఫోన్ / వాట్సాప్ సంప్రదింపులు.</li>
+        </ul>
+        <button onclick="window.AuthModule.open({ role: 'PROVIDER' })" class="agri-landing-btn provider-btn-bg">
+          యజమానిగా Login / సేవలను జోడించండి ➔
+        </button>
+      </div>
+    `;
+    container.style.display = 'block';
+  }
 };
 
 document.addEventListener("DOMContentLoaded", function() {
