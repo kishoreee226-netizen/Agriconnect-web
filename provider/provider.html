@@ -1,2 +1,35 @@
-<!-- provider/provider.html - Provider Dynamic Item Modal Slot -->
-<div id="providerItemModalContainer" style="display: none;"></div>
+<!-- provider/provider.html - Provider Dashboard, Item Modal & Order Template -->
+
+<!-- 1. Add Service / Item Modal Popup -->
+<div id="provider-item-modal" class="pitem-modal-overlay" style="display: none;">
+  <div class="pitem-modal-card">
+    <button type="button" onclick="window.ProviderModule.closeAddModal()" class="provider-close-btn" aria-label="Close">✕</button>
+    <h3 id="pitem-modal-dynamic-title" class="pitem-modal-title">🚜 వస్తువు / పరికరం వివరాలు</h3>
+
+    <form id="provider-add-item-form" onsubmit="window.ProviderModule.handleSaveItem(event)">
+      <div class="provider-form-group">
+        <label id="pitem-lbl-1" class="provider-form-label">పేరు / మోడల్:</label>
+        <input type="text" id="item-field-1" required class="provider-form-input" />
+      </div>
+
+      <div class="provider-form-group">
+        <label id="pitem-lbl-2" class="provider-form-label">ధర / అద్దె (₹):</label>
+        <input type="text" id="item-field-2" required class="provider-form-input" />
+      </div>
+
+      <div class="provider-form-group last">
+        <label id="pitem-lbl-3" class="provider-form-label">లభ్యత / సామర్థ్యం:</label>
+        <div id="pitem-field-3-wrapper">
+          <select id="item-field-3" class="provider-form-input">
+            <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
+            <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="pitem-submit-btn" type="submit" class="pitem-submit-btn">
+        లిస్టింగ్‌ను సేవ్ చేయండి ➔
+      </button>
+    </form>
+  </div>
+</div>
