@@ -4,79 +4,24 @@ window.BookingModule = {
   userLiveCoords: null,
 
   openModal: function() {
-    let modal = document.getElementById('farmer-booking-modal');
-    if (modal) modal.remove();
+    const modal = document.getElementById('farmer-booking-modal');
+    if (!modal) {
+      console.warn("Booking modal DOM not loaded yet.");
+      return;
+    }
 
-    modal = document.createElement('div');
-    modal.id = 'farmer-booking-modal';
-    modal.className = 'booking-modal-overlay';
+    // ఫారం రీసెట్ & డీఫాల్ట్ SPOT మోడ్ సెట్ చేయడం
+    const form = document.getElementById('farmer-booking-form');
+    if (form) form.reset();
+    this.setMode('SPOT');
 
-    modal.innerHTML = `
-      <div class="booking-modal-card">
-        <button onclick="window.BookingModule.closeModal()" class="booking-close-btn">✕</button>
-        
-        <div class="booking-modal-header">
-          <h3 class="booking-modal-title">🚜 వాహనం / యంత్రం బుకింగ్</h3>
-          <p class="booking-modal-subtitle">మీ పొలం వద్దకే నేరుగా వాహనాన్ని రప్పించుకోండి</p>
-        </div>
-
-        <div class="booking-mode-toggle">
-          <button id="btn-mode-spot" type="button" onclick="window.BookingModule.setMode('SPOT')" class="booking-mode-btn active">
-            ⚡ వెంటనే కావాలి (Spot)
-          </button>
-          <button id="btn-mode-adv" type="button" onclick="window.BookingModule.setMode('ADVANCE')" class="booking-mode-btn">
-            📅 అడ్వాన్స్ బుకింగ్ (Advance)
-          </button>
-        </div>
-
-        <div id="gps-status-box" class="gps-status-box">
-          <span>📍 లైవ్ లొకేషన్: <b id="gps-text">గుర్తిస్తోంది...</b></span>
-          <button type="button" onclick="window.BookingModule.fetchGPS()" class="gps-refresh-btn">రీఫ్రెష్</button>
-        </div>
-
-        <form onsubmit="window.BookingModule.handleConfirmBooking(event)">
-          <div class="provider-form-group">
-            <label class="provider-form-label">వాహనం / పరికరం ఎంచుకోండి:</label>
-            <select id="book-veh-type" required class="provider-form-input">
-              <option value="ట్రాక్టర్ (దుక్కి / రోటవేటర్)">ట్రాక్టర్ (దుక్కి / రోటవేటర్ / కల్టివేటర్)</option>
-              <option value="హార్వెస్టర్ (వరి / మొక్కజొన్న కోత)">హార్వెస్టర్ (వరి / మొక్కజొన్న కోత మిషన్)</option>
-              <option value="బొలెరో / DCM రవాణా వాహనం">బొలెరో / DCM రవాణా వాహనం</option>
-              <option value="ట్రాక్టర్ ట్రాలీ (ధాన్యం రవాణా)">ట్రాక్టర్ ట్రాలీ (ధాన్యం రవాణా)</option>
-              <option value="ఆటో ట్రాలీ (చిన్న లోడ్లు)">ఆటో ట్రాలీ (చిన్న లోడ్లు)</option>
-              <option value="డ్రోన్ స్ప్రేయర్ (పురుగు మందుల పిచికారీ)">డ్రోన్ స్ప్రేయర్ (పురుగు మందుల పిచికారీ)</option>
-            </select>
-          </div>
-
-          <div class="provider-form-group">
-            <label class="provider-form-label">పని పరిమాణం (ఎకరాలు / ట్రిప్పులు / బస్తాలు):</label>
-            <input type="text" id="book-work-size" placeholder="ఉదా: 2 ఎకరాలు దుక్కి లేదా 50 బస్తాల లోడ్" required class="provider-form-input" />
-          </div>
-
-          <div id="advance-fields-container" class="advance-fields-box">
-            <div class="advance-field-group">
-              <label class="advance-label">ఏ రోజున కావాలి (తేదీ):</label>
-              <input type="date" id="book-date" class="advance-input" />
-            </div>
-            <div class="advance-field-group last">
-              <label class="advance-label">సమయం (Time):</label>
-              <input type="time" id="book-time" class="advance-input" />
-            </div>
-          </div>
-
-          <button id="book-submit-btn" type="submit" class="booking-submit-btn">
-            ⚡ వెంటనే దగ్గరలోని వాహనాలకు రిక్వెస్ట్ పంపండి ➔
-          </button>
-        </form>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
+    modal.style.display = 'flex';
     this.fetchGPS();
   },
 
   closeModal: function() {
     const modal = document.getElementById('farmer-booking-modal');
-    if (modal) modal.remove();
+    if (modal) modal.style.display = 'none';
   },
 
   setMode: function(targetMode) {
