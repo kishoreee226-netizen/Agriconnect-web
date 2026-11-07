@@ -89,18 +89,35 @@ window.closeMenuBottomPopup = function(e) {
   }
 };
 
-  // Drawer close chesi, agri-tools-box ki smooth ga scroll chesthundhi
-window.openDirectToolsPopup = function() {
+  window.openDirectToolsPopup = function() {
   window.closeAgriMenu();
-  
-  setTimeout(() => {
-    const toolsBox = document.getElementById('agri-tools-box');
-    if (toolsBox) {
-      toolsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      toolsBox.classList.add('tools-highlight');
-      setTimeout(() => toolsBox.classList.remove('tools-highlight'), 1200);
-    }
-  }, 250);
+  const toolsBox = document.getElementById('agri-tools-box');
+  if (!toolsBox) return;
+
+  toolsBox.classList.add('tools-view-fullscreen');
+  document.body.classList.add('modal-open-freeze');
+
+  // Dedicated App Header + Close Button
+  let headerBar = document.getElementById('toolsAppHeaderBar');
+  if (!headerBar) {
+    headerBar = document.createElement('div');
+    headerBar.id = 'toolsAppHeaderBar';
+    headerBar.className = 'tools-view-header';
+    headerBar.innerHTML = `
+      <div class="tools-header-left">
+        <span class="tools-header-icon">🛠️</span>
+        <span class="tools-header-title">8 Smart Power Tools</span>
+      </div>
+      <button type="button" class="tools-view-close-btn" onclick="window.closeDirectToolsPopup()" aria-label="Close">✕</button>
+    `;
+    toolsBox.prepend(headerBar);
+  }
 };
 
-window.closeDirectToolsPopup = function() {};
+window.closeDirectToolsPopup = function() {
+  const toolsBox = document.getElementById('agri-tools-box');
+  if (toolsBox) {
+    toolsBox.classList.remove('tools-view-fullscreen');
+    document.body.classList.remove('modal-open-freeze');
+  }
+};
