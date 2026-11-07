@@ -75,60 +75,18 @@ window.openMenuBottomPopup = function(key) {
   titleEl.innerText = data.title;
   bodyEl.innerHTML = data.html;
 
-  // Drawer ni close chesi, bottom popup ni open chesthundhi
-  window.closeAgriMenu();
-  overlay.classList.add('active');
-  document.body.classList.add('modal-open-freeze');
-};
-
-window.closeMenuBottomPopup = function(e) {
-  const overlay = document.getElementById('agriBottomPopupOverlay');
-  if (overlay) {
-    overlay.classList.remove('active');
-    document.body.classList.remove('modal-open-freeze');
-  }
-};
-
-// Drawer ni close chesi, bottom popup ga tools box open chesthundhi
-
+  // Drawer close chesi, agri-tools-box ki smooth ga scroll chesthundhi
 window.openDirectToolsPopup = function() {
   window.closeAgriMenu();
-  const toolsBox = document.getElementById('agri-tools-box');
-  if (toolsBox) {
-    toolsBox.classList.add('tools-modal-active');
-    document.body.classList.add('modal-open-freeze');
-
-    // Close button lekapothe dynamic ga add chesthundi
-    let closeBtn = document.getElementById('toolsPopupCloseBtn');
-    if (!closeBtn) {
-      closeBtn = document.createElement('button');
-      closeBtn.id = 'toolsPopupCloseBtn';
-      closeBtn.className = 'tools-popup-close';
-      closeBtn.innerHTML = '✕';
-      closeBtn.setAttribute('aria-label', 'Close tools');
-      closeBtn.onclick = function(e) {
-        e.stopPropagation();
-        window.closeDirectToolsPopup();
-      };
-      
-      const innerCard = toolsBox.firstElementChild || toolsBox;
-      innerCard.style.position = 'relative';
-      innerCard.prepend(closeBtn);
+  
+  setTimeout(() => {
+    const toolsBox = document.getElementById('agri-tools-box');
+    if (toolsBox) {
+      toolsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      toolsBox.classList.add('tools-highlight');
+      setTimeout(() => toolsBox.classList.remove('tools-highlight'), 1200);
     }
-
-    // Overlay (venaka dark area) meeda click chesina close avuthundi
-    toolsBox.onclick = function(e) {
-      if (e.target === toolsBox) {
-        window.closeDirectToolsPopup();
-      }
-    };
-  }
+  }, 250);
 };
 
-window.closeDirectToolsPopup = function() {
-  const toolsBox = document.getElementById('agri-tools-box');
-  if (toolsBox) {
-    toolsBox.classList.remove('tools-modal-active');
-    document.body.classList.remove('modal-open-freeze');
-  }
-};
+window.closeDirectToolsPopup = function() {};
