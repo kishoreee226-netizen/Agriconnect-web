@@ -75,6 +75,20 @@ window.openMenuBottomPopup = function(key) {
   titleEl.innerText = data.title;
   bodyEl.innerHTML = data.html;
 
+ // 3.1 Drawer ni close chesi, bottom popup ni open chesthundhi
+  window.closeAgriMenu();
+  overlay.classList.add('active');
+  document.body.classList.add('modal-open-freeze');
+};
+
+window.closeMenuBottomPopup = function(e) {
+  const overlay = document.getElementById('agriBottomPopupOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    document.body.classList.remove('modal-open-freeze');
+  }
+};
+
   // Drawer close chesi, agri-tools-box ki smooth ga scroll chesthundhi
 window.openDirectToolsPopup = function() {
   window.closeAgriMenu();
