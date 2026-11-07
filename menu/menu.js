@@ -92,11 +92,36 @@ window.closeMenuBottomPopup = function(e) {
 // Drawer ni close chesi, bottom popup ga tools box open chesthundhi
 
 window.openDirectToolsPopup = function() {
-  window.closeAgriMenu(); // Drawer close chesthundi[span_1](start_span)[span_1](end_span)
+  window.closeAgriMenu();
   const toolsBox = document.getElementById('agri-tools-box');
   if (toolsBox) {
     toolsBox.classList.add('tools-modal-active');
     document.body.classList.add('modal-open-freeze');
+
+    // Close button lekapothe dynamic ga add chesthundi
+    let closeBtn = document.getElementById('toolsPopupCloseBtn');
+    if (!closeBtn) {
+      closeBtn = document.createElement('button');
+      closeBtn.id = 'toolsPopupCloseBtn';
+      closeBtn.className = 'tools-popup-close';
+      closeBtn.innerHTML = '✕';
+      closeBtn.setAttribute('aria-label', 'Close tools');
+      closeBtn.onclick = function(e) {
+        e.stopPropagation();
+        window.closeDirectToolsPopup();
+      };
+      
+      const innerCard = toolsBox.firstElementChild || toolsBox;
+      innerCard.style.position = 'relative';
+      innerCard.prepend(closeBtn);
+    }
+
+    // Overlay (venaka dark area) meeda click chesina close avuthundi
+    toolsBox.onclick = function(e) {
+      if (e.target === toolsBox) {
+        window.closeDirectToolsPopup();
+      }
+    };
   }
 };
 
@@ -107,4 +132,3 @@ window.closeDirectToolsPopup = function() {
     document.body.classList.remove('modal-open-freeze');
   }
 };
-
