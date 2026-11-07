@@ -13,14 +13,15 @@ window.ProviderModule = {
     const clone = tpl.content.cloneNode(true);
     const card = clone.querySelector('.provider-dashboard-card');
 
-    const titles = {
-      equipment: { name: '🚜 పరికరాల నిర్వహణ డ్యాష్‌బోర్డ్', color: '#f57c00', desc: 'మీ ట్రాక్టర్లు, హార్వెస్టర్లు మొదలైన పరికరాలను జోడించండి' },
-      transport: { name: '🚚 రవాణా వాహనాల డ్యాష్‌బోర్డ్', color: '#7b1fa2', desc: 'మీ రవాణా వాహనాలు, ట్రాలీలు, ఆటోలను అద్దెకు చేర్చండి' },
-      seeds: { name: '🌱 విత్తనాలు & ఎరువుల డీలర్ డ్యాష్‌బోర్డ్', color: '#2e7d32', desc: 'మీ వద్ద ఉన్న స్టాక్ మరియు ధరల వివరాలను నమోదు చేయండి' }
+    const configs = {
+      equipment: { name: '🚜 పరికరాల నిర్వహణ డ్యాష్‌బోర్డ్', desc: 'మీ ట్రాక్టర్లు, హార్వెస్టర్లు మొదలైన పరికరాలను జోడించండి', theme: 'provider-theme-equipment' },
+      transport: { name: '🚚 రవాణా వాహనాల డ్యాష్‌బోర్డ్', desc: 'మీ రవాణా వాహనాలు, ట్రాలీలు, ఆటోలను అద్దెకు చేర్చండి', theme: 'provider-theme-transport' },
+      seeds: { name: '🌱 విత్తనాలు & ఎరువుల డీలర్ డ్యాష్‌బోర్డ్', desc: 'మీ వద్ద ఉన్న స్టాక్ మరియు ధరల వివరాలను నమోదు చేయండి', theme: 'provider-theme-seeds' }
     };
-    const current = titles[this.selectedType] || titles.equipment;
+    const current = configs[this.selectedType] || configs.equipment;
 
-    card.style.setProperty('--provider-theme', current.color);
+    card.classList.remove('provider-theme-equipment', 'provider-theme-transport', 'provider-theme-seeds');
+    card.classList.add(current.theme);
     clone.querySelector('.provider-dash-title').textContent = current.name;
     clone.querySelector('.provider-dash-desc').textContent = current.desc;
 
@@ -45,6 +46,8 @@ window.ProviderModule = {
     const modal = document.getElementById('provider-item-modal');
     if (!modal) return console.warn("Provider modal DOM not loaded yet.");
 
+    modal.classList.remove('provider-theme-equipment', 'provider-theme-transport', 'provider-theme-seeds');
+
     const titleEl = document.getElementById('pitem-modal-dynamic-title');
     const lbl1 = document.getElementById('pitem-lbl-1');
     const lbl2 = document.getElementById('pitem-lbl-2');
@@ -60,44 +63,48 @@ window.ProviderModule = {
       if (lbl1) lbl1.textContent = 'వాహనం రకం:';
       if (lbl2) lbl2.textContent = 'ఛార్జీ (కి.మీ / ట్రిప్ ₹):';
       if (lbl3) lbl3.textContent = 'మోసే బరువు సామర్థ్యం:';
-      if (selectField) selectField.style.display = 'none';
+      if (selectField) selectField.classList.add('hidden');
       if (textField) {
-        textField.style.display = 'block';
+        textField.classList.remove('hidden');
         textField.placeholder = 'ఉదా: 2 టన్నులు / 50 బస్తాలు';
         textField.required = true;
       }
-      modal.style.setProperty('--pitem-color', '#7b1fa2');
+      modal.classList.add('provider-theme-transport');
     } else if (type === 'seeds') {
       if (titleEl) titleEl.textContent = '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి';
       if (lbl1) lbl1.textContent = 'పంట రకం & బ్రాండ్:';
       if (lbl2) lbl2.textContent = 'ధర (బ్యాగ్ / ప్యాకెట్ ₹):';
       if (lbl3) lbl3.textContent = 'స్టాక్ లభ్యత:';
-      if (selectField) selectField.style.display = 'none';
+      if (selectField) selectField.classList.add('hidden');
       if (textField) {
-        textField.style.display = 'block';
+        textField.classList.remove('hidden');
         textField.placeholder = 'ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి';
         textField.required = true;
       }
-      modal.style.setProperty('--pitem-color', '#2e7d32');
+      modal.classList.add('provider-theme-seeds');
     } else {
       if (titleEl) titleEl.textContent = '🚜 పరికరం వివరాలు జోడించండి';
       if (lbl1) lbl1.textContent = 'పరికరం రకం / మోడల్:';
       if (lbl2) lbl2.textContent = 'అద్దె ధర (గంటకు ₹):';
       if (lbl3) lbl3.textContent = 'పని స్థితి (Availability):';
       if (textField) {
-        textField.style.display = 'none';
+        textField.classList.add('hidden');
         textField.required = false;
       }
-      if (selectField) selectField.style.display = 'block';
-      modal.style.setProperty('--pitem-color', '#f57c00');
+      if (selectField) selectField.classList.remove('hidden');
+      modal.classList.add('provider-theme-equipment');
     }
 
-    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
+    modal.classList.add('visible-flex');
   },
 
   closeAddModal: function() {
     const modal = document.getElementById('provider-item-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal) {
+      modal.classList.remove('visible-flex');
+      modal.classList.add('hidden');
+    }
   },
 
   handleSaveItem: async function(e) {
@@ -191,7 +198,6 @@ window.ProviderModule = {
       if (items.length === 0) {
         const emptyDiv = document.createElement('div');
         emptyDiv.className = 'pitem-empty-card';
-        emptyDiv.style.cssText = 'padding:14px; text-align:center; color:#64748b; font-size:13px; background:#fff; border-radius:10px;';
         emptyDiv.textContent = `ఈ నంబర్ (${currentUserPhone || 'ప్రొఫైల్'}) పై ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.`;
         container.appendChild(emptyDiv);
         return;
@@ -289,7 +295,7 @@ window.ProviderModule = {
 
       if (bookings.length === 0) {
         const noOrders = document.createElement('div');
-        noOrders.style.cssText = 'padding:14px; text-align:center; color:#64748b; font-size:13px; background:#fff; border-radius:10px; margin-top:14px;';
+        noOrders.className = 'porders-empty-card';
         noOrders.textContent = 'ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.';
         box.appendChild(noOrders);
         return;
@@ -348,15 +354,17 @@ window.ProviderModule = {
         const mapBtn = row.querySelector('.porders-map-btn');
         if (b.mapLink) {
           mapBtn.href = b.mapLink;
-          mapBtn.style.display = 'inline-flex';
+          mapBtn.classList.remove('hidden');
+          mapBtn.classList.add('visible-inline-flex');
         }
 
         const acceptBtn = row.querySelector('.porders-accept-btn');
         const acceptedBadge = row.querySelector('.porders-accepted-badge');
 
         if (b.status === 'ACCEPTED') {
-          acceptBtn.style.display = 'none';
-          acceptedBadge.style.display = 'inline-flex';
+          acceptBtn.classList.add('hidden');
+          acceptedBadge.classList.remove('hidden');
+          acceptedBadge.classList.add('visible-inline-flex');
         } else {
           acceptBtn.onclick = () => window.ProviderModule.acceptOrder(b.id);
         }
@@ -430,7 +438,8 @@ window.injectProviderLandingCard = function() {
     container.replaceChildren();
     const clone = tpl.content.cloneNode(true);
     container.appendChild(clone);
-    container.style.display = 'block';
+    container.classList.remove('hidden');
+    container.classList.add('visible-block');
   }
 };
 
