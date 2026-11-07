@@ -88,3 +88,23 @@ window.closeMenuBottomPopup = function(e) {
     document.body.classList.remove('modal-open-freeze');
   }
 };
+
+// Drawer ni close chesi, bottom popup ga tools box open chesthundhi
+
+window.openDirectToolsPopup = function() {
+  window.closeAgriMenu(); // Drawer close chesthundi[span_1](start_span)[span_1](end_span)
+  const toolsBox = document.getElementById('agri-tools-box');
+  if (toolsBox) {
+    toolsBox.classList.add('tools-modal-active');
+    document.body.classList.add('modal-open-freeze');
+  }
+};
+
+window.closeDirectToolsPopup = function() {
+  const toolsBox = document.getElementById('agri-tools-box');
+  if (toolsBox) {
+    toolsBox.classList.remove('tools-modal-active');
+    document.body.classList.remove('modal-open-freeze');
+  }
+};
+
