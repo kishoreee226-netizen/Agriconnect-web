@@ -295,7 +295,9 @@
 .bottom-sheet-body li {
   margin-bottom: 6px;
 }
-
+/* --------------------------------------------------------------------------
+   SECTION 11: Smart power tools HEADER & CLOSE BUTTON direct fill screen app view
+   -------------------------------------------------------------------------- */
 /* Direct Fullscreen App View for Tools */
 #agri-tools-box.tools-view-fullscreen {
   position: fixed !important;
@@ -361,5 +363,9 @@
 
 .tools-view-close-btn:active {
   background: rgba(255, 255, 255, 0.35);
+}
+/* కేవలం ఫుల్‌స్క్రీన్ వ్యూ ఓపెన్ అయినప్పుడు మాత్రమే లోపలి డూప్లికేట్ టైటిల్ హైడ్ అవుతుంది */
+#agri-tools-box.tools-view-fullscreen .agri-tools-header {
+  display: none !important;
 }
 
