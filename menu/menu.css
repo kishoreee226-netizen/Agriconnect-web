@@ -300,7 +300,9 @@
    -------------------------------------------------------------------------- */
 /* కేవలం స్క్రీన్ మీద డైరెక్ట్‌గా ఓపెన్ అవ్వడానికి మాత్రమే (కార్డ్స్ రూల్స్ ఏవీ టచ్ చేయదు) */
 #agri-tools-box.tools-view-fullscreen,
-#utilitiesMountSlot.tools-view-fullscreen {
+#utilitiesMountSlot.tools-view-fullscreen,
+#weather-container.tools-view-fullscreen,
+#mandi-container.tools-view-fullscreen {
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
