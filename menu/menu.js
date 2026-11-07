@@ -89,40 +89,39 @@ window.closeMenuBottomPopup = function(e) {
   }
 };
 
-  window.openDirectToolsPopup = function() {
+  // Generic Fullscreen App View (Tools & Utilities renditiki idhe panichesthundi)
+window.openDirectAppView = function(containerId, title, icon) {
   window.closeAgriMenu();
-  const toolsBox = document.getElementById('agri-tools-box');
-  if (!toolsBox) return;
+  const box = document.getElementById(containerId);
+  if (!box) return;
 
-  toolsBox.classList.add('tools-view-fullscreen');
+  box.classList.add('tools-view-fullscreen');
   document.body.classList.add('modal-open-freeze');
 
-  // Dedicated App Header + Close Button
-  let headerBar = document.getElementById('toolsAppHeaderBar');
-  if (!headerBar) {
-    headerBar = document.createElement('div');
-    headerBar.id = 'toolsAppHeaderBar';
-    headerBar.className = 'tools-view-header';
-    headerBar.innerHTML = `
-      <div class="tools-header-left">
-        <span class="tools-header-icon">🛠️</span>
-        <span class="tools-header-title">Smart Power Tools</span>
-      </div>
-      <button type="button" class="tools-view-close-btn" onclick="window.closeDirectToolsPopup()" aria-label="Close">✕</button>
-    `;
-    toolsBox.prepend(headerBar);
-  }
+  // Patha header unte remove chesi kotthadi create chesthundi
+  let existingHeader = document.getElementById('dynamicAppHeaderBar');
+  if (existingHeader) existingHeader.remove();
+
+  const headerBar = document.createElement('div');
+  headerBar.id = 'dynamicAppHeaderBar';
+  headerBar.className = 'tools-view-header';
+  headerBar.innerHTML = `
+    <div class="tools-header-left">
+      <span class="tools-header-icon">${icon || '🛠️'}</span>
+      <span class="tools-header-title">${title || 'Smart App'}</span>
+    </div>
+    <button type="button" class="tools-view-close-btn" onclick="window.closeDirectAppView('${containerId}')" aria-label="Close">✕</button>
+  `;
+  box.prepend(headerBar);
 };
 
-window.closeDirectToolsPopup = function() {
-  const toolsBox = document.getElementById('agri-tools-box');
-  if (toolsBox) {
-    toolsBox.classList.remove('tools-view-fullscreen');
+window.closeDirectAppView = function(containerId) {
+  const box = document.getElementById(containerId);
+  if (box) {
+    box.classList.remove('tools-view-fullscreen');
     document.body.classList.remove('modal-open-freeze');
   }
-
-  // Header bar ni screen nunchi complete ga remove chesthundi
-  const headerBar = document.getElementById('toolsAppHeaderBar');
+  const headerBar = document.getElementById('dynamicAppHeaderBar');
   if (headerBar) {
     headerBar.remove();
   }
