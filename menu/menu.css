@@ -302,7 +302,11 @@
 #agri-tools-box.tools-view-fullscreen,
 #utilitiesMountSlot.tools-view-fullscreen,
 #weather-container.tools-view-fullscreen,
-#mandi-container.tools-view-fullscreen {
+#mandi-container.tools-view-fullscreen,
+#farmer-post-container.tools-view-fullscreen,
+#labour-jobs-container.tools-view-fullscreen,
+#provider-container.tools-view-fullscreen,
+#wallet-container.tools-view-fullscreen {
   position: fixed !important;
   inset: 0 !important;
   width: 100vw !important;
