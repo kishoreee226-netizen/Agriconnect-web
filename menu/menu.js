@@ -90,7 +90,18 @@ window.closeMenuBottomPopup = function(e) {
 };
 
   // Generic Fullscreen App View (Tools & Utilities renditiki idhe panichesthundi)
-window.openDirectAppView = function(containerId, title, icon) {
+window.openDirectAppView = function(containerId, title, icon, requiresAuth = false, roleType = 'FARMER') {
+  // 1. PIN లాగిన్ అవసరమై, యూజర్ లాగిన్ అవ్వకపోతే PIN పాపప్ ఓపెన్ అవుతుంది
+  if (requiresAuth && window.AuthModule && !window.AuthModule.isLoggedIn()) {
+    window.closeAgriMenu();
+    window.AuthModule.open({
+      role: roleType,
+      target: { containerId, title, icon }
+    });
+    return;
+  }
+
+  // 2. లాగిన్ అయి ఉంటే లేదా పబ్లిక్ స్క్రీన్ అయితే డైరెక్ట్ ఓపెన్
   window.closeAgriMenu();
   const box = document.getElementById(containerId);
   if (!box) return;
@@ -98,7 +109,7 @@ window.openDirectAppView = function(containerId, title, icon) {
   box.classList.add('tools-view-fullscreen');
   document.body.classList.add('modal-open-freeze');
 
-  // Patha header unte remove chesi kotthadi create chesthundi
+  // Patha header unte remove chesi kothadi create chesthundhi
   let existingHeader = document.getElementById('dynamicAppHeaderBar');
   if (existingHeader) existingHeader.remove();
 
