@@ -120,4 +120,10 @@ window.closeDirectToolsPopup = function() {
     toolsBox.classList.remove('tools-view-fullscreen');
     document.body.classList.remove('modal-open-freeze');
   }
+
+  // Header bar ni screen nunchi complete ga remove chesthundi
+  const headerBar = document.getElementById('toolsAppHeaderBar');
+  if (headerBar) {
+    headerBar.remove();
+  }
 };
