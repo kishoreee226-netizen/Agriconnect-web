@@ -33,98 +33,65 @@ window.ProviderModule = {
   },
 
   openAddModal: function(type) {
-    let modal = document.getElementById('provider-item-modal');
-    if (modal) modal.remove();
+    this.selectedType = type || 'equipment';
+    const modal = document.getElementById('provider-item-modal');
+    if (!modal) {
+      console.warn("Provider modal DOM not loaded yet.");
+      return;
+    }
 
-    const configs = {
-      equipment: {
-        title: '🚜 పరికరం వివరాలు జోడించండి',
-        color: '#f57c00',
-        fields: `
-          <div class="provider-form-group">
-            <label class="provider-form-label">పరికరం రకం / మోడల్:</label>
-            <input type="text" id="item-field-1" placeholder="ఉదా: మహీంద్రా 575 ట్రాక్టర్ / రోటవేటర్" required class="provider-form-input" />
-          </div>
-          <div class="provider-form-group">
-            <label class="provider-form-label">అద్దె ధర (గంటకు ₹):</label>
-            <input type="number" id="item-field-2" placeholder="ఉదా: 900" required class="provider-form-input" />
-          </div>
-          <div class="provider-form-group last">
-            <label class="provider-form-label">పని స్థితి (Availability):</label>
-            <select id="item-field-3" class="provider-form-input">
-              <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
-              <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
-            </select>
-          </div>
-        `
-      },
-      transport: {
-        title: '🚚 రవాణా వాహనం వివరాలు జోడించండి',
-        color: '#7b1fa2',
-        fields: `
-          <div class="provider-form-group">
-            <label class="provider-form-label">వాహనం రకం:</label>
-            <input type="text" id="item-field-1" placeholder="ఉదా: బొలెరో పికప్ / 407 DCM / ట్రాక్టర్ ట్రాలీ" required class="provider-form-input" />
-          </div>
-          <div class="provider-form-group">
-            <label class="provider-form-label">ఛార్జీ (కి.మీ / ట్రిప్ ₹):</label>
-            <input type="text" id="item-field-2" placeholder="ఉదా: ₹35 / కి.మీ లేదా ₹1200 / ట్రిప్" required class="provider-form-input" />
-          </div>
-          <div class="provider-form-group last">
-            <label class="provider-form-label">మోసే బరువు సామర్థ్యం:</label>
-            <input type="text" id="item-field-3" placeholder="ఉదా: 2 టన్నులు / 50 బస్తాలు" required class="provider-form-input" />
-          </div>
-        `
-      },
-      seeds: {
-        title: '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి',
-        color: '#2e7d32',
-        fields: `
-          <div class="provider-form-group">
-            <label class="provider-form-label">పంట రకం & బ్రాండ్:</label>
-            <input type="text" id="item-field-1" placeholder="ఉదా: వరి BPT 5204 / కాటన్ సీడ్స్" required class="provider-form-input" />
-          </div>
-          <div class="provider-form-group">
-            <label class="provider-form-label">ధర (బ్యాగ్ / ప్యాకెట్ ₹):</label>
-            <input type="number" id="item-field-2" placeholder="ఉదా: 850" required class="provider-form-input" />
-          </div>
-          <div class="provider-form-group last">
-            <label class="provider-form-label">స్టాక్ లభ్యత:</label>
-            <input type="text" id="item-field-3" placeholder="ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి" required class="provider-form-input" />
-          </div>
-        `
+    const titleEl = document.getElementById('pitem-modal-dynamic-title');
+    const lbl1 = document.getElementById('pitem-lbl-1');
+    const lbl2 = document.getElementById('pitem-lbl-2');
+    const lbl3 = document.getElementById('pitem-lbl-3');
+    const f3Wrapper = document.getElementById('pitem-field-3-wrapper');
+    const form = document.getElementById('provider-add-item-form');
+
+    if (form) form.reset();
+
+    if (type === 'transport') {
+      if (titleEl) titleEl.innerText = '🚚 రవాణా వాహనం వివరాలు జోడించండి';
+      if (lbl1) lbl1.innerText = 'వాహనం రకం:';
+      if (lbl2) lbl2.innerText = 'ఛార్జీ (కి.మీ / ట్రిప్ ₹):';
+      if (lbl3) lbl3.innerText = 'మోసే బరువు సామర్థ్యం:';
+      if (f3Wrapper) f3Wrapper.innerHTML = `<input type="text" id="item-field-3" placeholder="ఉదా: 2 టన్నులు / 50 బస్తాలు" required class="provider-form-input" />`;
+      modal.style.setProperty('--pitem-color', '#7b1fa2');
+    } else if (type === 'seeds') {
+      if (titleEl) titleEl.innerText = '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి';
+      if (lbl1) lbl1.innerText = 'పంట రకం & బ్రాండ్:';
+      if (lbl2) lbl2.innerText = 'ధర (బ్యాగ్ / ప్యాకెట్ ₹):';
+      if (lbl3) lbl3.innerText = 'స్టాక్ లభ్యత:';
+      if (f3Wrapper) f3Wrapper.innerHTML = `<input type="text" id="item-field-3" placeholder="ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి" required class="provider-form-input" />`;
+      modal.style.setProperty('--pitem-color', '#2e7d32');
+    } else {
+      titleEl.innerText = '🚜 పరికరం వివరాలు జోడించండి';
+      if (lbl1) lbl1.innerText = 'పరికరం రకం / మోడల్:';
+      if (lbl2) lbl2.innerText = 'అద్దె ధర (గంటకు ₹):';
+      if (lbl3) lbl3.innerText = 'పని స్థితి (Availability):';
+      if (f3Wrapper) {
+        f3Wrapper.innerHTML = `
+          <select id="item-field-3" class="provider-form-input">
+            <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
+            <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
+          </select>`;
       }
-    };
+      modal.style.setProperty('--pitem-color', '#f57c00');
+    }
 
-    const conf = configs[type] || configs.equipment;
-    modal = document.createElement('div');
-    modal.id = 'provider-item-modal';
-    modal.className = 'pitem-modal-overlay';
-    modal.style.setProperty('--pitem-color', conf.color);
-
-    modal.innerHTML = `
-      <div class="pitem-modal-card">
-        <button onclick="window.ProviderModule.closeAddModal()" class="provider-close-btn">✕</button>
-        <h3 class="pitem-modal-title">${conf.title}</h3>
-        <form onsubmit="window.ProviderModule.handleSaveItem(event, '${type}')">
-          ${conf.fields}
-          <button type="submit" class="pitem-submit-btn">లిస్టింగ్‌ను సేవ్ చేయండి ➔</button>
-        </form>
-      </div>
-    `;
-    document.body.appendChild(modal);
+    modal.style.display = 'flex';
   },
 
   closeAddModal: function() {
     const modal = document.getElementById('provider-item-modal');
-    if (modal) modal.remove();
+    if (modal) modal.style.display = 'none';
   },
 
-  handleSaveItem: async function(e, type) {
-    e.preventDefault();
-    const val1 = document.getElementById('item-field-1').value.trim();
-    const val2 = document.getElementById('item-field-2').value.trim();
-    const val3 = document.getElementById('item-field-3').value.trim();
+  handleSaveItem: async function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const type = this.selectedType || 'equipment';
+    const val1 = document.getElementById('item-field-1')?.value.trim();
+    const val2 = document.getElementById('item-field-2')?.value.trim();
+    const val3 = document.getElementById('item-field-3')?.value.trim();
 
     if (!val1 || !val2 || !val3) {
       alert("దయచేసి అన్ని వివరాలు నమోదు చేయండి.");
@@ -364,6 +331,7 @@ window.renderProviderItemsList = function(type) { window.ProviderModule.renderIt
 window.deleteProviderItem = function(id, type) { window.ProviderModule.deleteItem(id, type); };
 window.renderIncomingBookingsForProvider = function(cId) { window.ProviderModule.renderIncomingBookings(cId); };
 window.acceptBookingOrder = function(bId) { window.ProviderModule.acceptOrder(bId); };
+
 // ===================================================
 // Provider Landing Card Injection
 // ===================================================
