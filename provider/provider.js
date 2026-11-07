@@ -6,6 +6,13 @@ window.ProviderModule = {
     if (!container) return;
     this.selectedType = type || 'equipment';
 
+    const tpl = document.getElementById('provider-dashboard-template');
+    if (!tpl) return;
+
+    container.replaceChildren();
+    const clone = tpl.content.cloneNode(true);
+    const card = clone.querySelector('.provider-dashboard-card');
+
     const titles = {
       equipment: { name: '🚜 పరికరాల నిర్వహణ డ్యాష్‌బోర్డ్', color: '#f57c00', desc: 'మీ ట్రాక్టర్లు, హార్వెస్టర్లు మొదలైన పరికరాలను జోడించండి' },
       transport: { name: '🚚 రవాణా వాహనాల డ్యాష్‌బోర్డ్', color: '#7b1fa2', desc: 'మీ రవాణా వాహనాలు, ట్రాలీలు, ఆటోలను అద్దెకు చేర్చండి' },
@@ -13,20 +20,21 @@ window.ProviderModule = {
     };
     const current = titles[this.selectedType] || titles.equipment;
 
-    container.innerHTML = `
-      <div class="provider-dashboard-card" style="--provider-theme: ${current.color};">
-        <h3 class="provider-dash-title">${current.name}</h3>
-        <p class="provider-dash-desc">${current.desc}</p>
-        
-        <div onclick="window.ProviderModule.openAddModal('${this.selectedType}')" class="provider-add-service-btn">
-          <span class="provider-add-service-text">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
-          <p class="provider-add-service-subtext">వివరాలు నమోదు చేయడానికి ఇక్కడ నొక్కండి</p>
-        </div>
+    card.style.setProperty('--provider-theme', current.color);
+    clone.querySelector('.provider-dash-title').textContent = current.name;
+    clone.querySelector('.provider-dash-desc').textContent = current.desc;
 
-        <div id="provider-items-list" style="margin-top:16px;"></div>
-        <div id="provider-incoming-requests"></div>
-      </div>
-    `;
+    clone.querySelector('.provider-add-service-btn').onclick = () => {
+      window.ProviderModule.openAddModal(this.selectedType);
+    };
+
+    const itemsBox = clone.querySelector('.provider-items-box-wrapper');
+    itemsBox.id = 'provider-items-list';
+
+    const reqsBox = clone.querySelector('.provider-incoming-requests-wrapper');
+    reqsBox.id = 'provider-incoming-requests';
+
+    container.appendChild(clone);
 
     this.renderItemsList(this.selectedType);
     this.renderIncomingBookings('provider-incoming-requests');
@@ -35,46 +43,52 @@ window.ProviderModule = {
   openAddModal: function(type) {
     this.selectedType = type || 'equipment';
     const modal = document.getElementById('provider-item-modal');
-    if (!modal) {
-      console.warn("Provider modal DOM not loaded yet.");
-      return;
-    }
+    if (!modal) return console.warn("Provider modal DOM not loaded yet.");
 
     const titleEl = document.getElementById('pitem-modal-dynamic-title');
     const lbl1 = document.getElementById('pitem-lbl-1');
     const lbl2 = document.getElementById('pitem-lbl-2');
     const lbl3 = document.getElementById('pitem-lbl-3');
-    const f3Wrapper = document.getElementById('pitem-field-3-wrapper');
+    const selectField = document.getElementById('item-field-3-select');
+    const textField = document.getElementById('item-field-3-text');
     const form = document.getElementById('provider-add-item-form');
 
     if (form) form.reset();
 
     if (type === 'transport') {
-      if (titleEl) titleEl.innerText = '🚚 రవాణా వాహనం వివరాలు జోడించండి';
-      if (lbl1) lbl1.innerText = 'వాహనం రకం:';
-      if (lbl2) lbl2.innerText = 'ఛార్జీ (కి.మీ / ట్రిప్ ₹):';
-      if (lbl3) lbl3.innerText = 'మోసే బరువు సామర్థ్యం:';
-      if (f3Wrapper) f3Wrapper.innerHTML = `<input type="text" id="item-field-3" placeholder="ఉదా: 2 టన్నులు / 50 బస్తాలు" required class="provider-form-input" />`;
+      if (titleEl) titleEl.textContent = '🚚 రవాణా వాహనం వివరాలు జోడించండి';
+      if (lbl1) lbl1.textContent = 'వాహనం రకం:';
+      if (lbl2) lbl2.textContent = 'ఛార్జీ (కి.మీ / ట్రిప్ ₹):';
+      if (lbl3) lbl3.textContent = 'మోసే బరువు సామర్థ్యం:';
+      if (selectField) selectField.style.display = 'none';
+      if (textField) {
+        textField.style.display = 'block';
+        textField.placeholder = 'ఉదా: 2 టన్నులు / 50 బస్తాలు';
+        textField.required = true;
+      }
       modal.style.setProperty('--pitem-color', '#7b1fa2');
     } else if (type === 'seeds') {
-      if (titleEl) titleEl.innerText = '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి';
-      if (lbl1) lbl1.innerText = 'పంట రకం & బ్రాండ్:';
-      if (lbl2) lbl2.innerText = 'ధర (బ్యాగ్ / ప్యాకెట్ ₹):';
-      if (lbl3) lbl3.innerText = 'స్టాక్ లభ్యత:';
-      if (f3Wrapper) f3Wrapper.innerHTML = `<input type="text" id="item-field-3" placeholder="ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి" required class="provider-form-input" />`;
+      if (titleEl) titleEl.textContent = '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి';
+      if (lbl1) lbl1.textContent = 'పంట రకం & బ్రాండ్:';
+      if (lbl2) lbl2.textContent = 'ధర (బ్యాగ్ / ప్యాకెట్ ₹):';
+      if (lbl3) lbl3.textContent = 'స్టాక్ లభ్యత:';
+      if (selectField) selectField.style.display = 'none';
+      if (textField) {
+        textField.style.display = 'block';
+        textField.placeholder = 'ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి';
+        textField.required = true;
+      }
       modal.style.setProperty('--pitem-color', '#2e7d32');
     } else {
-      titleEl.innerText = '🚜 పరికరం వివరాలు జోడించండి';
-      if (lbl1) lbl1.innerText = 'పరికరం రకం / మోడల్:';
-      if (lbl2) lbl2.innerText = 'అద్దె ధర (గంటకు ₹):';
-      if (lbl3) lbl3.innerText = 'పని స్థితి (Availability):';
-      if (f3Wrapper) {
-        f3Wrapper.innerHTML = `
-          <select id="item-field-3" class="provider-form-input">
-            <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
-            <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
-          </select>`;
+      if (titleEl) titleEl.textContent = '🚜 పరికరం వివరాలు జోడించండి';
+      if (lbl1) lbl1.textContent = 'పరికరం రకం / మోడల్:';
+      if (lbl2) lbl2.textContent = 'అద్దె ధర (గంటకు ₹):';
+      if (lbl3) lbl3.textContent = 'పని స్థితి (Availability):';
+      if (textField) {
+        textField.style.display = 'none';
+        textField.required = false;
       }
+      if (selectField) selectField.style.display = 'block';
       modal.style.setProperty('--pitem-color', '#f57c00');
     }
 
@@ -91,7 +105,9 @@ window.ProviderModule = {
     const type = this.selectedType || 'equipment';
     const val1 = document.getElementById('item-field-1')?.value.trim();
     const val2 = document.getElementById('item-field-2')?.value.trim();
-    const val3 = document.getElementById('item-field-3')?.value.trim();
+    const selectField = document.getElementById('item-field-3-select');
+    const textField = document.getElementById('item-field-3-text');
+    const val3 = (type === 'equipment' ? selectField?.value : textField?.value)?.trim();
 
     if (!val1 || !val2 || !val3) {
       alert("దయచేసి అన్ని వివరాలు నమోదు చేయండి.");
@@ -150,7 +166,11 @@ window.ProviderModule = {
     const currentUserPhone = String(profile.phone || '').trim();
     const currentType = type || profile.providerType || 'equipment';
 
-    container.innerHTML = `<p class="pitem-loading-text">వివరాలు లోడ్ అవుతున్నాయి...</p>`;
+    container.replaceChildren();
+    const loadingP = document.createElement('p');
+    loadingP.className = 'pitem-loading-text';
+    loadingP.textContent = 'వివరాలు లోడ్ అవుతున్నాయి...';
+    container.appendChild(loadingP);
 
     try {
       let items = [];
@@ -158,7 +178,6 @@ window.ProviderModule = {
         const snapshot = await db.collection("provider_items")
           .where("phone", "==", currentUserPhone)
           .get();
-
         snapshot.forEach(doc => items.push({ id: doc.id, ...doc.data() }));
       }
 
@@ -167,42 +186,69 @@ window.ProviderModule = {
         items = local.filter(it => !currentUserPhone || it.phone === currentUserPhone);
       }
 
+      container.replaceChildren();
+
       if (items.length === 0) {
-        container.innerHTML = `
-          <div class="pitem-empty-card" style="padding:14px; text-align:center; color:#64748b; font-size:13px; background:#fff; border-radius:10px;">
-            ఈ నంబర్ (${currentUserPhone || 'ప్రొఫైల్'}) పై ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.
-          </div>
-        `;
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'pitem-empty-card';
+        emptyDiv.style.cssText = 'padding:14px; text-align:center; color:#64748b; font-size:13px; background:#fff; border-radius:10px;';
+        emptyDiv.textContent = `ఈ నంబర్ (${currentUserPhone || 'ప్రొఫైల్'}) పై ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.`;
+        container.appendChild(emptyDiv);
         return;
       }
 
-      container.innerHTML = `
-        <div class="pitem-box">
-          <div class="pitem-header">
-            <div class="pitem-title-text">
-              🚜 మీరు జోడించిన వస్తువులు <span class="pitem-count-badge">${items.length}</span>
-            </div>
-            <span class="pitem-live-badge"><span class="pitem-live-dot"></span> LIVE</span>
-          </div>
+      const box = document.createElement('div');
+      box.className = 'pitem-box';
 
-          <div class="pitem-scroll-list">
-            ${items.map(item => `
-              <div class="pitem-card-row">
-                <div>
-                  <div class="pitem-card-title">${item.name || item.title || 'పేరు లేదు'}</div>
-                  <div class="pitem-card-details">
-                    ధర / అద్దె: <b class="pitem-price-text">${item.rate || item.price || 'N/A'}</b> | <span>${item.status || 'అందుబాటులో ఉంది'}</span>
-                  </div>
-                </div>
-                <button onclick="window.ProviderModule.deleteItem('${item.id}', '${currentType}')" class="pitem-delete-btn">తీసివేయి</button>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
+      const header = document.createElement('div');
+      header.className = 'pitem-header';
+      
+      const title = document.createElement('div');
+      title.className = 'pitem-title-text';
+      title.textContent = '🚜 మీరు జోడించిన వస్తువులు ';
+      const badge = document.createElement('span');
+      badge.className = 'pitem-count-badge';
+      badge.textContent = items.length;
+      title.appendChild(badge);
+
+      const liveBadge = document.createElement('span');
+      liveBadge.className = 'pitem-live-badge';
+      const liveDot = document.createElement('span');
+      liveDot.className = 'pitem-live-dot';
+      liveBadge.appendChild(liveDot);
+      liveBadge.appendChild(document.createTextNode(' LIVE'));
+
+      header.appendChild(title);
+      header.appendChild(liveBadge);
+      box.appendChild(header);
+
+      const scrollList = document.createElement('div');
+      scrollList.className = 'pitem-scroll-list';
+
+      const rowTpl = document.getElementById('provider-item-row-template');
+
+      items.forEach(item => {
+        if (!rowTpl) return;
+        const row = rowTpl.content.cloneNode(true);
+        row.querySelector('.pitem-card-title').textContent = item.name || item.title || 'పేరు లేదు';
+        row.querySelector('.pitem-price-text').textContent = item.rate || item.price || 'N/A';
+        row.querySelector('.pitem-status-text').textContent = item.status || 'అందుబాటులో ఉంది';
+        row.querySelector('.pitem-delete-btn').onclick = () => {
+          window.ProviderModule.deleteItem(item.id, currentType);
+        };
+        scrollList.appendChild(row);
+      });
+
+      box.appendChild(scrollList);
+      container.appendChild(box);
+
     } catch (err) {
       console.error("Firestore Error:", err);
-      container.innerHTML = `<p class="pitem-error-text">డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.</p>`;
+      container.replaceChildren();
+      const errP = document.createElement('p');
+      errP.className = 'pitem-error-text';
+      errP.textContent = 'డేటా లోడ్ చేయడంలో సమస్య వచ్చింది.';
+      container.appendChild(errP);
     }
   },
 
@@ -239,45 +285,87 @@ window.ProviderModule = {
         return !bPhone || (currentPhone && bPhone === currentPhone);
       });
 
+      box.replaceChildren();
+
       if (bookings.length === 0) {
-        box.innerHTML = `<div style="padding:14px; text-align:center; color:#64748b; font-size:13px; background:#fff; border-radius:10px; margin-top:14px;">ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.</div>`;
+        const noOrders = document.createElement('div');
+        noOrders.style.cssText = 'padding:14px; text-align:center; color:#64748b; font-size:13px; background:#fff; border-radius:10px; margin-top:14px;';
+        noOrders.textContent = 'ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.';
+        box.appendChild(noOrders);
         return;
       }
 
-      box.innerHTML = `
-        <div class="porders-box">
-          <div class="porders-header">
-            <div class="porders-title">🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు <span class="porders-count-badge">${bookings.length}</span></div>
-            <span class="pitem-live-badge"><span class="pitem-live-dot"></span> LIVE</span>
-          </div>
+      const pBox = document.createElement('div');
+      pBox.className = 'porders-box';
 
-          <div class="porders-scroll-list">
-            ${bookings.map(b => `
-              <div class="porders-card ${b.status === 'ACCEPTED' ? 'accepted' : ''}">
-                <div class="porders-card-top">
-                  <span class="porders-type-tag ${b.type === 'SPOT' ? 'spot' : 'advance'}">
-                    ${b.type === 'SPOT' ? '⚡ SPOT (వెంటనే కావాలి)' : '📅 ADVANCE బుకింగ్'}
-                  </span>
-                  <span style="font-size:11px; color:#64748b;">${b.createdAt || ''}</span>
-                </div>
-                <div class="porders-veh-name">${b.vehicleType || b.itemName || ''}</div>
-                <div class="porders-work-details">
-                  <div>పని: <b>${b.workSize || ''}</b> &nbsp;|&nbsp; సమయం: <b>${b.schedule || ''}</b></div>
-                  <div>రైతు: <b>${b.farmerName || ''}</b>, గ్రామం: <b>${b.village || ''}</b></div>
-                </div>
-                <div class="porders-btn-row">
-                  <a href="tel:${b.farmerPhone || ''}" class="porders-action-btn porders-call-btn">📞 రైతుకు కాల్</a>
-                  ${b.mapLink ? `<a href="${b.mapLink}" target="_blank" class="porders-action-btn porders-map-btn">🗺️ పొలం మ్యాప్</a>` : ''}
-                  ${b.status !== 'ACCEPTED' 
-                    ? `<button onclick="window.ProviderModule.acceptOrder('${b.id}')" class="porders-action-btn porders-accept-btn">✅ ఒప్పుకోండి (Accept)</button>`
-                    : `<span class="porders-accepted-badge">ఆర్డర్ స్వీకరించబడింది</span>`
-                  }
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
+      const header = document.createElement('div');
+      header.className = 'porders-header';
+      const title = document.createElement('div');
+      title.className = 'porders-title';
+      title.textContent = '🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు ';
+      const badge = document.createElement('span');
+      badge.className = 'porders-count-badge';
+      badge.textContent = bookings.length;
+      title.appendChild(badge);
+
+      const liveBadge = document.createElement('span');
+      liveBadge.className = 'pitem-live-badge';
+      const dot = document.createElement('span');
+      dot.className = 'pitem-live-dot';
+      liveBadge.appendChild(dot);
+      liveBadge.appendChild(document.createTextNode(' LIVE'));
+
+      header.appendChild(title);
+      header.appendChild(liveBadge);
+      pBox.appendChild(header);
+
+      const scrollList = document.createElement('div');
+      scrollList.className = 'porders-scroll-list';
+
+      const cardTpl = document.getElementById('provider-order-card-template');
+
+      bookings.forEach(b => {
+        if (!cardTpl) return;
+        const row = cardTpl.content.cloneNode(true);
+        const cardEl = row.querySelector('.porders-card');
+
+        if (b.status === 'ACCEPTED') cardEl.classList.add('accepted');
+
+        const tag = row.querySelector('.porders-type-tag');
+        tag.classList.add(b.type === 'SPOT' ? 'spot' : 'advance');
+        tag.textContent = b.type === 'SPOT' ? '⚡ SPOT (వెంటనే కావాలి)' : '📅 ADVANCE బుకింగ్';
+
+        row.querySelector('.porders-time-text').textContent = b.createdAt || '';
+        row.querySelector('.porders-veh-name').textContent = b.vehicleType || b.itemName || '';
+        row.querySelector('.porders-work-size').textContent = b.workSize || '';
+        row.querySelector('.porders-schedule').textContent = b.schedule || '';
+        row.querySelector('.porders-farmer-name').textContent = b.farmerName || '';
+        row.querySelector('.porders-village').textContent = b.village || '';
+
+        const callBtn = row.querySelector('.porders-call-btn');
+        callBtn.href = `tel:${b.farmerPhone || ''}`;
+
+        const mapBtn = row.querySelector('.porders-map-btn');
+        if (b.mapLink) {
+          mapBtn.href = b.mapLink;
+          mapBtn.style.display = 'inline-flex';
+        }
+
+        const acceptBtn = row.querySelector('.porders-accept-btn');
+        const acceptedBadge = row.querySelector('.porders-accepted-badge');
+
+        if (b.status === 'ACCEPTED') {
+          acceptBtn.style.display = 'none';
+          acceptedBadge.style.display = 'inline-flex';
+        } else {
+          acceptBtn.onclick = () => window.ProviderModule.acceptOrder(b.id);
+        }
+
+        scrollList.appendChild(row);
+      });
+
+      pBox.appendChild(scrollList);
+      box.appendChild(pBox);
     };
 
     if (window.AgriDB && typeof window.AgriDB.listenToBookings === 'function') {
@@ -320,10 +408,8 @@ window.ProviderModule = {
   }
 };
 
-// Global Backwards Compatibility (పాత కాల్స్ ఎక్కడున్నా ఆగకుండా ఉండటానికి)
-window.renderProviderDashboardView = function(container, type) {
-  window.ProviderModule.renderDashboard(container, type);
-};
+// Global Backwards Compatibility
+window.renderProviderDashboardView = function(container, type) { window.ProviderModule.renderDashboard(container, type); };
 window.openAddServiceModal = function(type) { window.ProviderModule.openAddModal(type); };
 window.closeAddServiceModal = function() { window.ProviderModule.closeAddModal(); };
 window.handleSaveProviderItem = function(e, type) { window.ProviderModule.handleSaveItem(e, type); };
@@ -333,33 +419,17 @@ window.renderIncomingBookingsForProvider = function(cId) { window.ProviderModule
 window.acceptBookingOrder = function(bId) { window.ProviderModule.acceptOrder(bId); };
 
 // ===================================================
-// Provider Landing Card Injection
+// Provider Landing Card Clone Logic
 // ===================================================
 window.injectProviderLandingCard = function() {
   const container = document.getElementById('provider-container') || document.getElementById('provider-hub-container');
-  if (!container) return;
+  const tpl = document.getElementById('provider-landing-template');
+  if (!container || !tpl) return;
 
-  // యూజర్ లాగిన్ అయి ఉండకపోతే మాత్రమే ల్యాండింగ్ కార్డ్ చూపిస్తుంది
   if (!window.AppState || !window.AppState.isLoggedIn) {
-    container.innerHTML = `
-      <div class="agri-landing-card provider-border">
-        <div class="agri-card-header">
-          <span class="agri-icon">🤝</span>
-          <strong class="agri-title-provider">పరికరాలు, రవాణా & విత్తనాల యజమానుల సేవా కేంద్రం</strong>
-        </div>
-        <p class="agri-card-subtext">
-          ట్రాక్టర్లు, హార్వెస్టర్లు, రవాణా వాహనాలు లేదా విత్తనాలు/ఎరువుల యజమానులు తమ సేవలను అద్దెకు/అమ్ముకానికి ఇక్కడ సులభంగా జోడించవచ్చు.
-        </p>
-        <ul class="agri-card-desc-list">
-          <li>రైతుల నుండి నేరుగా బుకింగ్‌లు & ఆర్డర్‌లు పొందండి.</li>
-          <li>మీ పరికరాలు, రవాణా రేట్లు మీరే నిర్ణయించుకోండి.</li>
-          <li>కమిషన్ లేకుండా నేరుగా కస్టమర్‌తో ఫోన్ / వాట్సాప్ సంప్రదింపులు.</li>
-        </ul>
-        <button onclick="window.AuthModule.open({ role: 'PROVIDER' })" class="agri-landing-btn provider-btn-bg">
-          యజమానిగా Login / సేవలను జోడించండి ➔
-        </button>
-      </div>
-    `;
+    container.replaceChildren();
+    const clone = tpl.content.cloneNode(true);
+    container.appendChild(clone);
     container.style.display = 'block';
   }
 };
