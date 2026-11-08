@@ -15,7 +15,11 @@ window.RoleController = {
           window.AppState.isLoggedIn = true;
           window.AppState.userProfile = user;
           window.AppState.userType = user.roleType || user.userType || "FARMER";
-          window.AppState.currentRole = (window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
+          
+          // రోల్ డిఫాల్ట్ సెట్ చేయడం
+          if (!window.AppState.currentRole) {
+            window.AppState.currentRole = (window.AppState.userType === "LABOUR" || window.AppState.userType === "LABOURONLY") ? "LABOUR" : (window.AppState.userType === "PROVIDER" ? "PROVIDER" : "FARMER");
+          }
         }
       } catch (e) {
         console.warn("Session restore error:", e);
@@ -63,8 +67,8 @@ window.RoleController = {
     // 2. లాగిన్ అయినప్పుడు బ్యానర్ డిస్‌ప్లే
     this.renderUserProfileBanner();
 
-    // Case A: కూలీ మాత్రమే లాగిన్ అయినప్పుడు (LABOUR)
-    if (state.userType === "LABOURONLY" || state.userType === "LABOUR") {
+    // Case A: కేవలం కూలీగా మాత్రమే రిజిస్టర్ అయినవారు (LABOUR ONLY)
+    if (state.userType === "LABOURONLY") {
       this.removeRoleSwitchBar();
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
@@ -74,44 +78,53 @@ window.RoleController = {
       }
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
       this.filterLabourJobsByLocation();
+      return;
     }
-    // Case B: రైతు లాగిన్ అయినప్పుడు (FARMER / Dual-role mode)
-    else if (state.userType === "FARMER") {
-      this.renderRoleSwitchBar();
-      if (state.currentRole === 'LABOUR') {
-        if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-        if (labourContainer) {
-          labourContainer.style.setProperty('display', 'block', 'important');
-          if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
-          this.filterLabourJobsByLocation();
+
+    // Case B: రైతు లేదా యూనివర్సల్ ప్రొఫైల్ (FARMER / PROVIDER) - 3 మోడ్‌ల స్విచ్ బార్
+    this.renderRoleSwitchBar();
+
+    const currRole = state.currentRole || 'FARMER';
+
+    // 1. కూలీ మోడ్ లో ఉన్నప్పుడు
+    if (currRole === 'LABOUR') {
+      if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+      if (labourContainer) {
+        labourContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
+        this.filterLabourJobsByLocation();
+      }
+    } 
+    // 2. ప్రొవైడర్ మోడ్ లో ఉన్నప్పుడు (ట్రాక్టర్, విత్తనాలు, రవాణా అద్దెకు ఇచ్చే మోడ్)
+    else if (currRole === 'PROVIDER') {
+      if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) {
+        providerContainer.style.setProperty('display', 'block', 'important');
+        if (window.ProviderModule) {
+          if (typeof window.ProviderModule.renderDashboard === 'function') {
+            window.ProviderModule.renderDashboard(providerContainer, state.providerType || 'equipment');
+          } else if (typeof window.ProviderModule.init === 'function') {
+            window.ProviderModule.init();
+          }
         }
-      } else {
-        if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-        if (farmerContainer) {
-          farmerContainer.style.setProperty('display', 'block', 'important');
-          if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
-        }
+      }
+    } 
+    // 3. రైతు మోడ్ లో ఉన్నప్పుడు (డిఫాల్ట్)
+    else {
+      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+      if (farmerContainer) {
+        farmerContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
         if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
           window.renderFarmerWidgetWithLiveProviders();
         }
       }
-      if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
-    // Case C: ప్రొవైడర్ / యంత్రాల యజమాని (PROVIDER)
-    else if (state.userType === "PROVIDER") {
-      this.removeRoleSwitchBar();
-      if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-      if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
-      if (providerContainer && window.ProviderModule) {
-        providerContainer.style.setProperty('display', 'block', 'important');
-        if (typeof window.ProviderModule.renderDashboard === 'function') {
-          window.ProviderModule.renderDashboard(providerContainer, state.providerType || 'equipment');
-        } else if (typeof window.ProviderModule.init === 'function') {
-          window.ProviderModule.init();
-        }
-      }
-    }
+
+    if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
   },
 
   renderUserProfileBanner: function() {
@@ -131,13 +144,19 @@ window.RoleController = {
     }
 
     let roleText = "రైతు (Farmer)";
-    if (state.userType === "LABOUR" || state.currentRole === "LABOUR") roleText = "కూలీ (Labour)";
-    else if (state.userType === "PROVIDER") roleText = "🤝 యజమాని (Provider)";
+    const curr = state.currentRole || state.userType;
+    if (curr === "LABOUR" || curr === "LABOURONLY") roleText = "👷 కూలీ (Labour)";
+    else if (curr === "PROVIDER") roleText = "🤝 యజమాని (Provider)";
 
-    banner.querySelector(".user-name-text").textContent = `👤 ${user.name || 'వినియోగదారుడు'} `;
-    banner.querySelector(".profile-banner-badge").textContent = roleText;
-    banner.querySelector(".user-phone-text").textContent = `📞 ${user.phone || ''}`;
-    banner.querySelector(".user-village-text").textContent = user.village || '';
+    const nameNode = banner.querySelector(".user-name-text");
+    const badgeNode = banner.querySelector(".profile-banner-badge");
+    const phoneNode = banner.querySelector(".user-phone-text");
+    const villageNode = banner.querySelector(".user-village-text");
+
+    if (nameNode) nameNode.textContent = `👤 ${user.name || 'వినియోగదారుడు'} `;
+    if (badgeNode) badgeNode.textContent = roleText;
+    if (phoneNode) phoneNode.textContent = `📞 ${user.phone || ''}`;
+    if (villageNode) villageNode.textContent = user.village || '';
   },
 
   removeProfileHeader: function() {
@@ -147,7 +166,7 @@ window.RoleController = {
 
   renderRoleSwitchBar: function() {
     const state = window.AppState;
-    if (!state || !state.isLoggedIn || state.userType !== "FARMER") return;
+    if (!state || !state.isLoggedIn || state.userType === "LABOURONLY") return;
 
     let switchBar = document.getElementById("role-switch-container");
     if (!switchBar) {
@@ -165,12 +184,14 @@ window.RoleController = {
       }
     }
 
-    const isFarmerRole = (state.currentRole !== 'LABOUR');
-    const farmerBtn = switchBar.querySelector("#role-btn-farmer");
-    const labourBtn = switchBar.querySelector("#role-btn-labour");
+    const curr = state.currentRole || 'FARMER';
+    const fBtn = switchBar.querySelector("#role-btn-farmer");
+    const lBtn = switchBar.querySelector("#role-btn-labour");
+    const pBtn = switchBar.querySelector("#role-btn-provider");
 
-    if (farmerBtn) farmerBtn.classList.toggle("active", isFarmerRole);
-    if (labourBtn) labourBtn.classList.toggle("active", !isFarmerRole);
+    if (fBtn) fBtn.classList.toggle("active", curr === 'FARMER');
+    if (lBtn) lBtn.classList.toggle("active", curr === 'LABOUR');
+    if (pBtn) pBtn.classList.toggle("active", curr === 'PROVIDER');
   },
 
   removeRoleSwitchBar: function() {
@@ -189,6 +210,7 @@ window.RoleController = {
     if (window.AppState) {
       window.AppState.isLoggedIn = false;
       window.AppState.userProfile = null;
+      window.AppState.currentRole = null;
     }
     localStorage.removeItem("agri_user_profile");
     this.applyUserRoleView();
