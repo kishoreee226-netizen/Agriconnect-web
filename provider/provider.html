@@ -72,7 +72,7 @@
 </template>
 
 <!-- 5. Add Service / Item Modal Popup -->
-<div id="provider-item-modal" class="pitem-modal-overlay hidden">
+<div id="provider-item-modal" class="pitem-modal-overlay" style="display: none;">
   <div class="pitem-modal-card">
     <button type="button" onclick="window.ProviderModule.closeAddModal()" class="provider-close-btn" aria-label="Close">✕</button>
     <h3 id="pitem-modal-dynamic-title" class="pitem-modal-title">🚜 వస్తువు / పరికరం వివరాలు</h3>
@@ -94,7 +94,7 @@
           <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
           <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
         </select>
-        <input type="text" id="item-field-3-text" class="provider-form-input hidden" />
+       <input type="text" id="item-field-3-text" class="provider-form-input" style="display: none;" />
       </div>
 
       <button id="pitem-submit-btn" type="submit" class="pitem-submit-btn">
