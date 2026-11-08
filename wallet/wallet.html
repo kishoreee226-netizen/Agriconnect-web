@@ -1,0 +1,72 @@
+<!-- wallet/wallet.html - AgriConnect Smart Wallet Templates -->
+
+<template id="wallet-card-template">
+  <div class="wallet-card">
+    <!-- Wallet Header -->
+    <div class="wallet-card-header">
+      <div class="wallet-header-title">
+        <span class="wallet-header-icon">💰</span>
+        <h3>అగ్రీ Smart Wallet (Escrow Digital Lock)</h3>
+      </div>
+      <span class="badge-wallet-secured">100% Secured</span>
+    </div>
+
+    <div class="wallet-body">
+      <!-- Summary Cards Row -->
+      <div class="wallet-summary-row">
+        <!-- Farmer Side -->
+        <div class="balance-card balance-card-farmer">
+          <div class="balance-title">👨‍🌾 రైతు ఖాతా బ్యాలెన్స్</div>
+          <div class="balance-amount balance-val-farmer">₹0</div>
+          <div class="balance-locked-text">🔒 Hold / Lock: <span class="balance-val-locked">₹0</span></div>
+        </div>
+
+        <!-- Labour Side -->
+        <div class="balance-card balance-card-labour">
+          <div class="balance-title">👷 కూలీ ప్రధాన వాలెట్</div>
+          <div class="balance-amount balance-val-labour">₹0</div>
+          <button type="button" onclick="window.WalletModule.handleWithdrawUPI('labour')" class="btn-withdraw-upi">
+            💸 UPI Withdraw
+          </button>
+        </div>
+
+        <!-- Provider Side (Owner Earnings) -->
+        <div class="balance-card balance-card-provider">
+          <div class="balance-title">🛠️ ప్రొవైడర్ అద్దె రాబడి</div>
+          <div class="balance-amount balance-val-provider">₹0</div>
+          <button type="button" onclick="window.WalletModule.handleWithdrawUPI('provider')" class="btn-withdraw-upi btn-withdraw-provider">
+            💸 UPI Withdraw
+          </button>
+        </div>
+      </div>
+
+      <!-- Escrow Active Transactions Section -->
+      <div class="escrow-section">
+        <div class="escrow-title">
+          🔐 Escrow లావాదేవీలు (కూలీకి & సేవలకు గ్యారెంటీ లాక్):
+        </div>
+        <div class="escrow-list-container" id="escrow-items-list">
+          <!-- Dynamically populated escrow items -->
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<!-- Single Escrow Item Blueprint -->
+<template id="escrow-item-template">
+  <div class="escrow-item-card">
+    <div class="escrow-item-top">
+      <span class="escrow-item-title"><b>వ్యవసాయ పని</b> (కూలీ)</span>
+      <strong class="escrow-amount">₹0</strong>
+    </div>
+    <div class="escrow-status-text">
+      పరిస్థితి: <b class="escrow-status-label">🔒 hold అయింది</b>
+    </div>
+    <div class="escrow-action-center">
+      <button type="button" class="btn-release-payment">
+        🔓 పని పూర్తయింది - Release చేయండి
+      </button>
+    </div>
+  </div>
+</template>
