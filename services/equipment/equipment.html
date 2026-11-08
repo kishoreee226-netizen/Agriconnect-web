@@ -1,0 +1,88 @@
+<!-- services/equipment/equipment.html -->
+
+<!-- 1. Farmer/Consumer View Shell Template (Output for Farmer) -->
+<template id="equipment-consumer-shell-template">
+  <div class="eq-filter-bar">
+    <div class="eq-filter-left">
+      <span class="eq-filter-label">📍 పరిధి:</span>
+      <select id="eq-loc-filter" onchange="window.EquipmentService.setFilter(this.value)" class="eq-filter-select">
+        <option value="all">అన్ని ప్రాంతాలు</option>
+        <option value="village">🏡 నా గ్రామం (2 కి.మీ)</option>
+        <option value="5">⚡ 5 కి.మీ లోపు</option>
+        <option value="10">🚜 10 కి.మీ లోపు</option>
+      </select>
+    </div>
+    <span id="eq-count-badge" class="eq-count-badge">0 లభ్యం</span>
+  </div>
+
+  <div class="eq-list-wrap">
+    <div id="eq-empty-state" class="eq-empty-state is-hidden">
+      ఈ పరిధిలో ప్రస్తుతం ఎలాంటి పరికరాలు అందుబాటులో లేవు.
+    </div>
+    <div id="eq-items-list" class="eq-items-list"></div>
+  </div>
+</template>
+
+<!-- 2. Single Equipment Card for Farmer (Output Card) -->
+<template id="equipment-item-card-template">
+  <div class="eq-item-card eq-card-spaced">
+    <div class="eq-top-row">
+      <div>
+        <div class="eq-name"></div>
+        <div class="eq-owner-meta"></div>
+      </div>
+      <div class="eq-price-badge"></div>
+    </div>
+    <div class="eq-actions-row">
+      <button type="button" class="eq-btn-link eq-btn-book">📅 బుక్ చేయండి</button>
+      <a class="eq-btn-link eq-btn-call">📞 కాల్</a>
+      <a target="_blank" class="eq-btn-link eq-btn-wa">💬 వాట్సాప్</a>
+    </div>
+  </div>
+</template>
+
+<!-- 3. Provider Input Form Template (Input for Owner) -->
+<template id="equipment-provider-form-template">
+  <div class="eq-owner-form-card">
+    <h4 class="eq-owner-form-title">🚜 కొత్త పరికరం / యంత్రాన్ని నమోదు చేయండి</h4>
+    <form id="equipment-register-form" onsubmit="window.EquipmentService.handleOwnerSubmit(event)" class="eq-owner-form">
+      <div>
+        <label class="eq-owner-label">పరికరం / వాహనం రకం:</label>
+        <select id="eq_reg_type" required class="eq-owner-select">
+          <option value="ట్రాక్టర్ (Tractor)">ట్రాక్టర్ (Tractor)</option>
+          <option value="పంట కోత మిషన్ (Harvester)">పంట కోత మిషన్ (Harvester)</option>
+          <option value="రోటోవేటర్ (Rotavator)">రోటోవేటర్ (Rotavator)</option>
+          <option value="పవర్ టిల్లర్ (Power Tiller)">పవర్ టిల్లర్ (Power Tiller)</option>
+          <option value="మందు స్ప్రేయర్ (Sprayer Pump)">మందు స్ప్రేయర్ (Sprayer Pump)</option>
+          <option value="ఇతర పరికరం">ఇతర పరికరం</option>
+        </select>
+      </div>
+
+      <div class="eq-grid-2">
+        <div>
+          <label class="eq-owner-label">యజమాని పేరు:</label>
+          <input type="text" id="eq_reg_owner" required placeholder="మీ పేరు" class="eq-owner-input">
+        </div>
+        <div>
+          <label class="eq-owner-label">మొబైల్ నంబర్:</label>
+          <input type="tel" id="eq_reg_phone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" class="eq-owner-input">
+        </div>
+      </div>
+
+      <div class="eq-grid-2">
+        <div>
+          <label class="eq-owner-label">అద్దె ధర (గంటకు ₹):</label>
+          <input type="number" id="eq_reg_price" required min="50" step="50" placeholder="ఉదా: 800" class="eq-owner-input">
+        </div>
+        <div>
+          <label class="eq-owner-label">గ్రామం / లొకేషన్:</label>
+          <input type="text" id="eq_reg_village" required placeholder="గ్రామం పేరు" class="eq-owner-input">
+        </div>
+      </div>
+
+      <div class="eq-btn-row">
+        <button type="submit" class="eq-btn-save">🚀 పరికరాన్ని అందుబాటులో ఉంచండి</button>
+      </div>
+    </form>
+  </div>
+</template>
