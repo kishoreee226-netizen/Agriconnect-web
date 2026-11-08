@@ -262,3 +262,39 @@ window.logoutUser = () => window.RoleController.logoutUser();
 window.openLoginModal = (r) => {
   if (window.AuthModule) window.AuthModule.open({ role: r || 'FARMER' });
 };
+// పేజీ లోడ్ కాగానే ఆటోమేటిక్‌గా ప్రారంభించే లాజిక్ (Auto-Init)
+function initRoleOrchestrator() {
+  // లోకల్ స్టోరేజ్ నుండి లాగిన్ యూజర్ స్టేట్ చెక్
+  const savedData = localStorage.getItem("agri_user_profile");
+  if (savedData) {
+    try {
+      const user = JSON.parse(savedData);
+      if (user && user.phone) {
+        if (!window.AppState) window.AppState = {};
+        window.AppState.isLoggedIn = true;
+        window.AppState.userProfile = user;
+        window.AppState.userType = user.roleType || user.userType || "FARMER";
+        window.AppState.currentRole = (window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
+      }
+    } catch (e) {}
+  }
+
+  // ల్యాండింగ్ వ్యూ లేదా డాష్‌బోర్డ్‌ను రన్ చేయడం
+  window.RoleController.applyUserRoleView();
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", initRoleOrchestrator);
+} else {
+  initRoleOrchestrator();
+}
+
+// ఇతర మాడ్యూల్స్ (Labour, Farmer) ఆలస్యంగా లోడ్ అయినా వాటిని నియంత్రించే సేఫ్టీ గార్డ్
+window.addEventListener("load", function() {
+  if (!window.AppState || !window.AppState.isLoggedIn) {
+    const labour = document.getElementById("labour-jobs-container");
+    if (labour) labour.style.setProperty('display', 'none', 'important');
+    window.RoleController.renderGuestCards();
+  }
+});
+
