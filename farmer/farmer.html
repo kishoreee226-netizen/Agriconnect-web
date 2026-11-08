@@ -159,3 +159,87 @@
     </form>
   </div>
 </div>
+<!-- Quick Farmer Job Post Modal Template -->
+<template id="farmer-job-modal-template">
+  <div id="farmerJobModal" class="fjm-modal-overlay is-hidden">
+    <div class="fjm-modal-card">
+      
+      <div class="fjm-modal-header">
+        <h4 class="fjm-modal-title">🌾 రైతు పనిని పోస్ట్ చేయండి</h4>
+        <span onclick="window.FarmerModule.closeJobModal()" class="fjm-close-btn">&times;</span>
+      </div>
+
+      <form id="farmerJobForm" onsubmit="window.FarmerModule.handleJobModalSubmit(event)" class="fjm-form">
+        <div>
+          <label class="fjm-label">రైతు పేరు:</label>
+          <input type="text" id="fjm_name" required placeholder="మీ పేరు" class="fjm-input">
+        </div>
+
+        <div>
+          <label class="fjm-label">ఫోన్ నంబర్:</label>
+          <input type="tel" id="fjm_phone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" class="fjm-input">
+        </div>
+
+        <div class="fjm-grid-2">
+          <div>
+            <label class="fjm-label">పంట రకం:</label>
+            <select id="fjm_crop" class="fjm-select">
+              <option value="వరి (Paddy)">వరి</option>
+              <option value="పత్తి (Cotton)">పత్తి</option>
+              <option value="మిరప (Chilli)">మిరప</option>
+              <option value="మొక్కజొన్న">మొక్కజొన్న</option>
+              <option value="ఇతర">ఇతర పంట</option>
+            </select>
+          </div>
+          <div>
+            <label class="fjm-label">పని రకం:</label>
+            <select id="fjm_work" class="fjm-select">
+              <option value="వరి నాట్లు">వరి నాట్లు</option>
+              <option value="కలుపు తీత">కలుపు తీత</option>
+              <option value="పంట కోత">పంట కోత</option>
+              <option value="మందు స్ప్రేయింగ్">మందు స్ప్రేయింగ్</option>
+              <option value="పత్తి ఏరడం">పత్తి ఏరడం</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="fjm-grid-2">
+          <div>
+            <label class="fjm-label">ఎంతమంది కూలీలు?:</label>
+            <input type="number" id="fjm_required" min="1" max="50" value="5" required class="fjm-input">
+          </div>
+          <div>
+            <label class="fjm-label">రోజు కూలీ (₹):</label>
+            <input type="number" id="fjm_wage" min="100" step="50" value="450" required class="fjm-input">
+          </div>
+        </div>
+
+        <div class="fjm-grid-2">
+          <div>
+            <label class="fjm-label">పని తేదీ:</label>
+            <input type="date" id="fjm_date" required class="fjm-input">
+          </div>
+          <div>
+            <label class="fjm-label">గ్రామం / పొలం:</label>
+            <input type="text" id="fjm_village" required placeholder="ఊరి పేరు" class="fjm-input">
+          </div>
+        </div>
+
+        <div>
+          <label class="fjm-label">రవాణా సదుపాయం:</label>
+          <select id="fjm_trans" class="fjm-select">
+            <option value="needed">🛺 రైతు రవాణా ఏర్పాటు చేస్తారు</option>
+            <option value="own">🛵 కూలీల సొంత బండి ఉండాలి</option>
+          </select>
+        </div>
+
+        <div class="fjm-btn-row">
+          <button type="button" onclick="window.FarmerModule.closeJobModal()" class="fjm-btn-cancel">రద్దు</button>
+          <button type="submit" class="fjm-btn-submit">🚀 అలర్ట్ పంపండి</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</template>
+
