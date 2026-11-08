@@ -54,6 +54,10 @@ window.RoleController = {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
 
+      if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+
       if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
