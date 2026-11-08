@@ -211,3 +211,11 @@ window.filterEquipmentByRange = function(val) {
 
 // Auto Init on script load
 window.EquipmentService.init();
+// Register Equipment with Central Plug & Play Registry
+window.AgriServicesRegistry?.register({
+  id: "equipment",
+  label: "🚜 పరికరాలు",
+  renderConsumer: (containerId) => window.EquipmentService.renderConsumerView(containerId),
+  renderProvider: (containerId) => window.EquipmentService.renderProviderInput(containerId)
+});
+
