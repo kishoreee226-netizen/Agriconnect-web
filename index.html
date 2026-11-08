@@ -5,15 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgriConnect</title>
   <link rel="stylesheet" href="style.css?v=999">
-    <!-- Free Leaflet Map Library for Farm Pin Selection -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <!-- Free Leaflet Map Library for Farm Pin Selection -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
   <div class="container">
-    <!-- Role & Auth Containers -->
-    <div id="roles-container"></div>
+    <!-- Role & Profile Switcher Container (Fixed ID: role-container) -->
+    <div id="role-container"></div>
 
     <!-- 1st: Farmer Widget Container -->
     <div id="farmer-post-container"></div>
@@ -21,25 +21,23 @@
     <!-- 2nd: Labour Widget Container -->
     <div id="labour-jobs-container"></div>
 
-<!-- 3rd: Equipment / Seeds / Provider Container -->
-<div id="provider-container"></div>
+    <!-- 3rd: Equipment / Seeds / Provider Container -->
+    <div id="provider-container"></div>
 
-<!-- SMART Agri Tools (8 Power Tools) -->
-<div id="agri-tools-box"></div>
+    <!-- SMART Agri Tools (8 Power Tools) -->
+    <div id="agri-tools-box"></div>
 
-<!-- Utilities Section Slot -->
-<div id="utilitiesMountSlot"></div>
-<script src="utilities/utilities-loader.js"></script>
+    <!-- Utilities Section Slot -->
+    <div id="utilitiesMountSlot"></div>
 
     <!-- 4th: Wallet Widget Container -->
     <div id="wallet-container"></div>
 
- <!-- 5th: Weather Widget Container -->
+    <!-- 5th: Weather Widget Container -->
     <div id="weather-container"></div>
 
     <!-- 6th: Market / Mandi Widget Container -->
     <div id="mandi-container"></div>
-
   </div>
 
   <!-- Firebase SDKs -->
@@ -50,62 +48,53 @@
   <script src="config.js?v=999"></script>
   <script src="firebase-config.js?v=999"></script>
   <script src="firebase-db.js?v=999"></script>
+  <script src="state.js?v=999"></script>
 
+  <!-- 2. Common Tools & Menus -->
   <script src="tools/tools-loader.js" defer></script>
-
-<script src="menu/menu-loader.js" defer></script>
-
-<script src="state.js?v=999"></script>
-
- <script src="auth/auth-loader.js" defer></script>
+  <script src="menu/menu-loader.js" defer></script>
+  <script src="utilities/utilities-loader.js" defer></script>
+  <script src="auth/auth-loader.js" defer></script>
 
   <!-- 3. Sub-modules & Helpers -->
   <script src="voice.js?v=999"></script>
   <script src="weather.js?v=5"></script>
-  
-<script src="services/services-loader.js" defer></script>
-
-  <!-- 4. Main Widgets -->
   <script src="mandi.js?v=999"></script>
 
+  <!-- 4. Plugin Architecture Services -->
+  <script src="services/services-loader.js" defer></script>
+
+  <!-- 5. Core Feature Loaders (4-File Pattern) -->
   <script src="wallet/wallet-loader.js?v=1.0" defer></script>
-
   <script src="farmer/farmer-loader.js" defer></script>
+  <script src="labour/labour-loader.js" defer></script>
+  <script src="provider/provider-loader.js" defer></script>
+  <script src="booking/booking-loader.js" defer></script>
 
- <script src="labour/labour-loader.js" defer></script>
-
-  <!-- 2. Provider Hub Module Loader -->
-<script src="provider/provider-loader.js" defer></script>
-
-<!-- 3. Smart Vehicle Booking Module Loader -->
-<script src="booking/booking-loader.js" defer></script>
-
-  <!-- 5. Role Controller -->
+  <!-- 6. Master Role Orchestrator -->
   <script src="role/role-loader.js?v=1.0" defer></script>
 
   <!-- Initialization Logic -->
   <script>
     window.addEventListener("DOMContentLoaded", () => {
-      // 1. Mandi
+      // 1. Mandi Widget
       if (typeof renderMandiWidget === "function") {
         renderMandiWidget();
       } else if (typeof renderMandi === "function") {
         renderMandi();
       }
 
-      // 2. Wallet
-      if (typeof renderWalletWidget === "function") {
-        renderWalletWidget();
-      }
-
-      // 3. Weather
+      // 2. Weather Widget
       if (typeof window.renderWeatherWidget === "function") {
         window.renderWeatherWidget();
       }
 
-      // 4. Role View Controller (దీని ద్వారానే లాగిన్ చెక్, హెడర్, రోల్స్ అన్నీ హ్యాండిల్ అవుతాయి)
-      if (typeof applyUserRoleView === "function") {
-        applyUserRoleView();
+      // 3. Wallet & Role Views (Module Loaders ద్వారా ఆటో-ఇనిషియలైజ్ అవుతాయి)
+      if (typeof window.renderWalletWidget === "function") {
+        window.renderWalletWidget();
+      }
+      if (typeof window.applyUserRoleView === "function") {
+        window.applyUserRoleView();
       }
     });
   </script>
