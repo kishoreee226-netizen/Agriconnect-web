@@ -1,0 +1,143 @@
+<!-- services/seeds/seeds.html -->
+
+<!-- 1. Farmer/Consumer Shell Template (Output for Farmer) -->
+<template id="seeds-consumer-shell-template">
+  <div class="seeds-filter-bar">
+    <div class="seeds-filter-top">
+      <span class="seeds-filter-heading">🌱 అడ్వాన్స్ ఫిల్టర్లు:</span>
+      <div class="seeds-filter-top-right">
+        <select onchange="window.SeedsService.applyFilter('range', this.value)" id="seeds-select-range" class="seeds-select-range">
+          <option value="all">📍 పరిధి (అన్నీ)</option>
+          <option value="village">🏡 నా గ్రామం (2.5km)</option>
+          <option value="5">⚡ 5 కి.మీ లోపు</option>
+          <option value="10">🏬 10 కి.మీ లోపు</option>
+        </select>
+        <span id="seeds-count-badge" class="seeds-count-badge">0 లభ్యం</span>
+      </div>
+    </div>
+
+    <!-- 4 Advance Filters -->
+    <div class="seeds-filter-grid">
+      <select onchange="window.SeedsService.applyFilter('crop', this.value)" id="seeds-filter-crop" class="seeds-filter-select">
+        <option value="all">🌾 అన్ని పంటలు</option>
+        <option value="paddy">🌾 వరి (Paddy)</option>
+        <option value="cotton">☁️ పత్తి (Cotton)</option>
+        <option value="chilli">🌶️ మిర్చి (Chilli)</option>
+        <option value="fertilizer">🧪 ఎరువులు/DAP</option>
+      </select>
+      <select onchange="window.SeedsService.applyFilter('stock', this.value)" id="seeds-filter-stock" class="seeds-filter-select">
+        <option value="all">📦 స్టాక్ (అన్నీ)</option>
+        <option value="available">✅ తక్షణ లభ్యం ఉన్నవి</option>
+      </select>
+      <select onchange="window.SeedsService.applyFilter('vendor', this.value)" id="seeds-filter-vendor" class="seeds-filter-select">
+        <option value="all">🏛️ విక్రేత (అన్నీ)</option>
+        <option value="govt">🏛️ PACS / రైతు భరోసా</option>
+        <option value="pvt">🏪 ప్రైవేట్ డీలర్లు</option>
+      </select>
+      <select onchange="window.SeedsService.applyFilter('price', this.value)" id="seeds-filter-price" class="seeds-filter-select">
+        <option value="all">💰 ధర (అన్నీ)</option>
+        <option value="low">₹500 లోపు</option>
+        <option value="mid">₹500 - ₹1000</option>
+        <option value="high">₹1000 పైబడి</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Crop Advisory Board -->
+  <div class="crop-guidance-board">
+    <div id="crop-guidance-title" class="crop-guidance-title"></div>
+    <ul id="crop-guidance-list" class="crop-guidance-list"></ul>
+  </div>
+
+  <!-- Seeds List -->
+  <div class="seeds-list-wrap">
+    <div id="seeds-empty-card" class="seeds-empty-card is-hidden">
+      📢 మీరు ఎంచుకున్న ఫిల్టర్లకు సరిపడే విత్తనాలు లేదా ఎరువులు ప్రస్తుతం అందుబాటులో లేవు.
+    </div>
+    <div id="seeds-items-list" class="seeds-items-list"></div>
+  </div>
+</template>
+
+<!-- 2. Single Seed Item Card Template (Output Card) -->
+<template id="seed-item-card-template">
+  <div class="seed-card-item">
+    <div class="seed-top-row">
+      <div>
+        <div class="seed-item-title"></div>
+        <div class="seed-owner-meta"></div>
+        <div class="seed-stock-row">
+          <span class="seed-stock-badge"></span>
+        </div>
+      </div>
+      <div class="seed-price-badge"></div>
+    </div>
+    <div class="seed-actions-row">
+      <button type="button" class="seed-btn-book">📅 రిజర్వ్ / బుక్</button>
+      <a class="seed-btn-call">📞 కాల్ చేయండి</a>
+      <a target="_blank" class="seed-btn-wa">💬 వాట్సాప్</a>
+    </div>
+  </div>
+</template>
+
+<!-- 3. Provider Input Form Template (Input for Dealer / Society) -->
+<template id="seeds-provider-form-template">
+  <div class="seeds-dealer-form-card">
+    <h4 class="seeds-dealer-form-title">🌱 విత్తనాలు / ఎరువుల స్టాక్ నమోదు చేయండి</h4>
+    <form id="seeds-register-form" onsubmit="window.SeedsService.handleDealerSubmit(event)" class="seeds-dealer-form">
+      <div>
+        <label class="seeds-form-label">విత్తనం / ఎరువు పేరు (రకం):</label>
+        <input type="text" id="seed_reg_name" required placeholder="ఉదా: BPT 5204 (సాంబ మసూరి) లేదా DAP" class="seeds-form-input">
+      </div>
+
+      <div class="seeds-grid-2">
+        <div>
+          <label class="seeds-form-label">పంట కేటగిరీ:</label>
+          <select id="seed_reg_cat" required class="seeds-form-select">
+            <option value="paddy">వరి (Paddy)</option>
+            <option value="cotton">పత్తి (Cotton)</option>
+            <option value="chilli">మిరప (Chilli)</option>
+            <option value="fertilizer">ఎరువులు / రసాయనాలు</option>
+          </select>
+        </div>
+        <div>
+          <label class="seeds-form-label">విక్రేత రకం:</label>
+          <select id="seed_reg_vendor_type" required class="seeds-form-select">
+            <option value="govt">🏛️ PACS / రైతు భరోసా కేంద్రం</option>
+            <option value="pvt">🏪 ప్రైవేట్ ఫర్టిలైజర్ షాప్</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="seeds-grid-2">
+        <div>
+          <label class="seeds-form-label">షాప్ / డీలర్ పేరు:</label>
+          <input type="text" id="seed_reg_vendor" required placeholder="దుకాణం పేరు" class="seeds-form-input">
+        </div>
+        <div>
+          <label class="seeds-form-label">సంప్రదింపు ఫోన్ నంబర్:</label>
+          <input type="tel" id="seed_reg_phone" required pattern="[0-9]{10}" placeholder="10 అంకెల నంబర్" class="seeds-form-input">
+        </div>
+      </div>
+
+      <div class="seeds-grid-2">
+        <div>
+          <label class="seeds-form-label">ధర (₹ బస్తా/ప్యాకెట్):</label>
+          <input type="number" id="seed_reg_price" required min="10" step="10" placeholder="ఉదా: 850" class="seeds-form-input">
+        </div>
+        <div>
+          <label class="seeds-form-label">స్టాక్ పరిమాణం:</label>
+          <input type="text" id="seed_reg_stock" required placeholder="ఉదా: 50 బస్తాలు లభ్యం" class="seeds-form-input">
+        </div>
+      </div>
+
+      <div>
+        <label class="seeds-form-label">గ్రామం / కేంద్రం లొకేషన్:</label>
+        <input type="text" id="seed_reg_village" required placeholder="ఊరు / పట్టణం పేరు" class="seeds-form-input">
+      </div>
+
+      <div class="seeds-btn-row">
+        <button type="submit" class="seeds-btn-save">📦 స్టాక్‌ను లైవ్‌లో ఉంచండి</button>
+      </div>
+    </form>
+  </div>
+</template>
