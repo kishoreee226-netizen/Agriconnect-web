@@ -1,0 +1,142 @@
+<!-- labour/labour.html - Clean Templates for Labour Module -->
+
+<!-- 1. Main Dashboard Template -->
+<template id="labour-dashboard-template">
+  <div class="labour-card">
+    
+    <!-- Duty Switch Bar -->
+    <div class="labour-duty-bar">
+      <div class="labour-duty-left">
+        <span class="labour-duty-label">కూలీ డ్యూటీ:</span>
+        <button type="button" id="btn-duty-toggle" class="btn-duty-toggle">
+          <span id="duty-toggle-text"></span>
+        </button>
+      </div>
+      <button type="button" onclick="window.LabourModule.openProfileModal()" class="btn-labour-skills">
+        ⚙️ నా పనులు మార్చుకోండి
+      </button>
+    </div>
+
+    <!-- Job Alerts Section -->
+    <div class="labour-alerts-section">
+      <div class="labour-alerts-header">
+        <span>📢 సమీప రైతుల పనుల అలర్ట్స్:</span>
+        <span id="labour-alerts-badge" class="labour-alerts-badge">0 పనులు</span>
+      </div>
+
+      <div id="labour-duty-off-box" class="labour-duty-off-card is-hidden">
+        🛑 మీ డ్యూటీ <b>OFF</b> లో ఉంది.<br>పనుల అలర్ట్స్ అందుకోవడానికి మరియు రైతులకు లైవ్‌గా కనిపించడానికి పైన డ్యూటీ <b>ON</b> చేసుకోండి.
+      </div>
+
+      <div id="labour-empty-jobs-box" class="labour-empty-jobs-card is-hidden">
+        ప్రస్తుతం మీ ప్రాంతంలో కొత్త పనుల అలర్ట్స్ ఏవీ లేవు.
+      </div>
+
+      <div id="labour-open-jobs-list" class="labour-open-jobs-list"></div>
+    </div>
+
+    <!-- Confirmed Work Section -->
+    <div id="labour-confirmed-section" class="labour-confirmed-section is-hidden">
+      <h4 class="labour-confirmed-heading">🎉 మీరు ఒప్పుకున్న ఖరారైన పనులు:</h4>
+      <div id="labour-confirmed-list" class="labour-confirmed-list"></div>
+    </div>
+
+  </div>
+</template>
+
+<!-- 2. Single Open Job Alert Item Template -->
+<template id="labour-job-item-template">
+  <div class="labour-job-card">
+    <div class="labour-job-card-top">
+      <div>
+        <h4 class="labour-job-title"></h4>
+        <div class="labour-job-farmer-info"></div>
+        <div class="labour-job-schedule"></div>
+        <div class="labour-job-quota"></div>
+      </div>
+      <div class="labour-job-wage">
+        <span class="wage-text"></span>
+      </div>
+    </div>
+
+    <div class="labour-job-actions">
+      <button type="button" class="btn-job-accept">✅ పని Accept చేయండి</button>
+      <button type="button" class="btn-job-reject">❌ తిరస్కరించు</button>
+      <button type="button" class="btn-job-accepted-disabled is-hidden" disabled>✅ మీరు ఇప్పటికే అంగీకరించారు</button>
+    </div>
+  </div>
+</template>
+
+<!-- 3. Confirmed Job Card Template -->
+<template id="labour-confirmed-card-template">
+  <div class="labour-confirmed-card">
+    <div class="labour-confirmed-title"></div>
+    <div class="labour-confirmed-sub"></div>
+    <div class="labour-confirmed-btn-row">
+      <a class="labour-cbtn labour-cbtn-call">📞 రైతుకు కాల్</a>
+      <a target="_blank" class="labour-cbtn labour-cbtn-wa">💬 వాట్సాప్</a>
+      <a target="_blank" class="labour-cbtn labour-cbtn-map">🗺️ రూట్ Map</a>
+    </div>
+  </div>
+</template>
+
+<!-- 4. Labour Profile & Skills Modal Template -->
+<template id="labour-profile-modal-template">
+  <div id="labourProfileModal" class="lpm-modal-overlay is-hidden">
+    <div class="lpm-modal-card">
+      
+      <div class="lpm-modal-header">
+        <h4 class="lpm-modal-title">👷 నా కూలీ వివరాలు & పనులు</h4>
+        <span onclick="window.LabourModule.closeProfileModal()" class="lpm-close-btn">&times;</span>
+      </div>
+
+      <form id="labourProfileForm" onsubmit="window.LabourModule.handleProfileSubmit(event)" class="lpm-form">
+        <div>
+          <label class="lpm-label">కూలీ / మేస్త్రీ పేరు:</label>
+          <input type="text" id="lpf_name" required class="lpm-input">
+        </div>
+
+        <div>
+          <label class="lpm-label">ఫోన్ నంబర్:</label>
+          <input type="tel" id="lpf_phone" required pattern="[0-9]{10}" class="lpm-input">
+        </div>
+
+        <div class="lpm-grid-2">
+          <div>
+            <label class="lpm-label">గ్రామం / ప్రాంతం:</label>
+            <input type="text" id="lpf_village" required class="lpm-input">
+          </div>
+          <div>
+            <label class="lpm-label">బృందం సభ్యులు:</label>
+            <input type="number" id="lpf_count" min="1" required class="lpm-input">
+          </div>
+        </div>
+
+        <div class="lpm-grid-2">
+          <div>
+            <label class="lpm-label">రోజు కూలీ (₹):</label>
+            <input type="number" id="lpf_wage" min="100" step="50" required class="lpm-input">
+          </div>
+          <div>
+            <label class="lpm-label">సొంత బండి ఉందా?</label>
+            <select id="lpf_trans" class="lpm-select">
+              <option value="yes">🛵 ఉంది</option>
+              <option value="no">❌ లేదు (రవాణా కావాలి)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="lpm-label">మీకు వచ్చిన పనులు (టిక్ చేయండి):</label>
+          <div id="lpm-skills-box" class="lpm-skills-box"></div>
+        </div>
+
+        <div class="lpm-btn-row">
+          <button type="button" onclick="window.LabourModule.closeProfileModal()" class="lpm-btn-cancel">రద్దు</button>
+          <button type="submit" class="lpm-btn-save">💾 వివరాలు సేవ్ చేయండి</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</template>
