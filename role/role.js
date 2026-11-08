@@ -49,7 +49,7 @@ window.RoleController = {
     const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
     const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
 
-    // 1. లాగిన్ కానప్పుడు (Landing View)
+        // 1. లాగిన్ కానప్పుడు (Landing View)
     if (!state || !state.isLoggedIn) {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
@@ -57,15 +57,30 @@ window.RoleController = {
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
-
       if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+
+      // 3 ల్యాండింగ్ లాగిన్ కార్డులు స్క్రీన్‌పై చూపించడం
+      const mount = document.getElementById("role-container") || document.body;
+      let guestBox = document.getElementById("role-guest-cards");
+      if (!guestBox) {
+        const guestTpl = document.getElementById("role-guest-cards-template");
+        if (guestTpl) {
+          guestBox = guestTpl.content.cloneNode(true).querySelector(".guest-role-cards-container");
+          guestBox.id = "role-guest-cards";
+          mount.appendChild(guestBox);
+        }
+      }
 
       if (typeof window.injectProviderLandingCard === 'function') {
         window.injectProviderLandingCard();
       }
       return;
+    } else {
+      // యూజర్ లాగిన్ అవ్వగానే ఈ ల్యాండింగ్ కార్డులు తీసివేయడం
+      const guestBox = document.getElementById("role-guest-cards");
+      if (guestBox) guestBox.remove();
     }
 
     // 2. లాగిన్ అయినప్పుడు బ్యానర్ డిస్‌ప్లే
