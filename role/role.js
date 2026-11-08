@@ -13,6 +13,45 @@ window.RoleController = {
     return document.getElementById("provider-container") || document.getElementById("provider-hub-container");
   },
 
+  getRoleMountContainer: function() {
+    return document.getElementById("role-container") || document.getElementById("roles-container");
+  },
+
+  renderGuestCards: function() {
+    const mount = this.getRoleMountContainer();
+    if (!mount) return;
+
+    // ఇప్పటికే కార్డులు ఉంటే కేవలం డిస్‌ప్లే ఆన్ చేయాలి
+    const existing = document.getElementById("role-guest-cards");
+    if (existing) {
+      existing.style.setProperty('display', 'flex', 'important');
+      mount.style.setProperty('display', 'block', 'important');
+      return;
+    }
+
+    const tpl = document.getElementById("role-guest-cards-template");
+    if (!tpl) {
+      // DOM ఇంకా సిద్ధం కాకపోతే స్వల్ప ఆలస్యంతో మళ్లీ ప్రయత్నిస్తుంది
+      setTimeout(() => this.renderGuestCards(), 50);
+      return;
+    }
+
+    const clone = tpl.content.cloneNode(true);
+    const wrapper = clone.querySelector(".guest-role-cards-wrapper");
+    if (wrapper) {
+      wrapper.id = "role-guest-cards";
+      mount.replaceChildren(wrapper);
+      mount.style.setProperty('display', 'block', 'important');
+    }
+  },
+
+  removeGuestCards: function() {
+    const guestCards = document.getElementById("role-guest-cards");
+    if (guestCards) {
+      guestCards.remove();
+    }
+  },
+
   applyUserRoleView: function() {
     const state = window.AppState;
     const farmerContainer = this.getFarmerContainer();
@@ -27,15 +66,16 @@ window.RoleController = {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
 
-      // ల్యాండింగ్ పేజీలో రైతు పోస్టింగ్ ఫారమ్ మరియు వాలెట్ దాచాలి
+      // ల్యాండింగ్ 3 రోల్ కార్డ్స్ చూపించాలి
+      this.renderGuestCards();
+
+      // లాగిన్ కాకముందు వ్యక్తిగత డాష్‌బోర్డులు దాచాలి
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
+      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
 
-      // పబ్లిక్ పనులు, ప్రొవైడర్ కార్డ్, మార్కెట్, వెదర్ యథావిధిగా కనిపించాలి
-      if (labourContainer) {
-        labourContainer.style.setProperty('display', 'block', 'important');
-        if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
-      }
+      // మార్కెట్ ధరలు, వాతావరణం పబ్లిక్‌గా కనిపించాలి
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
 
@@ -45,7 +85,8 @@ window.RoleController = {
       return;
     }
 
-    // 2. లాగిన్ అయినప్పుడు ప్రొఫైల్ బ్యానర్
+    // 2. లాగిన్ అయినప్పుడు: 3 ల్యాండింగ్ కార్డులు తీసివేసి ప్రొఫైల్ బ్యానర్ చూపించడం
+    this.removeGuestCards();
     this.renderUserProfileBanner();
 
     // Case A: కూలీ మాత్రమే లాగిన్ అయినప్పుడు (LABOUR ONLY)
@@ -102,7 +143,7 @@ window.RoleController = {
       this.removeRoleSwitchBar();
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-      if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+      if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer && window.ProviderModule) {
         providerContainer.style.setProperty('display', 'block', 'important');
         window.ProviderModule.renderDashboard(providerContainer, state.providerType || 'equipment');
@@ -111,7 +152,7 @@ window.RoleController = {
   },
 
   renderUserProfileBanner: function() {
-    const mount = document.getElementById("role-container") || document.body;
+    const mount = this.getRoleMountContainer() || document.body;
     let banner = document.getElementById("user-profile-banner");
     const state = window.AppState;
     const user = state ? (state.userProfile || state.user) : null;
@@ -147,7 +188,7 @@ window.RoleController = {
     const state = window.AppState;
     if (!state || !state.isLoggedIn || state.userType !== "FARMER") return;
 
-    const mount = document.getElementById("role-container") || document.body;
+    const mount = this.getRoleMountContainer() || document.body;
     let bar = document.getElementById("role-switch-container");
     const tpl = document.getElementById("role-dual-switch-template");
     if (!tpl) return;
@@ -156,7 +197,7 @@ window.RoleController = {
       const fragment = tpl.content.cloneNode(true);
       bar = fragment.querySelector(".role-switch-container");
       bar.id = "role-switch-container";
-      
+
       const banner = document.getElementById("user-profile-banner");
       if (banner && banner.nextSibling) {
         mount.insertBefore(bar, banner.nextSibling);
