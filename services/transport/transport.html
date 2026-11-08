@@ -1,0 +1,87 @@
+<!-- services/transport/transport.html -->
+
+<!-- 1. Farmer/Consumer Shell Template (Output for Farmer) -->
+<template id="transport-consumer-shell-template">
+  <div class="transport-filter-bar">
+    <div class="transport-filter-left">
+      <span class="transport-filter-label">📍 పరిధి:</span>
+      <select id="tr-loc-filter" onchange="window.TransportService.setFilter(this.value)" class="transport-filter-select">
+        <option value="all">అన్ని వాహనాలు</option>
+        <option value="village">🏡 నా గ్రామం (2 కి.మీ)</option>
+        <option value="5">⚡ 5 కి.మీ లోపు</option>
+        <option value="10">🚛 10 కి.మీ లోపు</option>
+      </select>
+    </div>
+    <span id="transport-count-badge" class="transport-count-badge">0 లభ్యం</span>
+  </div>
+
+  <div class="transport-list-wrap">
+    <div id="transport-empty-state" class="transport-empty-state is-hidden">
+      ఈ పరిధిలో ప్రస్తుతం రవాణా వాహనాలు అందుబాటులో లేవు.
+    </div>
+    <div id="transport-items-list" class="transport-items-list"></div>
+  </div>
+</template>
+
+<!-- 2. Single Transport Item Card Template (Output Card) -->
+<template id="transport-item-card-template">
+  <div class="transport-item-card">
+    <div class="transport-top-row">
+      <div>
+        <div class="transport-name"></div>
+        <div class="transport-owner-meta"></div>
+      </div>
+      <div class="transport-price-badge"></div>
+    </div>
+    <div class="transport-actions-row">
+      <button type="button" class="transport-btn-book">📅 బుక్ చేయండి</button>
+      <a class="transport-btn-call">📞 కాల్</a>
+      <a target="_blank" class="transport-btn-wa">💬 వాట్సాప్</a>
+    </div>
+  </div>
+</template>
+
+<!-- 3. Provider Input Form Template (Input for Drivers / Transporters) -->
+<template id="transport-provider-form-template">
+  <div class="transport-driver-form-card">
+    <h4 class="transport-driver-form-title">🚚 రవాణా వాహనాన్ని నమోదు చేయండి</h4>
+    <form id="transport-register-form" onsubmit="window.TransportService.handleDriverSubmit(event)" class="transport-driver-form">
+      <div>
+        <label class="transport-form-label">వాహనం రకం:</label>
+        <select id="tr_reg_type" required class="transport-form-select">
+          <option value="ట్రాక్టర్ ట్రాలీ (Tractor Trolley)">ట్రాక్టర్ ట్రాలీ (Tractor Trolley)</option>
+          <option value="ఆటో ట్రాలీ / అపే (Auto Trolley)">ఆటో ట్రాలీ / అపే (Auto Trolley)</option>
+          <option value="టాటా ఏస్ (Tata Ace / Mini Truck)">టాటా ఏస్ (Tata Ace / Mini Truck)</option>
+          <option value="డీసీఎం / లారీ (DCM / Truck)">డీసీఎం / లారీ (DCM / Truck)</option>
+          <option value="ఎద్దుల బండి (Bullock Cart)">ఎద్దుల బండి (Bullock Cart)</option>
+        </select>
+      </div>
+
+      <div class="transport-grid-2">
+        <div>
+          <label class="transport-form-label">డ్రైవర్ / యజమాని పేరు:</label>
+          <input type="text" id="tr_reg_driver" required placeholder="డ్రైవర్ పేరు" class="transport-form-input">
+        </div>
+        <div>
+          <label class="transport-form-label">ఫోన్ నంబర్:</label>
+          <input type="tel" id="tr_reg_phone" required pattern="[0-9]{10}" placeholder="10 అంకెల మొబైల్" class="transport-form-input">
+        </div>
+      </div>
+
+      <div class="transport-grid-2">
+        <div>
+          <label class="transport-form-label">అద్దె రేటు (₹ ట్రిప్‌కు / కి.మీకి):</label>
+          <input type="text" id="tr_reg_rate" required placeholder="ఉదా: ₹500/ట్రిప్ లేదా ₹25/కి.మీ" class="transport-form-input">
+        </div>
+        <div>
+          <label class="transport-form-label">వాహనం అందుబాటు గ్రామం / ప్రాంతం:</label>
+          <input type="text" id="tr_reg_village" required placeholder="గ్రామం పేరు" class="transport-form-input">
+        </div>
+      </div>
+
+      <div class="transport-btn-row">
+        <button type="submit" class="transport-btn-save">🚀 రవాణా సేవలను లైవ్‌లో ఉంచండి</button>
+      </div>
+    </form>
+  </div>
+</template>
