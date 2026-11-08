@@ -290,3 +290,10 @@ window.applyAdvSeedFilter = function(t, v) {
 
 // Auto Init on script load
 window.SeedsService.init();
+// Register Seeds with Central Plug & Play Registry
+window.AgriServicesRegistry?.register({
+  id: "seeds",
+  label: "🌱 విత్తనాలు",
+  renderConsumer: (containerId) => window.SeedsService.renderConsumerView(containerId),
+  renderProvider: (containerId) => window.SeedsService.renderProviderInput(containerId)
+});
