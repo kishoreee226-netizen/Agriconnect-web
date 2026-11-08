@@ -207,3 +207,11 @@ window.filterTransportByRange = function(val) {
 
 // Auto Init on script load
 window.TransportService.init();
+// Register Transport with Central Plug & Play Registry
+window.AgriServicesRegistry?.register({
+  id: "transport",
+  label: "🚚 రవాణా",
+  renderConsumer: (containerId) => window.TransportService.renderConsumerView(containerId),
+  renderProvider: (containerId) => window.TransportService.renderProviderInput(containerId)
+});
+
