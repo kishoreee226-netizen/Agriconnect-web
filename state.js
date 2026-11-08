@@ -1,4 +1,4 @@
-// state.js - Shared Global Data Store for AgriConnect with Persistent Escrow & AppState
+// state.js - Shared Global Data Store for AgriConnect with Persistent Escrow & Dynamic AppState
 
 // 1. Helper: Safe LocalStorage JSON Getter/Setter
 function getStoredJSON(key, fallback) {
@@ -18,9 +18,9 @@ function setStoredJSON(key, data) {
   }
 }
 
-// 2. Central Data Store
+// 2. Central Data Store (Jobs, Escrow, Wallet & Services Cache)
 window.AgriState = {
-  // LocalStorage నుండి జాబ్స్ లోడ్ చేసుకోవడం (Fallback to empty array)
+  // LocalStorage నుండి జాబ్స్ లోడ్ చేసుకోవడం
   jobs: getStoredJSON("agri_farmer_posted_jobs", getStoredJSON("agri_jobs", [])),
 
   // పర్సిస్టెంట్ వాలెట్ మరియు ఎస్క్రో వివరాలు
@@ -32,7 +32,6 @@ window.AgriState = {
 
   // Getters & Setters
   getJobs: function() {
-    // తాజా లోకల్ స్టోరేజ్ డేటాతో సింక్ చేసి ఇవ్వడం
     const latest = getStoredJSON("agri_farmer_posted_jobs", getStoredJSON("agri_jobs", []));
     if (latest && Array.isArray(latest)) {
       this.jobs = latest;
@@ -84,13 +83,36 @@ window.AgriState = {
   }
 };
 
-// 3. Global App User Session State (Consistent with auth.js)
-window.AppState = window.AppState || {
-  isLoggedIn: false,
-  userType: null,            // 'LABOUR_ONLY', 'FARMER', etc.
-  currentRole: "GUEST",      // 'FARMER', 'LABOUR', 'PROVIDER', 'GUEST'
-  providerType: "equipment", // 'equipment', 'seeds', 'transport'
-  autoVoice: false,
-  userProfile: null,
-  user: null
-};
+// 3. Global App User Session State (Integrated with 3-in-1 Role Switcher & Services)
+(function initGlobalAppState() {
+  const savedProfile = getStoredJSON("agri_user_profile", null);
+  const savedRole = localStorage.getItem("agri_user_role");
+
+  const initialUserType = savedProfile ? (savedProfile.roleType || savedProfile.userType || "FARMER") : null;
+  
+  // ప్రొఫైల్ ఆధారంగా ప్రారంభ రోల్ నిర్ణయించడం
+  let defaultRole = "GUEST";
+  if (savedProfile) {
+    if (savedRole && ['FARMER', 'LABOUR', 'PROVIDER'].includes(savedRole)) {
+      defaultRole = savedRole;
+    } else {
+      defaultRole = (initialUserType === "LABOUR" || initialUserType === "LABOURONLY") ? "LABOUR" : (initialUserType === "PROVIDER" ? "PROVIDER" : "FARMER");
+    }
+  }
+
+  window.AppState = Object.assign(window.AppState || {}, {
+    isLoggedIn: Boolean(savedProfile && savedProfile.phone),
+    userType: initialUserType,                               // 'FARMER', 'LABOURONLY', 'LABOUR', 'PROVIDER'
+    currentRole: defaultRole,                                // 'FARMER' | 'LABOUR' | 'PROVIDER' | 'GUEST'
+    providerType: localStorage.getItem("agri_provider_tab") || "equipment", // 'equipment', 'seeds', 'transport'
+    autoVoice: false,
+    userProfile: savedProfile,
+    user: savedProfile,
+
+    // Helper: సింక్‌తో కూడిన రోల్ అప్‌డేట్
+    setCurrentRole: function(newRole) {
+      this.currentRole = newRole;
+      localStorage.setItem("agri_user_role", newRole);
+    }
+  });
+})();
