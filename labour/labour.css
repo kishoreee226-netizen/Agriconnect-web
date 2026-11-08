@@ -1,0 +1,369 @@
+/* labour/labour.css - Scoped UI Styles for Labour Module */
+
+.labour-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-family: inherit;
+}
+
+.labour-card .is-hidden {
+  display: none !important;
+}
+
+/* Duty Switch Bar */
+.labour-duty-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.labour-duty-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.labour-duty-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.btn-duty-toggle {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-duty-toggle.on {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.btn-duty-toggle.off {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+.btn-labour-skills {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Alerts Section */
+.labour-alerts-section {
+  margin-bottom: 16px;
+}
+
+.labour-alerts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 10px;
+}
+
+.labour-alerts-badge {
+  background: #fef08a;
+  color: #854d0e;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.labour-duty-off-card, .labour-empty-jobs-card {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.labour-open-jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.labour-job-card {
+  background: #ffffff;
+  border: 1.5px solid #bbf7d0;
+  border-left: 5px solid #16a34a;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.labour-job-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.labour-job-title {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  color: #15803d;
+  font-weight: 800;
+}
+
+.labour-job-farmer-info, .labour-job-schedule, .labour-job-quota {
+  font-size: 12px;
+  color: #475569;
+  margin-bottom: 2px;
+}
+
+.labour-job-wage {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.labour-job-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-job-accept {
+  flex: 2;
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-job-reject {
+  flex: 1;
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-job-accepted-disabled {
+  width: 100%;
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Confirmed Work Section */
+.labour-confirmed-section {
+  border-top: 2px dashed #e2e8f0;
+  padding-top: 14px;
+}
+
+.labour-confirmed-heading {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.labour-confirmed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.labour-confirmed-card {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.labour-confirmed-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #15803d;
+}
+
+.labour-confirmed-sub {
+  font-size: 12px;
+  color: #334155;
+  margin: 3px 0 8px 0;
+}
+
+.labour-confirmed-btn-row {
+  display: flex;
+  gap: 8px;
+}
+
+.labour-cbtn {
+  flex: 1;
+  text-align: center;
+  padding: 6px 4px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.labour-cbtn-call { background: #22c55e; color: #fff; }
+.labour-cbtn-wa { background: #25d366; color: #fff; }
+.labour-cbtn-map { background: #3b82f6; color: #fff; }
+
+/* Modal Styles */
+.lpm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100075;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.lpm-modal-card {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.lpm-modal-header {
+  background: #16a34a;
+  color: #ffffff;
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lpm-modal-title { margin: 0; font-size: 15px; font-weight: 800; }
+.lpm-close-btn { font-size: 24px; cursor: pointer; line-height: 1; }
+
+.lpm-form {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lpm-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 3px;
+  display: block;
+}
+
+.lpm-input, .lpm-select {
+  width: 100%;
+  height: 38px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.lpm-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.lpm-skills-box {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.lpm-skill-item {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.lpm-btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.lpm-btn-cancel {
+  flex: 1;
+  height: 40px;
+  border: 1px solid #cbd5e1;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.lpm-btn-save {
+  flex: 2;
+  height: 40px;
+  border: none;
+  background: #16a34a;
+  color: #ffffff;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+}
