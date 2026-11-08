@@ -86,6 +86,12 @@
   color: #c2410c;
 }
 
+.role-switch-provider.active {
+  color: #0369a1;
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
 /* Local Village Job Highlight */
 .job-card-highlight {
   border-left: 4px solid #16a34a !important;
