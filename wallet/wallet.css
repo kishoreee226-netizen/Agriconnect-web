@@ -1,0 +1,201 @@
+/* wallet/wallet.css - Scoped Styles for Smart Wallet */
+
+.wallet-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  margin: 14px 0 20px 0;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.wallet-card-header {
+  background: #f8fafc;
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.wallet-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wallet-header-title h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.badge-wallet-secured {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #86efac;
+}
+
+.wallet-body {
+  padding: 16px;
+}
+
+/* 3-Way Summary Grid */
+.wallet-summary-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.balance-card {
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.balance-card-farmer {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.balance-card-labour {
+  background: #fefce8;
+  border-color: #fef08a;
+}
+
+.balance-card-provider {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.balance-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 4px;
+}
+
+.balance-amount {
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+
+.balance-locked-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #d97706;
+}
+
+.btn-withdraw-upi {
+  background: #ca8a04;
+  color: #ffffff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: opacity 0.2s;
+}
+
+.btn-withdraw-provider {
+  background: #16a34a;
+}
+
+.btn-withdraw-upi:hover {
+  opacity: 0.9;
+}
+
+/* Escrow Section */
+.escrow-section {
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 14px;
+}
+
+.escrow-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 10px;
+}
+
+.escrow-empty-msg {
+  padding: 14px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.escrow-item-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.escrow-item-card.is-locked {
+  border-left: 4px solid #f59e0b;
+}
+
+.escrow-item-card.is-released {
+  border-left: 4px solid #10b981;
+}
+
+.escrow-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+.escrow-amount.is-locked {
+  color: #d97706;
+}
+
+.escrow-amount.is-released {
+  color: #16a34a;
+}
+
+.escrow-status-text {
+  font-size: 11px;
+  color: #64748b;
+  margin: 4px 0;
+}
+
+.escrow-action-center {
+  margin-top: 8px;
+}
+
+.btn-release-payment {
+  width: 100%;
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-release-payment:hover {
+  background: #15803d;
+}
