@@ -1,0 +1,161 @@
+<!-- farmer/farmer.html - Dedicated Farmer Module Templates -->
+
+<!-- 1. Main Dashboard Shell Template -->
+<template id="farmer-dashboard-template">
+  <div class="farmer-card">
+    <div class="farmer-card-header">
+      <h3>👨‍🌾 రైతు Dashboard</h3>
+      <span class="badge-live">Live</span>
+    </div>
+
+    <!-- 4 Tabs Bar -->
+    <div class="eq-tabs-bar">
+      <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="window.switchFarmerTab('labour')">
+        👥 కూలీలు
+      </button>
+      <button id="tab-btn-equipment" type="button" class="eq-tab-btn" onclick="window.switchFarmerTab('equipment')">
+        🚜 పరికరాలు
+      </button>
+      <button id="tab-btn-seeds" type="button" class="eq-tab-btn" onclick="window.switchFarmerTab('seeds')">
+        🌱 విత్తనాలు
+      </button>
+      <button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="window.switchFarmerTab('transport')">
+        🚚 రవాణా
+      </button>
+    </div>
+
+    <div class="farmer-card-body">
+      <!-- 4 Tab Panes -->
+      <div id="farmer-pane-labour" class="farmer-pane">
+        <div id="farmer-labour-form-wrapper"></div>
+        <div id="farmer-accepted-section-wrapper"></div>
+      </div>
+      <div id="farmer-pane-equipment" class="farmer-pane is-hidden"></div>
+      <div id="farmer-pane-seeds" class="farmer-pane is-hidden"></div>
+      <div id="farmer-pane-transport" class="farmer-pane is-hidden"></div>
+
+      <!-- Naa Bookinglu Container -->
+      <div id="farmer-booking-records"></div>
+    </div>
+  </div>
+</template>
+
+<!-- 2. Labour Post Form Template -->
+<template id="farmer-labour-form-template">
+  <form id="farmer-form" class="farmer-form">
+    <div class="form-row">
+      <input type="text" id="f-name" class="farmer-input" placeholder="మీ పేరు" required />
+      <input type="tel" id="f-phone" class="farmer-input" placeholder="ఫోన్ నంబర్" required />
+    </div>
+
+    <div class="form-row">
+      <input type="text" id="f-crop" class="farmer-input" placeholder="పంట (ఉదా: వరి, పత్తి)" required />
+      <input type="text" id="f-work" class="farmer-input" placeholder="పని (ఉదా: నాట్లు, కోత)" required />
+    </div>
+
+    <div class="form-row-spaced">
+      <input type="number" id="f-count" class="farmer-input" placeholder="కూలీల సంఖ్య" required min="1" />
+      <input type="number" id="f-wage" class="farmer-input" placeholder="రోజు కూలీ (₹)" required min="100" />
+    </div>
+
+    <div class="form-action-row">
+      <input 
+        type="text" 
+        id="f-date" 
+        class="input-date-fixed"
+        placeholder="📅 పని తేదీ" 
+        onfocus="(this.type='date'); this.showPicker && this.showPicker();" 
+        onblur="if(!this.value) this.type='text';" 
+        required 
+      />
+      <div class="gps-wrapper">
+        <button type="button" id="loc-btn" class="btn-gps">📍 పొలం GPS</button>
+        <span id="loc-status" class="gps-status-text"></span>
+      </div>
+      <button type="button" id="f-village-btn" class="btn-village"></button>
+    </div>
+
+    <div class="farmer-submit-row">
+      <button type="submit" class="btn-farmer-post">
+        📢 Submit కూలీల కోసం (Post Alert)
+      </button>
+    </div>
+  </form>
+</template>
+
+<!-- 3. Slot Tracker Row Template -->
+<template id="farmer-slot-card-template">
+  <div class="slot-job-card">
+    <div class="slot-card-header">
+      <strong class="slot-job-title"></strong>
+      <span class="slot-status-badge"></span>
+    </div>
+    <div class="slot-job-details"></div>
+    <div class="slot-labours-wrapper is-hidden">
+      <span class="slot-labour-head">చేరిన కూలీలు:</span>
+      <div class="slot-labours-list"></div>
+    </div>
+  </div>
+</template>
+
+<!-- 4. Accepted Labour Card Template -->
+<template id="farmer-labour-item-template">
+  <div class="labour-card-item">
+    <div class="labour-card-header">
+      <strong class="labour-name-text"></strong>
+      <span class="labour-wage"></span>
+    </div>
+    <div class="labour-work-info"></div>
+    <div class="labour-action-links">
+      <a class="labour-btn-link link-call">📞 కాల్</a>
+      <a class="labour-btn-link link-sms">✉️ SMS</a>
+      <a target="_blank" class="labour-btn-link link-whatsapp">💬 వాట్సాప్</a>
+    </div>
+  </div>
+</template>
+
+<!-- 5. Booking Record Row Template -->
+<template id="farmer-booking-card-template">
+  <div class="booking-record-card">
+    <div class="rec-title-row">
+      <span class="rec-item-title"></span>
+      <span class="rec-status-tag"></span>
+    </div>
+    <div class="rec-details-row"></div>
+    <div class="rec-action-buttons">
+      <a target="_blank" class="rec-btn-wa">💬 WhatsApp</a>
+      <a class="rec-btn-call">📞 Call</a>
+    </div>
+    <div class="rec-escrow-badge is-hidden">
+      ✅ ₹500 Escrow భద్రపరచబడింది
+    </div>
+    <button type="button" class="rec-btn-escrow">
+      🔒 ₹500 Advance Escrow Lock చేయండి
+    </button>
+  </div>
+</template>
+
+<!-- 6. Equipment/Vehicle Booking Modal (Initially Hidden) -->
+<div id="booking-modal" class="booking-modal-overlay is-hidden">
+  <div class="booking-modal-box">
+    <div class="booking-modal-header">
+      <h4>📋 బుకింగ్ అభ్యర్థన</h4>
+      <button type="button" class="btn-modal-close" onclick="window.FarmerModule.closeBookingModal()">✖</button>
+    </div>
+    <div class="booking-item-highlight">
+      <strong>వస్తువు:</strong> <span id="bm-item-name"></span><br>
+      <strong>ధర:</strong> <span id="bm-item-rate" class="booking-rate-text"></span>
+    </div>
+    <form id="booking-request-form" onsubmit="window.FarmerModule.handleBookingSubmit(event)">
+      <div class="modal-form-group">
+        <label>📅 కావలసిన తేదీ:</label>
+        <input type="date" id="book-date" class="modal-input" required />
+      </div>
+      <div class="modal-form-group">
+        <label>⏱️ వ్యవధి / విస్తీర్ణం (గంటలు / ఎకరాలు / ట్రిప్పులు):</label>
+        <input type="text" id="book-duration" class="modal-input" placeholder="ఉదా: 3 గంటలు లేదా 2 ఎకరాలు" required />
+      </div>
+      <button type="submit" class="btn-confirm-booking">✅ అభ్యర్థన పంపండి</button>
+    </form>
+  </div>
+</div>
