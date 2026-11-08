@@ -434,6 +434,102 @@ window.FarmerModule = {
       }
       alert(`🔒 ₹${amount} ఎస్క్రో లాక్ చేయబడింది (${itemName})! పని పూర్తయిన తర్వాత విడుదల అవుతుంది.`);
     }
+  },
+
+  // --- Quick Job Post Modal Controllers ---
+  openJobModal: function() {
+    let modal = document.getElementById("farmerJobModal");
+    if (!modal) {
+      const tpl = document.getElementById("farmer-job-modal-template");
+      if (tpl) {
+        document.body.appendChild(tpl.content.cloneNode(true));
+        modal = document.getElementById("farmerJobModal");
+      }
+    }
+    if (!modal) return;
+
+    // Auto Prefill
+    const prof = window.AppState?.userProfile || {};
+    const today = new Date().toISOString().split('T')[0];
+
+    const nameInput = document.getElementById("fjm_name");
+    const phoneInput = document.getElementById("fjm_phone");
+    const villageInput = document.getElementById("fjm_village");
+    const dateInput = document.getElementById("fjm_date");
+
+    if (nameInput) nameInput.value = prof.name || "";
+    if (phoneInput) phoneInput.value = prof.phone || "";
+    if (villageInput) villageInput.value = prof.village || "";
+    if (dateInput) {
+      dateInput.value = today;
+      dateInput.min = today;
+    }
+
+    modal.classList.remove("is-hidden");
+    modal.style.display = "flex";
+  },
+
+  closeJobModal: function() {
+    const modal = document.getElementById("farmerJobModal");
+    if (modal) {
+      modal.classList.add("is-hidden");
+      modal.style.display = "none";
+    }
+  },
+
+  handleJobModalSubmit: async function(e) {
+    e.preventDefault();
+
+    const farmerName = document.getElementById("fjm_name").value.trim();
+    const farmerPhone = document.getElementById("fjm_phone").value.trim();
+    const crop = document.getElementById("fjm_crop").value;
+    const workType = document.getElementById("fjm_work").value;
+    const totalRequired = parseInt(document.getElementById("fjm_required").value) || 1;
+    const wage = parseFloat(document.getElementById("fjm_wage").value) || 450;
+    const workDate = document.getElementById("fjm_date").value;
+    const village = document.getElementById("fjm_village").value.trim();
+    const trans = document.getElementById("fjm_trans").value;
+
+    const newJob = {
+      id: "JOB-" + Date.now(),
+      farmerName,
+      farmerPhone,
+      crop,
+      workType,
+      count: totalRequired,
+      totalRequired,
+      confirmedLabours: [],
+      wage,
+      workDate,
+      date: workDate,
+      village,
+      transportNote: trans === "own" ? "కూలీల సొంత బండి ఉండాలి" : "రైతు రవాణా ఏర్పాటు చేస్తారు",
+      status: "Open",
+      createdAt: Date.now()
+    };
+
+    if (window.db) {
+      try {
+        await window.db.collection("farmer_posted_jobs").add(newJob);
+      } catch(err) {
+        console.warn("Cloud save error, fallback to local:", err);
+      }
+    }
+
+    let list = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
+    list.unshift(newJob);
+    localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
+
+    let savedJobs = JSON.parse(localStorage.getItem("agri_jobs") || "[]");
+    savedJobs.unshift(newJob);
+    localStorage.setItem("agri_jobs", JSON.stringify(savedJobs));
+
+    this.closeJobModal();
+    this.renderAcceptedAndSlotList();
+
+    if (typeof renderLabourWidget === "function") renderLabourWidget();
+
+    alert("🎉 పని పోస్ట్ చేయబడింది! సమీప కూలీలకు అలర్ట్ వెళ్ళింది.");
   }
 };
 
@@ -448,6 +544,11 @@ window.closeBookingModal = function() { window.FarmerModule.closeBookingModal();
 window.renderBookingRecords = function() { window.FarmerModule.renderBookingRecords(); };
 window.clearFarmerBookings = function() { window.FarmerModule.clearBookings(); };
 window.lockBookingEscrow = function(id, a, n) { window.FarmerModule.lockEscrow(id, a, n); };
+
+// Quick Job Modal Global Bridges
+window.openFarmerJobModal = function() { window.FarmerModule.openJobModal(); };
+window.closeFarmerJobModal = function() { window.FarmerModule.closeJobModal(); };
+window.handleFarmerJobSubmit = function(e) { window.FarmerModule.handleJobModalSubmit(e); };
 
 // Real-time Cloud Sync Listener
 if (window.db) {
