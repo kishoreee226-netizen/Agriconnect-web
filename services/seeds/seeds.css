@@ -1,0 +1,225 @@
+/* services/seeds/seeds.css */
+
+.seeds-filter-bar {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+}
+
+.seeds-filter-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.seeds-filter-heading {
+  font-size: 13px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.seeds-filter-top-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seeds-select-range, .seeds-filter-select {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 12px;
+  outline: none;
+  background: #ffffff;
+}
+
+.seeds-count-badge {
+  background: #e2e8f0;
+  color: #334155;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.seeds-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.crop-guidance-board {
+  background: #fefce8;
+  border: 1px solid #fef08a;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.crop-guidance-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #854d0e;
+  margin-bottom: 6px;
+}
+
+.crop-guidance-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  color: #713f12;
+  line-height: 1.4;
+}
+
+.seeds-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.seeds-empty-card {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.seed-card-item {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.seed-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.seed-item-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.seed-owner-meta {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.seed-stock-row {
+  margin-top: 4px;
+}
+
+.seed-stock-badge {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.seed-price-badge {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.seed-actions-row {
+  display: flex;
+  gap: 6px;
+}
+
+.seed-btn-book, .seed-btn-call, .seed-btn-wa {
+  flex: 1;
+  text-align: center;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  box-sizing: border-box;
+}
+
+.seed-btn-book { background: #2e7d32; color: #ffffff; }
+.seed-btn-call { background: #22c55e; color: #ffffff; }
+.seed-btn-wa { background: #25d366; color: #ffffff; }
+
+/* Dealer Input Form Styles */
+.seeds-dealer-form-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
+}
+
+.seeds-dealer-form-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 800;
+  color: #166534;
+}
+
+.seeds-dealer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.seeds-form-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.seeds-form-input, .seeds-form-select {
+  width: 100%;
+  height: 38px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 10px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.seeds-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.seeds-btn-save {
+  width: 100%;
+  height: 40px;
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
