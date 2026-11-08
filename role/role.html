@@ -1,0 +1,29 @@
+<!-- role/role.html - User Profile Banner & Role Switcher Templates -->
+
+<!-- 1. Logged-in User Profile Banner Template -->
+<template id="role-profile-banner-template">
+  <div class="user-profile-banner">
+    <div class="profile-banner-info">
+      <div class="profile-banner-name">
+        <span class="user-name-text">👤 వినియోగదారుడు</span>
+        <span class="profile-banner-badge"></span>
+      </div>
+      <div class="profile-banner-details">
+        <span class="user-phone-text">📞 </span> &nbsp;|&nbsp; 📍 <b class="user-village-text"></b>
+      </div>
+    </div>
+    <button type="button" class="profile-banner-logout-btn" onclick="window.RoleController.logoutUser()">లాగౌట్ (Logout)</button>
+  </div>
+</template>
+
+<!-- 2. Dual-Role Switch Bar (For Farmers) -->
+<template id="role-dual-switch-template">
+  <div class="role-switch-container">
+    <button type="button" id="role-btn-farmer" onclick="window.RoleController.switchRoleMode('FARMER')" class="role-switch-btn role-switch-farmer">
+      🌾 Farmer mode (రైతు)
+    </button>
+    <button type="button" id="role-btn-labour" onclick="window.RoleController.switchRoleMode('LABOUR')" class="role-switch-btn role-switch-labour">
+      👷 Labour mode (కూలీ)
+    </button>
+  </div>
+</template>
