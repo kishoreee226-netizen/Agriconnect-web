@@ -97,3 +97,60 @@
   border-left: 4px solid #16a34a !important;
   background-color: #f0fdf4 !important;
 }
+/* Guest / Landing Role Cards */
+.guest-role-cards-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.guest-card {
+  border-radius: 12px;
+  padding: 12px 6px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.guest-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.guest-card-icon {
+  font-size: 26px;
+  margin-bottom: 4px;
+}
+
+.guest-card-title {
+  font-size: 13px;
+  display: block;
+}
+
+.guest-card-sub {
+  font-size: 10px;
+}
+
+/* Card Specific Themes */
+.guest-card-farmer {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+}
+.guest-card-farmer .guest-card-title { color: #166534; }
+.guest-card-farmer .guest-card-sub { color: #15803d; }
+
+.guest-card-labour {
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+}
+.guest-card-labour .guest-card-title { color: #9a3412; }
+.guest-card-labour .guest-card-sub { color: #c2410c; }
+
+.guest-card-provider {
+  background: #f0f9ff;
+  border: 1.5px solid #bae6fd;
+}
+.guest-card-provider .guest-card-title { color: #0369a1; }
+.guest-card-provider .guest-card-sub { color: #0284c7; }
