@@ -15,14 +15,17 @@
       <!-- Summary Cards Row -->
       <div class="wallet-summary-row">
         <!-- Farmer Side -->
-        <div class="balance-card balance-card-farmer">
+        <div class="balance-card balance-card-farmer" id="wallet-card-farmer-box">
           <div class="balance-title">👨‍🌾 రైతు ఖాతా బ్యాలెన్స్</div>
           <div class="balance-amount balance-val-farmer">₹0</div>
           <div class="balance-locked-text">🔒 Hold / Lock: <span class="balance-val-locked">₹0</span></div>
+          <button type="button" onclick="window.WalletModule.handleAddMoneyFarmer()" class="btn-deposit-money">
+            + డబ్బు జమ చేయండి
+          </button>
         </div>
 
         <!-- Labour Side -->
-        <div class="balance-card balance-card-labour">
+        <div class="balance-card balance-card-labour" id="wallet-card-labour-box">
           <div class="balance-title">👷 కూలీ ప్రధాన వాలెట్</div>
           <div class="balance-amount balance-val-labour">₹0</div>
           <button type="button" onclick="window.WalletModule.handleWithdrawUPI('labour')" class="btn-withdraw-upi">
@@ -31,7 +34,7 @@
         </div>
 
         <!-- Provider Side (Owner Earnings) -->
-        <div class="balance-card balance-card-provider">
+        <div class="balance-card balance-card-provider" id="wallet-card-provider-box">
           <div class="balance-title">🛠️ ప్రొవైడర్ అద్దె రాబడి</div>
           <div class="balance-amount balance-val-provider">₹0</div>
           <button type="button" onclick="window.WalletModule.handleWithdrawUPI('provider')" class="btn-withdraw-upi btn-withdraw-provider">
