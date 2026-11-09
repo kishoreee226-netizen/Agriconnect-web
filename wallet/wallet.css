@@ -199,3 +199,18 @@
 .btn-release-payment:hover {
   background: #15803d;
 }
+.btn-deposit-money {
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: opacity 0.2s;
+}
+.btn-deposit-money:hover {
+  opacity: 0.9;
+}
