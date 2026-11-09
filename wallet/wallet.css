@@ -46,10 +46,10 @@
   padding: 16px;
 }
 
-/* 3-Way Summary Grid */
+/* 2x2 Clean Balanced Summary Grid */
 .wallet-summary-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -61,6 +61,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 120px;
+  box-sizing: border-box;
 }
 
 .balance-card-farmer {
@@ -78,6 +80,12 @@
   border-color: #bbf7d0;
 }
 
+/* 4th Card: Quick Actions (Add Money & History) */
+.balance-card-actions {
+  background: #faf5ff;
+  border-color: #e9d5ff;
+}
+
 .balance-title {
   font-size: 12px;
   font-weight: 700;
@@ -89,7 +97,8 @@
   font-size: 20px;
   font-weight: 900;
   color: #0f172a;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
+  line-height: 1.2;
 }
 
 .balance-locked-text {
@@ -98,17 +107,24 @@
   color: #d97706;
 }
 
+/* Standardized Withdraw Action Buttons */
 .btn-withdraw-upi {
   background: #ca8a04;
   color: #ffffff;
   border: none;
-  padding: 6px 10px;
+  padding: 6px 8px;
   border-radius: 6px;
   font-size: 11px;
   font-weight: 800;
   cursor: pointer;
-  margin-top: 6px;
-  transition: opacity 0.2s;
+  margin-top: 8px;
+  width: 100%;
+  text-align: center;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.btn-withdraw-farmer {
+  background: #2563eb;
 }
 
 .btn-withdraw-provider {
@@ -116,7 +132,56 @@
 }
 
 .btn-withdraw-upi:hover {
+  opacity: 0.92;
+}
+
+.btn-withdraw-upi:active {
+  transform: scale(0.98);
+}
+
+/* Quick Actions Stack */
+.wallet-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  width: 100%;
+}
+
+.btn-action-add {
+  background: #7c3aed;
+  color: #ffffff;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: opacity 0.2s;
+}
+
+.btn-action-history {
+  background: #ffffff;
+  color: #6b21a8;
+  border: 1px solid #c084fc;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.btn-action-add:hover,
+.btn-action-history:hover {
   opacity: 0.9;
+}
+
+.btn-action-add:active,
+.btn-action-history:active {
+  transform: scale(0.98);
 }
 
 /* Escrow Section */
@@ -199,18 +264,7 @@
 .btn-release-payment:hover {
   background: #15803d;
 }
-.btn-deposit-money {
-  background: #2563eb;
-  color: #ffffff;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 800;
-  cursor: pointer;
-  margin-top: 6px;
-  transition: opacity 0.2s;
-}
-.btn-deposit-money:hover {
-  opacity: 0.9;
+
+.btn-release-payment:active {
+  transform: scale(0.99);
 }
