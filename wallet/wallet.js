@@ -69,13 +69,13 @@ window.WalletModule = {
     if (currentRole === "LABOUR") {
       if (farmerCard) farmerCard.style.display = "none";
       if (providerCard) providerCard.style.display = "none";
-      if (actionsCard) actionsCard.style.display = "none";
       if (labourCard) labourCard.style.display = "flex";
+      if (actionsCard) actionsCard.style.display = "flex"; // కూలీ మోడ్‌లో 4వ కార్డ్ ఆన్
     } else if (currentRole === "PROVIDER") {
       if (farmerCard) farmerCard.style.display = "none";
       if (labourCard) labourCard.style.display = "none";
-      if (actionsCard) actionsCard.style.display = "none";
       if (providerCard) providerCard.style.display = "flex";
+      if (actionsCard) actionsCard.style.display = "flex"; // ప్రొవైడర్ మోడ్‌లో 4వ కార్డ్ ఆన్
     } else {
       // రైతు మోడ్ లో ఉన్నప్పుడు 2x2 గ్రిడ్ లో 4 కార్డులూ కనిపిస్తాయి
       if (farmerCard) farmerCard.style.display = "flex";
@@ -125,25 +125,37 @@ window.WalletModule = {
     mount.appendChild(card);
   },
 
-  // రైతు వాలెట్‌లోకి డబ్బు జమ చేయడం (Add Money)
-  handleAddMoneyFarmer: function() {
-    const amountStr = prompt("రైతు వాలెట్‌లో ఎంత మొత్తం జమ చేయాలనుకుంటున్నారు (₹)?", "1000");
+  // వాలెట్‌లోకి డబ్బు జమ చేయడం (రైతు, కూలీ, ప్రొవైడర్ అందరికీ డైనమిక్‌గా రోల్ ఆధారంగా)
+  handleAddMoney: function() {
+    const currentRole = window.AppState?.currentRole || "FARMER";
+    let balanceKey = "farmerBalance";
+    let roleLabel = "రైతు";
+
+    if (currentRole === "LABOUR") {
+      balanceKey = "labourBalance";
+      roleLabel = "కూలీ";
+    } else if (currentRole === "PROVIDER") {
+      balanceKey = "providerBalance";
+      roleLabel = "ప్రొవైడర్";
+    }
+
+    const amountStr = prompt(`మీ ${roleLabel} వాలెట్‌లో ఎంత మొత్తం జమ చేయాలనుకుంటున్నారు (₹)?`, "500");
     if (!amountStr) return;
     const amt = Number(amountStr);
     if (isNaN(amt) || amt <= 0) {
-      alert("సరైన మొత్తాన్ని నమోదు చేయండి!");
+      alert("దయచేసి సరైన మొత్తాన్ని నమోదు చేయండి!");
       return;
     }
 
     const wallet = this.getWalletData();
-    wallet.farmerBalance = Number(wallet.farmerBalance || 0) + amt;
+    wallet[balanceKey] = Number(wallet[balanceKey] || 0) + amt;
 
     // హిస్టరీ రికార్డ్ యాడ్ చేయడం
     if (!Array.isArray(wallet.history)) wallet.history = [];
     wallet.history.unshift({
       id: "DEP-" + Date.now(),
       type: 'DEPOSIT',
-      role: 'రైతు',
+      role: roleLabel,
       amount: amt,
       info: 'Self Deposit (UPI/Bank)',
       date: new Date().toLocaleDateString('te-IN')
@@ -151,7 +163,12 @@ window.WalletModule = {
 
     this.saveWalletData(wallet);
     this.render();
-    alert(`🎉 ₹${amt} విజయవంతంగా రైతు వాలెట్‌లో జమ చేయబడింది!`);
+    alert(`🎉 ₹${amt} విజయవంతంగా మీ ${roleLabel} వాలెట్‌లో జమ చేయబడింది!`);
+  },
+
+  // బ్యాక్‌వర్డ్ కంపాటిబిలిటీ బ్రిడ్జ్
+  handleAddMoneyFarmer: function() {
+    this.handleAddMoney();
   },
 
   // ట్రాన్సాక్షన్ హిస్టరీ ప్రివ్యూ (History Button)
@@ -343,4 +360,6 @@ window.lockJobToEscrow = (job, name) => window.WalletModule.lockJobToEscrow(job,
 window.lockBookingEscrow = (id, amt, name) => window.WalletModule.lockBookingEscrow(id, amt, name);
 window.handleReleasePayment = (id) => window.WalletModule.handleReleasePayment(id);
 window.handleWithdrawUPI = (role) => window.WalletModule.handleWithdrawUPI(role);
+window.handleAddMoney = () => window.WalletModule.handleAddMoney();
+window.handleAddMoneyFarmer = () => window.WalletModule.handleAddMoneyFarmer();
 window.showTransactionHistory = () => window.WalletModule.showTransactionHistory();
