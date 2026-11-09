@@ -35,17 +35,35 @@ window.RoleController = {
   },
 
   setToolsVisibility: function(show) {
-    const allDivs = document.querySelectorAll("div, section");
-    allDivs.forEach(el => {
-      // మెయిన్ బాడీ లేదా కోర్ కంటైనర్లు కాకుండా చూసుకోవడం
-      if (el.id === "farmer-post-container" || el.id === "labour-jobs-container" || el.id === "provider-hub-container" || el.classList.contains("container")) {
-        return;
-      }
-      const heading = el.querySelector("h3, h4, span, strong");
-      if (heading) {
-        const text = heading.textContent || "";
-        if (text.includes("SMART సేవలు & Power Tools") || text.includes("SMART Utilities & లింకులు")) {
-          el.style.setProperty("display", show ? "block" : "none", "important");
+    // 1. క్లాస్ లేదా ఐడీ ఆధారంగా టార్గెట్ చేయడం
+    const explicitElements = document.querySelectorAll(
+      "#tools-container, #utilities-container, .tools-section, .utilities-section, " +
+      ".power-tools-card, .smart-utilities-card, [class*='power-tool'], [class*='smart-util']"
+    );
+    explicitElements.forEach(el => {
+      el.style.setProperty("display", show ? "block" : "none", "important");
+    });
+
+    // 2. హెడ్డింగ్ మరియు కింద ఉన్న గ్రిడ్ బాక్స్‌లను డైనమిక్‌గా గుర్తించి దాచడం
+    const allHeadings = document.querySelectorAll("h3, h4, h5, div, span, strong");
+    allHeadings.forEach(el => {
+      const txt = (el.textContent || "").trim();
+      if (txt.includes("రైతు SMART సేవలు & Power Tools") || txt.includes("రైతు SMART Utilities & లింకులు")) {
+        // హెడ్డింగ్ ఉన్న బాక్స్
+        let parentBox = el.closest(".card, .section, .box") || el.parentElement;
+        while (parentBox && (parentBox.tagName === "BODY" || parentBox.classList.contains("container"))) {
+          parentBox = el.parentElement;
+        }
+
+        if (parentBox && parentBox.tagName !== "BODY" && !parentBox.classList.contains("container")) {
+          parentBox.style.setProperty("display", show ? "block" : "none", "important");
+          
+          // హెడ్డింగ్ పక్కనే ఉన్న గ్రిడ్ / లింకుల కంటైనర్‌ను కూడా దాచడం
+          let nextEl = parentBox.nextElementSibling;
+          while (nextEl && !nextEl.querySelector("h3, h4, .wallet-card, #wallet-container, footer, .footer")) {
+            nextEl.style.setProperty("display", show ? "block" : "none", "important");
+            nextEl = nextEl.nextElementSibling;
+          }
         }
       }
     });
@@ -56,7 +74,7 @@ window.RoleController = {
     const farmerContainer = this.getFarmerContainer();
     const labourContainer = this.getLabourContainer();
     const providerContainer = this.getProviderContainer();
-    const walletContainer = document.getElementById('wallet-container');
+    const walletContainer = document.getElementById('wallet-container') || document.querySelector('.wallet-card');
     const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
     const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
 
@@ -98,7 +116,7 @@ window.RoleController = {
         this.renderRoleSwitchBar();
       }
 
-      // కూలీ మోడ్‌లో టూల్స్, వెదర్, మండి ఉండకూడదు
+      // కూలీ మోడ్‌లో టూల్స్, వెదర్, మండి ఉండకూడదు[span_4](start_span)[span_4](end_span)
       this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
@@ -111,6 +129,7 @@ window.RoleController = {
           window.renderLabourWidget();
         }
       }
+      // కూలీకి వాలెట్ డిస్‌ప్లే అవ్వాలి[span_5](start_span)[span_5](end_span)
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
       if (typeof window.filterLabourJobsByLocation === 'function') window.filterLabourJobsByLocation();
     }
@@ -122,11 +141,10 @@ window.RoleController = {
         this.renderRoleSwitchBar();
       }
 
-      // యజమాని మోడ్‌లో టూల్స్, వెదర్ ఉండకూడదు
+      // యజమాని మోడ్‌లో టూల్స్, వెదర్, మండి ఉండకూడదు
       this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-      if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
 
@@ -136,6 +154,8 @@ window.RoleController = {
           window.renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
         }
       }
+      // యజమాని మోడ్‌లో కూడా వాలెట్ డిస్‌ప్లే అవ్వాలి!
+      if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
     // C. రైతు మోడ్ (FARMER)
     else {
@@ -243,7 +263,6 @@ window.RoleController = {
   switchRoleMode: function(targetRole) {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
-    // మోడ్‌ను లోకల్ స్టోరేజ్‌లో భద్రపరచడం
     localStorage.setItem("agri_current_active_role", targetRole);
     this.applyUserRoleView();
   },
@@ -387,7 +406,6 @@ window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
 
-// DOM సిద్ధమైనప్పుడు సెషన్ & మోడ్ పునరుద్ధరణ (Auto Restore Active Role on Refresh)
 document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
   if (savedData) {
@@ -400,7 +418,6 @@ document.addEventListener("DOMContentLoaded", function() {
         window.AppState.userType = user.userType || user.roleType || "FARMER";
         window.AppState.providerType = user.providerType || "equipment";
 
-        // రీఫ్రెష్ చేసినప్పుడు గతంలో ఏ మోడ్‌లో ఉన్నారో అదే మోడ్‌ను సెట్ చేయడం
         const savedRole = localStorage.getItem("agri_current_active_role");
         if (savedRole && (savedRole === "FARMER" || savedRole === "LABOUR" || savedRole === "PROVIDER")) {
           window.AppState.currentRole = savedRole;
