@@ -2,28 +2,39 @@
 
 window.RoleController = {
   getFarmerContainer: function() {
-    return document.getElementById("farmer-post-container");
+    let el = document.getElementById("farmer-post-container");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "farmer-post-container";
+      const target = document.getElementById("wallet-container") || document.querySelector(".wallet-card") || document.body;
+      if (target && target.parentNode) target.parentNode.insertBefore(el, target);
+    }
+    return el;
   },
 
   getLabourContainer: function() {
-    return document.getElementById("labour-jobs-container");
+    let el = document.getElementById("labour-jobs-container");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "labour-jobs-container";
+      const target = document.getElementById("farmer-post-container") || document.getElementById("wallet-container") || document.body;
+      if (target && target.parentNode) target.parentNode.insertBefore(el, target.nextSibling);
+    }
+    return el;
   },
 
   getProviderContainer: function() {
-    return document.getElementById("provider-hub-container") || document.getElementById("provider-container");
-  },
-
-  getToolsAndUtilityElements: function() {
-    // SMART Tools & Utilities సెక్షన్లను గుర్తించడం
-    return document.querySelectorAll(
-      ".tools-section, .utilities-section, #tools-container, #utilities-container, " +
-      "[class*='power-tools'], [class*='smart-utilities'], " +
-      ".container > div:has(h4:contains('SMART')), .container > div:has(span:contains('SMART'))"
-    );
+    let el = document.getElementById("provider-hub-container") || document.getElementById("provider-container");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "provider-hub-container";
+      const target = document.getElementById("labour-jobs-container") || document.body;
+      if (target && target.parentNode) target.parentNode.insertBefore(el, target.nextSibling);
+    }
+    return el;
   },
 
   setToolsVisibility: function(show) {
-    // టూల్స్ హెడ్డింగ్‌లు మరియు వాటి క్రింది గ్రిడ్ బాక్సులను కంట్రోల్ చేయడం
     const allDivs = document.querySelectorAll("body > div, .container > div, main > div");
     allDivs.forEach(el => {
       const txt = el.textContent || "";
@@ -46,13 +57,11 @@ window.RoleController = {
     if (!state || !state.isLoggedIn) {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
+      this.setToolsVisibility(false);
 
       if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
-
-      // లాగిన్ కానప్పుడు SMART Tools & Utilities పూర్తిగా దాచిపెట్టాలి
-      this.setToolsVisibility(false);
 
       if (farmerContainer) {
         farmerContainer.style.setProperty('display', 'block', 'important');
@@ -74,11 +83,15 @@ window.RoleController = {
     // 2. యూజర్ లాగిన్ అయినప్పుడు
     this.renderUserProfileBanner();
 
-    // A. కేవలం కూలీ లాగిన్ (LABOUR)
-    if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.userType === "LABOUR") {
-      this.removeRoleSwitchBar();
-      this.setToolsVisibility(false); // కూలీకి టూల్స్ అవసరం లేదు
+    // A. కూలీ మోడ్ (LABOUR)
+    if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.currentRole === "LABOUR") {
+      if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
+        this.removeRoleSwitchBar();
+      } else {
+        this.renderRoleSwitchBar();
+      }
 
+      this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
@@ -86,63 +99,22 @@ window.RoleController = {
 
       if (labourContainer) {
         labourContainer.style.setProperty('display', 'block', 'important');
-        if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
+        if (typeof window.renderLabourWidget === 'function') {
+          window.renderLabourWidget();
+        }
       }
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
       if (typeof window.filterLabourJobsByLocation === 'function') window.filterLabourJobsByLocation();
     }
-    // B. రైతు లాగిన్ (FARMER)
-    else if (state.userType === "FARMER") {
-      this.renderRoleSwitchBar();
-
-      if (state.currentRole === 'LABOUR') {
-        this.setToolsVisibility(false);
-        if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-        if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
-        if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
-        if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
-
-        if (labourContainer) {
-          labourContainer.style.setProperty('display', 'block', 'important');
-          if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
-        }
-        if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
-      } else if (state.currentRole === 'PROVIDER') {
-        this.setToolsVisibility(false);
-        if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-        if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-        if (providerContainer) {
-          providerContainer.style.setProperty('display', 'block', 'important');
-          if (typeof window.renderProviderDashboardView === 'function') {
-            window.renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
-          }
-        }
-        if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+    // B. యజమాని మోడ్ (PROVIDER)
+    else if (state.userType === "PROVIDER" || state.currentRole === "PROVIDER") {
+      if (state.userType === "PROVIDER") {
+        this.removeRoleSwitchBar();
       } else {
-        // అసలైన రైతు మోడ్: ఇక్కడ మాత్రమే SMART Tools కనిపిస్తాయి
-        this.setToolsVisibility(true);
-
-        if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-        if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
-
-        if (farmerContainer) {
-          farmerContainer.style.setProperty('display', 'block', 'important');
-          if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
-        }
-        if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
-          window.renderFarmerWidgetWithLiveProviders();
-        }
-
-        if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
-        if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
-        if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+        this.renderRoleSwitchBar();
       }
-    }
-    // C. యజమాని లాగిన్ (PROVIDER)
-    else if (state.userType === "PROVIDER") {
-      this.removeRoleSwitchBar();
-      this.setToolsVisibility(false); // యజమానికి SMART Tools దాచిపెట్టాలి!
 
+      this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
@@ -155,6 +127,27 @@ window.RoleController = {
           window.renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
         }
       }
+    }
+    // C. రైతు మోడ్ (FARMER)
+    else {
+      this.renderRoleSwitchBar();
+      this.setToolsVisibility(true);
+
+      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+
+      if (farmerContainer) {
+        farmerContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
+      }
+      if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
+        window.renderFarmerWidgetWithLiveProviders();
+      }
+
+      // రైతు కోసం వెదర్ ఎప్పుడూ కనిపించాలి!
+      if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
+      if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+      if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
   },
 
@@ -182,21 +175,12 @@ window.RoleController = {
     let roleText = "రైతు (Farmer)";
     let badgeColor = "#16a34a";
 
-    if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.currentRole === "LABOUR") {
+    if (state.currentRole === "LABOUR" || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
       roleText = "కూలీ (Labour)";
       badgeColor = "#ea580c";
-    } else if (state.userType === "PROVIDER" || state.currentRole === "PROVIDER") {
-      const pType = state.providerType || (user && user.providerType) || 'equipment';
-      if (pType === 'transport') {
-        roleText = "🚚 రవాణా యజమాని";
-        badgeColor = "#7c3aed";
-      } else if (pType === 'seeds') {
-        roleText = "🌱 విత్తనాల డీలర్";
-        badgeColor = "#16a34a";
-      } else {
-        roleText = "🚜 పరికరాల యజమాని";
-        badgeColor = "#f57c00";
-      }
+    } else if (state.currentRole === "PROVIDER" || state.userType === "PROVIDER") {
+      roleText = "🤝 యజమాని (Provider)";
+      badgeColor = "#7c3aed";
     }
 
     banner.style.setProperty('--badge-color', badgeColor);
@@ -257,20 +241,20 @@ window.RoleController = {
     if (!window.AppState) window.AppState = {};
     window.AppState.isLoggedIn = false;
     window.AppState.userProfile = null;
+    window.AppState.currentRole = "GUEST";
     localStorage.removeItem("agri_user_profile");
     this.applyUserRoleView();
   }
 };
 
 // ===================================================
-// FARMER & LABOUR LOGIN / REGISTER MODAL ENGINE
+// MODALS LOGIC
 // ===================================================
 window.openLoginModal = function(roleType) {
   let modal = document.getElementById("role-login-modal");
   if (!modal) {
     modal = document.createElement("div");
     modal.id = "role-login-modal";
-    modal.className = "agri-modal-overlay";
     modal.style.cssText = "position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:99999; padding:16px;";
     document.body.appendChild(modal);
   }
@@ -284,23 +268,21 @@ window.openLoginModal = function(roleType) {
     if (saved) savedUser = JSON.parse(saved);
   } catch (e) {}
 
-  if (savedUser && savedUser.phone) {
+  // గతంలో రిజిస్టర్ అయిన రోల్ మరియు ఇప్పుడు క్లిక్ చేసిన రోల్ ఒకటే అయితేనే పిన్ అడుగుతుంది
+  if (savedUser && savedUser.phone && savedUser.roleType === roleType) {
     modal.innerHTML = `
-      <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:380px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+      <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:380px; text-align:center;">
         <div style="font-size:36px; margin-bottom:8px;">🔒</div>
-        <h3 style="margin:0 0 6px; color:#1e293b;">స్వాగతం, ${savedUser.name || 'రైతు'} గారు!</h3>
+        <h3 style="margin:0 0 6px; color:#1e293b;">స్వాగతం, ${savedUser.name} గారు!</h3>
         <p style="font-size:13px; color:#64748b; margin:0 0 16px;">మొబైల్: <b>${savedUser.phone}</b></p>
-
         <div style="margin-bottom:16px; text-align:left;">
           <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:6px;">మీ 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి:</label>
           <input type="password" id="fast-login-pin" maxlength="4" placeholder="••••" inputmode="numeric" style="width:100%; padding:10px; font-size:18px; text-align:center; letter-spacing:8px; border:2px solid ${themeColor}; border-radius:8px; box-sizing:border-box;">
         </div>
-
         <div style="display:flex; gap:10px; margin-bottom:12px;">
           <button onclick="window.closeLoginModal()" style="flex:1; padding:10px; background:#f1f5f9; border:none; border-radius:8px; font-weight:600; cursor:pointer;">రద్దు</button>
           <button onclick="window.submitDirectPinLogin('${roleType}')" style="flex:2; padding:10px; background:${themeColor}; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">లాగిన్ ➔</button>
         </div>
-
         <a href="javascript:void(0)" onclick="window.switchToFullRegister('${roleType}')" style="font-size:12px; color:${themeColor}; text-decoration:none;">
           వేరే నంబర్‌తో నమోదు చేసుకోవాలా? క్లిక్ చేయండి
         </a>
@@ -318,29 +300,24 @@ function renderRegisterForm(modal, roleType, themeColor) {
   const title = isFarmer ? "🌾 రైతు ప్రొఫైల్ నమోదు" : "👷 కూలీ ప్రొఫైల్ నమోదు";
 
   modal.innerHTML = `
-    <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:400px; box-shadow:0 10px 25px rgba(0,0,0,0.2);">
+    <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:400px;">
       <h3 style="margin:0 0 16px; text-align:center; color:${themeColor};">${title}</h3>
-      
       <div style="margin-bottom:10px;">
         <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:4px;">మీ పూర్తి పేరు:</label>
         <input type="text" id="reg-name" placeholder="ఉదా: రామయ్య" style="width:100%; padding:9px; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
       </div>
-
       <div style="margin-bottom:10px;">
         <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:4px;">మొబైల్ నంబర్ (10 అంకెలు):</label>
         <input type="tel" id="reg-phone" placeholder="9876543210" maxlength="10" inputmode="numeric" style="width:100%; padding:9px; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
       </div>
-
       <div style="margin-bottom:10px;">
         <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:4px;">గ్రామం / ఊరు (Village):</label>
         <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి" style="width:100%; padding:9px; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
       </div>
-
       <div style="margin-bottom:16px;">
         <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:4px;">భద్రతా పిన్ సెట్ చేయండి (4-Digit PIN):</label>
         <input type="password" id="reg-pin" placeholder="1234" maxlength="4" inputmode="numeric" style="width:100%; padding:9px; border:2px solid ${themeColor}; border-radius:8px; letter-spacing:4px; text-align:center; box-sizing:border-box;">
       </div>
-
       <div style="display:flex; gap:10px;">
         <button onclick="window.closeLoginModal()" style="flex:1; padding:10px; background:#f1f5f9; border:none; border-radius:8px; font-weight:600; cursor:pointer;">రద్దు</button>
         <button onclick="window.submitUserRegistration('${roleType}')" style="flex:2; padding:10px; background:${themeColor}; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">నమోదు చేసుకోండి</button>
@@ -349,29 +326,14 @@ function renderRegisterForm(modal, roleType, themeColor) {
   `;
 }
 
-window.switchToFullRegister = function(roleType) {
-  const modal = document.getElementById("role-login-modal");
-  const themeColor = (roleType === "FARMER") ? "#16a34a" : "#ea580c";
-  if (modal) renderRegisterForm(modal, roleType, themeColor);
-};
-
-window.closeLoginModal = function() {
-  const modal = document.getElementById("role-login-modal");
-  if (modal) modal.style.display = "none";
-};
+window.switchToFullRegister = (roleType) => renderRegisterForm(document.getElementById("role-login-modal"), roleType, roleType === "FARMER" ? "#16a34a" : "#ea580c");
+window.closeLoginModal = () => { const m = document.getElementById("role-login-modal"); if (m) m.style.display = "none"; };
 
 window.submitDirectPinLogin = function(roleType) {
   const pin = document.getElementById("fast-login-pin")?.value.trim();
-  if (!pin || pin.length !== 4) {
-    alert("దయచేసి 4 అంకెల పిన్ ఎంటర్ చేయండి.");
-    return;
-  }
+  if (!pin || pin.length !== 4) return alert("దయచేసి 4 అంకెల పిన్ ఎంటర్ చేయండి.");
 
-  let saved = null;
-  try {
-    saved = JSON.parse(localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user"));
-  } catch(e) {}
-
+  let saved = JSON.parse(localStorage.getItem("agri_user_profile") || "{}");
   if (!window.AppState) window.AppState = {};
   window.AppState.isLoggedIn = true;
   window.AppState.userProfile = saved;
@@ -383,38 +345,33 @@ window.submitDirectPinLogin = function(roleType) {
 };
 
 window.submitUserRegistration = function(roleType) {
-  const name = document.getElementById("reg-name")?.value.trim() || "";
-  const phone = document.getElementById("reg-phone")?.value.trim() || "";
-  const village = document.getElementById("reg-village")?.value.trim() || "";
+  const name = document.getElementById("reg-name")?.value.trim();
+  const phone = document.getElementById("reg-phone")?.value.trim();
+  const village = document.getElementById("reg-village")?.value.trim();
   const pin = document.getElementById("reg-pin")?.value.trim() || "1234";
 
-  if (!name) return alert("దయచేసి మీ పేరు నమోదు చేయండి.");
-  if (!phone || phone.length !== 10) return alert("దయచేసి 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.");
-  if (!village) return alert("దయచేసి మీ గ్రామం పేరు నమోదు చేయండి.");
+  if (!name || !phone || phone.length !== 10 || !village) {
+    return alert("దయచేసి అన్ని వివరాలను సరిగ్గా నమోదు చేయండి.");
+  }
 
   const profile = { name, phone, village, pin, roleType, userType: roleType };
-
   if (!window.AppState) window.AppState = {};
   window.AppState.isLoggedIn = true;
   window.AppState.userProfile = profile;
   window.AppState.userType = roleType;
   window.AppState.currentRole = (roleType === "LABOUR" || roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
 
-  try {
-    localStorage.setItem("agri_user_profile", JSON.stringify(profile));
-    localStorage.setItem("agri_last_user", JSON.stringify(profile));
-  } catch(e) {}
+  localStorage.setItem("agri_user_profile", JSON.stringify(profile));
+  localStorage.setItem("agri_last_user", JSON.stringify(profile));
 
   window.closeLoginModal();
   window.RoleController.applyUserRoleView();
 };
 
-// Global Helpers
 window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
 
-// Auto session restore & init
 document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
   if (savedData) {
@@ -425,7 +382,6 @@ document.addEventListener("DOMContentLoaded", function() {
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
         window.AppState.userType = user.userType || user.roleType || "FARMER";
-        window.AppState.providerType = user.providerType || "equipment";
         window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY" || window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
       }
     } catch (e) {}
