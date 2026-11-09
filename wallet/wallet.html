@@ -12,34 +12,53 @@
     </div>
 
     <div class="wallet-body">
-      <!-- Summary Cards Row -->
+      <!-- 2x2 Summary Cards Grid -->
       <div class="wallet-summary-row">
-        <!-- Farmer Side -->
+        <!-- 1. Farmer Side -->
         <div class="balance-card balance-card-farmer" id="wallet-card-farmer-box">
-          <div class="balance-title">👨‍🌾 రైతు ఖాతా బ్యాలెన్స్</div>
-          <div class="balance-amount balance-val-farmer">₹0</div>
-          <div class="balance-locked-text">🔒 Hold / Lock: <span class="balance-val-locked">₹0</span></div>
-          <button type="button" onclick="window.WalletModule.handleAddMoneyFarmer()" class="btn-deposit-money">
-            + డబ్బు జమ చేయండి
+          <div>
+            <div class="balance-title">👨‍🌾 రైతు ఖాతా బ్యాలెన్స్</div>
+            <div class="balance-amount balance-val-farmer">₹0</div>
+            <div class="balance-locked-text">🔒 Hold: <span class="balance-val-locked">₹0</span></div>
+          </div>
+          <button type="button" onclick="window.WalletModule.handleWithdrawUPI('farmer')" class="btn-withdraw-upi btn-withdraw-farmer">
+            💸 UPI Withdraw
           </button>
         </div>
 
-        <!-- Labour Side -->
+        <!-- 2. Labour Side -->
         <div class="balance-card balance-card-labour" id="wallet-card-labour-box">
-          <div class="balance-title">👷 కూలీ ప్రధాన వాలెట్</div>
-          <div class="balance-amount balance-val-labour">₹0</div>
+          <div>
+            <div class="balance-title">👷 కూలీ ప్రధాన వాలెట్</div>
+            <div class="balance-amount balance-val-labour">₹0</div>
+          </div>
           <button type="button" onclick="window.WalletModule.handleWithdrawUPI('labour')" class="btn-withdraw-upi">
             💸 UPI Withdraw
           </button>
         </div>
 
-        <!-- Provider Side (Owner Earnings) -->
+        <!-- 3. Provider Side -->
         <div class="balance-card balance-card-provider" id="wallet-card-provider-box">
-          <div class="balance-title">🛠️ ప్రొవైడర్ అద్దె రాబడి</div>
-          <div class="balance-amount balance-val-provider">₹0</div>
+          <div>
+            <div class="balance-title">🛠️ ప్రొవైడర్ అద్దె రాబడి</div>
+            <div class="balance-amount balance-val-provider">₹0</div>
+          </div>
           <button type="button" onclick="window.WalletModule.handleWithdrawUPI('provider')" class="btn-withdraw-upi btn-withdraw-provider">
             💸 UPI Withdraw
           </button>
+        </div>
+
+        <!-- 4. Quick Actions Card (Add Money & History) -->
+        <div class="balance-card balance-card-actions" id="wallet-card-actions-box">
+          <div class="balance-title">⚡ వాలెట్ సేవలు (Actions)</div>
+          <div class="wallet-action-buttons">
+            <button type="button" onclick="window.WalletModule.handleAddMoneyFarmer()" class="btn-action-add">
+              ➕ Add Money
+            </button>
+            <button type="button" onclick="window.WalletModule.showTransactionHistory()" class="btn-action-history">
+              📜 History
+            </button>
+          </div>
         </div>
       </div>
 
