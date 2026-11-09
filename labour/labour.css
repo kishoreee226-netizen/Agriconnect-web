@@ -361,3 +361,34 @@
   font-weight: bold;
   cursor: pointer;
 }
+/* labour/labour.css - స్క్రోలింగ్ ఫిక్స్ */
+
+.labour-open-jobs-list {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-top: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.labour-confirmed-list {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-top: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* అందమైన కస్టమ్ స్క్రోల్‌బార్ */
+.labour-open-jobs-list::-webkit-scrollbar,
+.labour-confirmed-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.labour-open-jobs-list::-webkit-scrollbar-thumb,
+.labour-confirmed-list::-webkit-scrollbar-thumb {
+  background: #fed7aa;
+  border-radius: 4px;
+}
