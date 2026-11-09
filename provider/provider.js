@@ -1,4 +1,4 @@
-// provider/provider.js - Complete Provider Dashboard & Service Controller
+// provider/provider.js - Complete Provider Dashboard & Service Controller with Cloud Sync
 
 let selectedProviderType = 'equipment';
 
@@ -47,7 +47,7 @@ window.renderProviderDashboardView = function(container, type) {
   window.renderIncomingBookingsForProvider('provider-incoming-requests');
 };
 
-// 3. Provider Auth Modal (3 Pill Tabs)
+// 3. Provider Auth Modal
 window.openProviderModal = function() {
   let modal = document.getElementById('provider-auth-modal');
   if (!modal) {
@@ -115,12 +115,13 @@ window.handleProviderLogin = function(e) {
   if (!window.AppState) window.AppState = {};
   window.AppState.isLoggedIn = true;
   window.AppState.userType = 'PROVIDER';
+  window.AppState.currentRole = 'PROVIDER';
   window.AppState.providerType = selectedProviderType;
   window.AppState.userProfile = profile;
 
   try {
     localStorage.setItem("agri_user_profile", JSON.stringify(profile));
-    localStorage.setItem("agri_last_user", JSON.stringify(profile));
+    localStorage.setItem("agri_current_active_role", 'PROVIDER');
   } catch (err) {}
 
   window.closeProviderModal();
@@ -231,8 +232,9 @@ window.handleSaveProviderItem = async function(e) {
   }
 
   const type = selectedProviderType || 'equipment';
+  const autoId = "item_" + Date.now();
   const newItem = {
-    id: "item_" + Date.now(),
+    id: autoId,
     name: val1,
     rate: '₹' + val2,
     rawRate: val2,
@@ -246,10 +248,12 @@ window.handleSaveProviderItem = async function(e) {
     createdAt: new Date().toISOString()
   };
 
+  // Firebase Firestore లో సేవ్ చేయడం (నిర్దిష్ట Doc ID తో)
   if (window.db) {
-    window.db.collection("provider_items").add(newItem).catch(err => console.warn(err));
+    window.db.collection("provider_items").doc(autoId).set(newItem).catch(err => console.warn("Firebase save error:", err));
   }
 
+  // LocalStorage లో కూడా బ్యాకప్ సేవ్ చేయడం
   let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
   items.unshift(newItem);
   localStorage.setItem('agri_provider_items', JSON.stringify(items));
@@ -259,7 +263,7 @@ window.handleSaveProviderItem = async function(e) {
   alert("🎉 విజయవంతంగా చేర్చబడింది!");
 };
 
-// 5. Render Provider Saved Items
+// 5. Render Provider Saved Items (Firebase Cloud First + Local Fallback)
 window.renderProviderItemsList = async function(type) {
   const container = document.getElementById('provider-items-list');
   if (!container) return;
@@ -268,10 +272,34 @@ window.renderProviderItemsList = async function(type) {
   const currentUserPhone = String(profile.phone || '').trim();
 
   let items = [];
-  try {
-    const local = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
-    items = local.filter(it => !currentUserPhone || it.phone === currentUserPhone);
-  } catch (err) {}
+
+  // A. ముందుగా Firebase నుండి లోడ్ చేయడానికి ప్రయత్నించడం
+  if (window.db && currentUserPhone) {
+    try {
+      const snap = await window.db.collection("provider_items")
+        .where("phone", "==", currentUserPhone)
+        .get();
+
+      if (!snap.empty) {
+        snap.forEach(doc => {
+          const d = doc.data();
+          items.push({ ...d, id: d.id || doc.id });
+        });
+        // క్లౌడ్ డేటాను లోకల్ స్టోరేజ్‌కి కూడా సింక్ చేయడం
+        localStorage.setItem('agri_provider_items', JSON.stringify(items));
+      }
+    } catch (e) {
+      console.warn("Firebase Fetching Fallback to LocalStorage:", e);
+    }
+  }
+
+  // B. Firebase లో లేకపోతే లేదా ఆఫ్‌లైన్ అయితే LocalStorage నుండి లోడ్ చేయడం
+  if (items.length === 0) {
+    try {
+      const local = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+      items = local.filter(it => !currentUserPhone || it.phone === currentUserPhone);
+    } catch (err) {}
+  }
 
   if (items.length === 0) {
     container.innerHTML = `
@@ -288,31 +316,54 @@ window.renderProviderItemsList = async function(type) {
         <div class="pitem-title-text">మీరు జోడించినవి <span class="pitem-count-badge">${items.length}</span></div>
       </div>
       <div class="pitem-scroll-list">
-        ${items.map(item => `
-          <div class="pitem-card-row">
-            <div>
-              <div class="pitem-card-title">${item.name}</div>
-              <div class="pitem-card-details">ధర: <b class="pitem-price-text">${item.rate}</b> | ${item.status || 'లభ్యం'}</div>
+        ${items.map((item, idx) => {
+          // ID లేని పాత రికార్డులకు కూడా పక్కాగా వర్క్ అయ్యేలా సేఫ్ కీ
+          const safeId = item.id || `idx_${idx}`;
+          return `
+            <div class="pitem-card-row">
+              <div>
+                <div class="pitem-card-title">${item.name}</div>
+                <div class="pitem-card-details">ధర: <b class="pitem-price-text">${item.rate}</b> | ${item.status || 'లభ్యం'}</div>
+              </div>
+              <button onclick="window.deleteProviderItem('${safeId}', '${type}', '${item.name}')" class="pitem-delete-btn">తీసివేయి</button>
             </div>
-            <button onclick="window.deleteProviderItem('${item.id}', '${type}')" class="pitem-delete-btn">తీసివేయి</button>
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </div>
     </div>
   `;
 };
 
-window.deleteProviderItem = function(id, type) {
+// 6. Delete Provider Item (Firebase + LocalStorage Complete Fix)
+window.deleteProviderItem = async function(id, type, itemName) {
   if (!confirm("ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?")) return;
 
+  // A. Firebase Firestore నుండి తొలగించడం
+  if (window.db && id && !id.startsWith("idx_")) {
+    try {
+      await window.db.collection("provider_items").doc(id).delete();
+    } catch (err) {
+      console.warn("Firebase Delete Error:", err);
+    }
+  }
+
+  // B. LocalStorage నుండి తొలగించడం (ID లేదా నేమ్ మ్యాచింగ్ తో)
   let localItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
-  localItems = localItems.filter(item => item.id !== id);
+  localItems = localItems.filter(item => {
+    if (item.id && id && !id.startsWith("idx_")) {
+      return item.id !== id;
+    }
+    // పాత డెమో ఐటెమ్స్ కి ID లేకపోతే పేరు ద్వారా మ్యాచ్ చేసి తీసేయడం
+    return item.name !== itemName;
+  });
+
   localStorage.setItem('agri_provider_items', JSON.stringify(localItems));
 
+  // C. స్క్రీన్ వెంటనే రీ-రెండర్ చేయడం
   window.renderProviderItemsList(type);
 };
 
-// 6. Incoming Orders Inbox (With Phone Isolation)
+// 7. Incoming Orders Inbox (With Firebase Realtime Listener + Phone Isolation)
 window.renderIncomingBookingsForProvider = function(containerId) {
   const box = document.getElementById(containerId);
   if (!box) return;
@@ -362,17 +413,41 @@ window.renderIncomingBookingsForProvider = function(containerId) {
     `;
   }
 
-  const local = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
-  renderUI(local);
+  // Firebase లైవ్ లిజనర్ లేదా LocalStorage
+  if (window.db && currentPhone) {
+    window.db.collection("farmer_bookings")
+      .where("providerPhone", "==", currentPhone)
+      .onSnapshot(snap => {
+        let bList = [];
+        snap.forEach(doc => bList.push({ ...doc.data(), id: doc.id }));
+        if (bList.length > 0) {
+          renderUI(bList);
+        } else {
+          renderUI(JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
+        }
+      }, () => {
+        renderUI(JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
+      });
+  } else {
+    renderUI(JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
+  }
 };
 
-window.acceptBookingOrder = function(bookingId) {
+window.acceptBookingOrder = async function(bookingId) {
   let bookings = JSON.parse(localStorage.getItem('agri_active_bookings') || '[]');
   const idx = bookings.findIndex(b => b.id === bookingId);
   if (idx !== -1) {
     bookings[idx].status = 'ACCEPTED';
     localStorage.setItem('agri_active_bookings', JSON.stringify(bookings));
   }
+
+  // Firebase లో కూడా అప్‌డేట్ చేయడం
+  if (window.db && bookingId) {
+    try {
+      await window.db.collection("farmer_bookings").doc(bookingId).update({ status: 'ACCEPTED' });
+    } catch (e) {}
+  }
+
   window.renderIncomingBookingsForProvider('provider-incoming-requests');
   alert("ఆర్డర్ కన్ఫర్మ్ చేయబడింది!");
 };
