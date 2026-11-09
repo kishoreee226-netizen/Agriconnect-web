@@ -3,24 +3,25 @@
   try {
     const timestamp = Date.now();
 
-    // 1. Load Auth CSS
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `auth/auth.css?v=${timestamp}`;
-    document.head.appendChild(link);
+    // 1. Auth CSS ని ఇంజెక్ట్ చేయడం
+    if (!document.getElementById("auth-css-link")) {
+      const link = document.createElement('link');
+      link.id = "auth-css-link";
+      link.rel = 'stylesheet';
+      link.href = `auth/auth.css?v=${timestamp}`;
+      document.head.appendChild(link);
+    }
 
-    // 2. Load Auth HTML Template
-    const res = await fetch(`auth/auth.html?v=${timestamp}`);
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-    const html = await res.text();
-    const wrapper = document.createElement('div');
-    wrapper.innerHTML = html;
-    document.body.appendChild(wrapper.firstElementChild);
-
-    // 3. Load All-in-One Auth Engine & Controller
-    const script = document.createElement('script');
-    script.src = `auth/auth.js?v=${timestamp}`;
-    document.body.appendChild(script);
+    // 2. Auth HTML టెంప్లేట్‌ను DOM లోకి తీసుకురావడం
+    if (!document.getElementById("agriAuthModal")) {
+      const res = await fetch(`auth/auth.html?v=${timestamp}`);
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      const html = await res.text();
+      const wrapper = document.createElement('div');
+      wrapper.id = "auth-template-container";
+      wrapper.innerHTML = html;
+      document.body.appendChild(wrapper.firstElementChild || wrapper);
+    }
 
     console.log("✅ AgriConnect Auth Module Loaded Successfully");
   } catch (err) {
