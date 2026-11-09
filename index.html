@@ -62,17 +62,23 @@
   <script src="mandi.js?v=999"></script>
 
   <!-- 4. Plugin Architecture Services -->
-  <script src="services/services-loader.js" defer></script>
+  
 
   <!-- 5. Core Feature Loaders (4-File Pattern) -->
   <script src="wallet/wallet-loader.js?v=1.0" defer></script>
-  <script src="farmer/farmer-loader.js" defer></script>
-  <script src="labour/labour-loader.js" defer></script>
-  <script src="provider/provider-loader.js" defer></script>
-  <script src="booking/booking-loader.js" defer></script>
+ 
 
-  <!-- 6. Master Role Orchestrator -->
-  <script src="role/role-loader.js?v=1.0" defer></script>
+<!-- Core Modules Loaders -->
+<script src="farmer/farmer-loader.js"></script>
+<script src="labour/labour-loader.js"></script>
+<script src="provider/provider-loader.js"></script>
+<script src="role/role-loader.js"></script>
+
+<!-- Business Logic Scripts -->
+<script src="farmer/farmer.js"></script>
+<script src="labour/labour.js"></script>
+<script src="provider/provider.js"></script>
+<script src="role/role.js"></script>
 
   <!-- Initialization Logic -->
   <script>
