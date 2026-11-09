@@ -1,156 +1,130 @@
-/* role/role.css - Role Banner & Switcher Scoped Styles */
+/* role/role.css - User Profile Banner & Switcher Bar Styles */
 
+/* 1. Profile Banner */
 .user-profile-banner {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f8fafc;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin: 10px 0 14px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 10px 14px;
-  margin: 10px 0 12px 0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.profile-banner-name {
-  font-size: 14px;
-  font-weight: 800;
-  color: #1e293b;
+.profile-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar-circle {
+  width: 44px;
+  height: 44px;
+  background: #f1f5f9;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.profile-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.user-name-line {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.profile-banner-badge {
-  background: #dcfce7;
-  color: #166534;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1px solid #bbf7d0;
+.user-name-text {
+  font-size: 16px;
+  color: #0f172a;
 }
 
-.profile-banner-details {
+.profile-banner-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--badge-color, #16a34a);
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.user-meta-line {
   font-size: 12px;
   color: #64748b;
-  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.profile-banner-logout-btn {
-  background: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
-  padding: 6px 12px;
-  border-radius: 6px;
+.meta-dot {
+  font-weight: bold;
+}
+
+.profile-banner-right .logout-btn-minimal {
+  background: #fef2f2;
+  color: #ef4444;
+  border: 1px solid #fecaca;
+  padding: 7px 12px;
+  border-radius: 8px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   transition: all 0.2s ease;
 }
 
-.profile-banner-logout-btn:hover {
-  background: #fecaca;
+.logout-btn-minimal:hover {
+  background: #fee2e2;
 }
 
-/* Dual Mode Toggle Bar */
+/* 2. Role Switcher Bar */
 .role-switch-container {
   display: flex;
   gap: 8px;
-  background: #e2e8f0;
-  padding: 4px;
-  border-radius: 10px;
-  margin-bottom: 14px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 12px;
+  margin-bottom: 16px;
 }
 
 .role-switch-btn {
   flex: 1;
-  padding: 8px 12px;
+  padding: 10px 6px;
   border: none;
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 800;
-  color: #475569;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.role-switch-btn.active {
-  background: #ffffff;
-  color: #166534;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-.role-switch-labour.active {
-  color: #c2410c;
-}
-
-.role-switch-provider.active {
-  color: #0369a1;
-  background: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-}
-
-/* Local Village Job Highlight */
-.job-card-highlight {
-  border-left: 4px solid #16a34a !important;
-  background-color: #f0fdf4 !important;
-}
-/* Guest / Landing Role Cards */
-.guest-role-cards-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin: 12px 0;
-}
-
-.guest-card {
-  border-radius: 12px;
-  padding: 12px 6px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.guest-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-}
-
-.guest-card-icon {
-  font-size: 26px;
-  margin-bottom: 4px;
-}
-
-.guest-card-title {
+  border-radius: 8px;
   font-size: 13px;
-  display: block;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: #475569;
+  transition: all 0.2s ease;
+  text-align: center;
 }
 
-.guest-card-sub {
-  font-size: 10px;
+.role-switch-btn.active.role-switch-farmer {
+  background: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
 }
 
-/* Card Specific Themes */
-.guest-card-farmer {
-  background: #f0fdf4;
-  border: 1.5px solid #86efac;
+.role-switch-btn.active.role-switch-labour {
+  background: #ea580c;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(234, 88, 12, 0.3);
 }
-.guest-card-farmer .guest-card-title { color: #166534; }
-.guest-card-farmer .guest-card-sub { color: #15803d; }
 
-.guest-card-labour {
-  background: #fffbeb;
-  border: 1.5px solid #fde68a;
+.role-switch-btn.active.role-switch-provider {
+  background: #7c3aed;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(124, 58, 237, 0.3);
 }
-.guest-card-labour .guest-card-title { color: #9a3412; }
-.guest-card-labour .guest-card-sub { color: #c2410c; }
-
-.guest-card-provider {
-  background: #f0f9ff;
-  border: 1.5px solid #bae6fd;
-}
-.guest-card-provider .guest-card-title { color: #0369a1; }
-.guest-card-provider .guest-card-sub { color: #0284c7; }
