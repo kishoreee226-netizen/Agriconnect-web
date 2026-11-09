@@ -238,8 +238,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 // role/role.js లోని ఆఖరి DOMContentLoaded విభాగాన్ని ఇలా మార్చండి:
-
-// role/role.js - ఆఖరి సెషన్ రీస్టోర్ భాగం
+// role/role.js లోని ఆఖరి విభాగాన్ని ఇలా అప్‌డేట్ చేయండి:
 
 document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
@@ -250,21 +249,29 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!window.AppState) window.AppState = {};
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
-        
-        // యూజర్ సెలెక్ట్ చేసుకున్న మోడ్‌ను మొదట ప్రాధాన్యతగా తీసుకోవడం
-        const savedActiveRole = localStorage.getItem("agri_current_active_role");
-        const defaultRole = (user.roleType === "LABOUR" || user.roleType === "LABOUR_ONLY") ? "LABOUR" : (user.roleType || "FARMER");
-        
-        // ఖచ్చితంగా సరైన రోల్ నే సెట్ చేయడం
-        window.AppState.currentRole = savedActiveRole || defaultRole;
-        window.AppState.userType = user.userType || user.roleType || "FARMER";
+
+        // అసలైన బేస్ యూజర్ టైప్ (FARMER / LABOUR / PROVIDER)
+        const baseUserType = user.roleType || user.userType || "FARMER";
+        window.AppState.userType = baseUserType;
         window.AppState.providerType = user.providerType || "equipment";
+
+        // స్విచ్ చేసిన రోల్ చెక్ చేయడం
+        const savedActiveRole = localStorage.getItem("agri_current_active_role");
+
+        // యూజర్ బేస్ టైప్ FARMER అయితే మరియు గతంలో వాలిడ్ స్విచ్ ఉంటేనే దాన్ని తీసుకోవాలి
+        if (baseUserType === "FARMER") {
+          window.AppState.currentRole = savedActiveRole || "FARMER";
+        } else if (baseUserType === "LABOUR" || baseUserType === "LABOUR_ONLY") {
+          window.AppState.currentRole = "LABOUR";
+        } else {
+          window.AppState.currentRole = "PROVIDER";
+        }
       }
     } catch (e) {
       console.error(e);
     }
   }
-  
+
   if (window.RoleController && typeof window.RoleController.applyUserRoleView === "function") {
     window.RoleController.applyUserRoleView();
   }
