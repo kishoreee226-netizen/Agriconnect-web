@@ -35,11 +35,19 @@ window.RoleController = {
   },
 
   setToolsVisibility: function(show) {
-    const allDivs = document.querySelectorAll("body > div, .container > div, main > div");
-    allDivs.forEach(el => {
-      const txt = el.textContent || "";
-      if (txt.includes("SMART సేవలు & Power Tools") || txt.includes("SMART Utilities & లింకులు")) {
-        el.style.setProperty("display", show ? "block" : "none", "important");
+    // మెయిన్ కంటైనర్లను టచ్ చేయకుండా, కేవలం SMART Tools & Utilities సెక్షన్లను మాత్రమే దాచడం
+    const toolHeadings = document.querySelectorAll("h3, h4, span, div, strong");
+    toolHeadings.forEach(el => {
+      const text = el.textContent || "";
+      if (text.includes("రైతు SMART సేవలు & Power Tools") || text.includes("రైతు SMART Utilities & లింకులు")) {
+        // హెడ్డింగ్ ఉన్న కార్డ్ లేదా సెక్షన్ బాక్స్‌ను మాత్రమే దాచడం
+        let box = el.closest(".card, .section, .box, [class*='tool'], [class*='util']") || el.parentElement;
+        if (box && !box.classList.contains("container") && box.tagName !== "BODY" && box.tagName !== "MAIN") {
+          box.style.setProperty("display", show ? "block" : "none", "important");
+          if (box.nextElementSibling) {
+            box.nextElementSibling.style.setProperty("display", show ? "block" : "none", "important");
+          }
+        }
       }
     });
   },
@@ -144,7 +152,6 @@ window.RoleController = {
         window.renderFarmerWidgetWithLiveProviders();
       }
 
-      // రైతు కోసం వెదర్ ఎప్పుడూ కనిపించాలి!
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
       if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
@@ -268,7 +275,6 @@ window.openLoginModal = function(roleType) {
     if (saved) savedUser = JSON.parse(saved);
   } catch (e) {}
 
-  // గతంలో రిజిస్టర్ అయిన రోల్ మరియు ఇప్పుడు క్లిక్ చేసిన రోల్ ఒకటే అయితేనే పిన్ అడుగుతుంది
   if (savedUser && savedUser.phone && savedUser.roleType === roleType) {
     modal.innerHTML = `
       <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:380px; text-align:center;">
