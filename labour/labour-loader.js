@@ -1,31 +1,38 @@
-// labour/labour-loader.js - Dynamic Loader for Labour Module
-(async function initAgriLabourModule() {
-  try {
-    const timestamp = Date.now();
+// labour/labour-loader.js - Dynamic Loader for Labour Templates & Styles
 
-    // 1. Load Scoped CSS
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `labour/labour.css?v=${timestamp}`;
+(function() {
+  // 1. labour.css ఇంజెక్ట్ చేయడం
+  if (!document.getElementById("labour-css-link")) {
+    const link = document.createElement("link");
+    link.id = "labour-css-link";
+    link.rel = "stylesheet";
+    link.href = "labour/labour.css";
     document.head.appendChild(link);
-
-    // 2. Fetch and Inject labour.html Templates into DOM
-    const response = await fetch(`labour/labour.html?v=${timestamp}`);
-    if (response.ok) {
-      const htmlText = await response.text();
-      const mount = document.createElement('div');
-      mount.id = 'agri-labour-module-mount';
-      mount.innerHTML = htmlText;
-      document.body.appendChild(mount);
-    }
-
-    // 3. Load Labour Core JS Engine
-    const script = document.createElement('script');
-    script.src = `labour/labour.js?v=${timestamp}`;
-    document.body.appendChild(script);
-
-    console.log("✅ AgriConnect Labour Module Loaded Successfully");
-  } catch (err) {
-    console.error("❌ Failed to load AgriConnect Labour Module:", err);
   }
+
+  // 2. labour.html టెంప్లేట్లను DOM లోకి తీసుకురావడం
+  fetch("labour/labour.html")
+    .then(response => {
+      if (!response.ok) throw new Error("labour.html లోడ్ కాలేదు");
+      return response.text();
+    })
+    .then(html => {
+      const div = document.createElement("div");
+      div.id = "labour-templates-container";
+      div.style.display = "none";
+      div.innerHTML = html;
+      document.body.appendChild(div);
+
+      // లాగిన్ కాకపోతే ల్యాండింగ్ కార్డ్‌ను, లాగిన్ అయి కూలీ రోల్‌లో ఉంటే డాష్‌బోర్డ్‌ను చూపించడం
+      if (!window.AppState || !window.AppState.isLoggedIn) {
+        if (typeof window.renderLabourLandingCard === 'function') {
+          window.renderLabourLandingCard();
+        }
+      } else if (window.AppState.currentRole === "LABOUR" || window.AppState.userType === "LABOURONLY" || window.AppState.userType === "LABOUR_ONLY") {
+        if (typeof window.renderLabourWidget === 'function') {
+          window.renderLabourWidget();
+        }
+      }
+    })
+    .catch(err => console.error("Labour loader error:", err));
 })();
