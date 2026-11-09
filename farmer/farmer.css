@@ -1,64 +1,84 @@
-/* farmer/farmer.css - Dedicated Farmer Module Styles */
+/* farmer/farmer.css - Styles for Farmer Module */
 
+/* 1. Landing Card Style */
+.agri-landing-card.farmer-border {
+  border: 2px solid #16a34a;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.agri-title-farmer {
+  color: #166534;
+  font-size: 16px;
+}
+
+.farmer-btn-bg {
+  background: #16a34a;
+  color: #fff;
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 2. Farmer Dashboard Card */
 .farmer-card {
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
   overflow: hidden;
-  margin-bottom: 20px;
 }
 
 .farmer-card-header {
-  background: #2e7d32;
-  color: #ffffff;
-  padding: 14px 18px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .farmer-card-header h3 {
   margin: 0;
-  font-size: 17px;
-  font-weight: 800;
+  font-size: 16px;
+  color: #1e293b;
 }
 
 .badge-live {
-  background: #ef4444;
-  color: #ffffff;
+  background: #dcfce7;
+  color: #15803d;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   padding: 3px 8px;
-  border-radius: 12px;
-  text-transform: uppercase;
-  animation: pulse-live 1.8s infinite;
+  border-radius: 20px;
 }
 
-@keyframes pulse-live {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-/* Tabs Bar */
+/* 3. 4 Tabs Bar */
 .eq-tabs-bar {
   display: flex;
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 8px;
-  gap: 8px;
+  background: #f1f5f9;
+  padding: 6px;
+  gap: 6px;
   overflow-x: auto;
 }
 
 .eq-tab-btn {
   flex: 1;
-  min-width: 80px;
-  padding: 9px 12px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  border-radius: 8px;
+  min-width: 75px;
+  padding: 8px 4px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
   color: #475569;
   cursor: pointer;
   transition: all 0.2s;
@@ -66,30 +86,20 @@
 }
 
 .eq-tab-btn.active {
-  background: #2e7d32;
+  background: #16a34a;
   color: #ffffff;
-  border-color: #2e7d32;
-  box-shadow: 0 2px 6px rgba(46, 125, 50, 0.25);
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
 }
 
 .farmer-card-body {
-  padding: 16px;
+  padding: 14px;
 }
 
-.farmer-pane {
-  display: block;
-}
-
-.farmer-pane.is-hidden {
-  display: none !important;
-}
-
-/* Labour Post Form */
+/* 4. Form Styles */
 .farmer-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 20px;
 }
 
 .form-row, .form-row-spaced {
@@ -99,140 +109,73 @@
 
 .farmer-input, .input-date-fixed {
   flex: 1;
-  height: 42px;
-  padding: 0 12px;
-  border: 1.5px solid #cbd5e1;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  font-size: 13.5px;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.farmer-input:focus, .input-date-fixed:focus {
-  border-color: #2e7d32;
+  font-size: 13px;
 }
 
 .form-action-row {
   display: flex;
+  align-items: center;
   gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.gps-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .btn-gps, .btn-village {
-  height: 42px;
-  padding: 0 12px;
-  border: 1.5px solid #cbd5e1;
+  padding: 8px 12px;
   border-radius: 8px;
-  background: #f1f5f9;
-  color: #334155;
-  font-weight: 700;
-  font-size: 12.5px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  font-size: 12px;
   cursor: pointer;
-}
-
-.btn-gps:hover, .btn-village:hover {
-  background: #e2e8f0;
-}
-
-.gps-status-text {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: #16a34a;
-}
-
-.farmer-submit-row {
-  margin-top: 4px;
+  white-space: nowrap;
 }
 
 .btn-farmer-post {
   width: 100%;
-  height: 46px;
-  background: #2e7d32;
+  padding: 11px;
+  background: #16a34a;
   color: #ffffff;
   border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 800;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(46, 125, 50, 0.25);
 }
 
-.btn-farmer-post:active {
-  transform: scale(0.99);
-}
-
-/* Slot Tracker & Accepted Lists */
-.accepted-section {
-  border-top: 2px dashed #e2e8f0;
-  padding-top: 16px;
-}
-
+/* 5. Slot Tracker & Accepted Lists */
 .slot-tracker-box {
-  background: #f8fafc;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 16px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 14px;
 }
 
 .slot-tracker-title {
-  margin: 0 0 10px 0;
-  font-size: 14px;
-  color: #1e293b;
-}
-
-.slot-tracker-scroll, .accepted-scroll-list, .booking-records-scroll {
-  max-height: 280px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.custom-scroll::-webkit-scrollbar {
-  width: 5px;
-}
-.custom-scroll::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: #166534;
 }
 
 .slot-job-card {
   background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-left: 4px solid #f59e0b;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   padding: 10px;
-}
-
-.slot-job-card.is-full {
-  border-left-color: #10b981;
+  margin-bottom: 8px;
 }
 
 .slot-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
-}
-
-.slot-job-title {
-  font-size: 13.5px;
-  color: #0f172a;
 }
 
 .slot-status-badge {
   font-size: 11px;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
   background: #fef3c7;
   color: #b45309;
 }
@@ -242,398 +185,99 @@
   color: #15803d;
 }
 
-.slot-job-details {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 8px;
-}
-
-.slot-labours-wrapper {
-  background: #f1f5f9;
-  padding: 8px;
-  border-radius: 6px;
-  font-size: 12px;
-}
-
-.slot-labour-head {
-  font-weight: 700;
-  color: #334155;
-  display: block;
-  margin-bottom: 4px;
-}
-
 .slot-labour-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
-  border-bottom: 1px dotted #cbd5e1;
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px dashed #e2e8f0;
 }
 
-.slot-labour-row:last-child {
-  border-bottom: none;
-}
-
-.slot-btn-group, .labour-action-links, .rec-action-buttons {
-  display: flex;
-  gap: 6px;
-}
-
-.slot-btn-call, .slot-btn-whatsapp, .labour-btn-link, .rec-btn-wa, .rec-btn-call {
-  text-decoration: none;
-  font-size: 11.5px;
-  font-weight: 700;
+.slot-btn-group a {
   padding: 4px 8px;
   border-radius: 6px;
+  font-size: 11px;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-.slot-btn-call, .link-call, .rec-btn-call {
-  background: #e0f2fe;
-  color: #0284c7;
+.slot-btn-call { background: #dbeafe; color: #1e40af; }
+.slot-btn-whatsapp { background: #dcfce7; color: #166534; margin-left: 4px; }
+
+/* 6. Modals */
+.fjm-modal-overlay, .booking-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
 }
 
-.slot-btn-whatsapp, .link-whatsapp, .rec-btn-wa {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.link-sms {
-  background: #fef3c7;
-  color: #d97706;
-}
-
-/* Accepted List Items */
-.accepted-header h4 {
-  margin: 0 0 10px 0;
-  font-size: 14px;
-  color: #1e293b;
-}
-
-.empty-labour-msg {
-  padding: 14px;
-  text-align: center;
-  background: #f8fafc;
-  color: #64748b;
-  font-size: 12.5px;
-  border-radius: 8px;
-}
-
-.labour-card-item {
+.fjm-modal-card, .booking-modal-box {
   background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-left: 4px solid #10b981;
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: 14px;
+  padding: 18px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-.labour-card-header {
+.fjm-modal-header, .booking-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 14px;
 }
 
-.labour-wage {
-  font-weight: 800;
-  color: #16a34a;
-  font-size: 13px;
-}
-
-.labour-work-info {
-  font-size: 12px;
-  color: #475569;
-  margin-bottom: 8px;
-}
-
-/* Booking Records Section */
-.booking-records-section {
-  margin-top: 20px;
-  border-top: 2px dashed #cbd5e1;
-  padding-top: 16px;
-}
-
-.booking-records-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.booking-records-title {
-  margin: 0;
-  font-size: 14.5px;
-  color: #0f172a;
-}
-
-.btn-clear-bookings {
+.fjm-close-btn, .btn-modal-close {
   background: none;
   border: none;
-  color: #ef4444;
-  font-weight: 700;
-  font-size: 12px;
+  font-size: 20px;
   cursor: pointer;
-}
-
-.booking-record-card {
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 12px;
-}
-
-.rec-title-row {
-  display: flex;
-  justify-content: space-between;
-  font-weight: 800;
-  font-size: 13.5px;
-  margin-bottom: 6px;
-}
-
-.rec-status-tag {
-  font-size: 11px;
-  padding: 2px 7px;
-  border-radius: 6px;
-  background: #e2e8f0;
-  color: #475569;
-}
-
-.rec-status-tag.is-locked {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.rec-details-row {
-  font-size: 12px;
-  color: #475569;
-  line-height: 1.5;
-  margin-bottom: 8px;
-}
-
-.rec-escrow-badge {
-  margin-top: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #16a34a;
-  background: #dcfce7;
-  padding: 6px;
-  border-radius: 6px;
-  text-align: center;
-}
-
-.rec-btn-escrow {
-  margin-top: 8px;
-  width: 100%;
-  padding: 8px;
-  background: #f59e0b;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  font-weight: 700;
-  font-size: 12.5px;
-  cursor: pointer;
-}
-
-/* Booking Modal Pop-up */
-.booking-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 100060;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.booking-modal-box {
-  width: 100%;
-  max-width: 420px;
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-}
-
-.booking-modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.booking-modal-header h4 {
-  margin: 0;
-  font-size: 16px;
-}
-
-.btn-modal-close {
-  background: #f1f5f9;
-  border: none;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-weight: 800;
-}
-
-.booking-item-highlight {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 14px;
-  font-size: 13px;
-}
-
-.booking-rate-text {
-  color: #16a34a;
-  font-weight: 800;
-}
-
-.modal-form-group {
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.modal-form-group label {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: #334155;
-}
-
-.modal-input {
-  height: 40px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 0 10px;
-  outline: none;
-}
-
-.btn-confirm-booking {
-  width: 100%;
-  height: 44px;
-  background: #16a34a;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  margin-top: 6px;
-}
-
-.is-hidden {
-  display: none !important;
-}
-/* Quick Job Modal Styles */
-.fjm-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100070;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.fjm-modal-card {
-  background: #ffffff;
-  border-radius: 16px;
-  width: 100%;
-  max-width: 440px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-.fjm-modal-header {
-  background: #2e7d32;
-  color: #ffffff;
-  padding: 12px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.fjm-modal-title {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.fjm-close-btn {
-  font-size: 24px;
-  cursor: pointer;
-  line-height: 1;
-}
-
-.fjm-form {
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.fjm-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: #334155;
-  margin-bottom: 3px;
-  display: block;
-}
-
-.fjm-input, .fjm-select {
-  width: 100%;
-  height: 38px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  padding: 0 10px;
-  font-size: 13px;
-  outline: none;
-  box-sizing: border-box;
-}
-
-.fjm-input:focus, .fjm-select:focus {
-  border-color: #2e7d32;
 }
 
 .fjm-grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 10px;
+  margin-bottom: 8px;
+}
+
+.fjm-input, .fjm-select, .modal-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
 }
 
 .fjm-btn-row {
   display: flex;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .fjm-btn-cancel {
   flex: 1;
-  height: 40px;
-  border: 1px solid #cbd5e1;
+  padding: 10px;
   background: #f1f5f9;
-  border-radius: 8px;
-  font-weight: 700;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.fjm-btn-submit {
+.fjm-btn-submit, .btn-confirm-booking {
   flex: 2;
-  height: 40px;
+  padding: 10px;
+  background: #16a34a;
+  color: #fff;
   border: none;
-  background: #2e7d32;
-  color: #ffffff;
-  border-radius: 8px;
-  font-weight: 800;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
 }
