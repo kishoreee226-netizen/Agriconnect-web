@@ -5,7 +5,8 @@ window.WalletModule = {
       farmerBalance: 2000, // టెస్టింగ్ కోసం ప్రారంభ నిల్వ
       labourBalance: 0,
       providerBalance: 0,
-      lockedEscrow: []
+      lockedEscrow: [],
+      history: []
     };
 
     try {
@@ -13,6 +14,7 @@ window.WalletModule = {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (!Array.isArray(parsed.lockedEscrow)) parsed.lockedEscrow = [];
+        if (!Array.isArray(parsed.history)) parsed.history = [];
         if (typeof parsed.providerBalance === "undefined") parsed.providerBalance = 0;
         return parsed;
       }
@@ -62,20 +64,24 @@ window.WalletModule = {
     const farmerCard = card.querySelector("#wallet-card-farmer-box");
     const labourCard = card.querySelector("#wallet-card-labour-box");
     const providerCard = card.querySelector("#wallet-card-provider-box");
+    const actionsCard = card.querySelector("#wallet-card-actions-box");
 
     if (currentRole === "LABOUR") {
       if (farmerCard) farmerCard.style.display = "none";
       if (providerCard) providerCard.style.display = "none";
+      if (actionsCard) actionsCard.style.display = "none";
       if (labourCard) labourCard.style.display = "flex";
     } else if (currentRole === "PROVIDER") {
       if (farmerCard) farmerCard.style.display = "none";
       if (labourCard) labourCard.style.display = "none";
+      if (actionsCard) actionsCard.style.display = "none";
       if (providerCard) providerCard.style.display = "flex";
     } else {
-      // రైతు మోడ్ లో ఉన్నప్పుడు పూర్తి ఎస్క్రో నియంత్రణ కనిపిస్తుంది
+      // రైతు మోడ్ లో ఉన్నప్పుడు 2x2 గ్రిడ్ లో 4 కార్డులూ కనిపిస్తాయి
       if (farmerCard) farmerCard.style.display = "flex";
       if (labourCard) labourCard.style.display = "flex";
       if (providerCard) providerCard.style.display = "flex";
+      if (actionsCard) actionsCard.style.display = "flex";
     }
 
     // ఎస్క్రో లిస్ట్ రెండరింగ్
@@ -131,9 +137,42 @@ window.WalletModule = {
 
     const wallet = this.getWalletData();
     wallet.farmerBalance = Number(wallet.farmerBalance || 0) + amt;
+
+    // హిస్టరీ రికార్డ్ యాడ్ చేయడం
+    if (!Array.isArray(wallet.history)) wallet.history = [];
+    wallet.history.unshift({
+      id: "DEP-" + Date.now(),
+      type: 'DEPOSIT',
+      role: 'రైతు',
+      amount: amt,
+      info: 'Self Deposit (UPI/Bank)',
+      date: new Date().toLocaleDateString('te-IN')
+    });
+
     this.saveWalletData(wallet);
     this.render();
     alert(`🎉 ₹${amt} విజయవంతంగా రైతు వాలెట్‌లో జమ చేయబడింది!`);
+  },
+
+  // ట్రాన్సాక్షన్ హిస్టరీ ప్రివ్యూ (History Button)
+  showTransactionHistory: function() {
+    const wallet = this.getWalletData();
+    const history = wallet.history || [];
+
+    if (history.length === 0) {
+      alert("📜 ఇప్పటివరకు ఎలాంటి లావాదేవీలు లేవు.");
+      return;
+    }
+
+    let msg = "📜 ఇటీవలి వాలెట్ లావాదేవీలు:\n-----------------------------\n";
+    history.slice(0, 5).forEach((h, i) => {
+      if (h.type === 'DEPOSIT') {
+        msg += `${i + 1}. [${h.date}] 🟢 జమ: ₹${h.amount} (${h.role})\n`;
+      } else {
+        msg += `${i + 1}. [${h.date}] 🔴 విత్‌డ్రా: ₹${h.amount} -> ${h.upi || 'UPI'} (${h.role})\n`;
+      }
+    });
+    alert(msg);
   },
 
   // కూలీ పనిని ఎస్క్రోలో లాక్ చేయడం
@@ -215,7 +254,7 @@ window.WalletModule = {
     return true;
   },
 
-  // ఎస్క్రో నిధులను కూలీకి లేదా ప్రొవైడర్‌కు విడుదల చేయడం (Double-Deduction Removed)
+  // ఎస్క్రో నిధులను కూలీకి లేదా ప్రొవైడర్‌కు విడుదల చేయడం (No Double-Deduction)
   handleReleasePayment: function(escrowId) {
     if (!confirm("పని/సేవ పూర్తిగా పూర్తయిందా? డబ్బును ఎదుటివారి వాలెట్‌కు విడుదల చేయమంటారా?")) {
       return;
@@ -229,7 +268,6 @@ window.WalletModule = {
       item.status = "Released";
       item.releasedAt = Date.now();
 
-      // గమనిక: లాక్ చేసినప్పుడే రైతు అకౌంట్ నుండి కట్ అయింది కాబట్టి ఇక్కడ మళ్లీ కట్ చేయకూడదు!
       if (item.recipientType === 'PROVIDER') {
         wallet.providerBalance = Number(wallet.providerBalance || 0) + amt;
       } else {
@@ -243,18 +281,28 @@ window.WalletModule = {
     }
   },
 
-  // UPI విత్‌డ్రాయల్
+  // UPI విత్‌డ్రాయల్ (రైతు, కూలీ, ప్రొవైడర్ ముగ్గురికీ సపోర్ట్)
   handleWithdrawUPI: function(roleType = 'labour') {
     const wallet = this.getWalletData();
-    const balanceKey = roleType === 'provider' ? 'providerBalance' : 'labourBalance';
+    let balanceKey = 'labourBalance';
+    let roleLabel = 'కూలీ';
+
+    if (roleType === 'farmer') {
+      balanceKey = 'farmerBalance';
+      roleLabel = 'రైతు';
+    } else if (roleType === 'provider') {
+      balanceKey = 'providerBalance';
+      roleLabel = 'ప్రొవైడర్';
+    }
+
     const currentBalance = Number(wallet[balanceKey] || 0);
 
     if (currentBalance <= 0) {
-      alert("మీ వాలెట్‌లో విత్‌డ్రా చేయడానికి తగిన బ్యాలెన్స్ లేదు!");
+      alert(`మీ ${roleLabel} ఖాతాలో విత్‌డ్రా చేయడానికి తగిన బ్యాలెన్స్ లేదు!`);
       return;
     }
 
-    const amountStr = prompt(`మీ వద్ద మొత్తం ₹${currentBalance} ఉంది.\nఎంత మొత్తం విత్‌డ్రా చేయాలనుకుంటున్నారు?`, currentBalance);
+    const amountStr = prompt(`మీ ${roleLabel} ఖాతాలో ₹${currentBalance} ఉంది.\nఎంత మొత్తం విత్‌డ్రా చేయాలనుకుంటున్నారు?`, currentBalance);
     if (!amountStr) return;
 
     const withdrawAmount = Number(amountStr);
@@ -270,6 +318,18 @@ window.WalletModule = {
     }
 
     wallet[balanceKey] = currentBalance - withdrawAmount;
+
+    // హిస్టరీ రికార్డ్ యాడ్ చేయడం
+    if (!Array.isArray(wallet.history)) wallet.history = [];
+    wallet.history.unshift({
+      id: "WTH-" + Date.now(),
+      type: 'WITHDRAW',
+      role: roleLabel,
+      amount: withdrawAmount,
+      upi: upiId.trim(),
+      date: new Date().toLocaleDateString('te-IN')
+    });
+
     this.saveWalletData(wallet);
     this.render();
 
@@ -283,3 +343,4 @@ window.lockJobToEscrow = (job, name) => window.WalletModule.lockJobToEscrow(job,
 window.lockBookingEscrow = (id, amt, name) => window.WalletModule.lockBookingEscrow(id, amt, name);
 window.handleReleasePayment = (id) => window.WalletModule.handleReleasePayment(id);
 window.handleWithdrawUPI = (role) => window.WalletModule.handleWithdrawUPI(role);
+window.showTransactionHistory = () => window.WalletModule.showTransactionHistory();
