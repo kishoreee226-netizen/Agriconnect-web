@@ -1,6 +1,24 @@
-<!-- farmer/farmer.html - Dedicated Farmer Module Templates -->
+<!-- farmer/farmer.html - Dedicated Clean Farmer Templates -->
 
-<!-- 1. Main Dashboard Shell Template -->
+<!-- 1. రైతు ల్యాండింగ్ కార్డ్ టెంప్లేట్ (లాగిన్ కానప్పుడు కనిపించే ఒరిజినల్ కార్డ్) -->
+<template id="farmer-landing-template">
+  <div class="agri-landing-card farmer-border">
+    <div class="agri-card-header">
+      <span class="agri-icon">🌾</span>
+      <strong class="agri-title-farmer">రైతు సోదరుల కోసం (Farmer)</strong>
+    </div>
+    <ul class="agri-card-desc-list">
+      <li>మీ పొలం పనులకు కూలీలను వెంటనే బుక్ చేసుకోండి.</li>
+      <li>ఉచిత జాబ్ పోస్టింగ్ & మార్కెట్ లైవ్ ధరల సమాచారం.</li>
+      <li>స్మార్ట్ ఆటో-స్విచ్: సొంత పని లేనప్పుడు కూలీ మోడ్‌కి మారే సదుపాయం.</li>
+    </ul>
+    <button type="button" onclick="window.openLoginModal('FARMER')" class="agri-landing-btn farmer-btn-bg">
+      రైతుగా Login / నమోదు అవ్వండి ➔
+    </button>
+  </div>
+</template>
+
+<!-- 2. రైతు మెయిన్ డాష్‌బోర్డ్ షెల్ టెంప్లేట్ -->
 <template id="farmer-dashboard-template">
   <div class="farmer-card">
     <div class="farmer-card-header">
@@ -30,17 +48,17 @@
         <div id="farmer-labour-form-wrapper"></div>
         <div id="farmer-accepted-section-wrapper"></div>
       </div>
-      <div id="farmer-pane-equipment" class="farmer-pane is-hidden"></div>
-      <div id="farmer-pane-seeds" class="farmer-pane is-hidden"></div>
-      <div id="farmer-pane-transport" class="farmer-pane is-hidden"></div>
+      <div id="farmer-pane-equipment" class="farmer-pane is-hidden" style="display: none;"></div>
+      <div id="farmer-pane-seeds" class="farmer-pane is-hidden" style="display: none;"></div>
+      <div id="farmer-pane-transport" class="farmer-pane is-hidden" style="display: none;"></div>
 
-      <!-- Naa Bookinglu Container -->
+      <!-- బుకింగ్ రికార్డులు కనిపించే బాక్స్ -->
       <div id="farmer-booking-records"></div>
     </div>
   </div>
 </template>
 
-<!-- 2. Labour Post Form Template -->
+<!-- 3. పని పోస్ట్ చేసే ఫారమ్ టెంప్లేట్ -->
 <template id="farmer-labour-form-template">
   <form id="farmer-form" class="farmer-form">
     <div class="form-row">
@@ -72,7 +90,7 @@
         <button type="button" id="loc-btn" class="btn-gps">📍 పొలం GPS</button>
         <span id="loc-status" class="gps-status-text"></span>
       </div>
-      <button type="button" id="f-village-btn" class="btn-village"></button>
+      <button type="button" id="f-village-btn" class="btn-village">🏛️ స్థానిక పరిధి</button>
     </div>
 
     <div class="farmer-submit-row">
@@ -83,93 +101,16 @@
   </form>
 </template>
 
-<!-- 3. Slot Tracker Row Template -->
-<template id="farmer-slot-card-template">
-  <div class="slot-job-card">
-    <div class="slot-card-header">
-      <strong class="slot-job-title"></strong>
-      <span class="slot-status-badge"></span>
-    </div>
-    <div class="slot-job-details"></div>
-    <div class="slot-labours-wrapper is-hidden">
-      <span class="slot-labour-head">చేరిన కూలీలు:</span>
-      <div class="slot-labours-list"></div>
-    </div>
-  </div>
-</template>
-
-<!-- 4. Accepted Labour Card Template -->
-<template id="farmer-labour-item-template">
-  <div class="labour-card-item">
-    <div class="labour-card-header">
-      <strong class="labour-name-text"></strong>
-      <span class="labour-wage"></span>
-    </div>
-    <div class="labour-work-info"></div>
-    <div class="labour-action-links">
-      <a class="labour-btn-link link-call">📞 కాల్</a>
-      <a class="labour-btn-link link-sms">✉️ SMS</a>
-      <a target="_blank" class="labour-btn-link link-whatsapp">💬 వాట్సాప్</a>
-    </div>
-  </div>
-</template>
-
-<!-- 5. Booking Record Row Template -->
-<template id="farmer-booking-card-template">
-  <div class="booking-record-card">
-    <div class="rec-title-row">
-      <span class="rec-item-title"></span>
-      <span class="rec-status-tag"></span>
-    </div>
-    <div class="rec-details-row"></div>
-    <div class="rec-action-buttons">
-      <a target="_blank" class="rec-btn-wa">💬 WhatsApp</a>
-      <a class="rec-btn-call">📞 Call</a>
-    </div>
-    <div class="rec-escrow-badge is-hidden">
-      ✅ ₹500 Escrow భద్రపరచబడింది
-    </div>
-    <button type="button" class="rec-btn-escrow">
-      🔒 ₹500 Advance Escrow Lock చేయండి
-    </button>
-  </div>
-</template>
-
-<!-- 6. Equipment/Vehicle Booking Modal (Initially Hidden) -->
-<div id="booking-modal" class="booking-modal-overlay is-hidden">
-  <div class="booking-modal-box">
-    <div class="booking-modal-header">
-      <h4>📋 బుకింగ్ అభ్యర్థన</h4>
-      <button type="button" class="btn-modal-close" onclick="window.FarmerModule.closeBookingModal()">✖</button>
-    </div>
-    <div class="booking-item-highlight">
-      <strong>వస్తువు:</strong> <span id="bm-item-name"></span><br>
-      <strong>ధర:</strong> <span id="bm-item-rate" class="booking-rate-text"></span>
-    </div>
-    <form id="booking-request-form" onsubmit="window.FarmerModule.handleBookingSubmit(event)">
-      <div class="modal-form-group">
-        <label>📅 కావలసిన తేదీ:</label>
-        <input type="date" id="book-date" class="modal-input" required />
-      </div>
-      <div class="modal-form-group">
-        <label>⏱️ వ్యవధి / విస్తీర్ణం (గంటలు / ఎకరాలు / ట్రిప్పులు):</label>
-        <input type="text" id="book-duration" class="modal-input" placeholder="ఉదా: 3 గంటలు లేదా 2 ఎకరాలు" required />
-      </div>
-      <button type="submit" class="btn-confirm-booking">✅ అభ్యర్థన పంపండి</button>
-    </form>
-  </div>
-</div>
-<!-- Quick Farmer Job Post Modal Template -->
+<!-- 4. జాబ్ పోస్టింగ్ పాప్-అప్ మోడల్ టెంప్లేట్ -->
 <template id="farmer-job-modal-template">
-  <div id="farmerJobModal" class="fjm-modal-overlay is-hidden">
+  <div id="farmerJobModal" class="fjm-modal-overlay">
     <div class="fjm-modal-card">
-      
       <div class="fjm-modal-header">
         <h4 class="fjm-modal-title">🌾 రైతు పనిని పోస్ట్ చేయండి</h4>
-        <span onclick="window.FarmerModule.closeJobModal()" class="fjm-close-btn">&times;</span>
+        <span onclick="window.closeFarmerJobModal()" class="fjm-close-btn">&times;</span>
       </div>
 
-      <form id="farmerJobForm" onsubmit="window.FarmerModule.handleJobModalSubmit(event)" class="fjm-form">
+      <form id="farmerJobForm" onsubmit="window.handleFarmerJobSubmit(event)" class="fjm-form">
         <div>
           <label class="fjm-label">రైతు పేరు:</label>
           <input type="text" id="fjm_name" required placeholder="మీ పేరు" class="fjm-input">
@@ -234,12 +175,37 @@
         </div>
 
         <div class="fjm-btn-row">
-          <button type="button" onclick="window.FarmerModule.closeJobModal()" class="fjm-btn-cancel">రద్దు</button>
+          <button type="button" onclick="window.closeFarmerJobModal()" class="fjm-btn-cancel">రద్దు</button>
           <button type="submit" class="fjm-btn-submit">🚀 అలర్ట్ పంపండి</button>
         </div>
       </form>
-
     </div>
   </div>
 </template>
 
+<!-- 5. వెహికల్ / పరికరాల బుకింగ్ మోడల్ టెంప్లేట్ -->
+<template id="farmer-booking-modal-template">
+  <div id="booking-modal" class="booking-modal-overlay">
+    <div class="booking-modal-box">
+      <div class="booking-modal-header">
+        <h4>📋 బుకింగ్ అభ్యర్థన</h4>
+        <button type="button" class="btn-modal-close" onclick="window.closeBookingModal()">✖</button>
+      </div>
+      <div class="booking-item-highlight">
+        <strong>వస్తువు:</strong> <span id="b-item-name">--</span> <br>
+        <strong>ధర:</strong> <span id="b-item-rate" class="booking-rate-text">--</span>
+      </div>
+      <form id="booking-request-form">
+        <div class="modal-form-group">
+          <label>📅 కావలసిన తేదీ:</label>
+          <input type="date" id="book-date" class="modal-input" required />
+        </div>
+        <div class="modal-form-group">
+          <label>⏱️ వ్యవధి / విస్తీర్ణం (గంటలు / ఎకరాలు / ట్రిప్పులు):</label>
+          <input type="text" id="book-duration" class="modal-input" placeholder="ఉదా: 3 గంటలు లేదా 2 ఎకరాలు" required />
+        </div>
+        <button type="submit" class="btn-confirm-booking">✅ అభ్యర్థన పంపండి</button>
+      </form>
+    </div>
+  </div>
+</template>
