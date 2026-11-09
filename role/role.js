@@ -236,3 +236,33 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   window.RoleController.applyUserRoleView();
 });
+
+// role/role.js లోని ఆఖరి DOMContentLoaded విభాగాన్ని ఇలా మార్చండి:
+
+document.addEventListener("DOMContentLoaded", function() {
+  const savedData = localStorage.getItem("agri_user_profile");
+  if (savedData) {
+    try {
+      const user = JSON.parse(savedData);
+      if (user && user.phone) {
+        if (!window.AppState) window.AppState = {};
+        window.AppState.isLoggedIn = true;
+        window.AppState.userProfile = user;
+        
+        // యూజర్ సెలెక్ట్ చేసుకున్న మోడ్‌ను మొదట ప్రాధాన్యతగా తీసుకోవడం
+        const savedActiveRole = localStorage.getItem("agri_current_active_role");
+        const defaultRole = (user.roleType === "LABOUR" || user.roleType === "LABOUR_ONLY") ? "LABOUR" : (user.roleType || "FARMER");
+        
+        window.AppState.currentRole = savedActiveRole || defaultRole;
+        window.AppState.userType = user.userType || user.roleType || "FARMER";
+        window.AppState.providerType = user.providerType || "equipment";
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  
+  if (window.RoleController && typeof window.RoleController.applyUserRoleView === "function") {
+    window.RoleController.applyUserRoleView();
+  }
+});
