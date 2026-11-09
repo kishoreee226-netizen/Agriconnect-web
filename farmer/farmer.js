@@ -1,576 +1,367 @@
-// farmer/farmer.js - Dedicated Farmer Dashboard Engine
-window.FarmerModule = {
-  farmCoords: null,
-  activeBookingItem: null,
+// farmer/farmer.js - Comprehensive Farmer Orchestrator
 
-  switchTab: function(tab) {
-    const panes = ['labour', 'equipment', 'seeds', 'transport'];
+window.renderFarmerLandingCard = function() {
+  const mount = document.getElementById("farmer-post-container");
+  if (!mount) return;
 
-    panes.forEach(t => {
-      const pane = document.getElementById(`farmer-pane-${t}`);
-      const btn = document.getElementById(`tab-btn-${t}`);
-      if (pane) {
-        if (t === tab) {
-          pane.classList.remove('is-hidden');
-        } else {
-          pane.classList.add('is-hidden');
-        }
+  const tpl = document.getElementById("farmer-landing-template");
+  if (!tpl) return;
+
+  mount.replaceChildren(tpl.content.cloneNode(true));
+  mount.style.setProperty('display', 'block', 'important');
+};
+
+// 1. Tab Switcher Function
+window.switchFarmerTab = function(tab) {
+  const panes = ['labour', 'equipment', 'seeds', 'transport'];
+
+  panes.forEach(t => {
+    const pane = document.getElementById(`farmer-pane-${t}`);
+    const btn = document.getElementById(`tab-btn-${t}`);
+    if (pane) {
+      if (t === tab) {
+        pane.classList.remove('is-hidden');
+        pane.style.display = 'block';
+      } else {
+        pane.classList.add('is-hidden');
+        pane.style.display = 'none';
       }
-      if (btn) btn.classList.toggle('active', t === tab);
-    });
-
-    if (tab === 'equipment' && typeof window.renderEquipmentWidget === 'function') {
-      window.renderEquipmentWidget('farmer-pane-equipment');
-    } else if (tab === 'seeds' && typeof window.renderSeedsWidget === 'function') {
-      window.renderSeedsWidget('farmer-pane-seeds');
-    } else if (tab === 'transport' && typeof window.renderTransportWidget === 'function') {
-      window.renderTransportWidget('farmer-pane-transport');
     }
-  },
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
 
-  render: function() {
-    const container = document.getElementById("farmer-post-container");
-    if (!container) return;
+  if (tab === 'equipment' && typeof window.renderEquipmentWidget === 'function') {
+    window.renderEquipmentWidget('farmer-pane-equipment');
+  } else if (tab === 'seeds' && typeof window.renderSeedsWidget === 'function') {
+    window.renderSeedsWidget('farmer-pane-seeds');
+  } else if (tab === 'transport' && typeof window.renderTransportWidget === 'function') {
+    window.renderTransportWidget('farmer-pane-transport');
+  }
+};
 
-    const tpl = document.getElementById("farmer-dashboard-template");
-    if (!tpl) return;
+// 2. Main Farmer Widget Renderer
+window.renderFarmerWidget = function() {
+  const container = document.getElementById("farmer-post-container");
+  if (!container) return;
 
-    container.replaceChildren();
-    container.appendChild(tpl.content.cloneNode(true));
+  const tpl = document.getElementById("farmer-dashboard-template");
+  if (!tpl) return;
 
-    this.renderForm();
-    this.renderAcceptedAndSlotList();
-    this.renderBookingRecords();
-  },
+  container.replaceChildren(tpl.content.cloneNode(true));
 
-  renderForm: function() {
-    const wrapper = document.getElementById("farmer-labour-form-wrapper");
-    const tpl = document.getElementById("farmer-labour-form-template");
-    if (!wrapper || !tpl) return;
+  // Labour Form ని ఇన్సర్ట్ చేయడం
+  const formWrap = document.getElementById("farmer-labour-form-wrapper");
+  const formTpl = document.getElementById("farmer-labour-form-template");
+  if (formWrap && formTpl) {
+    formWrap.replaceChildren(formTpl.content.cloneNode(true));
+  }
 
-    wrapper.replaceChildren();
-    const clone = tpl.content.cloneNode(true);
+  // Accepted Labours లిస్ట్ రెండర్
+  renderFarmerAcceptedList();
 
-    const userVillage = window.AppState?.userProfile?.village || "స్థానిక పరిధి";
-    const userProfile = window.AppState?.userProfile || {};
+  // Booking Records రెండర్
+  if (typeof window.renderBookingRecords === "function") {
+    window.renderBookingRecords();
+  }
 
-    const nameInput = clone.querySelector("#f-name");
-    const phoneInput = clone.querySelector("#f-phone");
-    const villageBtn = clone.querySelector("#f-village-btn");
+  prefillFarmerFormDefaults();
+  bindFarmerFormEvents();
+};
 
-    if (nameInput) nameInput.value = userProfile.name || "";
-    if (phoneInput) phoneInput.value = userProfile.phone || "";
-    if (villageBtn) villageBtn.textContent = `🏛️ ${userVillage}`;
+window.renderFarmerLabourPane = window.renderFarmerWidget;
 
-    const locBtn = clone.querySelector("#loc-btn");
-    locBtn.onclick = () => {
-      const s = document.getElementById("loc-status");
-      if (navigator.geolocation) {
-        if (s) s.textContent = "GPS వెతుకుతోంది...";
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            window.FarmerModule.farmCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-            if (s) s.textContent = `✅ GPS set అయింది (${window.FarmerModule.farmCoords.lat.toFixed(3)},${window.FarmerModule.farmCoords.lng.toFixed(3)})`;
-          },
-          () => { 
-            if (s) s.textContent = "స్థానిక గ్రామం వర్తిస్తుంది."; 
-          },
-          { enableHighAccuracy: true, timeout: 8000 }
-        );
-      }
-    };
+// 3. Accepted List & Slot Tracking
+function renderFarmerAcceptedList() {
+  const wrap = document.getElementById("farmer-accepted-section-wrapper");
+  if (!wrap) return;
 
-    const form = clone.querySelector("#farmer-form");
-    form.onsubmit = (e) => this.handleLabourPostSubmit(e);
+  let postedJobs = [];
+  try {
+    const stored = localStorage.getItem("agri_farmer_posted_jobs");
+    postedJobs = stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    postedJobs = [];
+  }
 
-    wrapper.appendChild(clone);
-  },
+  let html = `
+    <div class="accepted-section">
+      ${postedJobs.length > 0 ? `
+        <div class="slot-tracker-box">
+          <h4 class="slot-tracker-title">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
+          <div class="slot-tracker-scroll custom-scroll">
+            ${postedJobs.map(j => {
+              const confirmed = j.confirmedLabours || [];
+              const reqCount = parseInt(j.totalRequired || j.count || 1);
+              const isFull = confirmed.length >= reqCount;
 
-  handleLabourPostSubmit: async function(e) {
+              return `
+                <div class="slot-job-card ${isFull ? 'is-full' : ''}">
+                  <div class="slot-card-header">
+                    <strong class="slot-job-title">🌾 ${j.crop} - ${j.workType}</strong>
+                    <span class="slot-status-badge ${isFull ? 'is-full' : ''}">
+                      ${isFull ? '✅ కోటా పూర్తయింది' : '⏳ కూలీల కోసం చూస్తున్నారు'}
+                    </span>
+                  </div>
+                  <div class="slot-job-details">
+                    📅 తేదీ: <b>${j.workDate || j.date || 'ఈ రోజు'}</b> | కోటా: <b>${confirmed.length} / ${reqCount} మంది</b> | రేటు: ₹${j.wage}
+                  </div>
+                  ${confirmed.length > 0 ? `
+                    <div class="slot-labours-wrapper">
+                      ${confirmed.map(c => `
+                        <div class="slot-labour-row">
+                          <span class="slot-labour-info">👷 <b>${c.name}</b> (${c.phone})</span>
+                          <div class="slot-btn-group">
+                            <a href="tel:${c.phone}" class="slot-btn-call">📞 కాల్</a>
+                            <a href="https://wa.me/91${c.phone}" target="_blank" class="slot-btn-whatsapp">💬 వాట్సాప్</a>
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                  ` : ''}
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `;
+  wrap.innerHTML = html;
+}
+
+// 4. Form Events & Submit
+function bindFarmerFormEvents() {
+  let farmCoords = null;
+
+  document.getElementById("loc-btn")?.addEventListener("click", () => {
+    const s = document.getElementById("loc-status");
+    if (navigator.geolocation) {
+      if (s) s.innerText = "GPS వెతుకుతోంది...";
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          farmCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          if (s) s.innerText = `✅ GPS set అయింది`;
+        },
+        () => { if (s) s.innerText = "స్థానిక గ్రామం వర్తిస్తుంది."; },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+  });
+
+  document.getElementById("farmer-form")?.addEventListener("submit", (e) => {
     e.preventDefault();
 
     const villageText = document.getElementById("f-village-btn")?.textContent?.replace(/[🏛️🏘️\s]/g, '') || 
                         window.AppState?.userProfile?.village || "స్థానిక పరిధి";
 
-    const fName = document.getElementById("f-name").value.trim();
-    const fPhone = document.getElementById("f-phone").value.trim();
-    const crop = document.getElementById("f-crop").value.trim();
-    const work = document.getElementById("f-work").value.trim();
-    const count = parseInt(document.getElementById("f-count").value) || 1;
-    const wage = parseFloat(document.getElementById("f-wage").value) || 450;
-    const dateVal = document.getElementById("f-date").value;
-
     const newJob = {
       id: "JOB-" + Date.now(),
-      farmerName: fName,
-      farmerPhone: fPhone,
-      crop: crop,
-      workType: work,
-      count: count,
-      totalRequired: count,
+      farmerName: document.getElementById("f-name").value.trim(),
+      farmerPhone: document.getElementById("f-phone").value.trim(),
+      crop: document.getElementById("f-crop").value.trim(),
+      workType: document.getElementById("f-work").value.trim(),
+      count: parseInt(document.getElementById("f-count").value) || 1,
+      totalRequired: parseInt(document.getElementById("f-count").value) || 1,
       confirmedLabours: [],
-      wage: wage,
-      date: dateVal,
-      workDate: dateVal,
+      wage: parseFloat(document.getElementById("f-wage").value) || 450,
+      date: document.getElementById("f-date").value,
+      workDate: document.getElementById("f-date").value,
       village: villageText,
-      lat: this.farmCoords ? this.farmCoords.lat : null,
-      lng: this.farmCoords ? this.farmCoords.lng : null,
+      lat: farmCoords ? farmCoords.lat : null,
+      lng: farmCoords ? farmCoords.lng : null,
       status: "Open",
-      labourName: "",
-      labourPhone: "",
       transportNote: "రైతు రవాణా ఏర్పాటు చేస్తారు",
       createdAt: Date.now()
     };
 
     if (window.db) {
-      try {
-        await window.db.collection("farmer_posted_jobs").add(newJob);
-      } catch (err) {
-        console.warn("Cloud save error, fallback to local:", err);
-      }
+      window.db.collection("farmer_posted_jobs").add(newJob).catch(err => console.warn("Cloud save error:", err));
     }
 
     let farmerPostedList = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
     farmerPostedList.unshift(newJob);
     localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(farmerPostedList));
 
-    let savedJobs = JSON.parse(localStorage.getItem("agri_jobs") || "[]");
-    savedJobs.unshift(newJob);
-    localStorage.setItem("agri_jobs", JSON.stringify(savedJobs));
+    window.renderFarmerWidget();
+    if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
 
-    document.getElementById("f-crop").value = "";
-    document.getElementById("f-work").value = "";
-    document.getElementById("f-count").value = "";
-    document.getElementById("f-wage").value = "";
-    const dateInput = document.getElementById("f-date");
-    if (dateInput) {
-      dateInput.value = "";
-      dateInput.type = "text";
-    }
-
-    this.renderAcceptedAndSlotList();
-
-    if (typeof renderLabourWidget === "function") {
-      renderLabourWidget();
-    }
-
-    alert("📢 పని కూలీల Dashboard లో live గా post చేయబడింది!");
-  },
-
-  renderAcceptedAndSlotList: function() {
-    const wrapper = document.getElementById("farmer-accepted-section-wrapper");
-    if (!wrapper) return;
-
-    wrapper.replaceChildren();
-
-    const container = document.createElement("div");
-    container.className = "accepted-section";
-
-    let postedJobs = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
-
-    // 1. Live Slot Tracker Box
-    if (postedJobs.length > 0) {
-      const slotBox = document.createElement("div");
-      slotBox.className = "slot-tracker-box";
-
-      const title = document.createElement("h4");
-      title.className = "slot-tracker-title";
-      title.textContent = "📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):";
-      slotBox.appendChild(title);
-
-      const scrollDiv = document.createElement("div");
-      scrollDiv.className = "slot-tracker-scroll custom-scroll";
-
-      const slotTpl = document.getElementById("farmer-slot-card-template");
-
-      postedJobs.forEach(j => {
-        if (!slotTpl) return;
-        const clone = slotTpl.content.cloneNode(true);
-        const card = clone.querySelector(".slot-job-card");
-        const confirmed = j.confirmedLabours || [];
-        const reqCount = parseInt(j.totalRequired || j.count || 1);
-        const isFull = confirmed.length >= reqCount;
-
-        if (isFull) card.classList.add("is-full");
-
-        clone.querySelector(".slot-job-title").textContent = `🌾 ${j.crop} - ${j.workType}`;
-        const badge = clone.querySelector(".slot-status-badge");
-        if (isFull) {
-          badge.classList.add("is-full");
-          badge.textContent = "✅ కోటా పూర్తయింది";
-        } else {
-          badge.textContent = "⏳ కూలీల కోసం చూస్తున్నారు";
-        }
-
-        clone.querySelector(".slot-job-details").textContent = 
-          `📅 తేదీ: ${j.workDate || j.date || 'ఈ రోజు'} | కోటా: ${confirmed.length} / ${reqCount} మంది ఖరారయ్యారు | రేటు: ₹${j.wage}`;
-
-        if (confirmed.length > 0) {
-          const lWrap = clone.querySelector(".slot-labours-wrapper");
-          lWrap.classList.remove("is-hidden");
-          const lList = clone.querySelector(".slot-labours-list");
-
-          confirmed.forEach(c => {
-            const row = document.createElement("div");
-            row.className = "slot-labour-row";
-
-            const info = document.createElement("span");
-            info.className = "slot-labour-info";
-            info.innerHTML = `👷 <b>${c.name}</b> (${c.phone})`;
-
-            const btnGrp = document.createElement("div");
-            btnGrp.className = "slot-btn-group";
-
-            const callA = document.createElement("a");
-            callA.className = "slot-btn-call";
-            callA.href = `tel:${c.phone}`;
-            callA.textContent = "📞 కాల్";
-
-            const waA = document.createElement("a");
-            waA.className = "slot-btn-whatsapp";
-            waA.target = "_blank";
-            waA.href = `https://wa.me/91${c.phone}`;
-            waA.textContent = "💬 వాట్సాప్";
-
-            btnGrp.appendChild(callA);
-            btnGrp.appendChild(waA);
-            row.appendChild(info);
-            row.appendChild(btnGrp);
-            lList.appendChild(row);
-          });
-        }
-
-        scrollDiv.appendChild(clone);
-      });
-
-      slotBox.appendChild(scrollDiv);
-      container.appendChild(slotBox);
-    }
-
-    // 2. Standard Accepted Labours List
-    const accHeader = document.createElement("div");
-    accHeader.className = "accepted-header";
-    const accTitle = document.createElement("h4");
-    accTitle.textContent = "👥 Confirm అయిన కూలీలు:";
-    accHeader.appendChild(accTitle);
-    container.appendChild(accHeader);
-
-    const accScroll = document.createElement("div");
-    accScroll.className = "custom-scroll accepted-scroll-list";
-
-    let allConfirmed = [];
-    postedJobs.forEach(pj => {
-      if (pj.confirmedLabours && Array.isArray(pj.confirmedLabours)) {
-        pj.confirmedLabours.forEach(c => {
-          allConfirmed.push({
-            labourName: c.name || "కూలీ",
-            labourPhone: c.phone || "",
-            crop: pj.crop,
-            workType: pj.workType,
-            wage: pj.wage
-          });
-        });
-      }
-    });
-
-    if (allConfirmed.length === 0) {
-      const emptyMsg = document.createElement("div");
-      emptyMsg.className = "empty-labour-msg";
-      emptyMsg.textContent = "కూలీలు accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.";
-      accScroll.appendChild(emptyMsg);
+    if (typeof speakTeluguText === "function") {
+      speakTeluguText("పని వివరాలు విజయవంతంగా పోస్ట్ చేయబడ్డాయి.");
     } else {
-      const labourTpl = document.getElementById("farmer-labour-item-template");
-      allConfirmed.forEach(item => {
-        if (!labourTpl) return;
-        const clone = labourTpl.content.cloneNode(true);
-        clone.querySelector(".labour-name-text").textContent = `👷 ${item.labourName}`;
-        clone.querySelector(".labour-wage").textContent = `₹${item.wage}`;
-        clone.querySelector(".labour-work-info").textContent = `పని: ${item.crop} (${item.workType})`;
-
-        clone.querySelector(".link-call").href = `tel:${item.labourPhone}`;
-        clone.querySelector(".link-sms").href = `sms:${item.labourPhone}?body=నమస్తే`;
-        clone.querySelector(".link-whatsapp").href = `https://wa.me/91${item.labourPhone}`;
-
-        accScroll.appendChild(clone);
-      });
+      alert("📢 పని కూలీల Dashboard లో live గా post చేయబడింది!");
     }
+  });
+}
 
-    container.appendChild(accScroll);
-    wrapper.appendChild(container);
-  },
+function prefillFarmerFormDefaults() {
+  const profile = window.AppState?.userProfile;
+  if (!profile) return;
 
-  openBookingModal: function(itemName, ownerName, rate, phone) {
-    this.activeBookingItem = { itemName, ownerName, rate, phone };
-    const modal = document.getElementById("booking-modal");
-    if (!modal) return;
+  const nameInput = document.getElementById("f-name");
+  const phoneInput = document.getElementById("f-phone");
+  const villageBtn = document.getElementById("f-village-btn");
 
-    document.getElementById("bm-item-name").textContent = itemName;
-    document.getElementById("bm-item-rate").textContent = rate;
-    document.getElementById("booking-request-form")?.reset();
+  if (nameInput && !nameInput.value) nameInput.value = profile.name || '';
+  if (phoneInput && !phoneInput.value) phoneInput.value = profile.phone || '';
+  if (villageBtn && profile.village) villageBtn.textContent = "🏛️ " + profile.village;
+}
 
-    modal.classList.remove("is-hidden");
-  },
+// 5. Job Posting Modal (Auto-Prefill & Handle)
+window.openFarmerJobModal = function() {
+  let modal = document.getElementById("farmerJobModal");
+  if (!modal) {
+    const tpl = document.getElementById("farmer-job-modal-template");
+    if (tpl) {
+      document.body.appendChild(tpl.content.cloneNode(true));
+      modal = document.getElementById("farmerJobModal");
+    }
+  }
 
-  closeBookingModal: function() {
-    const modal = document.getElementById("booking-modal");
-    if (modal) modal.classList.add("is-hidden");
-  },
+  const prof = window.AppState?.userProfile;
+  if (prof) {
+    const n = document.getElementById("fjm_name");
+    const p = document.getElementById("fjm_phone");
+    const v = document.getElementById("fjm_village");
+    if (n && !n.value) n.value = prof.name || "";
+    if (p && !p.value) p.value = prof.phone || "";
+    if (v && !v.value) v.value = prof.village || "";
+  }
 
-  handleBookingSubmit: function(e) {
+  const today = new Date().toISOString().split('T')[0];
+  const dateInp = document.getElementById("fjm_date");
+  if (dateInp && !dateInp.value) dateInp.value = today;
+
+  if (modal) modal.style.display = "flex";
+};
+
+window.closeFarmerJobModal = function() {
+  const modal = document.getElementById("farmerJobModal");
+  if (modal) modal.style.display = "none";
+};
+
+window.handleFarmerJobSubmit = function(e) {
+  e.preventDefault();
+
+  const newJob = {
+    id: "job_" + Date.now(),
+    farmerName: document.getElementById("fjm_name").value.trim(),
+    farmerPhone: document.getElementById("fjm_phone").value.trim(),
+    crop: document.getElementById("fjm_crop").value,
+    workType: document.getElementById("fjm_work").value,
+    count: parseInt(document.getElementById("fjm_required").value) || 1,
+    totalRequired: parseInt(document.getElementById("fjm_required").value) || 1,
+    confirmedLabours: [],
+    wage: parseFloat(document.getElementById("fjm_wage").value) || 450,
+    workDate: document.getElementById("fjm_date").value,
+    date: document.getElementById("fjm_date").value,
+    village: document.getElementById("fjm_village").value.trim(),
+    transportNote: document.getElementById("fjm_trans").value === "own" ? "కూలీల సొంత బండి ఉండాలి" : "రైతు రవాణా ఏర్పాటు చేస్తారు",
+    status: "Open",
+    createdAt: Date.now()
+  };
+
+  if (window.db) {
+    window.db.collection("farmer_posted_jobs").add(newJob).catch(err => console.warn(err));
+  }
+
+  let list = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
+  list.unshift(newJob);
+  localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
+
+  window.closeFarmerJobModal();
+  if (typeof window.renderFarmerWidget === "function") window.renderFarmerWidget();
+  if (typeof window.renderLabourWidget === "function") window.renderLabourWidget();
+
+  alert("🎉 పని పోస్ట్ చేయబడింది!");
+};
+
+// 6. Booking Modal & Escrow Logic
+window.openBookingModal = function(itemName, ownerName, rate, phone) {
+  let modal = document.getElementById("booking-modal");
+  if (!modal) {
+    const tpl = document.getElementById("farmer-booking-modal-template");
+    if (tpl) {
+      document.body.appendChild(tpl.content.cloneNode(true));
+      modal = document.getElementById("booking-modal");
+    }
+  }
+
+  document.getElementById("b-item-name").textContent = itemName;
+  document.getElementById("b-item-rate").textContent = rate;
+
+  const form = document.getElementById("booking-request-form");
+  form.onsubmit = function(e) {
     e.preventDefault();
-    if (!this.activeBookingItem) return;
-
-    const dateVal = document.getElementById('book-date').value;
-    const durVal = document.getElementById('book-duration').value;
-
     const newBooking = {
       id: "BK-" + Date.now(),
-      itemName: this.activeBookingItem.itemName,
-      ownerName: this.activeBookingItem.ownerName,
-      rate: this.activeBookingItem.rate,
-      phone: this.activeBookingItem.phone,
-      date: dateVal,
-      duration: durVal,
+      itemName: itemName,
+      ownerName: ownerName,
+      rate: rate,
+      phone: phone,
+      date: document.getElementById('book-date').value,
+      duration: document.getElementById('book-duration').value,
       status: "అభ్యర్థన పంపబడింది (Pending)",
       escrowLocked: false
     };
 
-    let savedBookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
-    savedBookings.unshift(newBooking);
-    localStorage.setItem("farmer_bookings", JSON.stringify(savedBookings));
+    let saved = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+    saved.unshift(newBooking);
+    localStorage.setItem("farmer_bookings", JSON.stringify(saved));
 
-    this.closeBookingModal();
-    alert(`✅ ${this.activeBookingItem.itemName} బుకింగ్ అభ్యర్థన విజయవంతంగా నమోదైంది!`);
-    this.renderBookingRecords();
-  },
+    window.closeBookingModal();
+    alert(`✅ ${itemName} బుకింగ్ అభ్యర్థన విజయవంతంగా నమోదైంది!`);
+    window.renderBookingRecords();
+  };
 
-  renderBookingRecords: function() {
-    const container = document.getElementById("farmer-booking-records");
-    if (!container) return;
-
-    let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
-    container.replaceChildren();
-    if (bookings.length === 0) return;
-
-    const section = document.createElement("div");
-    section.className = "booking-records-section";
-
-    const header = document.createElement("div");
-    header.className = "booking-records-header";
-
-    const title = document.createElement("h4");
-    title.className = "booking-records-title";
-    title.textContent = `📋 Naa Bookinglu (${bookings.length}):`;
-
-    const clearBtn = document.createElement("button");
-    clearBtn.type = "button";
-    clearBtn.className = "btn-clear-bookings";
-    clearBtn.textContent = "🗑️ Clear Cheyandi";
-    clearBtn.onclick = () => this.clearBookings();
-
-    header.appendChild(title);
-    header.appendChild(clearBtn);
-    section.appendChild(header);
-
-    const scrollDiv = document.createElement("div");
-    scrollDiv.className = "booking-records-scroll custom-scroll";
-
-    const cardTpl = document.getElementById("farmer-booking-card-template");
-
-    bookings.forEach(b => {
-      if (!cardTpl) return;
-      const clone = cardTpl.content.cloneNode(true);
-      const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
-
-      clone.querySelector(".rec-item-title").textContent = `🚜 ${b.itemName}`;
-      const statusTag = clone.querySelector(".rec-status-tag");
-      statusTag.textContent = b.status;
-      if (isLocked) statusTag.classList.add("is-locked");
-
-      clone.querySelector(".rec-details-row").innerHTML = 
-        `👤 Yajamaani: <b>${b.ownerName}</b> (${b.phone})<br>` +
-        `📅 Theedhi: <b>${b.date}</b> | ⏱️ Parimaanam: <b>${b.duration}</b><br>` +
-        `💰 Dhara: <b>${b.rate}</b>`;
-
-      const bookingMsg = `Namaste ${b.ownerName} gaaru, nenu mee ${b.itemName} nu ${b.date} theedhina (${b.duration}) kosam book chesukunanu. Dayachesi vivaralu confirm cheyagalaru.`;
-      clone.querySelector(".rec-btn-wa").href = `https://wa.me/91${b.phone}?text=${encodeURIComponent(bookingMsg)}`;
-      clone.querySelector(".rec-btn-call").href = `tel:${b.phone}`;
-
-      const escrowBadge = clone.querySelector(".rec-escrow-badge");
-      const escrowBtn = clone.querySelector(".rec-btn-escrow");
-
-      if (isLocked) {
-        escrowBadge.classList.remove("is-hidden");
-        escrowBtn.classList.add("is-hidden");
-      } else {
-        escrowBtn.onclick = () => this.lockEscrow(b.id, 500, b.itemName);
-      }
-
-      scrollDiv.appendChild(clone);
-    });
-
-    section.appendChild(scrollDiv);
-    container.appendChild(section);
-  },
-
-  clearBookings: function() {
-    if (confirm("బుకింగ్ రికార్డులన్నింటినీ తీసివేయాలా?")) {
-      localStorage.removeItem("farmer_bookings");
-      this.renderBookingRecords();
-    }
-  },
-
-  lockEscrow: function(bookingId, amount, itemName) {
-    let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
-    const b = bookings.find(x => x.id === bookingId);
-    if (b) {
-      b.escrowLocked = true;
-      b.status = `₹${amount} Escrow Lock Aindi (Secure)`;
-      localStorage.setItem("farmer_bookings", JSON.stringify(bookings));
-      this.renderBookingRecords();
-
-      if (window.renderWalletWidget) {
-        window.renderWalletWidget();
-      }
-      alert(`🔒 ₹${amount} ఎస్క్రో లాక్ చేయబడింది (${itemName})! పని పూర్తయిన తర్వాత విడుదల అవుతుంది.`);
-    }
-  },
-
-  // --- Quick Job Post Modal Controllers ---
-  openJobModal: function() {
-    let modal = document.getElementById("farmerJobModal");
-    if (!modal) {
-      const tpl = document.getElementById("farmer-job-modal-template");
-      if (tpl) {
-        document.body.appendChild(tpl.content.cloneNode(true));
-        modal = document.getElementById("farmerJobModal");
-      }
-    }
-    if (!modal) return;
-
-    // Auto Prefill
-    const prof = window.AppState?.userProfile || {};
-    const today = new Date().toISOString().split('T')[0];
-
-    const nameInput = document.getElementById("fjm_name");
-    const phoneInput = document.getElementById("fjm_phone");
-    const villageInput = document.getElementById("fjm_village");
-    const dateInput = document.getElementById("fjm_date");
-
-    if (nameInput) nameInput.value = prof.name || "";
-    if (phoneInput) phoneInput.value = prof.phone || "";
-    if (villageInput) villageInput.value = prof.village || "";
-    if (dateInput) {
-      dateInput.value = today;
-      dateInput.min = today;
-    }
-
-    modal.classList.remove("is-hidden");
-    modal.style.display = "flex";
-  },
-
-  closeJobModal: function() {
-    const modal = document.getElementById("farmerJobModal");
-    if (modal) {
-      modal.classList.add("is-hidden");
-      modal.style.display = "none";
-    }
-  },
-
-  handleJobModalSubmit: async function(e) {
-    e.preventDefault();
-
-    const farmerName = document.getElementById("fjm_name").value.trim();
-    const farmerPhone = document.getElementById("fjm_phone").value.trim();
-    const crop = document.getElementById("fjm_crop").value;
-    const workType = document.getElementById("fjm_work").value;
-    const totalRequired = parseInt(document.getElementById("fjm_required").value) || 1;
-    const wage = parseFloat(document.getElementById("fjm_wage").value) || 450;
-    const workDate = document.getElementById("fjm_date").value;
-    const village = document.getElementById("fjm_village").value.trim();
-    const trans = document.getElementById("fjm_trans").value;
-
-    const newJob = {
-      id: "JOB-" + Date.now(),
-      farmerName,
-      farmerPhone,
-      crop,
-      workType,
-      count: totalRequired,
-      totalRequired,
-      confirmedLabours: [],
-      wage,
-      workDate,
-      date: workDate,
-      village,
-      transportNote: trans === "own" ? "కూలీల సొంత బండి ఉండాలి" : "రైతు రవాణా ఏర్పాటు చేస్తారు",
-      status: "Open",
-      createdAt: Date.now()
-    };
-
-    if (window.db) {
-      try {
-        await window.db.collection("farmer_posted_jobs").add(newJob);
-      } catch(err) {
-        console.warn("Cloud save error, fallback to local:", err);
-      }
-    }
-
-    let list = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
-    list.unshift(newJob);
-    localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(list));
-
-    let savedJobs = JSON.parse(localStorage.getItem("agri_jobs") || "[]");
-    savedJobs.unshift(newJob);
-    localStorage.setItem("agri_jobs", JSON.stringify(savedJobs));
-
-    this.closeJobModal();
-    this.renderAcceptedAndSlotList();
-
-    if (typeof renderLabourWidget === "function") renderLabourWidget();
-
-    alert("🎉 పని పోస్ట్ చేయబడింది! సమీప కూలీలకు అలర్ట్ వెళ్ళింది.");
-  }
+  modal.style.display = "flex";
 };
 
-// -------------------------------------------------------------
-// Global Bridges & Backward Compatibility
-// -------------------------------------------------------------
-window.switchFarmerTab = function(t) { window.FarmerModule.switchTab(t); };
-window.renderFarmerWidget = function() { window.FarmerModule.render(); };
-window.renderFarmerLabourPane = window.renderFarmerWidget;
-window.openBookingModal = function(i, o, r, p) { window.FarmerModule.openBookingModal(i, o, r, p); };
-window.closeBookingModal = function() { window.FarmerModule.closeBookingModal(); };
-window.renderBookingRecords = function() { window.FarmerModule.renderBookingRecords(); };
-window.clearFarmerBookings = function() { window.FarmerModule.clearBookings(); };
-window.lockBookingEscrow = function(id, a, n) { window.FarmerModule.lockEscrow(id, a, n); };
+window.closeBookingModal = function() {
+  const modal = document.getElementById("booking-modal");
+  if (modal) modal.style.display = "none";
+};
 
-// Quick Job Modal Global Bridges
-window.openFarmerJobModal = function() { window.FarmerModule.openJobModal(); };
-window.closeFarmerJobModal = function() { window.FarmerModule.closeJobModal(); };
-window.handleFarmerJobSubmit = function(e) { window.FarmerModule.handleJobModalSubmit(e); };
+window.renderBookingRecords = function() {
+  const container = document.getElementById("farmer-booking-records");
+  if (!container) return;
 
-// Real-time Cloud Sync Listener
-if (window.db) {
-  try {
-    window.db.collection("farmer_posted_jobs").orderBy("createdAt", "desc").limit(20)
-      .onSnapshot((snapshot) => {
-        let cloudJobs = [];
-        snapshot.forEach((doc) => {
-          cloudJobs.push({ id: doc.id, ...doc.data() });
-        });
-
-        if (cloudJobs.length > 0) {
-          localStorage.setItem("agri_farmer_posted_jobs", JSON.stringify(cloudJobs));
-          const paneLabour = document.getElementById("farmer-pane-labour");
-          if (paneLabour && !paneLabour.classList.contains("is-hidden")) {
-            window.FarmerModule.renderAcceptedAndSlotList();
-          }
-        }
-      }, (err) => {
-        console.warn("Real-time cloud sync notice:", err);
-      });
-  } catch (err) {
-    console.warn("Firestore sync setup error:", err);
+  let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+  if (bookings.length === 0) {
+    container.innerHTML = "";
+    return;
   }
-}
+
+  container.innerHTML = `
+    <div class="booking-records-section">
+      <h4>📋 Naa Bookinglu (${bookings.length}):</h4>
+      ${bookings.map(b => `
+        <div class="booking-record-card" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-top: 8px;">
+          <div>🚜 <b>${b.itemName}</b> | Status: <b>${b.status}</b></div>
+          <div>👤 యజమాని: ${b.ownerName} (${b.phone}) | తేదీ: ${b.date}</div>
+          <div style="margin-top: 6px;">
+            <a href="tel:${b.phone}" style="padding: 4px 8px; background: #dbeafe; text-decoration: none; border-radius: 4px;">📞 కాల్</a>
+            <a href="https://wa.me/91${b.phone}" target="_blank" style="padding: 4px 8px; background: #dcfce7; text-decoration: none; border-radius: 4px; margin-left: 6px;">💬 వాట్సాప్</a>
+            ${!b.escrowLocked ? `
+              <button onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')" style="margin-left:6px; padding:4px 8px; background:#fef3c7; border:none; border-radius:4px; cursor:pointer;">
+                🔒 ₹500 Escrow Lock
+              </button>
+            ` : '<span style="color:#16a34a; font-weight:bold; margin-left:6px;">✅ Escrow Locked</span>'}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+};
+
+window.lockBookingEscrow = function(bookingId, amount, itemName) {
+  let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+  const b = bookings.find(x => x.id === bookingId);
+  if (b) {
+    b.escrowLocked = true;
+    b.status = `₹${amount} Escrow Lock Aindi (Secure)`;
+    localStorage.setItem("farmer_bookings", JSON.stringify(bookings));
+    window.renderBookingRecords();
+    if (window.renderWalletWidget) window.renderWalletWidget();
+    alert(`🔒 ₹${amount} ఎస్క్రో లాక్ చేయబడింది (${itemName})!`);
+  }
+};
