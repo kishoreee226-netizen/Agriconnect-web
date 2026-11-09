@@ -2,7 +2,7 @@
 window.WalletModule = {
   getWalletData: function() {
     const defaultWallet = {
-      farmerBalance: 0,
+      farmerBalance: 2000, // టెస్టింగ్ కోసం ప్రారంభ నిల్వ
       labourBalance: 0,
       providerBalance: 0,
       lockedEscrow: []
@@ -43,6 +43,8 @@ window.WalletModule = {
     if (!tpl) return;
 
     const walletData = this.getWalletData();
+    const currentRole = window.AppState?.currentRole || "FARMER";
+
     const lockedTotal = (walletData.lockedEscrow || [])
       .filter(item => item.status === "Locked")
       .reduce((sum, item) => sum + Number(item.amount || 0), 0);
@@ -55,6 +57,26 @@ window.WalletModule = {
     card.querySelector(".balance-val-locked").textContent = `₹${lockedTotal}`;
     card.querySelector(".balance-val-labour").textContent = `₹${walletData.labourBalance || 0}`;
     card.querySelector(".balance-val-provider").textContent = `₹${walletData.providerBalance || 0}`;
+
+    // యాక్టివ్ రోల్ ఆధారంగా కార్డుల ప్రదర్శన
+    const farmerCard = card.querySelector("#wallet-card-farmer-box");
+    const labourCard = card.querySelector("#wallet-card-labour-box");
+    const providerCard = card.querySelector("#wallet-card-provider-box");
+
+    if (currentRole === "LABOUR") {
+      if (farmerCard) farmerCard.style.display = "none";
+      if (providerCard) providerCard.style.display = "none";
+      if (labourCard) labourCard.style.display = "flex";
+    } else if (currentRole === "PROVIDER") {
+      if (farmerCard) farmerCard.style.display = "none";
+      if (labourCard) labourCard.style.display = "none";
+      if (providerCard) providerCard.style.display = "flex";
+    } else {
+      // రైతు మోడ్ లో ఉన్నప్పుడు పూర్తి ఎస్క్రో నియంత్రణ కనిపిస్తుంది
+      if (farmerCard) farmerCard.style.display = "flex";
+      if (labourCard) labourCard.style.display = "flex";
+      if (providerCard) providerCard.style.display = "flex";
+    }
 
     // ఎస్క్రో లిస్ట్ రెండరింగ్
     const listContainer = card.querySelector("#escrow-items-list");
@@ -82,7 +104,8 @@ window.WalletModule = {
         statusLabel.textContent = isLocked ? "🔒 Hold అయింది (రైతు ఖాతాలో భద్రం)" : "✅ Release అయింది (ఖాతాకు చేరింది)";
 
         const actionCenter = itemCard.querySelector(".escrow-action-center");
-        if (isLocked) {
+        // కేవలం రైతు మోడ్‌లో ఉన్నప్పుడు మాత్రమే రిలీజ్ బటన్ నొక్కే అధికారం ఉంటుంది
+        if (isLocked && currentRole === "FARMER") {
           const btn = actionCenter.querySelector(".btn-release-payment");
           btn.onclick = () => window.WalletModule.handleReleasePayment(esc.id);
         } else {
@@ -96,6 +119,23 @@ window.WalletModule = {
     mount.appendChild(card);
   },
 
+  // రైతు వాలెట్‌లోకి డబ్బు జమ చేయడం (Add Money)
+  handleAddMoneyFarmer: function() {
+    const amountStr = prompt("రైతు వాలెట్‌లో ఎంత మొత్తం జమ చేయాలనుకుంటున్నారు (₹)?", "1000");
+    if (!amountStr) return;
+    const amt = Number(amountStr);
+    if (isNaN(amt) || amt <= 0) {
+      alert("సరైన మొత్తాన్ని నమోదు చేయండి!");
+      return;
+    }
+
+    const wallet = this.getWalletData();
+    wallet.farmerBalance = Number(wallet.farmerBalance || 0) + amt;
+    this.saveWalletData(wallet);
+    this.render();
+    alert(`🎉 ₹${amt} విజయవంతంగా రైతు వాలెట్‌లో జమ చేయబడింది!`);
+  },
+
   // కూలీ పనిని ఎస్క్రోలో లాక్ చేయడం
   lockJobToEscrow: function(job, labourName) {
     if (!job) return;
@@ -104,6 +144,14 @@ window.WalletModule = {
 
     const exists = wallet.lockedEscrow.find(e => e.jobId === job.id);
     if (exists) return;
+
+    if (wallet.farmerBalance < amount) {
+      alert(`⚠️ రైతు వాలెట్‌లో సరిపడా నిల్వ లేదు! కూలీ వేతనం: ₹${amount}, ఉన్నది: ₹${wallet.farmerBalance}`);
+      return false;
+    }
+
+    // రైతు నిల్వ నుండి కట్ చేసి ఎస్క్రో లాక్ చేయడం
+    wallet.farmerBalance -= amount;
 
     wallet.lockedEscrow.unshift({
       id: "ESC-" + Date.now(),
@@ -118,6 +166,7 @@ window.WalletModule = {
 
     this.saveWalletData(wallet);
     this.render();
+    return true;
   },
 
   // పరికరాలు / వాహనాల బుకింగ్ కోసం ఎస్క్రో లాక్
@@ -147,7 +196,6 @@ window.WalletModule = {
     this.saveWalletData(wallet);
     this.render();
 
-    // Farmer Bookings Cache అప్‌డేట్
     try {
       let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
       bookings = bookings.map(b => {
@@ -167,7 +215,7 @@ window.WalletModule = {
     return true;
   },
 
-  // ఎస్క్రో నిధులను కూలీకి లేదా ప్రొవైడర్‌కు విడుదల చేయడం
+  // ఎస్క్రో నిధులను కూలీకి లేదా ప్రొవైడర్‌కు విడుదల చేయడం (Double-Deduction Removed)
   handleReleasePayment: function(escrowId) {
     if (!confirm("పని/సేవ పూర్తిగా పూర్తయిందా? డబ్బును ఎదుటివారి వాలెట్‌కు విడుదల చేయమంటారా?")) {
       return;
@@ -181,9 +229,7 @@ window.WalletModule = {
       item.status = "Released";
       item.releasedAt = Date.now();
 
-      wallet.farmerBalance = Math.max(0, wallet.farmerBalance - amt);
-
-      // ప్రొవైడర్ బుకింగ్ అయితే ప్రొవైడర్ ఖాతాకు, కూలీ పని అయితే కూలీ ఖాతాకు క్రెడిట్
+      // గమనిక: లాక్ చేసినప్పుడే రైతు అకౌంట్ నుండి కట్ అయింది కాబట్టి ఇక్కడ మళ్లీ కట్ చేయకూడదు!
       if (item.recipientType === 'PROVIDER') {
         wallet.providerBalance = Number(wallet.providerBalance || 0) + amt;
       } else {
@@ -193,15 +239,11 @@ window.WalletModule = {
       this.saveWalletData(wallet);
       this.render();
 
-      if (typeof speakTeluguText === "function") {
-        speakTeluguText(`${amt} రూపాయలు విజయవంతంగా విడుదల చేయబడ్డాయి.`);
-      } else {
-        alert(`🎉 ₹${amt} నిధులు విజయవంతంగా బదిలీ చేయబడ్డాయి!`);
-      }
+      alert(`🎉 ₹${amt} నిధులు విజయవంతంగా బదిలీ చేయబడ్డాయి!`);
     }
   },
 
-  // UPI విత్‌డ్రాయల్ (కూలీ మరియు ప్రొవైడర్ ఇద్దరికీ)
+  // UPI విత్‌డ్రాయల్
   handleWithdrawUPI: function(roleType = 'labour') {
     const wallet = this.getWalletData();
     const balanceKey = roleType === 'provider' ? 'providerBalance' : 'labourBalance';
@@ -216,13 +258,8 @@ window.WalletModule = {
     if (!amountStr) return;
 
     const withdrawAmount = Number(amountStr);
-    if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+    if (isNaN(withdrawAmount) || withdrawAmount <= 0 || withdrawAmount > currentBalance) {
       alert("దయచేసి సరైన మొత్తం నమోదు చేయండి!");
-      return;
-    }
-
-    if (withdrawAmount > currentBalance) {
-      alert(`మీ వాలెట్‌లో అంత బ్యాలెన్స్ లేదు! గరిష్ట బ్యాలెన్స్: ₹${currentBalance}`);
       return;
     }
 
@@ -240,7 +277,7 @@ window.WalletModule = {
   }
 };
 
-// Global Bridges (పాత ఫంక్షన్ కాల్స్ దెబ్బతినకుండా ఉండేందుకు)
+// Global Bridges
 window.renderWalletWidget = () => window.WalletModule.render();
 window.lockJobToEscrow = (job, name) => window.WalletModule.lockJobToEscrow(job, name);
 window.lockBookingEscrow = (id, amt, name) => window.WalletModule.lockBookingEscrow(id, amt, name);
