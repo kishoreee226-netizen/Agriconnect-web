@@ -23,15 +23,9 @@
       div.innerHTML = html;
       document.body.appendChild(div);
 
-      // లాగిన్ కాకపోతే ల్యాండింగ్ కార్డ్‌ను, లాగిన్ అయి ప్రొవైడర్ రోల్‌లో ఉంటే డాష్‌బోర్డ్‌ను చూపించడం
-      if (!window.AppState || !window.AppState.isLoggedIn) {
-        if (typeof window.renderProviderLandingCard === 'function') {
-          window.renderProviderLandingCard();
-        }
-      } else if (window.AppState.userType === "PROVIDER" || window.AppState.currentRole === "PROVIDER") {
-        if (typeof window.renderProviderDashboardView === 'function') {
-          window.renderProviderDashboardView();
-        }
+      // వ్యూస్ డిసైడ్ చేసే బాధ్యత role.js చూసుకుంటుంది
+      if (window.RoleController && typeof window.RoleController.applyUserRoleView === 'function') {
+        window.RoleController.applyUserRoleView();
       }
     })
     .catch(err => console.error("Provider loader error:", err));
