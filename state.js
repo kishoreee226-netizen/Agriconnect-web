@@ -83,35 +83,40 @@ window.AgriState = {
   }
 };
 
-// 3. Global App User Session State (Integrated with 3-in-1 Role Switcher & Services)
+// 3. Global App User Session State (Integrated with 3-in-1 Role Switcher)
 (function initGlobalAppState() {
   const savedProfile = getStoredJSON("agri_user_profile", null);
-  const savedRole = localStorage.getItem("agri_user_role");
+  
+  // కీ మిస్-మ్యాచ్ రాకుండా సింక్రొనైజ్ చేయడం
+  const savedRole = localStorage.getItem("agri_current_active_role") || localStorage.getItem("agri_user_role");
 
   const initialUserType = savedProfile ? (savedProfile.roleType || savedProfile.userType || "FARMER") : null;
-  
-  // ప్రొఫైల్ ఆధారంగా ప్రారంభ రోల్ నిర్ణయించడం
+
+  // ప్రొఫైల్ మరియు యాక్టివ్ మోడ్ ఆధారంగా రోల్ నిర్ణయించడం
   let defaultRole = "GUEST";
   if (savedProfile) {
     if (savedRole && ['FARMER', 'LABOUR', 'PROVIDER'].includes(savedRole)) {
       defaultRole = savedRole;
     } else {
-      defaultRole = (initialUserType === "LABOUR" || initialUserType === "LABOURONLY") ? "LABOUR" : (initialUserType === "PROVIDER" ? "PROVIDER" : "FARMER");
+      defaultRole = (initialUserType === "LABOUR" || initialUserType === "LABOURONLY" || initialUserType === "LABOUR_ONLY") 
+                    ? "LABOUR" 
+                    : (initialUserType === "PROVIDER" ? "PROVIDER" : "FARMER");
     }
   }
 
   window.AppState = Object.assign(window.AppState || {}, {
     isLoggedIn: Boolean(savedProfile && savedProfile.phone),
-    userType: initialUserType,                               // 'FARMER', 'LABOURONLY', 'LABOUR', 'PROVIDER'
+    userType: initialUserType,                               // 'FARMER', 'LABOUR', 'PROVIDER'
     currentRole: defaultRole,                                // 'FARMER' | 'LABOUR' | 'PROVIDER' | 'GUEST'
-    providerType: localStorage.getItem("agri_provider_tab") || "equipment", // 'equipment', 'seeds', 'transport'
+    providerType: localStorage.getItem("agri_provider_tab") || (savedProfile && savedProfile.providerType) || "equipment",
     autoVoice: false,
     userProfile: savedProfile,
     user: savedProfile,
 
-    // Helper: సింక్‌తో కూడిన రోల్ అప్‌డేట్
+    // Helper: అన్ని మాడ్యూల్స్ కీలను ఒకేలా అప్‌డేట్ చేసే ఫంక్షన్
     setCurrentRole: function(newRole) {
       this.currentRole = newRole;
+      localStorage.setItem("agri_current_active_role", newRole);
       localStorage.setItem("agri_user_role", newRole);
     }
   });
