@@ -2,67 +2,35 @@
 
 window.RoleController = {
   getFarmerContainer: function() {
-    let el = document.getElementById("farmer-post-container");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "farmer-post-container";
-      const target = document.getElementById("wallet-container") || document.querySelector(".wallet-card") || document.body;
-      if (target && target.parentNode) target.parentNode.insertBefore(el, target);
-    }
-    return el;
+    return document.getElementById("farmer-post-container");
   },
 
   getLabourContainer: function() {
-    let el = document.getElementById("labour-jobs-container");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "labour-jobs-container";
-      const target = document.getElementById("farmer-post-container") || document.getElementById("wallet-container") || document.body;
-      if (target && target.parentNode) target.parentNode.insertBefore(el, target.nextSibling);
-    }
-    return el;
+    return document.getElementById("labour-jobs-container");
   },
 
   getProviderContainer: function() {
-    let el = document.getElementById("provider-hub-container") || document.getElementById("provider-container");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "provider-hub-container";
-      const target = document.getElementById("labour-jobs-container") || document.body;
-      if (target && target.parentNode) target.parentNode.insertBefore(el, target.nextSibling);
-    }
-    return el;
+    return document.getElementById("provider-hub-container") || document.getElementById("provider-container");
   },
 
   setToolsVisibility: function(show) {
-    // 1. క్లాస్ లేదా ఐడీ ఆధారంగా టార్గెట్ చేయడం
-    const explicitElements = document.querySelectorAll(
-      "#tools-container, #utilities-container, .tools-section, .utilities-section, " +
-      ".power-tools-card, .smart-utilities-card, [class*='power-tool'], [class*='smart-util']"
-    );
-    explicitElements.forEach(el => {
-      el.style.setProperty("display", show ? "block" : "none", "important");
-    });
+    // టూల్స్ మరియు యుటిలిటీస్ సెక్షన్లను మాత్రమే ఖచ్చితంగా దాచడం
+    const elements = document.querySelectorAll("div, section");
+    elements.forEach(el => {
+      // మెయిన్ కంటైనర్లు లేదా బాడీని ముట్టుకోవద్దు
+      if (el.id === "farmer-post-container" || el.id === "labour-jobs-container" || 
+          el.id === "provider-hub-container" || el.classList.contains("container") || 
+          el.tagName === "BODY" || el.id === "role-login-modal") {
+        return;
+      }
 
-    // 2. హెడ్డింగ్ మరియు కింద ఉన్న గ్రిడ్ బాక్స్‌లను డైనమిక్‌గా గుర్తించి దాచడం
-    const allHeadings = document.querySelectorAll("h3, h4, h5, div, span, strong");
-    allHeadings.forEach(el => {
-      const txt = (el.textContent || "").trim();
-      if (txt.includes("రైతు SMART సేవలు & Power Tools") || txt.includes("రైతు SMART Utilities & లింకులు")) {
-        // హెడ్డింగ్ ఉన్న బాక్స్
-        let parentBox = el.closest(".card, .section, .box") || el.parentElement;
-        while (parentBox && (parentBox.tagName === "BODY" || parentBox.classList.contains("container"))) {
-          parentBox = el.parentElement;
-        }
-
-        if (parentBox && parentBox.tagName !== "BODY" && !parentBox.classList.contains("container")) {
-          parentBox.style.setProperty("display", show ? "block" : "none", "important");
-          
-          // హెడ్డింగ్ పక్కనే ఉన్న గ్రిడ్ / లింకుల కంటైనర్‌ను కూడా దాచడం
-          let nextEl = parentBox.nextElementSibling;
-          while (nextEl && !nextEl.querySelector("h3, h4, .wallet-card, #wallet-container, footer, .footer")) {
-            nextEl.style.setProperty("display", show ? "block" : "none", "important");
-            nextEl = nextEl.nextElementSibling;
+      // నేరుగా టెక్స్ట్ ఉన్న బాక్సులను మాత్రమే హైడ్ చేయడం
+      if (el.children.length > 0) {
+        const firstHeader = el.querySelector("h3, h4, span.live-badge, strong");
+        if (firstHeader) {
+          const t = firstHeader.textContent || "";
+          if (t.includes("SMART సేవలు & Power Tools") || t.includes("SMART Utilities & లింకులు")) {
+            el.style.setProperty("display", show ? "block" : "none", "important");
           }
         }
       }
@@ -116,7 +84,6 @@ window.RoleController = {
         this.renderRoleSwitchBar();
       }
 
-      // కూలీ మోడ్‌లో టూల్స్, వెదర్, మండి ఉండకూడదు[span_4](start_span)[span_4](end_span)
       this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
@@ -125,11 +92,8 @@ window.RoleController = {
 
       if (labourContainer) {
         labourContainer.style.setProperty('display', 'block', 'important');
-        if (typeof window.renderLabourWidget === 'function') {
-          window.renderLabourWidget();
-        }
+        if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
       }
-      // కూలీకి వాలెట్ డిస్‌ప్లే అవ్వాలి[span_5](start_span)[span_5](end_span)
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
       if (typeof window.filterLabourJobsByLocation === 'function') window.filterLabourJobsByLocation();
     }
@@ -141,7 +105,6 @@ window.RoleController = {
         this.renderRoleSwitchBar();
       }
 
-      // యజమాని మోడ్‌లో టూల్స్, వెదర్, మండి ఉండకూడదు
       this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
@@ -154,13 +117,11 @@ window.RoleController = {
           window.renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
         }
       }
-      // యజమాని మోడ్‌లో కూడా వాలెట్ డిస్‌ప్లే అవ్వాలి!
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
     }
     // C. రైతు మోడ్ (FARMER)
     else {
       this.renderRoleSwitchBar();
-      // కేవలం రైతు మోడ్‌లో మాత్రమే టూల్స్ మరియు వెదర్ కనిపిస్తాయి
       this.setToolsVisibility(true);
 
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
@@ -279,16 +240,29 @@ window.RoleController = {
 };
 
 // ===================================================
-// MODALS LOGIC
+// MODALS LOGIC (Bulletproof Clean Modal)
 // ===================================================
 window.openLoginModal = function(roleType) {
   let modal = document.getElementById("role-login-modal");
   if (!modal) {
     modal = document.createElement("div");
     modal.id = "role-login-modal";
-    modal.style.cssText = "position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:99999; padding:16px;";
     document.body.appendChild(modal);
   }
+
+  // మోడల్ స్టైల్ ఎప్పుడూ పైనే ఉండేలా సెట్ చేయడం
+  modal.style.position = "fixed";
+  modal.style.top = "0";
+  modal.style.left = "0";
+  modal.style.width = "100%";
+  modal.style.height = "100%";
+  modal.style.backgroundColor = "rgba(0,0,0,0.7)";
+  modal.style.display = "flex";
+  modal.style.alignItems = "center";
+  modal.style.justifyContent = "center";
+  modal.style.zIndex = "999999";
+  modal.style.padding = "16px";
+  modal.style.boxSizing = "border-box";
 
   const isFarmer = (roleType === "FARMER");
   const themeColor = isFarmer ? "#16a34a" : "#ea580c";
@@ -301,7 +275,7 @@ window.openLoginModal = function(roleType) {
 
   if (savedUser && savedUser.phone && savedUser.roleType === roleType) {
     modal.innerHTML = `
-      <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:380px; text-align:center;">
+      <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:380px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3);">
         <div style="font-size:36px; margin-bottom:8px;">🔒</div>
         <h3 style="margin:0 0 6px; color:#1e293b;">స్వాగతం, ${savedUser.name} గారు!</h3>
         <p style="font-size:13px; color:#64748b; margin:0 0 16px;">మొబైల్: <b>${savedUser.phone}</b></p>
@@ -321,8 +295,6 @@ window.openLoginModal = function(roleType) {
   } else {
     renderRegisterForm(modal, roleType, themeColor);
   }
-
-  modal.style.display = "flex";
 };
 
 function renderRegisterForm(modal, roleType, themeColor) {
@@ -330,7 +302,7 @@ function renderRegisterForm(modal, roleType, themeColor) {
   const title = isFarmer ? "🌾 రైతు ప్రొఫైల్ నమోదు" : "👷 కూలీ ప్రొఫైల్ నమోదు";
 
   modal.innerHTML = `
-    <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:400px;">
+    <div style="background:#fff; border-radius:14px; padding:20px; width:100%; max-width:400px; box-shadow:0 10px 25px rgba(0,0,0,0.3);">
       <h3 style="margin:0 0 16px; text-align:center; color:${themeColor};">${title}</h3>
       <div style="margin-bottom:10px;">
         <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:4px;">మీ పూర్తి పేరు:</label>
