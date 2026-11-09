@@ -1,55 +1,49 @@
-// role/role.js - AgriConnect Smart Role Controller & Orchestrator (Clean Modular)
+// role/role.js - AgriConnect Pure State & View Orchestrator
 
 window.RoleController = {
   getFarmerContainer: function() {
-    return document.getElementById("farmer-post-container");
+    let el = document.getElementById("farmer-post-container");
+    if (!el) {
+      const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+      if (wallet && wallet.parentNode) {
+        el = document.createElement("div");
+        el.id = "farmer-post-container";
+        wallet.parentNode.insertBefore(el, wallet);
+      }
+    }
+    return el;
   },
 
   getLabourContainer: function() {
-    return document.getElementById("labour-jobs-container");
+    let el = document.getElementById("labour-jobs-container");
+    if (!el) {
+      const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+      if (wallet && wallet.parentNode) {
+        el = document.createElement("div");
+        el.id = "labour-jobs-container";
+        wallet.parentNode.insertBefore(el, wallet);
+      }
+    }
+    return el;
   },
 
   getProviderContainer: function() {
-    return document.getElementById("provider-container") || document.getElementById("provider-hub-container");
-  },
-
-  getRoleMountContainer: function() {
-    return document.getElementById("role-container") || document.getElementById("roles-container");
-  },
-
-  renderGuestCards: function() {
-    const mount = this.getRoleMountContainer();
-    if (!mount) return;
-
-    // ఇప్పటికే కార్డులు ఉంటే కేవలం డిస్‌ప్లే ఆన్ చేయాలి
-    const existing = document.getElementById("role-guest-cards");
-    if (existing) {
-      existing.style.setProperty('display', 'flex', 'important');
-      mount.style.setProperty('display', 'block', 'important');
-      return;
+    let el = document.getElementById("provider-hub-container") || document.getElementById("provider-container");
+    if (!el) {
+      const labour = document.getElementById("labour-jobs-container");
+      const wallet = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
+      const parent = (labour && labour.parentNode) || (wallet && wallet.parentNode);
+      if (parent) {
+        el = document.createElement("div");
+        el.id = "provider-hub-container";
+        if (labour && labour.nextSibling) {
+          parent.insertBefore(el, labour.nextSibling);
+        } else {
+          parent.appendChild(el);
+        }
+      }
     }
-
-    const tpl = document.getElementById("role-guest-cards-template");
-    if (!tpl) {
-      // DOM ఇంకా సిద్ధం కాకపోతే స్వల్ప ఆలస్యంతో మళ్లీ ప్రయత్నిస్తుంది
-      setTimeout(() => this.renderGuestCards(), 50);
-      return;
-    }
-
-    const clone = tpl.content.cloneNode(true);
-    const wrapper = clone.querySelector(".guest-role-cards-wrapper");
-    if (wrapper) {
-      wrapper.id = "role-guest-cards";
-      mount.replaceChildren(wrapper);
-      mount.style.setProperty('display', 'block', 'important');
-    }
-  },
-
-  removeGuestCards: function() {
-    const guestCards = document.getElementById("role-guest-cards");
-    if (guestCards) {
-      guestCards.remove();
-    }
+    return el;
   },
 
   applyUserRoleView: function() {
@@ -61,73 +55,99 @@ window.RoleController = {
     const mandiContainer = document.getElementById('mandi-container') || document.querySelector('.mandi-card');
     const weatherContainer = document.getElementById('weather-container') || document.querySelector('.weather-card');
 
-    // 1. లాగిన్ కానప్పుడు (ఒరిజినల్ పబ్లిక్ ల్యాండింగ్ వ్యూ)
+    // 1. ల్యాండింగ్ పేజీ (User Login కానప్పుడు)
     if (!state || !state.isLoggedIn) {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
 
-      // ల్యాండింగ్ 3 రోల్ కార్డ్స్ చూపించాలి
-      this.renderGuestCards();
-
-      // లాగిన్ కాకముందు వ్యక్తిగత డాష్‌బోర్డులు దాచాలి
-      if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
-      if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
-      if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
-
-      // మార్కెట్ ధరలు, వాతావరణం పబ్లిక్‌గా కనిపించాలి
       if (mandiContainer) mandiContainer.style.setProperty('display', 'block', 'important');
       if (weatherContainer) weatherContainer.style.setProperty('display', 'block', 'important');
 
-      if (typeof window.injectProviderLandingCard === 'function') {
-        window.injectProviderLandingCard();
+      // మూడు మాడ్యూల్స్ వాటి సొంత ల్యాండింగ్ కార్డులను చూపిస్తాయి
+      if (farmerContainer) {
+        farmerContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderFarmerLandingCard === 'function') {
+          window.renderFarmerLandingCard();
+        }
+      }
+
+      if (labourContainer) {
+        labourContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderLabourLandingCard === 'function') {
+          window.renderLabourLandingCard();
+        }
+      }
+
+      if (providerContainer) {
+        providerContainer.style.setProperty('display', 'block', 'important');
+        if (typeof window.renderProviderLandingCard === 'function') {
+          window.renderProviderLandingCard();
+        } else if (typeof window.injectProviderLandingCard === 'function') {
+          window.injectProviderLandingCard();
+        }
       }
       return;
     }
 
-    // 2. లాగిన్ అయినప్పుడు: 3 ల్యాండింగ్ కార్డులు తీసివేసి ప్రొఫైల్ బ్యానర్ చూపించడం
-    this.removeGuestCards();
+    // 2. లాగిన్ అయినప్పుడు
     this.renderUserProfileBanner();
 
-    // Case A: కూలీ మాత్రమే లాగిన్ అయినప్పుడు (LABOUR ONLY)
-    if (state.userType === "LABOURONLY" || state.userType === "LABOUR") {
+    // A. కేవలం కూలీ లాగిన్ (LABOUR ONLY)
+    if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.userType === "LABOUR") {
       this.removeRoleSwitchBar();
+
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+      if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+      if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
+
       if (labourContainer) {
         labourContainer.style.setProperty('display', 'block', 'important');
         if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
       }
       if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
-      this.filterLabourJobsByLocation();
-    } 
-    // Case B: రైతు లాగిన్ అయినప్పుడు (FARMER - 3-in-1 Switcher Dashboard)
+
+      if (typeof window.filterLabourJobsByLocation === 'function') window.filterLabourJobsByLocation();
+    }
+    // B. రైతు లాగిన్ (FARMER)
     else if (state.userType === "FARMER") {
       this.renderRoleSwitchBar();
 
+      // రైతు "కూలీ మోడ్" లోకి స్విచ్ అయితే:
       if (state.currentRole === 'LABOUR') {
-        // కూలీ మోడ్
         if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
         if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+        if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+        if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
+
         if (labourContainer) {
           labourContainer.style.setProperty('display', 'block', 'important');
           if (typeof window.renderLabourWidget === 'function') window.renderLabourWidget();
-          this.filterLabourJobsByLocation();
+          if (typeof window.filterLabourJobsByLocation === 'function') window.filterLabourJobsByLocation();
         }
-      } else if (state.currentRole === 'PROVIDER') {
-        // యజమాని / ప్రొవైడర్ మోడ్
+        if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+      }
+      // రైతు "యజమాని మోడ్" లోకి స్విచ్ అయితే:
+      else if (state.currentRole === 'PROVIDER') {
         if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
         if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
+        if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+        if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
+
         if (providerContainer) {
           providerContainer.style.setProperty('display', 'block', 'important');
-          if (window.ProviderModule) {
-            window.ProviderModule.renderDashboard(providerContainer, state.providerType || 'equipment');
+          if (typeof window.renderProviderDashboardView === 'function') {
+            window.renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
           }
         }
-      } else {
-        // డిఫాల్ట్: రైతు మోడ్
+        if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
+      }
+      // రైతు "రైతు మోడ్" లో ఉన్నప్పుడు:
+      else {
         if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
         if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
+
         if (farmerContainer) {
           farmerContainer.style.setProperty('display', 'block', 'important');
           if (typeof window.renderFarmerWidget === 'function') window.renderFarmerWidget();
@@ -135,24 +155,32 @@ window.RoleController = {
         if (typeof window.renderFarmerWidgetWithLiveProviders === 'function') {
           window.renderFarmerWidgetWithLiveProviders();
         }
+
+        if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+        if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
+        if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
       }
-      if (walletContainer) walletContainer.style.setProperty('display', 'block', 'important');
-    } 
-    // Case C: కేవలం ప్రొవైడర్ మాత్రమే లాగిన్ అయినప్పుడు
+    }
+    // C. యజమాని లాగిన్ (PROVIDER)
     else if (state.userType === "PROVIDER") {
       this.removeRoleSwitchBar();
+
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
       if (walletContainer) walletContainer.style.setProperty('display', 'none', 'important');
-      if (providerContainer && window.ProviderModule) {
+      if (mandiContainer) mandiContainer.style.setProperty('display', 'none', 'important');
+      if (weatherContainer) weatherContainer.style.setProperty('display', 'none', 'important');
+
+      if (providerContainer) {
         providerContainer.style.setProperty('display', 'block', 'important');
-        window.ProviderModule.renderDashboard(providerContainer, state.providerType || 'equipment');
+        if (typeof window.renderProviderDashboardView === 'function') {
+          window.renderProviderDashboardView(providerContainer, state.providerType || 'equipment');
+        }
       }
     }
   },
 
   renderUserProfileBanner: function() {
-    const mount = this.getRoleMountContainer() || document.body;
     let banner = document.getElementById("user-profile-banner");
     const state = window.AppState;
     const user = state ? (state.userProfile || state.user) : null;
@@ -165,13 +193,35 @@ window.RoleController = {
       const fragment = tpl.content.cloneNode(true);
       banner = fragment.querySelector(".user-profile-banner");
       banner.id = "user-profile-banner";
-      mount.prepend(banner);
+      const header = document.querySelector(".header") || document.querySelector("header") || document.body.firstChild;
+      if (header && header.parentNode) {
+        header.parentNode.insertBefore(banner, header.nextSibling);
+      } else {
+        document.body.prepend(banner);
+      }
     }
 
     let roleText = "రైతు (Farmer)";
-    if (state.userType === "LABOUR" || state.currentRole === "LABOUR") roleText = "కూలీ (Labour)";
-    else if (state.userType === "PROVIDER" || state.currentRole === "PROVIDER") roleText = "🤝 యజమాని (Provider)";
+    let badgeColor = "#16a34a";
 
+    if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY" || state.currentRole === "LABOUR") {
+      roleText = "కూలీ (Labour)";
+      badgeColor = "#ea580c";
+    } else if (state.userType === "PROVIDER" || state.currentRole === "PROVIDER") {
+      const pType = state.providerType || (user && user.providerType) || 'equipment';
+      if (pType === 'transport') {
+        roleText = "🚚 రవాణా యజమాని";
+        badgeColor = "#7c3aed";
+      } else if (pType === 'seeds') {
+        roleText = "🌱 విత్తనాల డీలర్";
+        badgeColor = "#16a34a";
+      } else {
+        roleText = "🚜 పరికరాల యజమాని";
+        badgeColor = "#f57c00";
+      }
+    }
+
+    banner.style.setProperty('--badge-color', badgeColor);
     banner.querySelector(".user-name-text").textContent = user.name || 'వినియోగదారుడు';
     banner.querySelector(".profile-banner-badge").textContent = roleText;
     banner.querySelector(".user-phone-text").textContent = user.phone || '';
@@ -183,33 +233,31 @@ window.RoleController = {
     if (banner) banner.remove();
   },
 
-  // రైతు డాష్‌బోర్డ్‌లో 3-ఇన్-1 మోడ్ స్విచర్ రెండరింగ్
   renderRoleSwitchBar: function() {
     const state = window.AppState;
     if (!state || !state.isLoggedIn || state.userType !== "FARMER") return;
 
-    const mount = this.getRoleMountContainer() || document.body;
-    let bar = document.getElementById("role-switch-container");
+    let switchContainer = document.getElementById("role-switch-container");
     const tpl = document.getElementById("role-dual-switch-template");
     if (!tpl) return;
 
-    if (!bar) {
+    if (!switchContainer) {
       const fragment = tpl.content.cloneNode(true);
-      bar = fragment.querySelector(".role-switch-container");
-      bar.id = "role-switch-container";
+      switchContainer = fragment.querySelector(".role-switch-container");
+      switchContainer.id = "role-switch-container";
 
-      const banner = document.getElementById("user-profile-banner");
-      if (banner && banner.nextSibling) {
-        mount.insertBefore(bar, banner.nextSibling);
+      const userBanner = document.getElementById('user-profile-banner');
+      if (userBanner && userBanner.parentNode) {
+        userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
       } else {
-        mount.appendChild(bar);
+        document.body.prepend(switchContainer);
       }
     }
 
     const current = state.currentRole || 'FARMER';
-    const farmerBtn = bar.querySelector("#role-btn-farmer");
-    const labourBtn = bar.querySelector("#role-btn-labour");
-    const providerBtn = bar.querySelector("#role-btn-provider");
+    const farmerBtn = switchContainer.querySelector("#role-btn-farmer");
+    const labourBtn = switchContainer.querySelector("#role-btn-labour");
+    const providerBtn = switchContainer.querySelector("#role-btn-provider");
 
     if (farmerBtn) farmerBtn.className = `role-switch-btn role-switch-farmer ${current === 'FARMER' ? 'active' : ''}`;
     if (labourBtn) labourBtn.className = `role-switch-btn role-switch-labour ${current === 'LABOUR' ? 'active' : ''}`;
@@ -217,54 +265,49 @@ window.RoleController = {
   },
 
   removeRoleSwitchBar: function() {
-    const bar = document.getElementById("role-switch-container");
-    if (bar) bar.remove();
-  },
-
-  filterLabourJobsByLocation: function() {
-    const profile = window.AppState?.userProfile;
-    if (!profile || !profile.village) return;
-
-    const jobCards = document.querySelectorAll(".job-card, .job-item, [data-village]");
-    jobCards.forEach(card => {
-      const jobVillage = card.getAttribute("data-village") || card.textContent;
-      if (jobVillage.toLowerCase().includes(profile.village.toLowerCase())) {
-        card.classList.add("job-card-highlight");
-      }
-    });
+    const switchContainer = document.getElementById("role-switch-container");
+    if (switchContainer) switchContainer.remove();
   },
 
   switchRoleMode: function(targetRole) {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
-    if (typeof window.AppState.setCurrentRole === 'function') {
-      window.AppState.setCurrentRole(targetRole);
-    }
+
     this.applyUserRoleView();
+
+    if (typeof speakTeluguText === "function") {
+      if (targetRole === "LABOUR") {
+        speakTeluguText("కూలీ మోడ్‌కి మారారు. మీ చుట్టుపక్కల పనుల వివరాలు ఇక్కడ కనిపిస్తాయి.");
+      } else if (targetRole === "PROVIDER") {
+        speakTeluguText("యజమాని మోడ్‌కి మారారు.");
+      } else {
+        speakTeluguText("రైతు మోడ్‌కి మారారు. మీ పొలం పనులకు కూలీలను పోస్ట్ చేయవచ్చు.");
+      }
+    }
   },
 
   logoutUser: function() {
-    if (window.AuthModule) window.AuthModule.close();
+    if (!window.AppState) window.AppState = {};
     window.AppState.isLoggedIn = false;
     window.AppState.userProfile = null;
-    window.AppState.user = null;
-    window.AppState.currentRole = "GUEST";
     localStorage.removeItem("agri_user_profile");
-    localStorage.removeItem("agri_user_role");
     this.applyUserRoleView();
+    if (typeof speakTeluguText === "function") {
+      speakTeluguText("ఖాతా నుండి విజయవంతంగా లాగౌట్ అయ్యారు.");
+    }
   }
 };
 
-// Global Bridges for Event Handlers & Backward Compatibility
+// Global Exposure for HTML onclick handlers
 window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
-window.openLoginModal = (r) => {
-  if (window.AuthModule) window.AuthModule.open({ role: r || 'FARMER' });
-};
-// పేజీ లోడ్ కాగానే ఆటోమేటిక్‌గా ప్రారంభించే లాజిక్ (Auto-Init)
-function initRoleOrchestrator() {
-  // లోకల్ స్టోరేజ్ నుండి లాగిన్ యూజర్ స్టేట్ చెక్
+window.removeProfileHeader = () => window.RoleController.removeProfileHeader();
+window.removeUserProfileBanner = () => window.RoleController.removeProfileHeader();
+window.removeRoleSwitchBar = () => window.RoleController.removeRoleSwitchBar();
+
+// Auto session restore & init
+document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
   if (savedData) {
     try {
@@ -273,28 +316,13 @@ function initRoleOrchestrator() {
         if (!window.AppState) window.AppState = {};
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
-        window.AppState.userType = user.roleType || user.userType || "FARMER";
-        window.AppState.currentRole = (window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
+        window.AppState.userType = user.userType || user.roleType || "FARMER";
+        window.AppState.providerType = user.providerType || "equipment";
+        window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY" || window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error("Session restore error:", e);
+    }
   }
-
-  // ల్యాండింగ్ వ్యూ లేదా డాష్‌బోర్డ్‌ను రన్ చేయడం
   window.RoleController.applyUserRoleView();
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener("DOMContentLoaded", initRoleOrchestrator);
-} else {
-  initRoleOrchestrator();
-}
-
-// ఇతర మాడ్యూల్స్ (Labour, Farmer) ఆలస్యంగా లోడ్ అయినా వాటిని నియంత్రించే సేఫ్టీ గార్డ్
-window.addEventListener("load", function() {
-  if (!window.AppState || !window.AppState.isLoggedIn) {
-    const labour = document.getElementById("labour-jobs-container");
-    if (labour) labour.style.setProperty('display', 'none', 'important');
-    window.RoleController.renderGuestCards();
-  }
 });
-
