@@ -239,6 +239,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // role/role.js లోని ఆఖరి DOMContentLoaded విభాగాన్ని ఇలా మార్చండి:
 
+// role/role.js - ఆఖరి సెషన్ రీస్టోర్ భాగం
+
 document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
   if (savedData) {
@@ -253,6 +255,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const savedActiveRole = localStorage.getItem("agri_current_active_role");
         const defaultRole = (user.roleType === "LABOUR" || user.roleType === "LABOUR_ONLY") ? "LABOUR" : (user.roleType || "FARMER");
         
+        // ఖచ్చితంగా సరైన రోల్ నే సెట్ చేయడం
         window.AppState.currentRole = savedActiveRole || defaultRole;
         window.AppState.userType = user.userType || user.roleType || "FARMER";
         window.AppState.providerType = user.providerType || "equipment";
