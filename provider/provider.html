@@ -1,6 +1,6 @@
-<!-- provider/provider.html - Dedicated Clean Provider Template -->
+<!-- provider/provider.html - Dedicated Clean Provider Templates -->
 
-<!-- 1. Provider Landing Card Template -->
+<!-- 1. యజమాని ల్యాండింగ్ కార్డ్ టెంప్లేట్ (లాగిన్ కానప్పుడు పబ్లిక్ కార్డ్) -->
 <template id="provider-landing-template">
   <div class="agri-landing-card provider-border">
     <div class="agri-card-header">
@@ -15,91 +15,86 @@
       <li>మీ పరికరాలు, రవాణా రేట్లు మీరే నిర్ణయించుకోండి.</li>
       <li>కమిషన్ లేకుండా నేరుగా కస్టమర్‌తో ఫోన్ / వాట్సాప్ సంప్రదింపులు.</li>
     </ul>
-    <button type="button" onclick="window.AuthModule.open({ role: 'PROVIDER' })" class="agri-landing-btn provider-btn-bg">
+    <button type="button" onclick="window.openProviderModal()" class="agri-landing-btn provider-btn-bg">
       యజమానిగా Login / సేవలను జోడించండి ➔
     </button>
   </div>
 </template>
 
-<!-- 2. Provider Dashboard Shell Template -->
+<!-- 2. యజమాని మెయిన్ డాష్‌బోర్డ్ షెల్ టెంప్లేట్ -->
 <template id="provider-dashboard-template">
-  <div class="provider-dashboard-card">
-    <h3 class="provider-dash-title"></h3>
-    <p class="provider-dash-desc"></p>
+  <div class="provider-dashboard-card" id="provider-dash-card-box">
+    <h3 class="provider-dash-title" id="p-dash-title">--</h3>
+    <p class="provider-dash-desc" id="p-dash-desc">--</p>
     
-    <div class="provider-add-service-btn">
+    <div onclick="window.openAddServiceModal()" class="provider-add-service-btn">
       <span class="provider-add-service-text">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
       <p class="provider-add-service-subtext">వివరాలు నమోదు చేయడానికి ఇక్కడ నొక్కండి</p>
     </div>
 
-    <div class="provider-items-box-wrapper"></div>
-    <div class="provider-incoming-requests-wrapper"></div>
+    <div id="provider-items-list" class="provider-items-box-wrapper"></div>
+    <div id="provider-incoming-requests" class="provider-incoming-requests-wrapper"></div>
   </div>
 </template>
 
-<!-- 3. Provider Item Row Template -->
-<template id="provider-item-row-template">
-  <div class="pitem-card-row">
-    <div>
-      <div class="pitem-card-title"></div>
-      <div class="pitem-card-details">
-        ధర / అద్దె: <b class="pitem-price-text"></b> | <span class="pitem-status-text"></span>
+<!-- 3. ప్రొవైడర్ లాగిన్ & రిజిస్ట్రేషన్ మోడల్ (3 Pill Tabs) -->
+<template id="provider-auth-modal-template">
+  <div id="provider-auth-modal" class="provider-modal-overlay">
+    <div class="provider-modal-card">
+      <button type="button" onclick="window.closeProviderModal()" class="provider-close-btn">✕</button>
+      
+      <div class="provider-modal-header">
+        <h3 class="provider-modal-title">🤝 యజమానుల సేవా కేంద్రం</h3>
+        <p class="provider-modal-subtitle">మీ కేటగిరీని ఎంచుకొని వివరాలు నమోదు చేయండి</p>
       </div>
+
+      <div class="provider-tab-row">
+        <button id="p-tab-equipment" type="button" onclick="window.selectProviderTab('equipment')" class="provider-tab-btn tab-eq active">
+          🚜 పరికరాలు
+        </button>
+        <button id="p-tab-transport" type="button" onclick="window.selectProviderTab('transport')" class="provider-tab-btn tab-tr">
+          🚚 రవాణా
+        </button>
+        <button id="p-tab-seeds" type="button" onclick="window.selectProviderTab('seeds')" class="provider-tab-btn tab-sd">
+          🌱 విత్తనాలు
+        </button>
+      </div>
+
+      <form id="provider-login-form" onsubmit="window.handleProviderLogin(event)">
+        <div class="provider-form-group">
+          <label class="provider-form-label">యజమాని / డీలర్ పేరు:</label>
+          <input type="text" id="prov-name" placeholder="ఉదా: రామయ్య / బాలాజీ ఫెర్టిలైజర్స్" required class="provider-form-input" />
+        </div>
+
+        <div class="provider-form-group">
+          <label class="provider-form-label">మొబైల్ నంబర్ (10 అంకెలు):</label>
+          <input type="tel" id="prov-phone" pattern="[0-9]{10}" placeholder="10 అంకెల ఫోన్ నంబర్" required class="provider-form-input" />
+        </div>
+
+        <div class="provider-form-group last">
+          <label class="provider-form-label">గ్రామం / పట్టణం:</label>
+          <input type="text" id="prov-village" placeholder="ఉదా: పరకాల, వరంగల్" required class="provider-form-input" />
+        </div>
+
+        <button id="prov-submit-btn" type="submit" class="provider-submit-btn">
+          🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔
+        </button>
+      </form>
     </div>
-    <button type="button" class="pitem-delete-btn">తీసివేయి</button>
   </div>
 </template>
 
-<!-- 4. Provider Order Card Template -->
-<template id="provider-order-card-template">
-  <div class="porders-card">
-    <div class="porders-card-top">
-      <span class="porders-type-tag"></span>
-      <span class="porders-time-text"></span>
-    </div>
-    <div class="porders-veh-name"></div>
-    <div class="porders-work-details">
-      <div>పని: <b class="porders-work-size"></b> &nbsp;|&nbsp; సమయం: <b class="porders-schedule"></b></div>
-      <div>రైతు: <b class="porders-farmer-name"></b>, గ్రామం: <b class="porders-village"></b></div>
-    </div>
-    <div class="porders-btn-row">
-      <a class="porders-action-btn porders-call-btn">📞 రైతుకు కాల్</a>
-      <a target="_blank" class="porders-action-btn porders-map-btn hidden">🗺️ పొలం మ్యాప్</a>
-      <button type="button" class="porders-action-btn porders-accept-btn">✅ ఒప్పుకోండి (Accept)</button>
-      <span class="porders-accepted-badge hidden">ఆర్డర్ స్వీకరించబడింది</span>
+<!-- 4. కొత్త వస్తువు / సేవను జోడించే పాప్-అప్ మోడల్ -->
+<template id="provider-item-modal-template">
+  <div id="provider-item-modal" class="pitem-modal-overlay">
+    <div class="pitem-modal-card">
+      <button type="button" onclick="window.closeAddServiceModal()" class="provider-close-btn">✕</button>
+      <h3 id="pitem-modal-title" class="pitem-modal-title">--</h3>
+
+      <form id="pitem-form" onsubmit="window.handleSaveProviderItem(event)">
+        <div id="pitem-dynamic-fields"></div>
+        <button type="submit" class="pitem-submit-btn">లిస్టింగ్‌ను సేవ్ చేయండి ➔</button>
+      </form>
     </div>
   </div>
 </template>
-
-<!-- 5. Add Service / Item Modal Popup -->
-<div id="provider-item-modal" class="pitem-modal-overlay" style="display: none;">
-  <div class="pitem-modal-card">
-    <button type="button" onclick="window.ProviderModule.closeAddModal()" class="provider-close-btn" aria-label="Close">✕</button>
-    <h3 id="pitem-modal-dynamic-title" class="pitem-modal-title">🚜 వస్తువు / పరికరం వివరాలు</h3>
-
-    <form id="provider-add-item-form" onsubmit="window.ProviderModule.handleSaveItem(event)">
-      <div class="provider-form-group">
-        <label id="pitem-lbl-1" class="provider-form-label">పేరు / మోడల్:</label>
-        <input type="text" id="item-field-1" required class="provider-form-input" />
-      </div>
-
-      <div class="provider-form-group">
-        <label id="pitem-lbl-2" class="provider-form-label">ధర / అద్దె (₹):</label>
-        <input type="text" id="item-field-2" required class="provider-form-input" />
-      </div>
-
-      <div class="provider-form-group last">
-        <label id="pitem-lbl-3" class="provider-form-label">లభ్యత / సామర్థ్యం:</label>
-        <select id="item-field-3-select" class="provider-form-input">
-          <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
-          <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
-        </select>
-       <input type="text" id="item-field-3-text" class="provider-form-input" style="display: none;" />
-      </div>
-
-      <button id="pitem-submit-btn" type="submit" class="pitem-submit-btn">
-        లిస్టింగ్‌ను సేవ్ చేయండి ➔
-      </button>
-    </form>
-  </div>
-</div>
