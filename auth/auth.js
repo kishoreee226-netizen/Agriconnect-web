@@ -14,9 +14,11 @@ window.AppState.currentRole = null;
       if (parsed && parsed.phone) {
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = parsed;
-        window.AppState.userType = parsed.roleType;
+        window.AppState.userType = parsed.roleType || 'FARMER';
         window.AppState.providerType = parsed.providerType || 'equipment';
-        window.AppState.currentRole = (parsed.roleType === 'LABOUR_ONLY') ? 'LABOUR' : (parsed.roleType || 'FARMER');
+        
+        const savedRole = localStorage.getItem("agri_current_active_role");
+        window.AppState.currentRole = savedRole || ((parsed.roleType === 'LABOUR_ONLY' || parsed.roleType === 'LABOUR') ? 'LABOUR' : 'FARMER');
       }
     }
   } catch (e) {
@@ -54,25 +56,29 @@ window.registerUniversalUser = function(profileData) {
   }
 
   const cleanPhone = phone.trim();
+  const assignedRole = (roleType === 'LABOUR_ONLY' || roleType === 'LABOUR') ? 'LABOUR' : (roleType || 'FARMER');
+
   const profile = {
     name: name.trim(),
     phone: cleanPhone,
     village: village.trim(),
-    roleType: roleType || 'FARMER',
+    roleType: assignedRole,
+    userType: assignedRole,
     providerType: providerType || window.AppState.providerType || 'equipment',
     pin: cleanPin,
     updatedAt: new Date().toISOString()
   };
 
   window.AppState.isLoggedIn = true;
-  window.AppState.userType = profile.roleType;
+  window.AppState.userType = assignedRole;
+  window.AppState.currentRole = assignedRole;
   window.AppState.providerType = profile.providerType;
-  window.AppState.currentRole = (profile.roleType === 'LABOUR_ONLY') ? 'LABOUR' : profile.roleType;
   window.AppState.userProfile = profile;
 
   try {
     localStorage.setItem('agri_user_profile', JSON.stringify(profile));
     localStorage.setItem('agri_last_user', JSON.stringify(profile));
+    localStorage.setItem('agri_current_active_role', assignedRole);
   } catch (e) {}
 
   if (window.AgriDB && typeof window.AgriDB.saveUser === 'function') {
@@ -85,7 +91,7 @@ window.registerUniversalUser = function(profileData) {
 };
 
 // --- 3. Fast Login with 4-Digit PIN ---
-window.loginWithPin = async function(phone, inputPin) {
+window.loginWithPin = async function(phone, inputPin, expectedRole = 'FARMER') {
   const cleanPhone = (phone || "").toString().trim();
   const cleanPin = (inputPin || "").toString().trim();
 
@@ -96,35 +102,39 @@ window.loginWithPin = async function(phone, inputPin) {
     alert("దయచేసి 4 అంకెల పిన్ నమోదు చేయండి."); return false;
   }
 
+  // A. LocalStorage Check
   try {
     const saved = localStorage.getItem("agri_user_profile") || localStorage.getItem("agri_last_user");
     if (saved) {
       const user = JSON.parse(saved);
       if (user.phone === cleanPhone && user.pin === cleanPin) {
+        const assignedRole = expectedRole || user.roleType || 'FARMER';
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
-        window.AppState.userType = user.roleType;
-        window.AppState.providerType = user.providerType || 'equipment';
-        window.AppState.currentRole = (user.roleType === 'LABOUR_ONLY') ? 'LABOUR' : (user.roleType || 'FARMER');
+        window.AppState.userType = assignedRole;
+        window.AppState.currentRole = assignedRole;
         localStorage.setItem("agri_user_profile", JSON.stringify(user));
+        localStorage.setItem("agri_current_active_role", assignedRole);
         return user;
       }
     }
   } catch (e) {}
 
+  // B. Firebase Firestore Cloud Check
   if (window.db && window.db.collection) {
     try {
       const snap = await window.db.collection("users").doc(cleanPhone).get();
       if (snap.exists) {
         const cloudUser = snap.data();
         if (cloudUser.pin === cleanPin) {
+          const assignedRole = expectedRole || cloudUser.roleType || 'FARMER';
           window.AppState.isLoggedIn = true;
           window.AppState.userProfile = cloudUser;
-          window.AppState.userType = cloudUser.roleType;
-          window.AppState.providerType = cloudUser.providerType || 'equipment';
-          window.AppState.currentRole = (cloudUser.roleType === 'LABOUR_ONLY') ? 'LABOUR' : (cloudUser.roleType || 'FARMER');
+          window.AppState.userType = assignedRole;
+          window.AppState.currentRole = assignedRole;
           localStorage.setItem("agri_user_profile", JSON.stringify(cloudUser));
           localStorage.setItem("agri_last_user", JSON.stringify(cloudUser));
+          localStorage.setItem("agri_current_active_role", assignedRole);
           return cloudUser;
         } else {
           alert("తప్పుడు పిన్! దయచేసి సరైన 4 అంకెల పిన్ నమోదు చేయండి."); return false;
@@ -137,17 +147,25 @@ window.loginWithPin = async function(phone, inputPin) {
     }
   }
 
-  alert("లాగిన్ సమస్య వచ్చింది. మళ్ళీ ప్రయత్నించండి.");
+  alert("లాగిన్ వివరాలు సరిపోలలేదు. దయచేసి నమోదు చేసుకోండి.");
   return false;
 };
 
 // --- 4. Logout ---
 window.logoutUser = function() {
-  window.AppState.isLoggedIn = false;
-  window.AppState.userProfile = null;
-  window.AppState.currentRole = null;
+  if (window.AppState) {
+    window.AppState.isLoggedIn = false;
+    window.AppState.userProfile = null;
+    window.AppState.currentRole = "GUEST";
+  }
   localStorage.removeItem("agri_user_profile");
-  location.reload();
+  localStorage.removeItem("agri_current_active_role");
+  
+  if (typeof window.applyUserRoleView === 'function') {
+    window.applyUserRoleView();
+  } else {
+    location.reload();
+  }
 };
 
 // --- 5. UI Modal Controller (AuthModule) ---
@@ -158,7 +176,8 @@ window.AuthModule = {
   roleConfigs: {
     FARMER: { theme: 'role-theme-farmer', icon: '🌾', label: 'రైతు లాగిన్' },
     LABOUR: { theme: 'role-theme-labour', icon: '👷', label: 'కూలీల లాగిన్' },
-    PROVIDER: { theme: 'role-theme-provider', icon: '🚜', label: 'యంత్రాల ప్రొవైడర్' }
+    LABOUR_ONLY: { theme: 'role-theme-labour', icon: '👷', label: 'కూలీల లాగిన్' },
+    PROVIDER: { theme: 'role-theme-provider', icon: '🤝', label: 'యజమానుల కేంద్రం' }
   },
 
   isLoggedIn: function() {
@@ -166,7 +185,8 @@ window.AuthModule = {
   },
 
   open: function(options = {}) {
-    this.currentRole = options.role || 'FARMER';
+    const rawRole = (typeof options === 'string') ? options : (options.role || 'FARMER');
+    this.currentRole = (rawRole === 'LABOUR_ONLY' || rawRole === 'LABOUR') ? 'LABOUR' : rawRole;
     this.targetContainer = options.target || null;
 
     const modal = document.getElementById('agriAuthModal');
@@ -174,29 +194,41 @@ window.AuthModule = {
 
     const cfg = this.roleConfigs[this.currentRole] || this.roleConfigs.FARMER;
     modal.className = `agri-auth-overlay ${cfg.theme}`;
-    document.getElementById('authBadgeIcon').innerText = cfg.icon;
-    document.getElementById('authBadgeText').innerText = cfg.label;
+    
+    const iconEl = document.getElementById('authBadgeIcon');
+    const badgeEl = document.getElementById('authBadgeText');
+    if (iconEl) iconEl.innerText = cfg.icon;
+    if (badgeEl) badgeEl.innerText = cfg.label;
 
     const savedUser = window.AppState && window.AppState.userProfile;
     const phoneRow = document.getElementById('authPhoneRow');
     const phoneInput = document.getElementById('authMobileInput');
     const pinInput = document.getElementById('authPinInput');
-    pinInput.value = '';
+    const subText = document.getElementById('authCardSub');
+    if (pinInput) pinInput.value = '';
 
-    if (savedUser && savedUser.phone) {
-      phoneRow.style.display = 'none';
-      phoneInput.value = savedUser.phone;
-      document.getElementById('authCardSub').innerText = `${savedUser.name || 'రైతు'} (${savedUser.phone})`;
+    // కేవలం అదే రోల్ కు సంబంధించిన యూజర్ డేటా ఉంటేనే ఆటోమేటిక్ గా పిన్ స్క్రీన్ వస్తుంది
+    if (savedUser && savedUser.phone && (savedUser.roleType === this.currentRole || savedUser.userType === this.currentRole)) {
+      if (phoneRow) phoneRow.style.display = 'none';
+      if (phoneInput) phoneInput.value = savedUser.phone;
+      if (subText) subText.innerText = `${savedUser.name || 'వినియోగదారుడు'} (${savedUser.phone})`;
+      this.toggleView('PIN');
     } else {
-      phoneRow.style.display = 'flex';
-      phoneInput.value = '';
-      document.getElementById('authCardSub').innerText = 'కొనసాగడానికి మీ భద్రతా పిన్ నమోదు చేయండి';
+      if (phoneRow) phoneRow.style.display = 'flex';
+      if (phoneInput) phoneInput.value = '';
+      if (subText) subText.innerText = 'కొనసాగడానికి వివరాలు నమోదు చేయండి';
+      this.toggleView('PIN');
     }
 
-    this.toggleView('PIN');
     modal.style.display = 'flex';
     document.body.classList.add('modal-open-freeze');
-    setTimeout(() => pinInput.focus(), 200);
+    setTimeout(() => {
+      if (phoneRow && phoneRow.style.display !== 'none' && phoneInput) {
+        phoneInput.focus();
+      } else if (pinInput) {
+        pinInput.focus();
+      }
+    }, 200);
   },
 
   close: function() {
@@ -207,13 +239,16 @@ window.AuthModule = {
   },
 
   toggleView: function(view) {
-    document.getElementById('authPinFlow').style.display = (view === 'PIN') ? 'block' : 'none';
-    document.getElementById('authRegisterFlow').style.display = (view === 'REGISTER') ? 'block' : 'none';
+    const pinBox = document.getElementById('authPinFlow');
+    const regBox = document.getElementById('authRegisterFlow');
+    if (pinBox) pinBox.style.display = (view === 'PIN') ? 'block' : 'none';
+    if (regBox) regBox.style.display = (view === 'REGISTER') ? 'block' : 'none';
   },
 
   submitLogin: async function() {
-    const phone = (document.getElementById('authMobileInput').value || window.getActiveUserPhone()).trim();
-    const pin = document.getElementById('authPinInput').value.trim();
+    const phoneInput = document.getElementById('authMobileInput');
+    const phone = (phoneInput?.value || window.getActiveUserPhone()).trim();
+    const pin = document.getElementById('authPinInput')?.value.trim();
 
     if (!phone || phone.length !== 10) {
       alert('దయచేసి సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.'); return;
@@ -222,17 +257,17 @@ window.AuthModule = {
       alert('దయచేసి 4 అంకెల సెక్యూరిటీ పిన్ నమోదు చేయండి.'); return;
     }
 
-    const user = await window.loginWithPin(phone, pin);
+    const user = await window.loginWithPin(phone, pin, this.currentRole);
     if (user) {
       this.handleSuccessRedirect();
     }
   },
 
   submitRegister: function() {
-    const name = document.getElementById('regNameInput').value;
-    const phone = document.getElementById('regPhoneInput').value;
-    const village = document.getElementById('regVillageInput').value;
-    const pin = document.getElementById('regPinInput').value;
+    const name = document.getElementById('regNameInput')?.value;
+    const phone = document.getElementById('regPhoneInput')?.value;
+    const village = document.getElementById('regVillageInput')?.value;
+    const pin = document.getElementById('regPinInput')?.value;
 
     const ok = window.registerUniversalUser({
       name, phone, village, pin, roleType: this.currentRole
@@ -245,13 +280,22 @@ window.AuthModule = {
   },
 
   handleSuccessRedirect: function() {
-    const target = this.targetContainer;
     this.close();
 
-    if (target && typeof window.openDirectAppView === 'function') {
-      setTimeout(() => {
-        window.openDirectAppView(target.containerId, target.title, target.icon, false);
-      }, 150);
+    // కేంద్ర ట్రాఫిక్ కంట్రోలర్ వ్యూ అప్‌డేట్ ట్రిగ్గర్
+    if (typeof window.applyUserRoleView === 'function') {
+      window.applyUserRoleView();
+    } else if (window.RoleController && typeof window.RoleController.applyUserRoleView === 'function') {
+      window.RoleController.applyUserRoleView();
     }
   }
+};
+
+// --- 6. Global Forwarding Bridge (రైతు & కూలీ కార్డుల కోసం) ---
+window.openLoginModal = function(role) {
+  window.AuthModule.open({ role: role || 'FARMER' });
+};
+
+window.closeLoginModal = function() {
+  window.AuthModule.close();
 };
