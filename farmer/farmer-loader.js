@@ -1,31 +1,38 @@
-// farmer/farmer-loader.js
-(async function initAgriFarmerModule() {
-  try {
-    const timestamp = Date.now();
+// farmer/farmer-loader.js - Dynamic Loader for Farmer Templates & Styles
 
-    // 1. Load CSS
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `farmer/farmer.css?v=${timestamp}`;
+(function() {
+  // 1. farmer.css ఇంజెక్ట్ చేయడం
+  if (!document.getElementById("farmer-css-link")) {
+    const link = document.createElement("link");
+    link.id = "farmer-css-link";
+    link.rel = "stylesheet";
+    link.href = "farmer/farmer.css";
     document.head.appendChild(link);
-
-    // 2. Fetch and Inject farmer.html templates into DOM
-    const response = await fetch(`farmer/farmer.html?v=${timestamp}`);
-    if (response.ok) {
-      const htmlText = await response.text();
-      const mount = document.createElement('div');
-      mount.id = 'agri-farmer-module-mount';
-      mount.innerHTML = htmlText;
-      document.body.appendChild(mount);
-    }
-
-    // 3. Load Farmer JS Engine
-    const script = document.createElement('script');
-    script.src = `farmer/farmer.js?v=${timestamp}`;
-    document.body.appendChild(script);
-
-    console.log("✅ AgriConnect Farmer Module Loaded Successfully");
-  } catch (err) {
-    console.error("❌ Failed to load AgriConnect Farmer Module:", err);
   }
+
+  // 2. farmer.html టెంప్లేట్లను DOM లోకి తీసుకురావడం
+  fetch("farmer/farmer.html")
+    .then(response => {
+      if (!response.ok) throw new Error("farmer.html లోడ్ కాలేదు");
+      return response.text();
+    })
+    .then(html => {
+      const div = document.createElement("div");
+      div.id = "farmer-templates-container";
+      div.style.display = "none";
+      div.innerHTML = html;
+      document.body.appendChild(div);
+
+      // లాగిన్ కాకపోతే ల్యాండింగ్ కార్డ్‌ను, లాగిన్ అయి రైతు రోల్‌లో ఉంటే డాష్‌బోర్డ్‌ను చూపించడం
+      if (!window.AppState || !window.AppState.isLoggedIn) {
+        if (typeof window.renderFarmerLandingCard === 'function') {
+          window.renderFarmerLandingCard();
+        }
+      } else if (window.AppState.currentRole === "FARMER") {
+        if (typeof window.renderFarmerWidget === 'function') {
+          window.renderFarmerWidget();
+        }
+      }
+    })
+    .catch(err => console.error("Farmer loader error:", err));
 })();
