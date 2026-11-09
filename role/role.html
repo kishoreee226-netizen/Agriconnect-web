@@ -1,32 +1,39 @@
-<!-- role/role.html - User Profile Banner & Role Switcher Templates -->
-
-<!-- 1. Logged-in User Profile Banner Template -->
+<!-- 1. లాగిన్ అయిన యూజర్ ప్రొఫైల్ బ్యానర్ -->
 <template id="role-profile-banner-template">
   <div class="user-profile-banner">
-    <div class="profile-banner-info">
-      <div class="profile-banner-name">
-        <span class="user-name-text">👤 వినియోగదారుడు</span>
-        <span class="profile-banner-badge"></span>
-      </div>
-      <div class="profile-banner-details">
-        <span class="user-phone-text">📞 </span> &nbsp;|&nbsp; 📍 <b class="user-village-text"></b>
+    <div class="profile-banner-left">
+      <div class="profile-avatar-circle">👤</div>
+      <div class="profile-info-block">
+        <div class="user-name-line">
+          <strong class="user-name-text">రైతు సోదరుడు</strong>
+          <span class="profile-banner-badge">రైతు (Farmer)</span>
+        </div>
+        <div class="user-meta-line">
+          <span class="meta-item"><span class="meta-icon">📞</span> <span class="user-phone-text">--</span></span>
+          <span class="meta-dot">•</span>
+          <span class="meta-item"><span class="meta-icon">📍</span> <span class="user-village-text">--</span></span>
+        </div>
       </div>
     </div>
-    <button type="button" class="profile-banner-logout-btn" onclick="window.RoleController.logoutUser()">లాగౌట్ (Logout)</button>
+    <div class="profile-banner-right">
+      <button type="button" class="logout-btn-minimal" onclick="window.logoutUser()" title="Logout">
+        <span class="logout-icon">🚪</span> లాగౌట్
+      </button>
+    </div>
   </div>
 </template>
 
-<!-- 2. Dual-Role Switch Bar (For Farmers) -->
+<!-- 2. రైతు కోసం 3-ఇన్-1 మోడ్ స్విచర్ ట్యాబ్స్ -->
 <template id="role-dual-switch-template">
   <div class="role-switch-container">
-    <button type="button" id="role-btn-farmer" onclick="window.RoleController.switchRoleMode('FARMER')" class="role-switch-btn role-switch-farmer">
-      🌾 Farmer mode (రైతు)
+    <button type="button" id="role-btn-farmer" class="role-switch-btn role-switch-farmer active" onclick="window.switchRoleMode('FARMER')">
+      🌾 రైతు మోడ్
     </button>
-    <button type="button" id="role-btn-labour" onclick="window.RoleController.switchRoleMode('LABOUR')" class="role-switch-btn role-switch-labour">
-      👷 Labour mode (కూలీ)
+    <button type="button" id="role-btn-labour" class="role-switch-btn role-switch-labour" onclick="window.switchRoleMode('LABOUR')">
+      👷 కూలీ మోడ్
     </button>
-      <button type="button" id="role-btn-provider" onclick="window.RoleController.switchRoleMode('PROVIDER')" class="role-switch-btn role-switch-provider">
-        🛠️ Provider mode (యజమాని)
-      </button>
+    <button type="button" id="role-btn-provider" class="role-switch-btn role-switch-provider" onclick="window.switchRoleMode('PROVIDER')">
+      🤝 యజమాని మోడ్
+    </button>
   </div>
 </template>
