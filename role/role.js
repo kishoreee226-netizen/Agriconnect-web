@@ -13,6 +13,7 @@ window.RoleController = {
     return document.getElementById("provider-hub-container") || document.getElementById("provider-container");
   },
 
+  // ఏకైక బాధ్యత: ట్రాఫిక్ సిగ్నల్ లా ఏది ఆన్ ఉండాలో, ఏది ఆఫ్ ఉండాలో నిర్ణయించడం
   applyUserRoleView: function() {
     const state = window.AppState;
     const farmerBox = this.getFarmerContainer();
@@ -48,7 +49,7 @@ window.RoleController = {
 
     // 2. లాగిన్ అయినప్పుడు: ప్రొఫైల్ బ్యానర్ & రోల్ స్విచ్ బార్
     this.renderUserProfileBanner();
-    this.renderRoleSwitchBar(); // బేస్ యూజర్ రైతు అయితే స్విచ్ బార్ ఎల్లప్పుడూ ఉండాలి!
+    this.renderRoleSwitchBar();
 
     // A. కూలీ మోడ్ (LABOUR)
     if (state.currentRole === "LABOUR") {
@@ -137,7 +138,7 @@ window.RoleController = {
 
   renderRoleSwitchBar: function() {
     const state = window.AppState;
-    // యూజర్ బేస్ అకౌంట్ రైతు అయినప్పుడు మాత్రమే పైన స్విచ్ బార్ కనిపిస్తుంది
+    // బేస్ అకౌంట్ రైతు అయితే మాత్రమే 3 మోడ్స్ మార్చుకునే స్విచ్ బార్ ఉంటుంది
     if (!state || !state.isLoggedIn || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
       this.removeRoleSwitchBar();
       return;
@@ -179,7 +180,7 @@ window.RoleController = {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
 
-    // కేవలం యాక్టివ్ మోడ్ మాత్రమే మారాలి, బేస్ యూజర్ ప్రొఫైల్ ఎప్పటికీ చెరిగిపోకూడదు!
+    // కేవలం యాక్టివ్ మోడ్ మాత్రమే మారాలి
     localStorage.setItem("agri_current_active_role", targetRole);
     localStorage.setItem("agri_user_role", targetRole);
 
@@ -202,29 +203,7 @@ window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
 
-// DOM సిద్ధమైనప్పుడు సెషన్ రికవరీ
+// DOM సిద్ధమైనప్పుడు state.js రెడీ చేసిన వ్యూని ట్రిగ్గర్ చేయడం
 document.addEventListener("DOMContentLoaded", function() {
-  const savedData = localStorage.getItem("agri_user_profile");
-  if (savedData) {
-    try {
-      const user = JSON.parse(savedData);
-      if (user && user.phone) {
-        if (!window.AppState) window.AppState = {};
-        window.AppState.isLoggedIn = true;
-        window.AppState.userProfile = user;
-
-        // బేస్ అకౌంట్ టైప్ రైతుగా ఉంటేనే స్విచ్చింగ్ సాధ్యమవుతుంది
-        const baseRole = (user.roleType === "LABOUR_ONLY" || user.roleType === "LABOUR") ? "LABOUR" : "FARMER";
-        window.AppState.userType = baseRole;
-
-        // యూజర్ సెలెక్ట్ చేసిన మోడ్
-        const savedActiveRole = localStorage.getItem("agri_current_active_role") || localStorage.getItem("agri_user_role");
-        window.AppState.currentRole = savedActiveRole || baseRole;
-        window.AppState.providerType = user.providerType || "equipment";
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
   window.RoleController.applyUserRoleView();
 });
