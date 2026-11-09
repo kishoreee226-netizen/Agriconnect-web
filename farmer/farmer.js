@@ -60,9 +60,7 @@ window.renderFarmerWidget = function() {
   renderFarmerAcceptedList();
 
   // Booking Records రెండర్
-  if (typeof window.renderBookingRecords === "function") {
-    window.renderBookingRecords();
-  }
+  window.renderBookingRecords();
 
   prefillFarmerFormDefaults();
   bindFarmerFormEvents();
@@ -70,7 +68,7 @@ window.renderFarmerWidget = function() {
 
 window.renderFarmerLabourPane = window.renderFarmerWidget;
 
-// 3. Accepted List & Slot Tracking
+// 3. Accepted List & Slot Tracking (Confirm అయిన కూలీల వివరాలతో సహా)
 function renderFarmerAcceptedList() {
   const wrap = document.getElementById("farmer-accepted-section-wrapper");
   if (!wrap) return;
@@ -83,36 +81,56 @@ function renderFarmerAcceptedList() {
     postedJobs = [];
   }
 
+  // కూలీల వివరాల సేకరణ
+  let allConfirmed = [];
+  postedJobs.forEach(pj => {
+    if (pj.confirmedLabours && Array.isArray(pj.confirmedLabours)) {
+      pj.confirmedLabours.forEach(c => {
+        allConfirmed.push({
+          labourName: c.name || "కూలీ",
+          labourPhone: c.phone || "",
+          crop: pj.crop,
+          workType: pj.workType,
+          wage: pj.wage
+        });
+      });
+    }
+  });
+
   let html = `
-    <div class="accepted-section">
-      ${postedJobs.length > 0 ? `
-        <div class="slot-tracker-box">
-          <h4 class="slot-tracker-title">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
-          <div class="slot-tracker-scroll custom-scroll">
+    <div class="accepted-section" style="margin-top: 14px;">
+      <!-- A. Live Slot Tracking -->
+      <div class="slot-tracker-box" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px; margin-bottom:12px;">
+        <h4 class="slot-tracker-title" style="margin:0 0 8px; font-size:13px; color:#166534;">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
+        ${postedJobs.length === 0 ? `
+          <div style="font-size:12px; color:#64748b; text-align:center; padding:8px;">మీరు ఇంకా ఎలాంటి పనులు పోస్ట్ చేయలేదు.</div>
+        ` : `
+          <div class="slot-tracker-scroll custom-scroll" style="max-height:220px; overflow-y:auto;">
             ${postedJobs.map(j => {
               const confirmed = j.confirmedLabours || [];
               const reqCount = parseInt(j.totalRequired || j.count || 1);
               const isFull = confirmed.length >= reqCount;
 
               return `
-                <div class="slot-job-card ${isFull ? 'is-full' : ''}">
-                  <div class="slot-card-header">
-                    <strong class="slot-job-title">🌾 ${j.crop} - ${j.workType}</strong>
-                    <span class="slot-status-badge ${isFull ? 'is-full' : ''}">
+                <div class="slot-job-card ${isFull ? 'is-full' : ''}" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:10px; margin-bottom:8px;">
+                  <div class="slot-card-header" style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong class="slot-job-title" style="font-size:13px; color:#1e293b;">🌾 ${j.crop} - ${j.workType}</strong>
+                    <span class="slot-status-badge ${isFull ? 'is-full' : ''}" style="font-size:10px; padding:2px 6px; border-radius:4px; background:${isFull ? '#dcfce7' : '#fef3c7'}; color:${isFull ? '#166534' : '#b45309'}; font-weight:bold;">
                       ${isFull ? '✅ కోటా పూర్తయింది' : '⏳ కూలీల కోసం చూస్తున్నారు'}
                     </span>
                   </div>
-                  <div class="slot-job-details">
+                  <div class="slot-job-details" style="font-size:11px; color:#64748b; margin:4px 0;">
                     📅 తేదీ: <b>${j.workDate || j.date || 'ఈ రోజు'}</b> | కోటా: <b>${confirmed.length} / ${reqCount} మంది</b> | రేటు: ₹${j.wage}
                   </div>
                   ${confirmed.length > 0 ? `
-                    <div class="slot-labours-wrapper">
+                    <div class="slot-labours-wrapper" style="margin-top:6px; padding-top:4px; border-top:1px dashed #e2e8f0;">
+                      <span style="font-size:11px; font-weight:bold; color:#166534;">చేరిన కూలీలు:</span>
                       ${confirmed.map(c => `
-                        <div class="slot-labour-row">
-                          <span class="slot-labour-info">👷 <b>${c.name}</b> (${c.phone})</span>
+                        <div class="slot-labour-row" style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                          <span class="slot-labour-info" style="font-size:11px;">👷 <b>${c.name}</b> (${c.phone})</span>
                           <div class="slot-btn-group">
-                            <a href="tel:${c.phone}" class="slot-btn-call">📞 కాల్</a>
-                            <a href="https://wa.me/91${c.phone}" target="_blank" class="slot-btn-whatsapp">💬 వాట్సాప్</a>
+                            <a href="tel:${c.phone}" class="slot-btn-call" style="padding:2px 6px; background:#dbeafe; color:#1e40af; border-radius:4px; text-decoration:none; font-size:10px; font-weight:bold;">📞 కాల్</a>
+                            <a href="https://wa.me/91${c.phone}" target="_blank" class="slot-btn-whatsapp" style="padding:2px 6px; background:#dcfce7; color:#166534; border-radius:4px; text-decoration:none; font-size:10px; font-weight:bold; margin-left:4px;">💬 వాట్సాప్</a>
                           </div>
                         </div>
                       `).join('')}
@@ -122,8 +140,32 @@ function renderFarmerAcceptedList() {
               `;
             }).join('')}
           </div>
+        `}
+      </div>
+
+      <!-- B. Confirm అయిన కూలీల ప్రత్యేక కార్డ్స్ -->
+      <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:12px; margin-bottom:12px;">
+        <h4 style="margin:0 0 10px; font-size:13px; color:#1e293b;">👥 Confirm అయిన కూలీలు (${allConfirmed.length}):</h4>
+        <div id="accepted-list" class="custom-scroll" style="max-height:200px; overflow-y:auto;">
+          ${allConfirmed.length === 0 ? `
+            <div style="font-size:12px; color:#64748b; text-align:center; padding:8px;">
+              కూలీలు పనిని accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.
+            </div>
+          ` : allConfirmed.map(j => `
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong>👷 ${j.labourName}</strong>
+                <span style="background:#dcfce7; color:#166534; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:12px;">₹${j.wage}</span>
+              </div>
+              <div style="font-size:12px; color:#475569; margin:4px 0;">పని: ${j.crop} (${j.workType})</div>
+              <div style="display:flex; gap:6px; margin-top:6px;">
+                <a href="tel:${j.labourPhone}" style="padding:4px 8px; background:#dbeafe; color:#1e40af; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold;">📞 కాల్</a>
+                <a href="https://wa.me/91${j.labourPhone}" target="_blank" style="padding:4px 8px; background:#dcfce7; color:#166534; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold;">💬 వాట్సాప్</a>
+              </div>
+            </div>
+          `).join('')}
         </div>
-      ` : ''}
+      </div>
     </div>
   `;
   wrap.innerHTML = html;
@@ -206,7 +248,7 @@ function prefillFarmerFormDefaults() {
   if (villageBtn && profile.village) villageBtn.textContent = "🏛️ " + profile.village;
 }
 
-// 5. Job Posting Modal (Auto-Prefill & Handle)
+// 5. Job Posting Modal
 window.openFarmerJobModal = function() {
   let modal = document.getElementById("farmerJobModal");
   if (!modal) {
@@ -321,36 +363,63 @@ window.closeBookingModal = function() {
   if (modal) modal.style.display = "none";
 };
 
+// 7. పరికరాల బుకింగ్ రికార్డులు (Naa Bookinglu)
 window.renderBookingRecords = function() {
   const container = document.getElementById("farmer-booking-records");
   if (!container) return;
 
   let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
-  if (bookings.length === 0) {
-    container.innerHTML = "";
-    return;
-  }
 
   container.innerHTML = `
-    <div class="booking-records-section">
-      <h4>📋 Naa Bookinglu (${bookings.length}):</h4>
-      ${bookings.map(b => `
-        <div class="booking-record-card" style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-top: 8px;">
-          <div>🚜 <b>${b.itemName}</b> | Status: <b>${b.status}</b></div>
-          <div>👤 యజమాని: ${b.ownerName} (${b.phone}) | తేదీ: ${b.date}</div>
-          <div style="margin-top: 6px;">
-            <a href="tel:${b.phone}" style="padding: 4px 8px; background: #dbeafe; text-decoration: none; border-radius: 4px;">📞 కాల్</a>
-            <a href="https://wa.me/91${b.phone}" target="_blank" style="padding: 4px 8px; background: #dcfce7; text-decoration: none; border-radius: 4px; margin-left: 6px;">💬 వాట్సాప్</a>
-            ${!b.escrowLocked ? `
-              <button onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')" style="margin-left:6px; padding:4px 8px; background:#fef3c7; border:none; border-radius:4px; cursor:pointer;">
-                🔒 ₹500 Escrow Lock
-              </button>
-            ` : '<span style="color:#16a34a; font-weight:bold; margin-left:6px;">✅ Escrow Locked</span>'}
-          </div>
+    <div class="booking-records-section" style="margin-top: 14px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <h4 style="margin: 0; font-size: 13px; color: #1e293b;">📋 నా పరికరాల & వాహనాల బుకింగ్‌లు (${bookings.length}):</h4>
+        ${bookings.length > 0 ? `
+          <button type="button" onclick="window.clearFarmerBookings()" style="background: none; border: none; color: #ef4444; font-size: 11px; font-weight: bold; cursor: pointer;">🗑️ Clear</button>
+        ` : ''}
+      </div>
+      
+      ${bookings.length === 0 ? `
+        <div style="font-size: 12px; color: #64748b; text-align: center; padding: 10px;">
+          మీరు ఇంకా ఎలాంటి పరికరాలు లేదా వాహనాలు బుక్ చేసుకోలేదు.
         </div>
-      `).join('')}
+      ` : `
+        <div class="booking-records-scroll custom-scroll" style="max-height: 250px; overflow-y: auto;">
+          ${bookings.map(b => {
+            const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
+            return `
+              <div class="booking-record-card" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-top: 8px; background: #f8fafc;">
+                <div style="display: flex; justify-content: space-between;">
+                  <span>🚜 <b>${b.itemName}</b></span>
+                  <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${isLocked ? '#dcfce7' : '#fef3c7'}; color: ${isLocked ? '#166534' : '#b45309'}; font-weight: bold;">${b.status}</span>
+                </div>
+                <div style="font-size: 12px; color: #475569; margin: 4px 0;">
+                  👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
+                  📅 తేదీ: <b>${b.date}</b> | ⏱️ పరిమాణం: <b>${b.duration}</b> | 💰 ధర: <b>${b.rate}</b>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center; margin-top: 6px;">
+                  <a href="tel:${b.phone}" style="padding: 4px 8px; background: #dbeafe; color: #1e40af; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: bold;">📞 కాల్</a>
+                  <a href="https://wa.me/91${b.phone}" target="_blank" style="padding: 4px 8px; background: #dcfce7; color: #166534; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: bold;">💬 వాట్సాప్</a>
+                  ${!isLocked ? `
+                    <button onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')" style="padding: 4px 8px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; color: #b45309;">
+                      🔒 ₹500 Escrow Lock
+                    </button>
+                  ` : '<span style="color: #16a34a; font-weight: bold; font-size: 11px;">✅ Escrow Locked</span>'}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `}
     </div>
   `;
+};
+
+window.clearFarmerBookings = function() {
+  if (confirm("బుకింగ్ రికార్డులన్నింటినీ తీసివేయాలా?")) {
+    localStorage.removeItem("farmer_bookings");
+    window.renderBookingRecords();
+  }
 };
 
 window.lockBookingEscrow = function(bookingId, amount, itemName) {
