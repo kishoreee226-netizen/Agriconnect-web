@@ -1,4 +1,4 @@
-// role/role.js - Pure Role Switcher & View Orchestrator (No Extra Work)
+// role/role.js - Pure Role Switcher & View Orchestrator
 
 window.RoleController = {
   getFarmerContainer: function() {
@@ -13,7 +13,6 @@ window.RoleController = {
     return document.getElementById("provider-hub-container") || document.getElementById("provider-container");
   },
 
-  // ఏకైక బాధ్యత: ట్రాఫిక్ సిగ్నల్ లా ఏది ఆన్ ఉండాలో, ఏది ఆఫ్ ఉండాలో నిర్ణయించడం
   applyUserRoleView: function() {
     const state = window.AppState;
     const farmerBox = this.getFarmerContainer();
@@ -47,17 +46,12 @@ window.RoleController = {
       return;
     }
 
-    // 2. లాగిన్ అయినప్పుడు: పైన ప్రొఫైల్ బ్యానర్ చూపించడం
+    // 2. లాగిన్ అయినప్పుడు: ప్రొఫైల్ బ్యానర్ & రోల్ స్విచ్ బార్
     this.renderUserProfileBanner();
+    this.renderRoleSwitchBar(); // బేస్ యూజర్ రైతు అయితే స్విచ్ బార్ ఎల్లప్పుడూ ఉండాలి!
 
     // A. కూలీ మోడ్ (LABOUR)
-    if (state.currentRole === "LABOUR" || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
-      if (state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
-        this.removeRoleSwitchBar();
-      } else {
-        this.renderRoleSwitchBar();
-      }
-
+    if (state.currentRole === "LABOUR") {
       if (farmerBox) farmerBox.style.display = "none";
       if (providerBox) providerBox.style.display = "none";
       if (labourBox) {
@@ -72,12 +66,6 @@ window.RoleController = {
 
     // B. యజమాని మోడ్ (PROVIDER)
     else if (state.currentRole === "PROVIDER") {
-      if (state.userType === "PROVIDER") {
-        this.removeRoleSwitchBar();
-      } else {
-        this.renderRoleSwitchBar();
-      }
-
       if (farmerBox) farmerBox.style.display = "none";
       if (labourBox) labourBox.style.display = "none";
       if (providerBox) {
@@ -94,8 +82,6 @@ window.RoleController = {
 
     // C. రైతు మోడ్ (FARMER)
     else {
-      this.renderRoleSwitchBar();
-
       if (labourBox) labourBox.style.display = "none";
       if (providerBox) providerBox.style.display = "none";
       if (farmerBox) {
@@ -129,7 +115,7 @@ window.RoleController = {
     let roleText = "రైతు (Farmer)";
     let badgeColor = "#16a34a";
 
-    if (state.currentRole === "LABOUR" || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
+    if (state.currentRole === "LABOUR") {
       roleText = "కూలీ (Labour)";
       badgeColor = "#ea580c";
     } else if (state.currentRole === "PROVIDER") {
@@ -151,7 +137,11 @@ window.RoleController = {
 
   renderRoleSwitchBar: function() {
     const state = window.AppState;
-    if (!state || !state.isLoggedIn || (state.userType !== "FARMER" && state.currentRole !== "FARMER")) return;
+    // యూజర్ బేస్ అకౌంట్ రైతు అయినప్పుడు మాత్రమే పైన స్విచ్ బార్ కనిపిస్తుంది
+    if (!state || !state.isLoggedIn || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
+      this.removeRoleSwitchBar();
+      return;
+    }
 
     let switchContainer = document.getElementById("role-switch-container");
     const tpl = document.getElementById("role-dual-switch-template");
@@ -188,7 +178,11 @@ window.RoleController = {
   switchRoleMode: function(targetRole) {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
+
+    // కేవలం యాక్టివ్ మోడ్ మాత్రమే మారాలి, బేస్ యూజర్ ప్రొఫైల్ ఎప్పటికీ చెరిగిపోకూడదు!
     localStorage.setItem("agri_current_active_role", targetRole);
+    localStorage.setItem("agri_user_role", targetRole);
+
     this.applyUserRoleView();
   },
 
@@ -199,6 +193,7 @@ window.RoleController = {
     window.AppState.currentRole = "GUEST";
     localStorage.removeItem("agri_user_profile");
     localStorage.removeItem("agri_current_active_role");
+    localStorage.removeItem("agri_user_role");
     this.applyUserRoleView();
   }
 };
@@ -207,7 +202,7 @@ window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
 
-// DOM సిద్ధమైనప్పుడు సెషన్ & మోడ్ పునరుద్ధరణ (ఒకే ఒక్క క్లీన్ లిజనర్)
+// DOM సిద్ధమైనప్పుడు సెషన్ రికవరీ
 document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
   if (savedData) {
@@ -218,13 +213,13 @@ document.addEventListener("DOMContentLoaded", function() {
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
 
-        // మీరు లాస్ట్ ఏ మోడ్‌లో ఉన్నారో (FARMER / LABOUR / PROVIDER) దాన్ని మాత్రమే ప్రాధాన్యతగా తీసుకోవడం
-        const savedActiveRole = localStorage.getItem("agri_current_active_role");
-        const activeRole = savedActiveRole || user.roleType || user.userType || "FARMER";
+        // బేస్ అకౌంట్ టైప్ రైతుగా ఉంటేనే స్విచ్చింగ్ సాధ్యమవుతుంది
+        const baseRole = (user.roleType === "LABOUR_ONLY" || user.roleType === "LABOUR") ? "LABOUR" : "FARMER";
+        window.AppState.userType = baseRole;
 
-        window.AppState.currentRole = activeRole;
-        // ఒకవేళ రైతు మోడ్ లేదా కూలీ మోడ్ లో ఉంటే userType ని కూడా అదే మోడ్ కి సెట్ చేసి లాక్ చేయడం
-        window.AppState.userType = (activeRole === "PROVIDER") ? "PROVIDER" : (user.userType || "FARMER");
+        // యూజర్ సెలెక్ట్ చేసిన మోడ్
+        const savedActiveRole = localStorage.getItem("agri_current_active_role") || localStorage.getItem("agri_user_role");
+        window.AppState.currentRole = savedActiveRole || baseRole;
         window.AppState.providerType = user.providerType || "equipment";
       }
     } catch (e) {
