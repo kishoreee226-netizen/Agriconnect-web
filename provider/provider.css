@@ -1,215 +1,131 @@
-/* provider/provider.css - Provider Dashboard, Modals & Live Order Inbox */
-:root {
-  --provider-orange: #f57c00;
-  --provider-purple: #7b1fa2;
-  --provider-green: #2e7d32;
+/* provider/provider.css - Dedicated Styles for Provider Module */
+
+/* 1. Landing Card */
+.agri-landing-card.provider-border {
+  border: 2px solid #7c3aed;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Dashboard Card */
+.agri-title-provider {
+  color: #581c87;
+  font-size: 16px;
+}
+
+.agri-card-subtext {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 6px 0 8px;
+}
+
+.provider-btn-bg {
+  background: #7c3aed;
+  color: #ffffff;
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 2. Main Dashboard Card */
 .provider-dashboard-card {
   background: #ffffff;
-  border-radius: 18px;
-  padding: 18px;
-  border: 1.5px solid #e2e8f0;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 2px solid var(--provider-theme, #f57c00);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .provider-dash-title {
-  font-size: 18px;
-  font-weight: 800;
+  margin: 0 0 4px;
+  font-size: 16px;
   color: #1e293b;
-  margin: 0 0 4px 0;
 }
 
 .provider-dash-desc {
   font-size: 13px;
   color: #64748b;
-  margin: 0 0 16px 0;
+  margin: 0 0 12px;
 }
 
-/* Add Service Button Card */
 .provider-add-service-btn {
-  background: #fff7ed;
-  border: 2px dashed var(--provider-orange);
-  border-radius: 14px;
-  padding: 16px;
+  background: #f8fafc;
+  border: 2px dashed var(--provider-theme, #f57c00);
+  border-radius: 10px;
+  padding: 12px;
   text-align: center;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.2s;
+  transition: all 0.2s;
 }
 
-.provider-add-service-btn:active {
-  transform: scale(0.98);
-  background: #ffedd5;
+.provider-add-service-btn:hover {
+  background: #f1f5f9;
 }
 
 .provider-add-service-text {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--provider-orange);
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--provider-theme, #f57c00);
 }
 
 .provider-add-service-subtext {
-  font-size: 12px;
-  color: #9a3412;
-  margin: 4px 0 0 0;
-}
-
-/* Add Item Modal Overlay */
-.pitem-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.7);
-  backdrop-filter: blur(6px);
-  z-index: 100010;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  box-sizing: border-box;
-}
-
-.pitem-modal-card {
-  width: 100%;
-  max-width: 420px;
-  background: #ffffff;
-  border-radius: 20px;
-  padding: 22px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  position: relative;
-  box-sizing: border-box;
-}
-
-.pitem-modal-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: #0f172a;
-  margin: 0 0 16px 0;
-}
-
-.provider-close-btn {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #f1f5f9;
-  border: none;
-  font-weight: 800;
-  cursor: pointer;
+  font-size: 11px;
   color: #64748b;
+  margin: 3px 0 0;
 }
 
-.provider-form-group {
-  margin-bottom: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.provider-form-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: #334155;
-}
-
-.provider-form-input {
-  width: 100%;
-  height: 44px;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 10px;
-  padding: 0 12px;
-  font-size: 14px;
-  box-sizing: border-box;
-  outline: none;
-}
-
-.provider-form-input:focus {
-  border-color: var(--provider-orange);
-}
-
-.pitem-submit-btn {
-  width: 100%;
-  height: 46px;
-  background: var(--pitem-color, var(--provider-orange));
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 8px;
-}
-
-/* My Added Items List */
+/* 3. Items List */
 .pitem-box {
+  margin-top: 16px;
   background: #f8fafc;
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 10px;
+  padding: 12px;
   border: 1px solid #e2e8f0;
 }
 
 .pitem-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .pitem-title-text {
-  font-size: 14.5px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: bold;
   color: #1e293b;
 }
 
 .pitem-count-badge {
   background: #e2e8f0;
-  color: #0f172a;
-  font-size: 11px;
-  padding: 2px 8px;
+  color: #334155;
+  padding: 2px 6px;
   border-radius: 10px;
-  font-weight: 800;
-}
-
-.pitem-live-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
   font-size: 11px;
-  font-weight: 800;
-  color: #15803d;
-}
-
-.pitem-live-dot {
-  width: 7px;
-  height: 7px;
-  background: #16a34a;
-  border-radius: 50%;
-  animation: pitemPulse 1.5s infinite;
-}
-
-@keyframes pitemPulse {
-  0% { transform: scale(0.9); opacity: 0.6; }
-  50% { transform: scale(1.3); opacity: 1; }
-  100% { transform: scale(0.9); opacity: 0.6; }
 }
 
 .pitem-card-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px;
+  align-items: center;
   background: #ffffff;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
+  padding: 10px;
+  border-radius: 8px;
   margin-bottom: 8px;
 }
 
 .pitem-card-title {
-  font-size: 14px;
-  font-weight: 700;
+  font-weight: bold;
+  font-size: 13px;
   color: #0f172a;
 }
 
@@ -220,129 +136,201 @@
 }
 
 .pitem-price-text {
-  color: #15803d;
+  color: #16a34a;
 }
 
 .pitem-delete-btn {
   background: #fee2e2;
   color: #dc2626;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
+  border: 1px solid #fca5a5;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-/* Incoming Orders Inbox */
+/* 4. Incoming Bookings Inbox */
 .porders-box {
-  margin-top: 18px;
-  background: #ffffff;
-  border-radius: 14px;
-  border: 1.5px solid #e2e8f0;
-  padding: 14px;
+  margin-top: 16px;
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 10px;
+  padding: 12px;
 }
 
 .porders-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.porders-title {
-  font-size: 14.5px;
-  font-weight: 800;
-  color: #1e293b;
-}
-
-.porders-count-badge {
-  background: #ffedd5;
-  color: #c2410c;
-  font-size: 11px;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 800;
-}
-
-.porders-card {
-  background: #f8fafc;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  padding: 12px;
+  align-items: center;
   margin-bottom: 10px;
 }
 
+.porders-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #92400e;
+}
+
+.porders-count-badge {
+  background: #fde68a;
+  color: #78350f;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.porders-card {
+  background: #ffffff;
+  border: 1px solid #fef3c7;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
 .porders-card.accepted {
-  border-color: #86efac;
-  background: #f0fdf4;
+  border-left: 4px solid #16a34a;
 }
 
 .porders-card-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .porders-type-tag {
-  font-size: 11px;
-  font-weight: 800;
-  padding: 3px 8px;
-  border-radius: 6px;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.porders-type-tag.spot {
-  background: #fee2e2;
-  color: #dc2626;
-}
-
-.porders-type-tag.advance {
-  background: #e0e7ff;
-  color: #4338ca;
-}
+.porders-type-tag.spot { background: #fee2e2; color: #b91c1c; }
+.porders-type-tag.advance { background: #e0e7ff; color: #3730a3; }
 
 .porders-veh-name {
-  font-size: 14.5px;
-  font-weight: 800;
-  color: #0f172a;
+  font-weight: bold;
+  font-size: 14px;
+  color: #1e293b;
 }
 
 .porders-work-details {
-  font-size: 12.5px;
+  font-size: 12px;
   color: #475569;
-  margin: 4px 0 10px 0;
+  margin: 4px 0 8px;
   line-height: 1.4;
 }
 
 .porders-btn-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
 }
 
 .porders-action-btn {
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
   text-decoration: none;
-  font-size: 12.5px;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 8px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
   cursor: pointer;
+  border: none;
 }
 
-.porders-call-btn { background: #dcfce7; color: #15803d; }
-.porders-map-btn { background: #e0f2fe; color: #0369a1; }
+.porders-call-btn { background: #dbeafe; color: #1e40af; }
+.porders-map-btn { background: #f1f5f9; color: #334155; }
 .porders-accept-btn { background: #16a34a; color: #ffffff; }
+.porders-accepted-badge { font-size: 11px; color: #15803d; font-weight: bold; }
 
-.porders-accepted-badge {
-  font-size: 12px;
-  font-weight: 800;
-  color: #16a34a;
-  display: inline-flex;
+/* 5. Modals */
+.provider-modal-overlay, .pitem-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+}
+
+.provider-modal-card, .pitem-modal-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  width: 100%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.provider-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.provider-tab-row {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0 14px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.provider-tab-btn {
+  flex: 1;
+  padding: 8px 4px;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  background: transparent;
+  color: #64748b;
+}
+
+.provider-tab-btn.active.tab-eq { background: #f57c00; color: #fff; }
+.provider-tab-btn.active.tab-tr { background: #7b1fa2; color: #fff; }
+.provider-tab-btn.active.tab-sd { background: #2e7d32; color: #fff; }
+
+.provider-form-group {
+  margin-bottom: 10px;
+}
+
+.provider-form-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.provider-form-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.provider-submit-btn, .pitem-submit-btn {
+  width: 100%;
+  padding: 11px;
+  background: var(--provider-theme, #f57c00);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 8px;
 }
