@@ -28,7 +28,6 @@ window.RoleController = {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
 
-      // ల్యాండింగ్ పేజీలో 3 కార్డులు పక్కపక్కనే కనిపించాలి
       if (farmerBox) {
         farmerBox.style.display = "block";
         if (typeof window.renderFarmerLandingCard === "function") window.renderFarmerLandingCard();
@@ -42,7 +41,6 @@ window.RoleController = {
         if (typeof window.renderProviderLandingCard === "function") window.renderProviderLandingCard();
       }
 
-      // లాగిన్ కాకముందు వ్యక్తిగత వాలెట్ ఉండదు
       if (walletBox) walletBox.style.display = "none";
       if (mandiBox) mandiBox.style.display = "block";
       if (weatherBox) weatherBox.style.display = "block";
@@ -60,7 +58,6 @@ window.RoleController = {
         this.renderRoleSwitchBar();
       }
 
-      // ట్రాఫిక్ స్విచ్: కూలీ మాత్రమే ON, మిగతావి OFF
       if (farmerBox) farmerBox.style.display = "none";
       if (providerBox) providerBox.style.display = "none";
       if (labourBox) {
@@ -74,14 +71,13 @@ window.RoleController = {
     }
 
     // B. యజమాని మోడ్ (PROVIDER)
-    else if (state.currentRole === "PROVIDER" || state.userType === "PROVIDER") {
+    else if (state.currentRole === "PROVIDER") {
       if (state.userType === "PROVIDER") {
         this.removeRoleSwitchBar();
       } else {
         this.renderRoleSwitchBar();
       }
 
-      // ట్రాఫిక్ స్విచ్: యజమాని మాత్రమే ON, మిగతావి OFF
       if (farmerBox) farmerBox.style.display = "none";
       if (labourBox) labourBox.style.display = "none";
       if (providerBox) {
@@ -100,7 +96,6 @@ window.RoleController = {
     else {
       this.renderRoleSwitchBar();
 
-      // ట్రాఫిక్ స్విచ్: రైతు మాత్రమే ON, మిగతావి OFF
       if (labourBox) labourBox.style.display = "none";
       if (providerBox) providerBox.style.display = "none";
       if (farmerBox) {
@@ -137,7 +132,7 @@ window.RoleController = {
     if (state.currentRole === "LABOUR" || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
       roleText = "కూలీ (Labour)";
       badgeColor = "#ea580c";
-    } else if (state.currentRole === "PROVIDER" || state.userType === "PROVIDER") {
+    } else if (state.currentRole === "PROVIDER") {
       roleText = "🤝 యజమాని (Provider)";
       badgeColor = "#7c3aed";
     }
@@ -156,7 +151,7 @@ window.RoleController = {
 
   renderRoleSwitchBar: function() {
     const state = window.AppState;
-    if (!state || !state.isLoggedIn || state.userType !== "FARMER") return;
+    if (!state || !state.isLoggedIn || (state.userType !== "FARMER" && state.currentRole !== "FARMER")) return;
 
     let switchContainer = document.getElementById("role-switch-container");
     const tpl = document.getElementById("role-dual-switch-template");
@@ -212,34 +207,7 @@ window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
 
-// DOM సిద్ధమైనప్పుడు సెషన్ & మోడ్ పునరుద్ధరణ
-document.addEventListener("DOMContentLoaded", function() {
-  const savedData = localStorage.getItem("agri_user_profile");
-  if (savedData) {
-    try {
-      const user = JSON.parse(savedData);
-      if (user && user.phone) {
-        if (!window.AppState) window.AppState = {};
-        window.AppState.isLoggedIn = true;
-        window.AppState.userProfile = user;
-        window.AppState.userType = user.userType || user.roleType || "FARMER";
-        window.AppState.providerType = user.providerType || "equipment";
-
-        const savedRole = localStorage.getItem("agri_current_active_role");
-        if (savedRole && (savedRole === "FARMER" || savedRole === "LABOUR" || savedRole === "PROVIDER")) {
-          window.AppState.currentRole = savedRole;
-        } else {
-          window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY" || window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
-        }
-      }
-    } catch (e) {}
-  }
-  window.RoleController.applyUserRoleView();
-});
-
-// role/role.js లోని ఆఖరి DOMContentLoaded విభాగాన్ని ఇలా మార్చండి:
-// role/role.js లోని ఆఖరి విభాగాన్ని ఇలా అప్‌డేట్ చేయండి:
-
+// DOM సిద్ధమైనప్పుడు సెషన్ & మోడ్ పునరుద్ధరణ (ఒకే ఒక్క క్లీన్ లిజనర్)
 document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
   if (savedData) {
@@ -250,29 +218,18 @@ document.addEventListener("DOMContentLoaded", function() {
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
 
-        // అసలైన బేస్ యూజర్ టైప్ (FARMER / LABOUR / PROVIDER)
-        const baseUserType = user.roleType || user.userType || "FARMER";
-        window.AppState.userType = baseUserType;
-        window.AppState.providerType = user.providerType || "equipment";
-
-        // స్విచ్ చేసిన రోల్ చెక్ చేయడం
+        // మీరు లాస్ట్ ఏ మోడ్‌లో ఉన్నారో (FARMER / LABOUR / PROVIDER) దాన్ని మాత్రమే ప్రాధాన్యతగా తీసుకోవడం
         const savedActiveRole = localStorage.getItem("agri_current_active_role");
+        const activeRole = savedActiveRole || user.roleType || user.userType || "FARMER";
 
-        // యూజర్ బేస్ టైప్ FARMER అయితే మరియు గతంలో వాలిడ్ స్విచ్ ఉంటేనే దాన్ని తీసుకోవాలి
-        if (baseUserType === "FARMER") {
-          window.AppState.currentRole = savedActiveRole || "FARMER";
-        } else if (baseUserType === "LABOUR" || baseUserType === "LABOUR_ONLY") {
-          window.AppState.currentRole = "LABOUR";
-        } else {
-          window.AppState.currentRole = "PROVIDER";
-        }
+        window.AppState.currentRole = activeRole;
+        // ఒకవేళ రైతు మోడ్ లేదా కూలీ మోడ్ లో ఉంటే userType ని కూడా అదే మోడ్ కి సెట్ చేసి లాక్ చేయడం
+        window.AppState.userType = (activeRole === "PROVIDER") ? "PROVIDER" : (user.userType || "FARMER");
+        window.AppState.providerType = user.providerType || "equipment";
       }
     } catch (e) {
       console.error(e);
     }
   }
-
-  if (window.RoleController && typeof window.RoleController.applyUserRoleView === "function") {
-    window.RoleController.applyUserRoleView();
-  }
+  window.RoleController.applyUserRoleView();
 });
