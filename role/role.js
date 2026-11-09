@@ -35,18 +35,17 @@ window.RoleController = {
   },
 
   setToolsVisibility: function(show) {
-    // మెయిన్ కంటైనర్లను టచ్ చేయకుండా, కేవలం SMART Tools & Utilities సెక్షన్లను మాత్రమే దాచడం
-    const toolHeadings = document.querySelectorAll("h3, h4, span, div, strong");
-    toolHeadings.forEach(el => {
-      const text = el.textContent || "";
-      if (text.includes("రైతు SMART సేవలు & Power Tools") || text.includes("రైతు SMART Utilities & లింకులు")) {
-        // హెడ్డింగ్ ఉన్న కార్డ్ లేదా సెక్షన్ బాక్స్‌ను మాత్రమే దాచడం
-        let box = el.closest(".card, .section, .box, [class*='tool'], [class*='util']") || el.parentElement;
-        if (box && !box.classList.contains("container") && box.tagName !== "BODY" && box.tagName !== "MAIN") {
-          box.style.setProperty("display", show ? "block" : "none", "important");
-          if (box.nextElementSibling) {
-            box.nextElementSibling.style.setProperty("display", show ? "block" : "none", "important");
-          }
+    const allDivs = document.querySelectorAll("div, section");
+    allDivs.forEach(el => {
+      // మెయిన్ బాడీ లేదా కోర్ కంటైనర్లు కాకుండా చూసుకోవడం
+      if (el.id === "farmer-post-container" || el.id === "labour-jobs-container" || el.id === "provider-hub-container" || el.classList.contains("container")) {
+        return;
+      }
+      const heading = el.querySelector("h3, h4, span, strong");
+      if (heading) {
+        const text = heading.textContent || "";
+        if (text.includes("SMART సేవలు & Power Tools") || text.includes("SMART Utilities & లింకులు")) {
+          el.style.setProperty("display", show ? "block" : "none", "important");
         }
       }
     });
@@ -99,6 +98,7 @@ window.RoleController = {
         this.renderRoleSwitchBar();
       }
 
+      // కూలీ మోడ్‌లో టూల్స్, వెదర్, మండి ఉండకూడదు
       this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (providerContainer) providerContainer.style.setProperty('display', 'none', 'important');
@@ -122,6 +122,7 @@ window.RoleController = {
         this.renderRoleSwitchBar();
       }
 
+      // యజమాని మోడ్‌లో టూల్స్, వెదర్ ఉండకూడదు
       this.setToolsVisibility(false);
       if (farmerContainer) farmerContainer.style.setProperty('display', 'none', 'important');
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
@@ -139,6 +140,7 @@ window.RoleController = {
     // C. రైతు మోడ్ (FARMER)
     else {
       this.renderRoleSwitchBar();
+      // కేవలం రైతు మోడ్‌లో మాత్రమే టూల్స్ మరియు వెదర్ కనిపిస్తాయి
       this.setToolsVisibility(true);
 
       if (labourContainer) labourContainer.style.setProperty('display', 'none', 'important');
@@ -241,6 +243,8 @@ window.RoleController = {
   switchRoleMode: function(targetRole) {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
+    // మోడ్‌ను లోకల్ స్టోరేజ్‌లో భద్రపరచడం
+    localStorage.setItem("agri_current_active_role", targetRole);
     this.applyUserRoleView();
   },
 
@@ -250,6 +254,7 @@ window.RoleController = {
     window.AppState.userProfile = null;
     window.AppState.currentRole = "GUEST";
     localStorage.removeItem("agri_user_profile");
+    localStorage.removeItem("agri_current_active_role");
     this.applyUserRoleView();
   }
 };
@@ -318,7 +323,7 @@ function renderRegisterForm(modal, roleType, themeColor) {
       </div>
       <div style="margin-bottom:10px;">
         <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:4px;">గ్రామం / ఊరు (Village):</label>
-        <input type="text" id="reg-village" placeholder="ఉదా: హసన్‌పర్తి" style="width:100%; padding:9px; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
+        <input type="text" id="reg-village" placeholder="ఉదా: పరకాల" style="width:100%; padding:9px; border:1px solid #cbd5e1; border-radius:8px; box-sizing:border-box;">
       </div>
       <div style="margin-bottom:16px;">
         <label style="font-size:12px; font-weight:600; color:#334155; display:block; margin-bottom:4px;">భద్రతా పిన్ సెట్ చేయండి (4-Digit PIN):</label>
@@ -344,7 +349,9 @@ window.submitDirectPinLogin = function(roleType) {
   window.AppState.isLoggedIn = true;
   window.AppState.userProfile = saved;
   window.AppState.userType = roleType;
-  window.AppState.currentRole = (roleType === "LABOUR" || roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+  const targetRole = (roleType === "LABOUR" || roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+  window.AppState.currentRole = targetRole;
+  localStorage.setItem("agri_current_active_role", targetRole);
 
   window.closeLoginModal();
   window.RoleController.applyUserRoleView();
@@ -365,7 +372,9 @@ window.submitUserRegistration = function(roleType) {
   window.AppState.isLoggedIn = true;
   window.AppState.userProfile = profile;
   window.AppState.userType = roleType;
-  window.AppState.currentRole = (roleType === "LABOUR" || roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+  const targetRole = (roleType === "LABOUR" || roleType === "LABOUR_ONLY") ? "LABOUR" : "FARMER";
+  window.AppState.currentRole = targetRole;
+  localStorage.setItem("agri_current_active_role", targetRole);
 
   localStorage.setItem("agri_user_profile", JSON.stringify(profile));
   localStorage.setItem("agri_last_user", JSON.stringify(profile));
@@ -378,6 +387,7 @@ window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
 
+// DOM సిద్ధమైనప్పుడు సెషన్ & మోడ్ పునరుద్ధరణ (Auto Restore Active Role on Refresh)
 document.addEventListener("DOMContentLoaded", function() {
   const savedData = localStorage.getItem("agri_user_profile");
   if (savedData) {
@@ -388,7 +398,15 @@ document.addEventListener("DOMContentLoaded", function() {
         window.AppState.isLoggedIn = true;
         window.AppState.userProfile = user;
         window.AppState.userType = user.userType || user.roleType || "FARMER";
-        window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY" || window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
+        window.AppState.providerType = user.providerType || "equipment";
+
+        // రీఫ్రెష్ చేసినప్పుడు గతంలో ఏ మోడ్‌లో ఉన్నారో అదే మోడ్‌ను సెట్ చేయడం
+        const savedRole = localStorage.getItem("agri_current_active_role");
+        if (savedRole && (savedRole === "FARMER" || savedRole === "LABOUR" || savedRole === "PROVIDER")) {
+          window.AppState.currentRole = savedRole;
+        } else {
+          window.AppState.currentRole = (window.AppState.userType === "LABOUR_ONLY" || window.AppState.userType === "LABOUR") ? "LABOUR" : "FARMER";
+        }
       }
     } catch (e) {}
   }
