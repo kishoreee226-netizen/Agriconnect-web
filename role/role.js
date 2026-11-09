@@ -94,6 +94,9 @@ window.RoleController = {
       if (weatherBox) weatherBox.style.display = "block";
       if (mandiBox) mandiBox.style.display = "none";
     }
+if (window.WalletModule && typeof window.WalletModule.render === "function") {
+  window.WalletModule.render();
+}
   },
 
   renderUserProfileBanner: function() {
