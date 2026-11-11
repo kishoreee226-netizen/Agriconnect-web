@@ -108,11 +108,7 @@ window.RoleController = {
     if (window.WalletModule && typeof window.WalletModule.render === "function") {
       window.WalletModule.render();
     }
-    if (window.WalletModule && typeof window.WalletModule.render === "function") {
-      window.WalletModule.render();
-    }
-
-    // 🌾 రైతు తిరిగి రావడానికి బ్యాక్ బటన్ విజిబిలిటీ లాజిక్
+      // 🌾 రైతు ఇతర మోడ్‌లలోకి వెళ్ళినప్పుడు బ్యాక్ బటన్ విజిబిలిటీ లాజిక్
     const profile = state.userProfile || state.user || {};
     const baseRole = String(profile.accountType || profile.role || profile.roleType || profile.userType || '').toUpperCase().trim();
     
@@ -124,6 +120,7 @@ window.RoleController = {
 
     if (lBack) lBack.style.display = isRealFarmer ? "block" : "none";
     if (pBack) pBack.style.display = isRealFarmer ? "block" : "none";
+
   },
 
     renderUserProfileBanner: function() {
