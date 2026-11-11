@@ -67,10 +67,21 @@ window.mountFarmerPersistentSwitchBar = function() {
   const lBtn = document.getElementById("f-btn-labour");
   const pBtn = document.getElementById("f-btn-provider");
 
-  if (fBtn) fBtn.classList.toggle("active", current === "FARMER");
-  if (lBtn) lBtn.classList.toggle("active", current === "LABOUR");
-  if (pBtn) pBtn.classList.toggle("active", current === "PROVIDER");
-};
+      if (fBtn) {
+      const isActive = (current === "FARMER");
+      fBtn.classList.toggle("active", isActive);
+      fBtn.classList.toggle("active-farmer", isActive);
+    }
+    if (lBtn) {
+      const isActive = (current === "LABOUR");
+      lBtn.classList.toggle("active", isActive);
+      lBtn.classList.toggle("active-labour", isActive);
+    }
+    if (pBtn) {
+      const isActive = (current === "PROVIDER");
+      pBtn.classList.toggle("active", isActive);
+      pBtn.classList.toggle("active-provider", isActive);
+    }
 
 // పాత ఫంక్షన్ కాల్స్ బ్రేక్ అవ్వకుండా అలియాస్
 window.updateFarmerSwitchBarActiveState = window.mountFarmerPersistentSwitchBar;
