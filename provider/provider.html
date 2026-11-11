@@ -1,4 +1,4 @@
-<!-- provider/provider.html - Dedicated Clean Provider Templates -->
+<!-- provider/provider.html - 100% Dedicated Clean Provider Templates -->
 
 <!-- 1. యజమాని ల్యాండింగ్ కార్డ్ టెంప్లేట్ (లాగిన్ కానప్పుడు పబ్లిక్ కార్డ్) -->
 <template id="provider-landing-template">
@@ -26,7 +26,10 @@
   <div class="provider-dashboard-card" id="provider-dash-card-box">
     <h3 class="provider-dash-title" id="p-dash-title">--</h3>
     <p class="provider-dash-desc" id="p-dash-desc">--</p>
-    
+
+    <!-- ⚡ అత్యవసర రైతు స్పాట్ అలర్ట్స్ కంటైనర్ (Tractor / Transport SOS) -->
+    <div id="provider-spot-alerts-container" class="provider-spot-alerts-wrapper is-hidden"></div>
+
     <div onclick="window.openAddServiceModal()" class="provider-add-service-btn">
       <span class="provider-add-service-text">➕ కొత్త వస్తువును / సేవను జోడించండి</span>
       <p class="provider-add-service-subtext">వివరాలు నమోదు చేయడానికి ఇక్కడ నొక్కండి</p>
@@ -37,12 +40,12 @@
   </div>
 </template>
 
-<!-- 3. ప్రొవైడర్ లాగిన్ & రిజిస్ట్రేషన్ మోడల్ (3 Pill Tabs) -->
+<!-- 3. ప్రొవైడర్ లాగిన్ & రిజిస్ట్రేషన్ మోడల్ -->
 <template id="provider-auth-modal-template">
   <div id="provider-auth-modal" class="provider-modal-overlay">
     <div class="provider-modal-card">
       <button type="button" onclick="window.closeProviderModal()" class="provider-close-btn">✕</button>
-      
+
       <div class="provider-modal-header">
         <h3 class="provider-modal-title">🤝 యజమానుల సేవా కేంద్రం</h3>
         <p class="provider-modal-subtitle">మీ కేటగిరీని ఎంచుకొని వివరాలు నమోదు చేయండి</p>
@@ -95,6 +98,93 @@
         <div id="pitem-dynamic-fields"></div>
         <button type="submit" class="pitem-submit-btn">లిస్టింగ్‌ను సేవ్ చేయండి ➔</button>
       </form>
+    </div>
+  </div>
+</template>
+
+<!-- 5. ⚡ అత్యవసర స్పాట్ అభ్యర్థన కార్డ్ టెంప్లేట్ (Farmer SOS ➔ Provider) -->
+<template id="provider-spot-card-template">
+  <div class="provider-spot-card">
+    <div class="provider-spot-card-top">
+      <div>
+        <span class="badge-sos-blink">🚨 తక్షణ అత్యవసర ఆర్డర్ (SOS)</span>
+        <h4 class="provider-spot-title"></h4>
+        <div class="provider-spot-farmer"></div>
+        <div class="provider-spot-req"></div>
+      </div>
+      <div class="provider-spot-wage"></div>
+    </div>
+    <div class="provider-spot-actions">
+      <button type="button" class="btn-spot-accept-provider">✅ ఆర్డర్ ఒప్పుకోండి (Accept)</button>
+    </div>
+  </div>
+</template>
+
+<!-- 6. యజమాని జోడించిన వస్తువుల బాక్స్ షెల్ టెంప్లేట్ -->
+<template id="provider-items-box-template">
+  <div class="pitem-box">
+    <div class="pitem-header">
+      <div class="pitem-title-text">మీరు జోడించినవి <span class="pitem-count-badge" id="pitem-badge-count">0</span></div>
+    </div>
+    <div class="pitem-scroll-list" id="pitem-scroll-target"></div>
+  </div>
+</template>
+
+<!-- 7. సింగిల్ ప్రొవైడర్ ఐటమ్ రో టెంప్లేట్ -->
+<template id="provider-item-row-template">
+  <div class="pitem-card-row">
+    <div>
+      <div class="pitem-card-title"></div>
+      <div class="pitem-card-details">
+        ధర: <b class="pitem-price-text"></b> | <span class="pitem-status-text"></span>
+      </div>
+    </div>
+    <button type="button" class="pitem-delete-btn">తీసివేయి</button>
+  </div>
+</template>
+
+<!-- 8. ఇన్‌కమింగ్ ఆర్డర్స్ బాక్స్ షెల్ టెంప్లేట్ -->
+<template id="provider-orders-box-template">
+  <div class="porders-box">
+    <div class="porders-header">
+      <div class="porders-title">🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు <span class="porders-count-badge" id="porders-badge-count">0</span></div>
+    </div>
+    <div class="porders-scroll-list" id="porders-scroll-target"></div>
+  </div>
+</template>
+
+<!-- 9. సింగిల్ ఇన్‌కమింగ్ ఆర్డర్ కార్డ్ టెంప్లేట్ -->
+<template id="provider-order-card-template">
+  <div class="porders-card">
+    <div class="porders-card-top">
+      <span class="porders-type-tag"></span>
+      <span class="porders-time-text"></span>
+    </div>
+    <div class="porders-veh-name"></div>
+    <div class="porders-work-details"></div>
+    <div class="porders-btn-row">
+      <a class="porders-action-btn porders-call-btn">📞 కాల్</a>
+      <button type="button" class="porders-action-btn porders-accept-btn">✅ ఒప్పుకోండి</button>
+      <span class="porders-accepted-badge is-hidden">✅ కన్ఫర్మ్ అయింది</span>
+    </div>
+  </div>
+</template>
+
+<!-- 10. రైతు ట్యాబ్‌ల కోసం ప్రొవైడర్ ఐటమ్ కార్డ్ టెంప్లేట్ (Farmer Dashboard Cards) -->
+<template id="farmer-category-item-template">
+  <div class="farmer-market-card">
+    <div class="farmer-market-card-top">
+      <div>
+        <h4 class="market-item-name"></h4>
+        <div class="market-item-owner"></div>
+        <div class="market-item-meta"></div>
+      </div>
+      <div class="market-item-rate"></div>
+    </div>
+    <div class="farmer-market-actions">
+      <a class="market-btn-call">📞 కాల్</a>
+      <a target="_blank" class="market-btn-wa">💬 వాట్సాప్</a>
+      <button type="button" class="market-btn-book">📋 బుక్ చేయండి</button>
     </div>
   </div>
 </template>
