@@ -60,6 +60,20 @@ window.renderFarmerWidget = function() {
 
   prefillFarmerFormDefaults();
   bindFarmerFormEvents();
+    if (typeof window.updateFarmerSwitchBarActiveState === "function") {
+      window.updateFarmerSwitchBarActiveState();
+    }
+};
+
+window.updateFarmerSwitchBarActiveState = function() {
+  const current = String(window.AppState?.currentRole || 'FARMER').toUpperCase();
+  const fBtn = document.getElementById("f-btn-farmer");
+  const lBtn = document.getElementById("f-btn-labour");
+  const pBtn = document.getElementById("f-btn-provider");
+
+  if (fBtn) fBtn.classList.toggle("active", current === "FARMER");
+  if (lBtn) lBtn.classList.toggle("active", current === "LABOUR");
+  if (pBtn) pBtn.classList.toggle("active", current === "PROVIDER");
 };
 
 window.renderFarmerLabourPane = window.renderFarmerWidget;
