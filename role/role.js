@@ -29,6 +29,8 @@ window.RoleController = {
     if (!state || !state.isLoggedIn) {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
+const pSwitch = document.getElementById("persistent-role-switch-bar");
+if (pSwitch) pSwitch.style.display = "none";
 
       if (farmerBox) {
         farmerBox.style.display = "block";
