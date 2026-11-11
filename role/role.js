@@ -68,6 +68,9 @@ window.RoleController = {
       if (walletBox) walletBox.style.display = "block";
       if (mandiBox) mandiBox.style.display = "none";
       if (weatherBox) weatherBox.style.display = "none";
+      if (toolsBox) toolsBox.style.display = "none";
+      if (utilsBox) utilsBox.style.display = "none";
+
     }
 
     // B. యజమాని మోడ్ (PROVIDER) - రైతు, కూలీ కంటైనర్లు పూర్తిగా ఆఫ్
