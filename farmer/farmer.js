@@ -16,7 +16,7 @@ window.switchFarmerTab = function(tab) {
   panes.forEach(t => {
     const pane = document.getElementById(`farmer-pane-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
-    
+
     if (pane) {
       if (t === tab) {
         pane.classList.remove('is-hidden');
@@ -38,7 +38,44 @@ window.switchFarmerTab = function(tab) {
   }
 };
 
-// 2. Main Farmer Widget Renderer
+// 2. శాశ్వత మోడ్ స్విచర్ మౌంట్ మరియు యాక్టివ్ స్టేట్ అప్‌డేట్
+window.mountFarmerPersistentSwitchBar = function() {
+  let switchBar = document.getElementById("persistent-role-switch-bar");
+
+  // DOM లో ఇంకా బార్ లేకపోతే టెంప్లేట్ నుండి క్లోన్ చేసి ఇన్సర్ట్ చేస్తుంది
+  if (!switchBar) {
+    const tpl = document.getElementById("farmer-persistent-switch-template");
+    if (!tpl) return;
+
+    const clone = tpl.content.cloneNode(true);
+    switchBar = clone.querySelector("#persistent-role-switch-bar");
+
+    // ప్రొఫైల్ బ్యానర్ కింద, డాష్‌బోర్డ్ కంటైనర్ కంటే పైన ఇన్సర్ట్ చేయడం
+    const banner = document.getElementById("user-profile-banner");
+    const farmerContainer = document.getElementById("farmer-post-container");
+
+    if (banner && banner.parentNode) {
+      banner.parentNode.insertBefore(switchBar, banner.nextSibling);
+    } else if (farmerContainer && farmerContainer.parentNode) {
+      farmerContainer.parentNode.insertBefore(switchBar, farmerContainer);
+    }
+  }
+
+  // బటన్ల రంగును ప్రస్తుత రోల్ ప్రకారం అప్‌డేట్ చేయడం
+  const current = String(window.AppState?.currentRole || 'FARMER').toUpperCase();
+  const fBtn = document.getElementById("f-btn-farmer");
+  const lBtn = document.getElementById("f-btn-labour");
+  const pBtn = document.getElementById("f-btn-provider");
+
+  if (fBtn) fBtn.classList.toggle("active", current === "FARMER");
+  if (lBtn) lBtn.classList.toggle("active", current === "LABOUR");
+  if (pBtn) pBtn.classList.toggle("active", current === "PROVIDER");
+};
+
+// పాత ఫంక్షన్ కాల్స్ బ్రేక్ అవ్వకుండా అలియాస్
+window.updateFarmerSwitchBarActiveState = window.mountFarmerPersistentSwitchBar;
+
+// 3. Main Farmer Widget Renderer
 window.renderFarmerWidget = function() {
   const container = document.getElementById("farmer-post-container");
   const tpl = document.getElementById("farmer-dashboard-template");
@@ -60,25 +97,16 @@ window.renderFarmerWidget = function() {
 
   prefillFarmerFormDefaults();
   bindFarmerFormEvents();
-    if (typeof window.updateFarmerSwitchBarActiveState === "function") {
-      window.updateFarmerSwitchBarActiveState();
-    }
-};
 
-window.updateFarmerSwitchBarActiveState = function() {
-  const current = String(window.AppState?.currentRole || 'FARMER').toUpperCase();
-  const fBtn = document.getElementById("f-btn-farmer");
-  const lBtn = document.getElementById("f-btn-labour");
-  const pBtn = document.getElementById("f-btn-provider");
-
-  if (fBtn) fBtn.classList.toggle("active", current === "FARMER");
-  if (lBtn) lBtn.classList.toggle("active", current === "LABOUR");
-  if (pBtn) pBtn.classList.toggle("active", current === "PROVIDER");
+  // డాష్‌బోర్డ్ పైన ఉన్న గ్యాప్‌లో 3 బటన్ల బార్‌ను ఫిక్స్ చేయడం
+  if (typeof window.mountFarmerPersistentSwitchBar === "function") {
+    window.mountFarmerPersistentSwitchBar();
+  }
 };
 
 window.renderFarmerLabourPane = window.renderFarmerWidget;
 
-// 3. Accepted List & Slot Tracking (Pure Template Cloning)
+// 4. Accepted List & Slot Tracking (Pure Template Cloning)
 function renderFarmerAcceptedList() {
   const wrap = document.getElementById("farmer-accepted-section-wrapper");
   const shellTpl = document.getElementById("farmer-accepted-template");
@@ -118,7 +146,7 @@ function renderFarmerAcceptedList() {
       if (isFull) cardRoot.classList.add("is-full");
 
       card.querySelector(".slot-job-title").textContent = `🌾 ${j.crop} - ${j.workType}`;
-      
+
       const badge = card.querySelector(".slot-status-badge");
       badge.textContent = isFull ? "✅ కోటా పూర్తయింది" : "⏳ కూలీల కోసం చూస్తున్నారు";
       if (isFull) badge.classList.add("is-full");
@@ -179,7 +207,7 @@ function renderFarmerAcceptedList() {
   }
 }
 
-// 4. Form Events & Submit
+// 5. Form Events & Submit
 function bindFarmerFormEvents() {
   let farmCoords = null;
 
@@ -204,18 +232,21 @@ function bindFarmerFormEvents() {
     const villageText = document.getElementById("f-village-btn")?.textContent?.replace(/[🏛️🏘️\s]/g, '') || 
                         window.AppState?.userProfile?.village || "స్థానిక పరిధి";
 
+    const countVal = parseInt(document.getElementById("f-count").value) || 1;
+    const dateVal = document.getElementById("f-date").value;
+
     const newJob = {
       id: "JOB-" + Date.now(),
       farmerName: document.getElementById("f-name").value.trim(),
       farmerPhone: document.getElementById("f-phone").value.trim(),
       crop: document.getElementById("f-crop").value.trim(),
       workType: document.getElementById("f-work").value.trim(),
-      count: parseInt(document.getElementById("f-count").value) || 1,
-      totalRequired: parseInt(document.getElementById("f-count").value) || 1,
+      count: countVal,
+      totalRequired: countVal,
       confirmedLabours: [],
       wage: parseFloat(document.getElementById("f-wage").value) || 450,
-      date: document.getElementById("f-date").value,
-      workDate: document.getElementById("f-date").value,
+      date: dateVal,
+      workDate: dateVal,
       village: villageText,
       lat: farmCoords ? farmCoords.lat : null,
       lng: farmCoords ? farmCoords.lng : null,
@@ -256,7 +287,7 @@ function prefillFarmerFormDefaults() {
   if (villageBtn && profile.village) villageBtn.textContent = "🏛️ " + profile.village;
 }
 
-// 5. Job Posting Modal
+// 6. Job Posting Modal
 window.openFarmerJobModal = function() {
   let modal = document.getElementById("farmerJobModal");
   if (!modal) {
@@ -292,18 +323,21 @@ window.closeFarmerJobModal = function() {
 window.handleFarmerJobSubmit = function(e) {
   e.preventDefault();
 
+  const countVal = parseInt(document.getElementById("fjm_required").value) || 1;
+  const dateVal = document.getElementById("fjm_date").value;
+
   const newJob = {
     id: "job_" + Date.now(),
     farmerName: document.getElementById("fjm_name").value.trim(),
     farmerPhone: document.getElementById("fjm_phone").value.trim(),
     crop: document.getElementById("fjm_crop").value,
     workType: document.getElementById("fjm_work").value,
-    count: parseInt(document.getElementById("fjm_required").value) || 1,
-    totalRequired: parseInt(document.getElementById("fjm_required").value) || 1,
+    count: countVal,
+    totalRequired: countVal,
     confirmedLabours: [],
     wage: parseFloat(document.getElementById("fjm_wage").value) || 450,
-    workDate: document.getElementById("fjm_date").value,
-    date: document.getElementById("fjm_date").value,
+    workDate: dateVal,
+    date: dateVal,
     village: document.getElementById("fjm_village").value.trim(),
     transportNote: document.getElementById("fjm_trans").value === "own" ? "కూలీల సొంత బండి ఉండాలి" : "రైతు రవాణా ఏర్పాటు చేస్తారు",
     status: "Open",
@@ -325,7 +359,7 @@ window.handleFarmerJobSubmit = function(e) {
   alert("🎉 పని పోస్ట్ చేయబడింది!");
 };
 
-// 6. Booking Modal & Escrow Logic
+// 7. Booking Modal & Escrow Logic
 window.openBookingModal = function(itemName, ownerName, rate, phone) {
   let modal = document.getElementById("booking-modal");
   if (!modal) {
@@ -371,7 +405,7 @@ window.closeBookingModal = function() {
   if (modal) modal.classList.add("is-hidden");
 };
 
-// 7. పరికరాల బుకింగ్ రికార్డులు (Pure Template Rendering)
+// 8. పరికరాల బుకింగ్ రికార్డులు (Pure Template Rendering)
 window.renderBookingRecords = function() {
   const container = document.getElementById("farmer-booking-records");
   const shellTpl = document.getElementById("farmer-booking-records-template");
@@ -401,7 +435,7 @@ window.renderBookingRecords = function() {
     const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
 
     card.querySelector(".booking-item-title").textContent = `🚜 ${b.itemName}`;
-    
+
     const tag = card.querySelector(".booking-status-tag");
     tag.textContent = b.status;
     tag.classList.add(isLocked ? "locked" : "pending");
@@ -448,7 +482,7 @@ window.lockBookingEscrow = function(bookingId, amount, itemName) {
   }
 };
 
-// 8. ⚡ స్పాట్ బుకింగ్ ఫంక్షన్స్
+// 9. ⚡ స్పాట్ బుకింగ్ ఫంక్షన్స్
 window.openSpotModal = function() {
   const modal = document.getElementById("spot-booking-modal");
   if (modal) modal.style.display = "flex";
@@ -499,10 +533,11 @@ window.submitSpotAlert = function() {
   alert(`🚨 మీ అత్యవసర స్పాట్ అభ్యర్థన సమీపంలోని ${categoryName} మాత్రమే తక్షణ అలర్ట్‌గా పంపబడింది!`);
 };
 
-// 9. మాడ్యూల్ ఎక్స్‌పోర్ట్
+// 10. మాడ్యూల్ ఎక్స్‌పోర్ట్
 window.FarmerModule = window.FarmerModule || {};
 window.FarmerModule.openSpotModal = window.openSpotModal;
 window.FarmerModule.closeSpotModal = window.closeSpotModal;
 window.FarmerModule.submitSpotAlert = window.submitSpotAlert;
 window.FarmerModule.switchFarmerTab = window.switchFarmerTab;
 window.FarmerModule.renderFarmerWidget = window.renderFarmerWidget;
+window.FarmerModule.mountFarmerPersistentSwitchBar = window.mountFarmerPersistentSwitchBar;
