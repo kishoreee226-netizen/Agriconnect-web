@@ -13,7 +13,7 @@ window.RoleController = {
     return document.getElementById("provider-hub-container") || document.getElementById("provider-container");
   },
 
-  // ఏకైక బాధ్యత: ట్రాఫిక్ సిగ్నల్ లా ఏది ఆన్ ఉండాలో, ఏది ఆఫ్ ఉండాలో నిర్ణయించడం
+  // ఏకైక బాధ్యత: ఏది ఆన్ ఉండాలో, ఏది ఆఫ్ ఉండాలో నిర్ణయించడం
   applyUserRoleView: function() {
     const state = window.AppState;
     const farmerBox = this.getFarmerContainer();
@@ -65,7 +65,7 @@ window.RoleController = {
       if (weatherBox) weatherBox.style.display = "none";
     }
 
-    // B. యజమాని మోడ్ (PROVIDER)
+    // B. యజమాని మోడ్ (PROVIDER) - రైతు, కూలీ కంటైనర్లు పూర్తిగా ఆఫ్
     else if (state.currentRole === "PROVIDER") {
       if (farmerBox) farmerBox.style.display = "none";
       if (labourBox) labourBox.style.display = "none";
@@ -94,9 +94,10 @@ window.RoleController = {
       if (weatherBox) weatherBox.style.display = "block";
       if (mandiBox) mandiBox.style.display = "none";
     }
-if (window.WalletModule && typeof window.WalletModule.render === "function") {
-  window.WalletModule.render();
-}
+
+    if (window.WalletModule && typeof window.WalletModule.render === "function") {
+      window.WalletModule.render();
+    }
   },
 
   renderUserProfileBanner: function() {
@@ -123,8 +124,9 @@ if (window.WalletModule && typeof window.WalletModule.render === "function") {
       roleText = "కూలీ (Labour)";
       badgeColor = "#ea580c";
     } else if (state.currentRole === "PROVIDER") {
-      roleText = "🤝 యజమాని (Provider)";
-      badgeColor = "#7c3aed";
+      const pType = state.providerType || "equipment";
+      roleText = pType === "transport" ? "🚚 రవాణా యజమాని" : (pType === "seeds" ? "🌱 విత్తనాల డీలర్" : "🚜 పరికరాల యజమాని");
+      badgeColor = pType === "transport" ? "#7b1fa2" : (pType === "seeds" ? "#2e7d32" : "#f57c00");
     }
 
     banner.style.setProperty("--badge-color", badgeColor);
@@ -141,8 +143,9 @@ if (window.WalletModule && typeof window.WalletModule.render === "function") {
 
   renderRoleSwitchBar: function() {
     const state = window.AppState;
-    // బేస్ అకౌంట్ రైతు అయితే మాత్రమే 3 మోడ్స్ మార్చుకునే స్విచ్ బార్ ఉంటుంది
-    if (!state || !state.isLoggedIn || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
+
+    // ⚡ ముఖ్యమైన మార్పు: యజమాని (PROVIDER) లాగిన్ అయినా లేదా కేవలం కూలీ అయినా మోడ్ బటన్లు కనిపించవు
+    if (!state || !state.isLoggedIn || state.currentRole === "PROVIDER" || state.userType === "PROVIDER" || state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
       this.removeRoleSwitchBar();
       return;
     }
@@ -183,7 +186,6 @@ if (window.WalletModule && typeof window.WalletModule.render === "function") {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
 
-    // కేవలం యాక్టివ్ మోడ్ మాత్రమే మారాలి
     localStorage.setItem("agri_current_active_role", targetRole);
     localStorage.setItem("agri_user_role", targetRole);
 
@@ -206,7 +208,6 @@ window.applyUserRoleView = () => window.RoleController.applyUserRoleView();
 window.switchRoleMode = (r) => window.RoleController.switchRoleMode(r);
 window.logoutUser = () => window.RoleController.logoutUser();
 
-// DOM సిద్ధమైనప్పుడు state.js రెడీ చేసిన వ్యూని ట్రిగ్గర్ చేయడం
 document.addEventListener("DOMContentLoaded", function() {
   window.RoleController.applyUserRoleView();
 });
