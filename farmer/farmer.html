@@ -1,6 +1,6 @@
-<!-- farmer/farmer.html - Dedicated Clean Farmer Templates -->
+<!-- farmer/farmer.html - 100% Pure Template Architecture -->
 
-<!-- 1. రైతు ల్యాండింగ్ కార్డ్ టెంప్లేట్ (లాగిన్ కానప్పుడు కనిపించే ఒరిజినల్ కార్డ్) -->
+<!-- 1. రైతు ల్యాండింగ్ కార్డ్ టెంప్లేట్ -->
 <template id="farmer-landing-template">
   <div class="agri-landing-card farmer-border">
     <div class="agri-card-header">
@@ -26,7 +26,7 @@
       <span class="badge-live">Live</span>
     </div>
 
-    <!-- 4 Tabs Bar -->
+    <!-- 5 Tabs Bar -->
     <div class="eq-tabs-bar">
       <button id="tab-btn-labour" type="button" class="eq-tab-btn active" onclick="window.switchFarmerTab('labour')">
         👥 కూలీలు
@@ -40,9 +40,9 @@
       <button id="tab-btn-transport" type="button" class="eq-tab-btn" onclick="window.switchFarmerTab('transport')">
         🚚 రవాణా
       </button>
-<button id="tab-btn-spot" type="button" class="eq-tab-btn pill-spot" onclick="window.FarmerModule.openSpotModal()">
-          ⚡ స్పాట్ బుకింగ్
-        </button>
+      <button id="tab-btn-spot" type="button" class="eq-tab-btn pill-spot" onclick="window.openSpotModal()">
+        ⚡ స్పాట్ బుకింగ్
+      </button>
     </div>
 
     <div class="farmer-card-body">
@@ -51,41 +51,56 @@
         <div id="farmer-labour-form-wrapper"></div>
         <div id="farmer-accepted-section-wrapper"></div>
       </div>
-      <div id="farmer-pane-equipment" class="farmer-pane is-hidden" style="display: none;"></div>
-      <div id="farmer-pane-seeds" class="farmer-pane is-hidden" style="display: none;"></div>
-      <div id="farmer-pane-transport" class="farmer-pane is-hidden" style="display: none;"></div>
+      <div id="farmer-pane-equipment" class="farmer-pane is-hidden">
+        <div class="tab-placeholder-card">
+          <h4>🚜 పరికరాలు & యంత్రాల సేవలు</h4>
+          <p class="tab-placeholder-desc">ట్రాక్టర్లు, హార్వెస్టర్లు మరియు వ్యవసాయ పరికరాల బుకింగ్ సేవలు త్వరలో ప్రారంభం కానున్నాయి.</p>
+        </div>
+      </div>
+      <div id="farmer-pane-seeds" class="farmer-pane is-hidden">
+        <div class="tab-placeholder-card">
+          <h4>🌱 నాణ్యమైన విత్తనాలు & ఎరువులు</h4>
+          <p class="tab-placeholder-desc">ధృవీకరించబడిన విత్తనాలు, సేంద్రీయ ఎరువుల సరఫరా వివరాలు త్వరలో రానున్నాయి.</p>
+        </div>
+      </div>
+      <div id="farmer-pane-transport" class="farmer-pane is-hidden">
+        <div class="tab-placeholder-card">
+          <h4>🚚 పంట రవాణా & మార్కెట్ లాజిస్టిక్స్</h4>
+          <p class="tab-placeholder-desc">మీ పంటను వ్యవసాయ మార్కెట్‌కు సురక్షితంగా చేర్చే రవాణా వాహనాల వివరాలు ఇక్కడ వస్తాయి.</p>
+        </div>
+      </div>
 
       <!-- బుకింగ్ రికార్డులు కనిపించే బాక్స్ -->
       <div id="farmer-booking-records"></div>
     </div>
-  </div>
-      <!-- ⚡ అత్యవసర స్పాట్ బుకింగ్ పాప్-అప్ మోడల్ -->
-      <div id="spot-booking-modal" class="spot-modal-overlay" style="display: none;">
-        <div class="spot-modal-box">
-          <div class="spot-modal-header">
-            <h4>⚡ అత్యవసర స్పాట్ బుకింగ్ (SOS)</h4>
-            <span class="spot-modal-close" onclick="window.FarmerModule.closeSpotModal()">&times;</span>
-          </div>
-          <div class="spot-modal-body">
-            <label>అత్యవసర అవసరం దేనికి?:</label>
-            <select id="spot-service-type">
-              <option value="LABOUR">👷 అత్యవసర కూలీలు (పత్తి తీత, వరి రక్షణ)</option>
-              <option value="TRACTOR">🚜 ట్రాక్టర్ / యంత్రం (తక్షణ దుక్కి/కోత)</option>
-              <option value="TRANSPORT">🚛 తక్షణ రవాణా (మార్కెట్‌కు తరలింపు)</option>
-            </select>
 
-            <label>ఎంతమంది / ఎంత సమయం?:</label>
-            <input type="text" id="spot-quantity" placeholder="ఉదా: 4 గురు కూలీలు లేదా 2 గంటలు">
+    <!-- ⚡ అత్యవసర స్పాట్ బుకింగ్ పాప్-అప్ మోడల్ -->
+    <div id="spot-booking-modal" class="spot-modal-overlay">
+      <div class="spot-modal-box">
+        <div class="spot-modal-header">
+          <h4>⚡ అత్యవసర స్పాట్ బుకింగ్ (SOS)</h4>
+          <span class="spot-modal-close" onclick="window.closeSpotModal()">&times;</span>
+        </div>
+        <div class="spot-modal-body">
+          <label class="spot-label">అత్యవసర అవసరం దేనికి?:</label>
+          <select id="spot-service-type" class="spot-select">
+            <option value="LABOUR">👷 అత్యవసర కూలీలు (పత్తి తీత, వరి రక్షణ)</option>
+            <option value="TRACTOR">🚜 ట్రాక్టర్ / యంత్రం (తక్షణ దుక్కి/కోత)</option>
+            <option value="TRANSPORT">🚛 తక్షణ రవాణా (మార్కెట్‌కు తరలింపు)</option>
+          </select>
 
-            <label>అందించే వేతనం / అద్దె (₹):</label>
-            <input type="number" id="spot-wage" placeholder="ఉదా: 600">
+          <label class="spot-label">ఎంతమంది / ఎంత సమయం?:</label>
+          <input type="text" id="spot-quantity" class="spot-input" placeholder="ఉదా: 4 గురు కూలీలు లేదా 2 గంటలు" />
 
-            <button type="button" class="btn-spot-submit" onclick="window.FarmerModule.submitSpotAlert()">
-              📢 తక్షణమే అలర్ట్ పంపండి
-            </button>
-          </div>
+          <label class="spot-label">అందించే వేతనం / అద్దె (₹):</label>
+          <input type="number" id="spot-wage" class="spot-input" placeholder="ఉదా: 600" />
+
+          <button type="button" class="btn-spot-submit" onclick="window.submitSpotAlert()">
+            📢 తక్షణమే అలర్ట్ పంపండి
+          </button>
         </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -237,6 +252,88 @@
         </div>
         <button type="submit" class="btn-confirm-booking">✅ అభ్యర్థన పంపండి</button>
       </form>
+    </div>
+  </div>
+</template>
+
+<!-- 6. లైవ్ స్లాట్ & కన్ఫర్మ్డ్ కూలీల విభాగం షెల్ -->
+<template id="farmer-accepted-template">
+  <div class="accepted-section">
+    <div class="slot-tracker-box">
+      <h4 class="slot-tracker-title">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
+      <div id="slot-tracker-container" class="slot-tracker-scroll custom-scroll"></div>
+    </div>
+    <div class="confirmed-labours-box">
+      <h4 class="confirmed-title">👥 Confirm అయిన కూలీలు (<span id="confirmed-count">0</span>):</h4>
+      <div id="accepted-list" class="custom-scroll"></div>
+    </div>
+  </div>
+</template>
+
+<!-- 7. సింగిల్ స్లాట్ జాబ్ కార్డ్ టెంప్లేట్ -->
+<template id="slot-job-card-template">
+  <div class="slot-job-card">
+    <div class="slot-card-header">
+      <strong class="slot-job-title"></strong>
+      <span class="slot-status-badge"></span>
+    </div>
+    <div class="slot-job-details"></div>
+    <div class="slot-labours-wrapper"></div>
+  </div>
+</template>
+
+<!-- 8. స్లాట్ లోపల సింగిల్ లేబర్ రో టెంప్లేట్ -->
+<template id="slot-labour-row-template">
+  <div class="slot-labour-row">
+    <span class="slot-labour-info"></span>
+    <div class="slot-btn-group">
+      <a class="slot-btn-call">📞 కాల్</a>
+      <a class="slot-btn-whatsapp" target="_blank">💬 వాట్సాప్</a>
+    </div>
+  </div>
+</template>
+
+<!-- 9. కన్ఫర్మ్డ్ లేబర్ కార్డ్ టెంప్లేట్ -->
+<template id="confirmed-labour-card-template">
+  <div class="confirmed-labour-card">
+    <div class="confirmed-header-row">
+      <strong class="labour-name-text"></strong>
+      <span class="badge-wage"></span>
+    </div>
+    <div class="labour-work-info"></div>
+    <div class="slot-btn-group contact-actions">
+      <a class="slot-btn-call">📞 కాల్</a>
+      <a class="slot-btn-whatsapp" target="_blank">💬 వాట్సాప్</a>
+    </div>
+  </div>
+</template>
+
+<!-- 10. పరికరాల బుకింగ్ రికార్డుల షెల్ -->
+<template id="farmer-booking-records-template">
+  <div class="booking-records-section">
+    <div class="booking-header-row">
+      <h4 class="booking-title">📋 నా పరికరాల & వాహనాల బుకింగ్‌లు (<span id="booking-count">0</span>):</h4>
+      <button type="button" id="btn-clear-bookings" onclick="window.clearFarmerBookings()" class="btn-clear-records">
+        🗑️ Clear
+      </button>
+    </div>
+    <div id="booking-records-list" class="booking-records-scroll custom-scroll"></div>
+  </div>
+</template>
+
+<!-- 11. సింగిల్ బుకింగ్ రికార్డ్ కార్డ్ టెంప్లేట్ -->
+<template id="booking-record-item-template">
+  <div class="booking-record-card">
+    <div class="booking-record-top">
+      <span class="booking-item-title"></span>
+      <span class="booking-status-tag"></span>
+    </div>
+    <div class="booking-record-details"></div>
+    <div class="booking-actions-row">
+      <a class="slot-btn-call">📞 కాల్</a>
+      <a class="slot-btn-whatsapp" target="_blank">💬 వాట్సాప్</a>
+      <button type="button" class="btn-escrow">🔒 ₹500 Escrow Lock</button>
+      <span class="txt-escrow-locked is-hidden">✅ Escrow Locked</span>
     </div>
   </div>
 </template>
