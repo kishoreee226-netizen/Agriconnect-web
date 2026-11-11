@@ -434,3 +434,57 @@ window.lockBookingEscrow = function(bookingId, amount, itemName) {
     alert(`🔒 ₹${amount} ఎస్క్రో లాక్ చేయబడింది (${itemName})!`);
   }
 };
+// ⚡ 5. స్పాట్ బుకింగ్ ఫంక్షన్స్
+window.openSpotModal = function() {
+  const modal = document.getElementById("spot-booking-modal");
+  if (modal) modal.style.display = "flex";
+};
+
+window.closeSpotModal = function() {
+  const modal = document.getElementById("spot-booking-modal");
+  if (modal) modal.style.display = "none";
+};
+
+window.submitSpotAlert = function() {
+  const typeSelect = document.getElementById("spot-service-type");
+  const qtyInput = document.getElementById("spot-quantity");
+  const wageInput = document.getElementById("spot-wage");
+
+  const selectedType = typeSelect ? typeSelect.value : "LABOUR";
+  const qty = qtyInput ? qtyInput.value.trim() : "";
+  const wage = wageInput ? wageInput.value.trim() : "";
+
+  if (!qty || !wage) {
+    alert("దయచేసి అవసరమైన పరిమాణం మరియు వేతనం వివరాలను నమోదు చేయండి!");
+    return;
+  }
+
+  const spotAlertData = {
+    id: "SPOT-" + Date.now(),
+    roleTarget: selectedType,
+    farmerName: "Kishor",
+    location: "Warangal",
+    quantity: qty,
+    wage: Number(wage),
+    status: "URGENT_BROADCAST",
+    createdAt: new Date().toLocaleTimeString('te-IN')
+  };
+
+  let alerts = JSON.parse(localStorage.getItem("agri_spot_alerts") || "[]");
+  alerts.unshift(spotAlertData);
+  localStorage.setItem("agri_spot_alerts", JSON.stringify(alerts));
+
+  window.closeSpotModal();
+  if (qtyInput) qtyInput.value = "";
+  if (wageInput) wageInput.value = "";
+
+  let categoryName = selectedType === "LABOUR" ? "కూలీలకు" : (selectedType === "TRACTOR" ? "ట్రాక్టర్ యజమానులకు" : "రవాణా డ్రైవర్లకు");
+  alert(`🚨 మీ అత్యవసర స్పాట్ అభ్యర్థన సమీపంలోని ${categoryName} మాత్రమే తక్షణ అలర్ట్‌గా పంపబడింది!`);
+};
+
+// మాడ్యూల్ ఆబ్జెక్ట్ కోసం లింక్
+if (window.FarmerModule) {
+  window.FarmerModule.openSpotModal = window.openSpotModal;
+  window.FarmerModule.closeSpotModal = window.closeSpotModal;
+  window.FarmerModule.submitSpotAlert = window.submitSpotAlert;
+}
