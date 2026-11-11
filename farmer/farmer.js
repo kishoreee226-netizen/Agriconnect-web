@@ -7,6 +7,8 @@ window.renderFarmerLandingCard = function() {
 
   mount.replaceChildren(tpl.content.cloneNode(true));
   mount.classList.remove("is-hidden");
+  mount.style.display = "block";
+
 };
 
 // 1. Tab Switcher
