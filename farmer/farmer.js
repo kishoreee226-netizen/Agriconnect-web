@@ -86,7 +86,7 @@ window.mountFarmerPersistentSwitchBar = function() {
       pBtn.classList.toggle("active", isActive);
       pBtn.classList.toggle("active-provider", isActive);
     }
-
+};
 // పాత ఫంక్షన్ కాల్స్ బ్రేక్ అవ్వకుండా అలియాస్
 window.updateFarmerSwitchBarActiveState = window.mountFarmerPersistentSwitchBar;
 
