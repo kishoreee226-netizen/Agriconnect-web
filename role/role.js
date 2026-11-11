@@ -160,22 +160,23 @@ window.RoleController = {
     if (banner) banner.remove();
   },
 
-  renderRoleSwitchBar: function() {
+    renderRoleSwitchBar: function() {
     const state = window.AppState;
     if (!state || !state.isLoggedIn) {
       this.removeRoleSwitchBar();
       return;
     }
 
-    // డేటాబేస్ లేదా లోకల్‌స్టోరేజ్ ప్రొఫైల్ నుంచి రోల్ రీడ్ చేయడం
+    // ప్రొఫైల్ నుంచి బేస్ రోల్ వివరాలను తీసుకోవడం
     const profile = state.userProfile || state.user || {};
-    const actualRole = String(profile.role || profile.roleType || profile.userType || state.userType || '').toUpperCase().trim();
+    const originalRole = String(profile.accountType || profile.originalRole || profile.baseRole || '').toUpperCase().trim();
+    const explicitRole = String(profile.roleType || profile.userType || '').toUpperCase().trim();
 
-    // కేవలం ప్రత్యేకంగా కూలీ లేదా ప్రొవైడర్‌గా లాగిన్ అయితేనే స్విచ్ బార్ రాదు
-    const isDedicatedLabour = (actualRole === "LABOUR" || actualRole === "LABOURONLY" || actualRole === "LABOUR_ONLY");
-    const isDedicatedProvider = (actualRole === "PROVIDER");
+    // కేవలం ప్రత్యేకంగా కూలీ లేదా ప్రొవైడర్‌గా లాగిన్ అయితే మాత్రమే స్విచ్ బార్ రాకూడదు
+    const isStrictLabour = (originalRole === "LABOUR" || originalRole === "LABOURONLY" || explicitRole === "LABOURONLY" || explicitRole === "LABOUR_ONLY");
+    const isStrictProvider = (originalRole === "PROVIDER" && !profile.isFarmer);
 
-    if (isDedicatedLabour || isDedicatedProvider) {
+    if (isStrictLabour || isStrictProvider) {
       this.removeRoleSwitchBar();
       return;
     }
@@ -189,7 +190,7 @@ window.RoleController = {
       switchContainer = fragment.querySelector(".role-switch-container");
       switchContainer.id = "role-switch-container";
 
-      // ప్రొఫైల్ బ్యానర్ కిందే నేరుగా ఇన్సర్ట్ అవుతుంది
+      // ప్రొఫైల్ బ్యానర్ కింద ఇన్సర్ట్ చేయడం
       const userBanner = document.getElementById("user-profile-banner");
       if (userBanner && userBanner.parentNode) {
         userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
@@ -227,7 +228,7 @@ window.RoleController = {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
 
-    // తాత్కాలిక వ్యూ కోసం మాత్రమే సేవ్ అవుతుంది, అసలు ప్రొఫైల్ సేఫ్‌గా ఉంటుంది
+    // తాత్కాలిక వ్యూ కోసం మాత్రమే సేవ్ అవుతుంది, అసలు ప్రొఫైల్ మారదు
     localStorage.setItem("agri_current_active_role", targetRole);
 
     this.applyUserRoleView();
