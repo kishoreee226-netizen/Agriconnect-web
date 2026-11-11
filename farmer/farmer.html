@@ -18,25 +18,27 @@
   </div>
 </template>
 
+<!-- 🌾 శాశ్వత మోడ్ స్విచర్ టెంప్లేట్ (డాష్‌బోర్డ్ పైన ఉంటుంది) -->
+<template id="farmer-persistent-switch-template">
+  <div id="persistent-role-switch-bar" class="farmer-role-switch-bar">
+    <button type="button" id="f-btn-farmer" class="farmer-switch-btn active" onclick="window.switchRoleMode('FARMER')">
+      🌾 రైతు మోడ్ (Farmer)
+    </button>
+    <button type="button" id="f-btn-labour" class="farmer-switch-btn" onclick="window.switchRoleMode('LABOUR')">
+      👷 కూలీ మోడ్ (Labour)
+    </button>
+    <button type="button" id="f-btn-provider" class="farmer-switch-btn" onclick="window.switchRoleMode('PROVIDER')">
+      🤝 యజమాని మోడ్ (Provider)
+    </button>
+  </div>
+</template>
+
 <!-- 2. రైతు మెయిన్ డాష్‌బోర్డ్ షెల్ టెంప్లేట్ -->
 <template id="farmer-dashboard-template">
   <div class="farmer-card">
     <div class="farmer-card-header">
       <h3>👨‍🌾 రైతు Dashboard</h3>
       <span class="badge-live">Live</span>
-    </div>
-
-    <!-- 🌾 రైతు డాష్‌బోర్డ్ మోడ్ స్విచ్ బటన్లు -->
-    <div class="farmer-role-switch-bar">
-      <button type="button" id="f-btn-farmer" class="farmer-switch-btn active" onclick="window.switchRoleMode('FARMER')">
-        🌾 రైతు మోడ్ (Farmer)
-      </button>
-      <button type="button" id="f-btn-labour" class="farmer-switch-btn" onclick="window.switchRoleMode('LABOUR')">
-        👷 కూలీ మోడ్ (Labour)
-      </button>
-      <button type="button" id="f-btn-provider" class="farmer-switch-btn" onclick="window.switchRoleMode('PROVIDER')">
-        🤝 యజమాని మోడ్ (Provider)
-      </button>
     </div>
 
     <!-- 5 Tabs Bar -->
