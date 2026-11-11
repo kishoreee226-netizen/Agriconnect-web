@@ -155,10 +155,13 @@ window.RoleController = {
     const state = window.AppState;
 
     // ⚡ ముఖ్యమైన మార్పు: యజమాని (PROVIDER) లాగిన్ అయినా లేదా కేవలం కూలీ అయినా మోడ్ బటన్లు కనిపించవు
-        if (!state || !state.isLoggedIn || 
-        state.currentRole === "PROVIDER" || state.userType === "PROVIDER" || 
-        state.currentRole === "LABOUR" || state.userType === "LABOUR" || 
-        state.userType === "LABOURONLY" || state.userType === "LABOUR_ONLY") {
+            const baseType = state.userProfile?.roleType || state.userProfile?.userType || state.userType;
+
+    if (!state || !state.isLoggedIn || 
+        baseType === "PROVIDER" || 
+        baseType === "LABOUR" || 
+        baseType === "LABOURONLY" || 
+        baseType === "LABOUR_ONLY") {
 
       this.removeRoleSwitchBar();
       return;
