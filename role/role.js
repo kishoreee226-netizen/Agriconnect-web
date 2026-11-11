@@ -25,24 +25,46 @@ window.RoleController = {
     const toolsBox = document.getElementById("agri-tools-box");
     const utilsBox = document.getElementById("utilitiesMountSlot");
 
-    // 1. లాగిన్ కానప్పుడు (Public Landing View)
+      // 1. లాగిన్ కానప్పుడు (Public Landing View)
     if (!state || !state.isLoggedIn) {
       this.removeProfileHeader();
       this.removeRoleSwitchBar();
-const pSwitch = document.getElementById("persistent-role-switch-bar");
-if (pSwitch) pSwitch.style.display = "none";
 
+      const pSwitch = document.getElementById("persistent-role-switch-bar");
+      if (pSwitch) pSwitch.style.display = "none";
+
+      // 🌾 రైతు ల్యాండింగ్ కార్డ్
       if (farmerBox) {
+        farmerBox.classList.remove("is-hidden"); // దాగి ఉన్న క్లాస్‌ను ఖచ్చితంగా తీసేయాలి
         farmerBox.style.display = "block";
-        if (typeof window.renderFarmerLandingCard === "function") window.renderFarmerLandingCard();
+        
+        // టెంప్లేట్ లోడ్ అవ్వడానికి కాస్త సమయం పట్టినా సేఫ్‌గా రెండర్ చేసే లాజిక్
+        const tryRenderFarmer = () => {
+          if (typeof window.renderFarmerLandingCard === "function") {
+            window.renderFarmerLandingCard();
+          } else {
+            setTimeout(tryRenderFarmer, 100);
+          }
+        };
+        tryRenderFarmer();
       }
+
+      // 👷 కూలీ ల్యాండింగ్ కార్డ్
       if (labourBox) {
+        labourBox.classList.remove("is-hidden");
         labourBox.style.display = "block";
-        if (typeof window.renderLabourLandingCard === "function") window.renderLabourLandingCard();
+        if (typeof window.renderLabourLandingCard === "function") {
+          window.renderLabourLandingCard();
+        }
       }
+
+      // 🤝 యజమాని ల్యాండింగ్ కార్డ్
       if (providerBox) {
+        providerBox.classList.remove("is-hidden");
         providerBox.style.display = "block";
-        if (typeof window.renderProviderLandingCard === "function") window.renderProviderLandingCard();
+        if (typeof window.renderProviderLandingCard === "function") {
+          window.renderProviderLandingCard();
+        }
       }
 
       if (walletBox) walletBox.style.display = "none";
@@ -52,6 +74,7 @@ if (pSwitch) pSwitch.style.display = "none";
       if (utilsBox) utilsBox.style.display = "block";
       return;
     }
+
 
     // 2. లాగిన్ అయినప్పుడు: ప్రొఫైల్ బ్యానర్ & రోల్ స్విచ్ బార్
     this.renderUserProfileBanner();
