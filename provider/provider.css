@@ -1,4 +1,4 @@
-/* provider/provider.css - Dedicated Styles for Provider Module */
+/* provider/provider.css - Dedicated Clean Styles for Provider Module */
 
 .is-hidden {
   display: none !important;
@@ -38,15 +38,18 @@
   cursor: pointer;
 }
 
-/* 2. Main Dashboard Card */
+/* 2. Main Dashboard Card Themes */
 .provider-dashboard-card {
   background: #ffffff;
-  border: 2px solid var(--provider-theme, #f57c00);
   border-radius: 14px;
   padding: 14px;
   margin-bottom: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+.provider-dashboard-card.theme-equipment { border: 2px solid #f57c00; }
+.provider-dashboard-card.theme-transport { border: 2px solid #7b1fa2; }
+.provider-dashboard-card.theme-seeds { border: 2px solid #2e7d32; }
 
 .provider-dash-title {
   margin: 0 0 4px;
@@ -62,13 +65,16 @@
 
 .provider-add-service-btn {
   background: #f8fafc;
-  border: 2px dashed var(--provider-theme, #f57c00);
   border-radius: 10px;
   padding: 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
 }
+
+.provider-dashboard-card.theme-equipment .provider-add-service-btn { border: 2px dashed #f57c00; }
+.provider-dashboard-card.theme-transport .provider-add-service-btn { border: 2px dashed #7b1fa2; }
+.provider-dashboard-card.theme-seeds .provider-add-service-btn { border: 2px dashed #2e7d32; }
 
 .provider-add-service-btn:hover {
   background: #f1f5f9;
@@ -77,8 +83,11 @@
 .provider-add-service-text {
   font-size: 14px;
   font-weight: bold;
-  color: var(--provider-theme, #f57c00);
 }
+
+.provider-dashboard-card.theme-equipment .provider-add-service-text { color: #f57c00; }
+.provider-dashboard-card.theme-transport .provider-add-service-text { color: #7b1fa2; }
+.provider-dashboard-card.theme-seeds .provider-add-service-text { color: #2e7d32; }
 
 .provider-add-service-subtext {
   font-size: 11px;
@@ -347,7 +356,7 @@
 .porders-accept-btn { background: #16a34a; color: #ffffff; }
 .porders-accepted-badge { font-size: 11px; color: #15803d; font-weight: bold; }
 
-/* 6. Farmer Dashboard Items Display (రైతు ట్యాబ్ కార్డ్స్) */
+/* 6. Farmer Dashboard Items Display */
 .farmer-market-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -515,7 +524,6 @@
 .provider-submit-btn, .pitem-submit-btn {
   width: 100%;
   padding: 11px;
-  background: var(--provider-theme, #f57c00);
   color: #ffffff;
   border: none;
   border-radius: 8px;
@@ -524,3 +532,7 @@
   cursor: pointer;
   margin-top: 8px;
 }
+
+.theme-equipment { background: #f57c00 !important; }
+.theme-transport { background: #7b1fa2 !important; }
+.theme-seeds { background: #2e7d32 !important; }
