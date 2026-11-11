@@ -78,25 +78,26 @@
 }
 
 .eq-tab-btn {
-  flex-shrink: 0;             /* 👉 4. (flex: 1 స్థానంలో ఇది పెట్టండి - అక్షరాలు నలగవు) */
-  min-width: 75px;
-  padding: 8px 10px;          /* సైడ్ స్పేస్ కొద్దిగా పెంచాం */
+  flex-shrink: 0;
+  min-width: fit-content;    /* 👉 75px తీసేసి ఇది పెట్టండి (అక్షరాల సైజును బట్టి బటన్ దానంతటదే సర్దుకుంటుంది) */
+  padding: 8px 14px;
   font-size: 13px;
   font-weight: 600;
-  border: none;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
-  background: transparent;
+  background: #ffffff;
   color: #475569;
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
 }
 
-/* 👉 5. స్పాట్ బుకింగ్ బటన్ ప్రత్యేక రంగు కోసం */
+/* 👉 5వ బటన్: ఎరుపు రంగు (SOS / అత్యవసరం కాబట్టి 2వ బటన్ ఆరెంజ్‌తో కలవదు) */
 .eq-tab-btn.pill-spot {
-  background: #fff3e0;
-  color: #e65100;
-  border: 1px solid #ff9800;
+  background: #ffebee !important;
+  color: #d32f2f !important;
+  border: 1px solid #ef5350 !important;
+  font-weight: 700;
 }
 
 .eq-tab-btn.active {
