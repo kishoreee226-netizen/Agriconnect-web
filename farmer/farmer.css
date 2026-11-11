@@ -617,3 +617,36 @@
   cursor: pointer;
   margin-top: 6px;
 }
+/* farmer/farmer.css - Role Switch Bar */
+.farmer-role-switch-bar {
+  display: flex;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+
+.farmer-switch-btn {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: #475569;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.farmer-switch-btn:hover {
+  background: #e2e8f0;
+}
+
+.farmer-switch-btn.active {
+  background: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
+}
