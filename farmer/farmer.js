@@ -1,33 +1,32 @@
-// farmer/farmer.js - Comprehensive Farmer Orchestrator
+// farmer/farmer.js - Pure Logic & Template Orchestration
 
 window.renderFarmerLandingCard = function() {
   const mount = document.getElementById("farmer-post-container");
-  if (!mount) return;
-
   const tpl = document.getElementById("farmer-landing-template");
-  if (!tpl) return;
+  if (!mount || !tpl) return;
 
   mount.replaceChildren(tpl.content.cloneNode(true));
-  mount.style.setProperty('display', 'block', 'important');
+  mount.classList.remove("is-hidden");
 };
 
-// 1. Tab Switcher Function
+// 1. Tab Switcher
 window.switchFarmerTab = function(tab) {
   const panes = ['labour', 'equipment', 'seeds', 'transport'];
 
   panes.forEach(t => {
     const pane = document.getElementById(`farmer-pane-${t}`);
     const btn = document.getElementById(`tab-btn-${t}`);
+    
     if (pane) {
       if (t === tab) {
         pane.classList.remove('is-hidden');
-        pane.style.display = 'block';
       } else {
         pane.classList.add('is-hidden');
-        pane.style.display = 'none';
       }
     }
-    if (btn) btn.classList.toggle('active', t === tab);
+    if (btn) {
+      btn.classList.toggle('active', t === tab);
+    }
   });
 
   if (tab === 'equipment' && typeof window.renderEquipmentWidget === 'function') {
@@ -42,25 +41,22 @@ window.switchFarmerTab = function(tab) {
 // 2. Main Farmer Widget Renderer
 window.renderFarmerWidget = function() {
   const container = document.getElementById("farmer-post-container");
-  if (!container) return;
-
   const tpl = document.getElementById("farmer-dashboard-template");
-  if (!tpl) return;
+  if (!container || !tpl) return;
 
   container.replaceChildren(tpl.content.cloneNode(true));
 
-  // Labour Form ని ఇన్సర్ట్ చేయడం
   const formWrap = document.getElementById("farmer-labour-form-wrapper");
   const formTpl = document.getElementById("farmer-labour-form-template");
   if (formWrap && formTpl) {
     formWrap.replaceChildren(formTpl.content.cloneNode(true));
   }
 
-  // Accepted Labours లిస్ట్ రెండర్
   renderFarmerAcceptedList();
 
-  // Booking Records రెండర్
-  window.renderBookingRecords();
+  if (typeof window.renderBookingRecords === 'function') {
+    window.renderBookingRecords();
+  }
 
   prefillFarmerFormDefaults();
   bindFarmerFormEvents();
@@ -68,107 +64,105 @@ window.renderFarmerWidget = function() {
 
 window.renderFarmerLabourPane = window.renderFarmerWidget;
 
-// 3. Accepted List & Slot Tracking (Confirm అయిన కూలీల వివరాలతో సహా)
+// 3. Accepted List & Slot Tracking (Pure Template Cloning)
 function renderFarmerAcceptedList() {
   const wrap = document.getElementById("farmer-accepted-section-wrapper");
-  if (!wrap) return;
+  const shellTpl = document.getElementById("farmer-accepted-template");
+  if (!wrap || !shellTpl) return;
+
+  wrap.replaceChildren(shellTpl.content.cloneNode(true));
 
   let postedJobs = [];
   try {
-    const stored = localStorage.getItem("agri_farmer_posted_jobs");
-    postedJobs = stored ? JSON.parse(stored) : [];
+    postedJobs = JSON.parse(localStorage.getItem("agri_farmer_posted_jobs") || "[]");
   } catch (e) {
     postedJobs = [];
   }
 
-  // కూలీల వివరాల సేకరణ
+  const trackerBox = wrap.querySelector("#slot-tracker-container");
+  const acceptedList = wrap.querySelector("#accepted-list");
+  const countEl = wrap.querySelector("#confirmed-count");
+
+  const jobCardTpl = document.getElementById("slot-job-card-template");
+  const labourRowTpl = document.getElementById("slot-labour-row-template");
+
+  // A. Slot Tracking Jobs Binding
+  if (postedJobs.length === 0) {
+    const emptyEl = document.createElement("div");
+    emptyEl.className = "empty-state-text";
+    emptyEl.textContent = "మీరు ఇంకా ఎలాంటి పనులు పోస్ట్ చేయలేదు.";
+    trackerBox.appendChild(emptyEl);
+  } else {
+    postedJobs.forEach(j => {
+      if (!jobCardTpl) return;
+      const card = jobCardTpl.content.cloneNode(true);
+      const confirmed = j.confirmedLabours || [];
+      const reqCount = parseInt(j.totalRequired || j.count || 1);
+      const isFull = confirmed.length >= reqCount;
+
+      const cardRoot = card.querySelector(".slot-job-card");
+      if (isFull) cardRoot.classList.add("is-full");
+
+      card.querySelector(".slot-job-title").textContent = `🌾 ${j.crop} - ${j.workType}`;
+      
+      const badge = card.querySelector(".slot-status-badge");
+      badge.textContent = isFull ? "✅ కోటా పూర్తయింది" : "⏳ కూలీల కోసం చూస్తున్నారు";
+      if (isFull) badge.classList.add("is-full");
+
+      card.querySelector(".slot-job-details").textContent = 
+        `📅 తేదీ: ${j.workDate || j.date || 'ఈ రోజు'} | కోటా: ${confirmed.length} / ${reqCount} మంది | రేటు: ₹${j.wage}`;
+
+      const laboursWrap = card.querySelector(".slot-labours-wrapper");
+      if (confirmed.length > 0 && labourRowTpl) {
+        confirmed.forEach(c => {
+          const row = labourRowTpl.content.cloneNode(true);
+          row.querySelector(".slot-labour-info").textContent = `👷 ${c.name} (${c.phone})`;
+          row.querySelector(".slot-btn-call").href = `tel:${c.phone}`;
+          row.querySelector(".slot-btn-whatsapp").href = `https://wa.me/91${c.phone}`;
+          laboursWrap.appendChild(row);
+        });
+      } else {
+        laboursWrap.remove();
+      }
+
+      trackerBox.appendChild(card);
+    });
+  }
+
+  // B. Confirmed Labours List Binding
   let allConfirmed = [];
   postedJobs.forEach(pj => {
-    if (pj.confirmedLabours && Array.isArray(pj.confirmedLabours)) {
-      pj.confirmedLabours.forEach(c => {
-        allConfirmed.push({
-          labourName: c.name || "కూలీ",
-          labourPhone: c.phone || "",
-          crop: pj.crop,
-          workType: pj.workType,
-          wage: pj.wage
-        });
+    (pj.confirmedLabours || []).forEach(c => {
+      allConfirmed.push({
+        labourName: c.name || "కూలీ",
+        labourPhone: c.phone || "",
+        crop: pj.crop,
+        workType: pj.workType,
+        wage: pj.wage
       });
-    }
+    });
   });
 
-  let html = `
-    <div class="accepted-section" style="margin-top: 14px;">
-      <!-- A. Live Slot Tracking -->
-      <div class="slot-tracker-box" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px; margin-bottom:12px;">
-        <h4 class="slot-tracker-title" style="margin:0 0 8px; font-size:13px; color:#166534;">📋 మీరు పోస్ట్ చేసిన పనులు (Live Slot Tracking):</h4>
-        ${postedJobs.length === 0 ? `
-          <div style="font-size:12px; color:#64748b; text-align:center; padding:8px;">మీరు ఇంకా ఎలాంటి పనులు పోస్ట్ చేయలేదు.</div>
-        ` : `
-          <div class="slot-tracker-scroll custom-scroll" style="max-height:220px; overflow-y:auto;">
-            ${postedJobs.map(j => {
-              const confirmed = j.confirmedLabours || [];
-              const reqCount = parseInt(j.totalRequired || j.count || 1);
-              const isFull = confirmed.length >= reqCount;
+  if (countEl) countEl.textContent = allConfirmed.length;
 
-              return `
-                <div class="slot-job-card ${isFull ? 'is-full' : ''}" style="background:#fff; border:1px solid #cbd5e1; border-radius:8px; padding:10px; margin-bottom:8px;">
-                  <div class="slot-card-header" style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong class="slot-job-title" style="font-size:13px; color:#1e293b;">🌾 ${j.crop} - ${j.workType}</strong>
-                    <span class="slot-status-badge ${isFull ? 'is-full' : ''}" style="font-size:10px; padding:2px 6px; border-radius:4px; background:${isFull ? '#dcfce7' : '#fef3c7'}; color:${isFull ? '#166534' : '#b45309'}; font-weight:bold;">
-                      ${isFull ? '✅ కోటా పూర్తయింది' : '⏳ కూలీల కోసం చూస్తున్నారు'}
-                    </span>
-                  </div>
-                  <div class="slot-job-details" style="font-size:11px; color:#64748b; margin:4px 0;">
-                    📅 తేదీ: <b>${j.workDate || j.date || 'ఈ రోజు'}</b> | కోటా: <b>${confirmed.length} / ${reqCount} మంది</b> | రేటు: ₹${j.wage}
-                  </div>
-                  ${confirmed.length > 0 ? `
-                    <div class="slot-labours-wrapper" style="margin-top:6px; padding-top:4px; border-top:1px dashed #e2e8f0;">
-                      <span style="font-size:11px; font-weight:bold; color:#166534;">చేరిన కూలీలు:</span>
-                      ${confirmed.map(c => `
-                        <div class="slot-labour-row" style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-                          <span class="slot-labour-info" style="font-size:11px;">👷 <b>${c.name}</b> (${c.phone})</span>
-                          <div class="slot-btn-group">
-                            <a href="tel:${c.phone}" class="slot-btn-call" style="padding:2px 6px; background:#dbeafe; color:#1e40af; border-radius:4px; text-decoration:none; font-size:10px; font-weight:bold;">📞 కాల్</a>
-                            <a href="https://wa.me/91${c.phone}" target="_blank" class="slot-btn-whatsapp" style="padding:2px 6px; background:#dcfce7; color:#166534; border-radius:4px; text-decoration:none; font-size:10px; font-weight:bold; margin-left:4px;">💬 వాట్సాప్</a>
-                          </div>
-                        </div>
-                      `).join('')}
-                    </div>
-                  ` : ''}
-                </div>
-              `;
-            }).join('')}
-          </div>
-        `}
-      </div>
-
-      <!-- B. Confirm అయిన కూలీల ప్రత్యేక కార్డ్స్ -->
-      <div style="background:#ffffff; border:1px solid #cbd5e1; border-radius:10px; padding:12px; margin-bottom:12px;">
-        <h4 style="margin:0 0 10px; font-size:13px; color:#1e293b;">👥 Confirm అయిన కూలీలు (${allConfirmed.length}):</h4>
-        <div id="accepted-list" class="custom-scroll" style="max-height:200px; overflow-y:auto;">
-          ${allConfirmed.length === 0 ? `
-            <div style="font-size:12px; color:#64748b; text-align:center; padding:8px;">
-              కూలీలు పనిని accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.
-            </div>
-          ` : allConfirmed.map(j => `
-            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:10px; margin-bottom:8px;">
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong>👷 ${j.labourName}</strong>
-                <span style="background:#dcfce7; color:#166534; padding:2px 6px; border-radius:4px; font-weight:bold; font-size:12px;">₹${j.wage}</span>
-              </div>
-              <div style="font-size:12px; color:#475569; margin:4px 0;">పని: ${j.crop} (${j.workType})</div>
-              <div style="display:flex; gap:6px; margin-top:6px;">
-                <a href="tel:${j.labourPhone}" style="padding:4px 8px; background:#dbeafe; color:#1e40af; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold;">📞 కాల్</a>
-                <a href="https://wa.me/91${j.labourPhone}" target="_blank" style="padding:4px 8px; background:#dcfce7; color:#166534; border-radius:4px; text-decoration:none; font-size:11px; font-weight:bold;">💬 వాట్సాప్</a>
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </div>
-  `;
-  wrap.innerHTML = html;
+  const confCardTpl = document.getElementById("confirmed-labour-card-template");
+  if (allConfirmed.length === 0) {
+    const emptyEl = document.createElement("div");
+    emptyEl.className = "empty-state-text";
+    emptyEl.textContent = "కూలీలు పనిని accept చేయగానే వారి వివరాలు ఇక్కడ కనిపిస్తాయి.";
+    acceptedList.appendChild(emptyEl);
+  } else {
+    allConfirmed.forEach(j => {
+      if (!confCardTpl) return;
+      const cCard = confCardTpl.content.cloneNode(true);
+      cCard.querySelector(".labour-name-text").textContent = `👷 ${j.labourName}`;
+      cCard.querySelector(".badge-wage").textContent = `₹${j.wage}`;
+      cCard.querySelector(".labour-work-info").textContent = `పని: ${j.crop} (${j.workType})`;
+      cCard.querySelector(".slot-btn-call").href = `tel:${j.labourPhone}`;
+      cCard.querySelector(".slot-btn-whatsapp").href = `https://wa.me/91${j.labourPhone}`;
+      acceptedList.appendChild(cCard);
+    });
+  }
 }
 
 // 4. Form Events & Submit
@@ -178,13 +172,13 @@ function bindFarmerFormEvents() {
   document.getElementById("loc-btn")?.addEventListener("click", () => {
     const s = document.getElementById("loc-status");
     if (navigator.geolocation) {
-      if (s) s.innerText = "GPS వెతుకుతోంది...";
+      if (s) s.textContent = "GPS వెతుకుతోంది...";
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           farmCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-          if (s) s.innerText = `✅ GPS set అయింది`;
+          if (s) s.textContent = "✅ GPS set అయింది";
         },
-        () => { if (s) s.innerText = "స్థానిక గ్రామం వర్తిస్తుంది."; },
+        () => { if (s) s.textContent = "స్థానిక గ్రామం వర్తిస్తుంది."; },
         { enableHighAccuracy: true, timeout: 8000 }
       );
     }
@@ -273,12 +267,12 @@ window.openFarmerJobModal = function() {
   const dateInp = document.getElementById("fjm_date");
   if (dateInp && !dateInp.value) dateInp.value = today;
 
-  if (modal) modal.style.display = "flex";
+  if (modal) modal.classList.remove("is-hidden");
 };
 
 window.closeFarmerJobModal = function() {
   const modal = document.getElementById("farmerJobModal");
-  if (modal) modal.style.display = "none";
+  if (modal) modal.classList.add("is-hidden");
 };
 
 window.handleFarmerJobSubmit = function(e) {
@@ -355,64 +349,69 @@ window.openBookingModal = function(itemName, ownerName, rate, phone) {
     window.renderBookingRecords();
   };
 
-  modal.style.display = "flex";
+  modal.classList.remove("is-hidden");
 };
 
 window.closeBookingModal = function() {
   const modal = document.getElementById("booking-modal");
-  if (modal) modal.style.display = "none";
+  if (modal) modal.classList.add("is-hidden");
 };
 
-// 7. పరికరాల బుకింగ్ రికార్డులు (Naa Bookinglu)
+// 7. పరికరాల బుకింగ్ రికార్డులు (Pure Template Rendering)
 window.renderBookingRecords = function() {
   const container = document.getElementById("farmer-booking-records");
-  if (!container) return;
+  const shellTpl = document.getElementById("farmer-booking-records-template");
+  const itemTpl = document.getElementById("booking-record-item-template");
+  if (!container || !shellTpl || !itemTpl) return;
+
+  container.replaceChildren(shellTpl.content.cloneNode(true));
 
   let bookings = JSON.parse(localStorage.getItem("farmer_bookings") || "[]");
+  const countEl = container.querySelector("#booking-count");
+  const listEl = container.querySelector("#booking-records-list");
+  const clearBtn = container.querySelector("#btn-clear-bookings");
 
-  container.innerHTML = `
-    <div class="booking-records-section" style="margin-top: 14px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 12px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <h4 style="margin: 0; font-size: 13px; color: #1e293b;">📋 నా పరికరాల & వాహనాల బుకింగ్‌లు (${bookings.length}):</h4>
-        ${bookings.length > 0 ? `
-          <button type="button" onclick="window.clearFarmerBookings()" style="background: none; border: none; color: #ef4444; font-size: 11px; font-weight: bold; cursor: pointer;">🗑️ Clear</button>
-        ` : ''}
-      </div>
-      
-      ${bookings.length === 0 ? `
-        <div style="font-size: 12px; color: #64748b; text-align: center; padding: 10px;">
-          మీరు ఇంకా ఎలాంటి పరికరాలు లేదా వాహనాలు బుక్ చేసుకోలేదు.
-        </div>
-      ` : `
-        <div class="booking-records-scroll custom-scroll" style="max-height: 250px; overflow-y: auto;">
-          ${bookings.map(b => {
-            const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
-            return `
-              <div class="booking-record-card" style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-top: 8px; background: #f8fafc;">
-                <div style="display: flex; justify-content: space-between;">
-                  <span>🚜 <b>${b.itemName}</b></span>
-                  <span style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: ${isLocked ? '#dcfce7' : '#fef3c7'}; color: ${isLocked ? '#166534' : '#b45309'}; font-weight: bold;">${b.status}</span>
-                </div>
-                <div style="font-size: 12px; color: #475569; margin: 4px 0;">
-                  👤 యజమాని: <b>${b.ownerName}</b> (${b.phone})<br>
-                  📅 తేదీ: <b>${b.date}</b> | ⏱️ పరిమాణం: <b>${b.duration}</b> | 💰 ధర: <b>${b.rate}</b>
-                </div>
-                <div style="display: flex; gap: 6px; align-items: center; margin-top: 6px;">
-                  <a href="tel:${b.phone}" style="padding: 4px 8px; background: #dbeafe; color: #1e40af; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: bold;">📞 కాల్</a>
-                  <a href="https://wa.me/91${b.phone}" target="_blank" style="padding: 4px 8px; background: #dcfce7; color: #166534; text-decoration: none; border-radius: 4px; font-size: 11px; font-weight: bold;">💬 వాట్సాప్</a>
-                  ${!isLocked ? `
-                    <button onclick="lockBookingEscrow('${b.id}', 500, '${b.itemName}')" style="padding: 4px 8px; background: #fef3c7; border: 1px solid #fde68a; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; color: #b45309;">
-                      🔒 ₹500 Escrow Lock
-                    </button>
-                  ` : '<span style="color: #16a34a; font-weight: bold; font-size: 11px;">✅ Escrow Locked</span>'}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      `}
-    </div>
-  `;
+  if (countEl) countEl.textContent = bookings.length;
+  if (clearBtn && bookings.length === 0) clearBtn.classList.add("is-hidden");
+
+  if (bookings.length === 0) {
+    const emptyEl = document.createElement("div");
+    emptyEl.className = "empty-state-text";
+    emptyEl.textContent = "మీరు ఇంకా ఎలాంటి పరికరాలు లేదా వాహనాలు బుక్ చేసుకోలేదు.";
+    listEl.appendChild(emptyEl);
+    return;
+  }
+
+  bookings.forEach(b => {
+    const card = itemTpl.content.cloneNode(true);
+    const isLocked = b.escrowLocked || (b.status && b.status.includes("Escrow"));
+
+    card.querySelector(".booking-item-title").textContent = `🚜 ${b.itemName}`;
+    
+    const tag = card.querySelector(".booking-status-tag");
+    tag.textContent = b.status;
+    tag.classList.add(isLocked ? "locked" : "pending");
+
+    card.querySelector(".booking-record-details").textContent = 
+      `👤 యజమాని: ${b.ownerName} (${b.phone}) | 📅 తేదీ: ${b.date} | ⏱️ పరిమాణం: ${b.duration} | 💰 ధర: ${b.rate}`;
+
+    card.querySelector(".slot-btn-call").href = `tel:${b.phone}`;
+    card.querySelector(".slot-btn-whatsapp").href = `https://wa.me/91${b.phone}`;
+
+    const lockBtn = card.querySelector(".btn-escrow");
+    const lockTxt = card.querySelector(".txt-escrow-locked");
+
+    if (isLocked) {
+      lockBtn.remove();
+      lockTxt.classList.remove("is-hidden");
+    } else {
+      lockBtn.onclick = function() {
+        window.lockBookingEscrow(b.id, 500, b.itemName);
+      };
+    }
+
+    listEl.appendChild(card);
+  });
 };
 
 window.clearFarmerBookings = function() {
@@ -435,7 +434,7 @@ window.lockBookingEscrow = function(bookingId, amount, itemName) {
   }
 };
 
-// ⚡ 5. స్పాట్ బుకింగ్ ఫంక్షన్స్
+// 8. ⚡ స్పాట్ బుకింగ్ ఫంక్షన్స్
 window.openSpotModal = function() {
   const modal = document.getElementById("spot-booking-modal");
   if (modal) modal.style.display = "flex";
@@ -460,11 +459,14 @@ window.submitSpotAlert = function() {
     return;
   }
 
+  const farmerName = window.AppState?.userProfile?.name || "రైతు";
+  const farmerVillage = window.AppState?.userProfile?.village || "స్థానిక ప్రాంతం";
+
   const spotAlertData = {
     id: "SPOT-" + Date.now(),
     roleTarget: selectedType,
-    farmerName: "Kishor",
-    location: "Warangal",
+    farmerName: farmerName,
+    location: farmerVillage,
     quantity: qty,
     wage: Number(wage),
     status: "URGENT_BROADCAST",
@@ -483,10 +485,10 @@ window.submitSpotAlert = function() {
   alert(`🚨 మీ అత్యవసర స్పాట్ అభ్యర్థన సమీపంలోని ${categoryName} మాత్రమే తక్షణ అలర్ట్‌గా పంపబడింది!`);
 };
 
-// మాడ్యూల్ ఆబ్జెక్ట్ కోసం లింక్
-if (window.FarmerModule) {
-  window.FarmerModule.openSpotModal = window.openSpotModal;
-  window.FarmerModule.closeSpotModal = window.closeSpotModal;
-  window.FarmerModule.submitSpotAlert = window.submitSpotAlert;
-}
-
+// 9. మాడ్యూల్ ఎక్స్‌పోర్ట్
+window.FarmerModule = window.FarmerModule || {};
+window.FarmerModule.openSpotModal = window.openSpotModal;
+window.FarmerModule.closeSpotModal = window.closeSpotModal;
+window.FarmerModule.submitSpotAlert = window.submitSpotAlert;
+window.FarmerModule.switchFarmerTab = window.switchFarmerTab;
+window.FarmerModule.renderFarmerWidget = window.renderFarmerWidget;
