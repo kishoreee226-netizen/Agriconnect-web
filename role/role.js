@@ -108,6 +108,22 @@ window.RoleController = {
     if (window.WalletModule && typeof window.WalletModule.render === "function") {
       window.WalletModule.render();
     }
+    if (window.WalletModule && typeof window.WalletModule.render === "function") {
+      window.WalletModule.render();
+    }
+
+    // 🌾 రైతు తిరిగి రావడానికి బ్యాక్ బటన్ విజిబిలిటీ లాజిక్
+    const profile = state.userProfile || state.user || {};
+    const baseRole = String(profile.accountType || profile.role || profile.roleType || profile.userType || '').toUpperCase().trim();
+    
+    // కూలీ లేదా ప్రొవైడర్ లాగిన్ అయితే ఇది false అవుతుంది, రైతు అయితే true అవుతుంది
+    const isRealFarmer = !(baseRole === "LABOUR" || baseRole === "LABOURONLY" || baseRole === "LABOUR_ONLY" || baseRole === "PROVIDER");
+
+    const lBack = document.getElementById("labour-back-to-farmer-bar");
+    const pBack = document.getElementById("provider-back-to-farmer-bar");
+
+    if (lBack) lBack.style.display = isRealFarmer ? "block" : "none";
+    if (pBack) pBack.style.display = isRealFarmer ? "block" : "none";
   },
 
     renderUserProfileBanner: function() {
