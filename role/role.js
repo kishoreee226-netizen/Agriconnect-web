@@ -244,7 +244,7 @@ window.RoleController = {
     if (switchContainer) switchContainer.remove();
   },
 
-  switchRoleMode: function(targetRole) {
+    switchRoleMode: function(targetRole) {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
 
@@ -252,6 +252,11 @@ window.RoleController = {
     localStorage.setItem("agri_current_active_role", targetRole);
 
     this.applyUserRoleView();
+
+    // 🌾 రైతు డాష్‌బోర్డ్ బటన్ల యాక్టివ్ స్టేట్ అప్‌డేట్
+    if (typeof window.updateFarmerSwitchBarActiveState === "function") {
+      window.updateFarmerSwitchBarActiveState();
+    }
   },
 
   logoutUser: function() {
