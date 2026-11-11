@@ -110,7 +110,7 @@ window.RoleController = {
     }
   },
 
-  renderUserProfileBanner: function() {
+    renderUserProfileBanner: function() {
     let banner = document.getElementById("user-profile-banner");
     const state = window.AppState;
     const user = state ? (state.userProfile || state.user) : null;
@@ -123,27 +123,36 @@ window.RoleController = {
       const fragment = tpl.content.cloneNode(true);
       banner = fragment.querySelector(".user-profile-banner");
       banner.id = "user-profile-banner";
-      const mount = document.getElementById("role-container") || document.querySelector(".container") || document.body;
+
+      // పాత 'role-container' తో పనిలేదు, నేరుగా ప్రధాన కంటైనర్ లోనే చేరుతుంది
+      const mount = document.querySelector(".container") || document.body;
       mount.prepend(banner);
     }
 
     let roleText = "రైతు (Farmer)";
     let badgeColor = "#16a34a";
 
-    if (state.currentRole === "LABOUR") {
+    const activeRole = String(state.currentRole || 'FARMER').toUpperCase();
+    if (activeRole === "LABOUR") {
       roleText = "కూలీ (Labour)";
       badgeColor = "#ea580c";
-    } else if (state.currentRole === "PROVIDER") {
+    } else if (activeRole === "PROVIDER") {
       const pType = state.providerType || "equipment";
       roleText = pType === "transport" ? "🚚 రవాణా యజమాని" : (pType === "seeds" ? "🌱 విత్తనాల డీలర్" : "🚜 పరికరాల యజమాని");
       badgeColor = pType === "transport" ? "#7b1fa2" : (pType === "seeds" ? "#2e7d32" : "#f57c00");
     }
 
     banner.style.setProperty("--badge-color", badgeColor);
-    banner.querySelector(".user-name-text").textContent = user.name || "వినియోగదారుడు";
-    banner.querySelector(".profile-banner-badge").textContent = roleText;
-    banner.querySelector(".user-phone-text").textContent = user.phone || "";
-    banner.querySelector(".user-village-text").textContent = user.village || "";
+
+    const nameEl = banner.querySelector(".user-name-text");
+    const badgeEl = banner.querySelector(".profile-banner-badge");
+    const phoneEl = banner.querySelector(".user-phone-text");
+    const villageEl = banner.querySelector(".user-village-text");
+
+    if (nameEl) nameEl.textContent = user.name || "వినియోగదారుడు";
+    if (badgeEl) badgeEl.textContent = roleText;
+    if (phoneEl) phoneEl.textContent = user.phone || "";
+    if (villageEl) villageEl.textContent = user.village || "";
   },
 
   removeProfileHeader: function() {
@@ -153,16 +162,20 @@ window.RoleController = {
 
   renderRoleSwitchBar: function() {
     const state = window.AppState;
+    if (!state || !state.isLoggedIn) {
+      this.removeRoleSwitchBar();
+      return;
+    }
 
-    // ⚡ ముఖ్యమైన మార్పు: యజమాని (PROVIDER) లాగిన్ అయినా లేదా కేవలం కూలీ అయినా మోడ్ బటన్లు కనిపించవు
-            const baseType = state.userProfile?.roleType || state.userProfile?.userType || state.userType;
+    // డేటాబేస్ లేదా లోకల్‌స్టోరేజ్ ప్రొఫైల్ నుంచి రోల్ రీడ్ చేయడం
+    const profile = state.userProfile || state.user || {};
+    const actualRole = String(profile.role || profile.roleType || profile.userType || state.userType || '').toUpperCase().trim();
 
-    if (!state || !state.isLoggedIn || 
-        baseType === "PROVIDER" || 
-        baseType === "LABOUR" || 
-        baseType === "LABOURONLY" || 
-        baseType === "LABOUR_ONLY") {
+    // కేవలం ప్రత్యేకంగా కూలీ లేదా ప్రొవైడర్‌గా లాగిన్ అయితేనే స్విచ్ బార్ రాదు
+    const isDedicatedLabour = (actualRole === "LABOUR" || actualRole === "LABOURONLY" || actualRole === "LABOUR_ONLY");
+    const isDedicatedProvider = (actualRole === "PROVIDER");
 
+    if (isDedicatedLabour || isDedicatedProvider) {
       this.removeRoleSwitchBar();
       return;
     }
@@ -176,22 +189,33 @@ window.RoleController = {
       switchContainer = fragment.querySelector(".role-switch-container");
       switchContainer.id = "role-switch-container";
 
+      // ప్రొఫైల్ బ్యానర్ కిందే నేరుగా ఇన్సర్ట్ అవుతుంది
       const userBanner = document.getElementById("user-profile-banner");
       if (userBanner && userBanner.parentNode) {
         userBanner.parentNode.insertBefore(switchContainer, userBanner.nextSibling);
       } else {
-        document.body.prepend(switchContainer);
+        const mount = document.querySelector(".container") || document.body;
+        mount.prepend(switchContainer);
       }
     }
 
-    const current = state.currentRole || "FARMER";
+    const current = String(state.currentRole || "FARMER").toUpperCase();
     const farmerBtn = switchContainer.querySelector("#role-btn-farmer");
     const labourBtn = switchContainer.querySelector("#role-btn-labour");
     const providerBtn = switchContainer.querySelector("#role-btn-provider");
 
-    if (farmerBtn) farmerBtn.className = `role-switch-btn role-switch-farmer ${current === "FARMER" ? "active" : ""}`;
-    if (labourBtn) labourBtn.className = `role-switch-btn role-switch-labour ${current === "LABOUR" ? "active" : ""}`;
-    if (providerBtn) providerBtn.className = `role-switch-btn role-switch-provider ${current === "PROVIDER" ? "active" : ""}`;
+    if (farmerBtn) {
+      farmerBtn.className = `role-switch-btn role-switch-farmer ${current === "FARMER" ? "active" : ""}`;
+      farmerBtn.onclick = () => window.switchRoleMode("FARMER");
+    }
+    if (labourBtn) {
+      labourBtn.className = `role-switch-btn role-switch-labour ${current === "LABOUR" ? "active" : ""}`;
+      labourBtn.onclick = () => window.switchRoleMode("LABOUR");
+    }
+    if (providerBtn) {
+      providerBtn.className = `role-switch-btn role-switch-provider ${current === "PROVIDER" ? "active" : ""}`;
+      providerBtn.onclick = () => window.switchRoleMode("PROVIDER");
+    }
   },
 
   removeRoleSwitchBar: function() {
@@ -202,6 +226,8 @@ window.RoleController = {
   switchRoleMode: function(targetRole) {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
+
+    // తాత్కాలిక వ్యూ కోసం మాత్రమే సేవ్ అవుతుంది, అసలు ప్రొఫైల్ సేఫ్‌గా ఉంటుంది
     localStorage.setItem("agri_current_active_role", targetRole);
 
     this.applyUserRoleView();
