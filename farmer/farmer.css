@@ -68,12 +68,19 @@
   padding: 6px;
   gap: 6px;
   overflow-x: auto;
+  flex-wrap: nowrap;          /* 👉 1. కింద లైన్‌కు విరిగిపోకుండా చేస్తుంది */
+  scrollbar-width: none;       /* 👉 2. Firefox లో స్క్రోల్‌బార్ కనిపించదు */
+}
+
+/* 👉 3. Android/Chrome లో స్క్రోల్‌బార్ కనిపించకుండా చేస్తుంది */
+.eq-tabs-bar::-webkit-scrollbar {
+  display: none;
 }
 
 .eq-tab-btn {
-  flex: 1;
+  flex-shrink: 0;             /* 👉 4. (flex: 1 స్థానంలో ఇది పెట్టండి - అక్షరాలు నలగవు) */
   min-width: 75px;
-  padding: 8px 4px;
+  padding: 8px 10px;          /* సైడ్ స్పేస్ కొద్దిగా పెంచాం */
   font-size: 13px;
   font-weight: 600;
   border: none;
@@ -83,6 +90,13 @@
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+}
+
+/* 👉 5. స్పాట్ బుకింగ్ బటన్ ప్రత్యేక రంగు కోసం */
+.eq-tab-btn.pill-spot {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ff9800;
 }
 
 .eq-tab-btn.active {
