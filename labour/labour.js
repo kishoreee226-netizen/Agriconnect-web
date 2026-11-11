@@ -1,4 +1,4 @@
-// labour/labour.js - Complete Labour Dashboard & Profile Controller
+// labour/labour.js - Complete Pure Logic Controller
 
 let postedFarmerJobs = [];
 let isJobsListenerActive = false;
@@ -14,16 +14,14 @@ try {
 // 1. Landing Card Render (Guest View)
 window.renderLabourLandingCard = function() {
   const mount = document.getElementById("labour-jobs-container");
-  if (!mount) return;
-
   const tpl = document.getElementById("labour-landing-template");
-  if (!tpl) return;
+  if (!mount || !tpl) return;
 
   mount.replaceChildren(tpl.content.cloneNode(true));
-  mount.style.setProperty('display', 'block', 'important');
+  mount.classList.remove("is-hidden");
 };
 
-// 2. Profile Helper (Sync with AppState)
+// 2. Profile Helper
 window.getLabourProfile = function() {
   const appProf = window.AppState?.userProfile;
   let stored = null;
@@ -143,8 +141,8 @@ window.renderLabourWidget = function() {
     initJobsListener();
   }
 
-  // టెంప్లేట్ క్లోన్ చేయడం
-  let dashboard = document.querySelector(".labour-card");
+  // డాష్‌బోర్డ్ కార్డ్ లేకుంటే టెంప్లేట్ క్లోన్ చేయడం
+  let dashboard = container.querySelector(".labour-card");
   if (!dashboard) {
     const tpl = document.getElementById("labour-dashboard-template");
     if (!tpl) return;
@@ -165,104 +163,149 @@ window.renderLabourWidget = function() {
   const emptyJobsBox = document.getElementById("labour-empty-jobs-box");
   const openJobsList = document.getElementById("labour-open-jobs-list");
   const alertsBadge = document.getElementById("labour-alerts-badge");
+  const spotWrapper = document.getElementById("labour-spot-alerts-container");
 
   if (!myProf.isDutyOn) {
-    if (dutyOffBox) dutyOffBox.style.display = "block";
-    if (emptyJobsBox) emptyJobsBox.style.display = "none";
-    if (openJobsList) openJobsList.innerHTML = "";
+    if (dutyOffBox) dutyOffBox.classList.remove("is-hidden");
+    if (emptyJobsBox) emptyJobsBox.classList.add("is-hidden");
+    if (openJobsList) openJobsList.replaceChildren();
+    if (spotWrapper) spotWrapper.classList.add("is-hidden");
     if (alertsBadge) alertsBadge.textContent = "0 పనులు";
     return;
   }
 
-  if (dutyOffBox) dutyOffBox.style.display = "none";
+  if (dutyOffBox) dutyOffBox.classList.add("is-hidden");
 
-  // ఫిల్టర్ ఓపెన్ పనులు
+  // ⚡ A. స్పాట్ అలర్ట్స్ రెండరింగ్ (రైతు SOS బుకింగ్స్)
+  renderLabourSpotAlerts(spotWrapper);
+
+  // B. సాధారణ ఓపెన్ పనులు
   const openJobs = postedFarmerJobs.filter(j => 
     j.status === "Open" && !rejectedJobIds.includes(j.id)
   );
 
   if (alertsBadge) alertsBadge.textContent = `${openJobs.length} పనులు`;
 
-  if (openJobs.length === 0) {
-    if (emptyJobsBox) emptyJobsBox.style.display = "block";
-    if (openJobsList) openJobsList.innerHTML = "";
-  } else {
-    if (emptyJobsBox) emptyJobsBox.style.display = "none";
-    if (openJobsList) {
-      openJobsList.innerHTML = openJobs.map(job => {
+  const jobCardTpl = document.getElementById("labour-job-card-template");
+  if (openJobsList && jobCardTpl) {
+    openJobsList.replaceChildren();
+
+    if (openJobs.length === 0) {
+      if (emptyJobsBox) emptyJobsBox.classList.remove("is-hidden");
+    } else {
+      if (emptyJobsBox) emptyJobsBox.classList.add("is-hidden");
+
+      openJobs.forEach(job => {
+        const cardNode = jobCardTpl.content.cloneNode(true);
+        const card = cardNode.querySelector(".labour-job-card");
         const filledCount = job.confirmedLabours ? job.confirmedLabours.length : 0;
         const reqCount = parseInt(job.totalRequired || job.count || 1);
         const isAlreadyAccepted = Boolean(myProf.phone && job.confirmedLabours && job.confirmedLabours.some(l => l.phone === myProf.phone));
 
-        return `
-          <div class="labour-job-card" data-village="${job.village || ''}">
-            <div class="labour-job-card-top">
-              <div>
-                <h4 class="labour-job-title">🌾 ${job.crop} - ${job.workType}</h4>
-                <div class="labour-job-farmer-info">
-                  రైతు: <b>${job.farmerName}</b> | 📍 గ్రామం: <b>${job.village || 'సమీప గ్రామం'}</b>
-                </div>
-                <div class="labour-job-schedule">
-                  📅 పని తేదీ: ${job.workDate || job.date || 'ఈ రోజు'} | 🛵 ${job.transportNote || 'రవాణా కలదు'}
-                </div>
-                <div class="labour-job-quota">
-                  👥 కూలీల కోటా: <b>${filledCount} / ${reqCount} భర్తీ అయ్యారు</b>
-                </div>
-              </div>
-              <div class="labour-job-wage">
-                ₹${job.wage}/రోజు
-              </div>
-            </div>
+        card.setAttribute("data-village", job.village || "");
+        card.querySelector(".labour-job-title").textContent = `🌾 ${job.crop} - ${job.workType}`;
+        card.querySelector(".labour-job-farmer-info").innerHTML = `రైతు: <b>${job.farmerName}</b> | 📍 గ్రామం: <b>${job.village || 'సమీప గ్రామం'}</b>`;
+        card.querySelector(".labour-job-schedule").textContent = `📅 పని తేదీ: ${job.workDate || job.date || 'ఈ రోజు'} | 🛵 ${job.transportNote || 'రవాణా కలదు'}`;
+        card.querySelector(".labour-job-quota").innerHTML = `👥 కూలీల కోటా: <b>${filledCount} / ${reqCount} భర్తీ అయ్యారు</b>`;
+        card.querySelector(".labour-job-wage").textContent = `₹${job.wage}/రోజు`;
 
-            <div class="labour-job-actions">
-              ${isAlreadyAccepted ? `
-                <button type="button" disabled class="btn-job-accepted-disabled">
-                  ✅ మీరు ఇప్పటికే అంగీకరించారు
-                </button>
-              ` : `
-                <button type="button" onclick="window.acceptFarmerJob('${job.id}')" class="btn-job-accept">
-                  ✅ పని Accept చేయండి
-                </button>
-                <button type="button" onclick="window.rejectFarmerJob('${job.id}')" class="btn-job-reject">
-                  ❌ తిరస్కరించు
-                </button>
-              `}
-            </div>
-          </div>
-        `;
-      }).join('');
+        const btnAccept = card.querySelector(".btn-job-accept");
+        const btnReject = card.querySelector(".btn-job-reject");
+        const btnDisabled = card.querySelector(".btn-job-accepted-disabled");
+
+        if (isAlreadyAccepted) {
+          btnAccept.remove();
+          btnReject.remove();
+          btnDisabled.classList.remove("is-hidden");
+        } else {
+          btnAccept.onclick = () => window.acceptFarmerJob(job.id);
+          btnReject.onclick = () => window.rejectFarmerJob(job.id);
+        }
+
+        openJobsList.appendChild(card);
+      });
     }
   }
 
-  // ఖరారైన పనులు (Confirmed List)
-  const myConfirmedJobs = postedFarmerJobs.filter(j => 
-    myProf.phone && j.confirmedLabours && j.confirmedLabours.some(l => l.phone === myProf.phone)
-  );
-
-  const confSec = document.getElementById("labour-confirmed-section");
-  const confList = document.getElementById("labour-confirmed-list");
-
-  if (myConfirmedJobs.length > 0 && confSec && confList) {
-    confSec.style.display = "block";
-    confList.innerHTML = myConfirmedJobs.map(c => `
-      <div class="labour-confirmed-card">
-        <div class="labour-confirmed-title">${c.crop} - ${c.workType} (📅 ${c.workDate || c.date})</div>
-        <div class="labour-confirmed-sub">రైతు: <b>${c.farmerName}</b> (${c.village || 'స్థానిక పరిధి'}) | వేతనం: ₹${c.wage}/రోజు</div>
-        <div class="labour-confirmed-btn-row">
-          <a href="tel:${c.farmerPhone}" class="labour-cbtn labour-cbtn-call">📞 రైతుకు కాల్</a>
-          <a href="https://wa.me/91${c.farmerPhone}" target="_blank" class="labour-cbtn labour-cbtn-wa">💬 వాట్సాప్</a>
-          <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(c.village || myProf.village || '')}" target="_blank" class="labour-cbtn labour-cbtn-map">🗺️ రూట్ Map</a>
-        </div>
-      </div>
-    `).join('');
-  } else if (confSec) {
-    confSec.style.display = "none";
-  }
+  // C. ఖరారైన పనులు (Confirmed List)
+  renderLabourConfirmedList(myProf);
 
   if (typeof window.filterLabourJobsByLocation === "function") {
     window.filterLabourJobsByLocation();
   }
 };
+
+// ⚡ స్పాట్ అలర్ట్స్ లాజిక్ (Farmer SOS ➔ Labour Live)
+function renderLabourSpotAlerts(wrapper) {
+  if (!wrapper) return;
+  const spotTpl = document.getElementById("labour-spot-card-template");
+  if (!spotTpl) return;
+
+  let allSpotAlerts = [];
+  try {
+    allSpotAlerts = JSON.parse(localStorage.getItem("agri_spot_alerts") || "[]");
+  } catch (e) { allSpotAlerts = []; }
+
+  // కేవలం LABOUR కోసం పంపిన ఓపెన్ అలర్ట్‌లను మాత్రమే ఫిల్టర్ చేయడం
+  const labourSpots = allSpotAlerts.filter(a => a.roleTarget === "LABOUR" && a.status === "URGENT_BROADCAST");
+
+  if (labourSpots.length === 0) {
+    wrapper.classList.add("is-hidden");
+    wrapper.replaceChildren();
+    return;
+  }
+
+  wrapper.classList.remove("is-hidden");
+  wrapper.replaceChildren();
+
+  labourSpots.forEach(spot => {
+    const card = spotTpl.content.cloneNode(true);
+    card.querySelector(".labour-spot-title").textContent = `⚡ అత్యవసర కూలీల అవసరం (${spot.quantity})`;
+    card.querySelector(".labour-spot-farmer-info").textContent = `రైతు: ${spot.farmerName} (${spot.location}) | సమయం: ${spot.createdAt}`;
+    card.querySelector(".labour-spot-desc").textContent = `📢 తక్షణమే పొలానికి చేరుకోవాలి!`;
+    card.querySelector(".labour-spot-wage").textContent = `₹${spot.wage}`;
+
+    card.querySelector(".btn-spot-accept").onclick = function() {
+      spot.status = "ACCEPTED";
+      localStorage.setItem("agri_spot_alerts", JSON.stringify(allSpotAlerts));
+      alert(`🎉 మీరు రైతు ${spot.farmerName} అత్యవసర స్పాట్ బుకింగ్‌ను స్వీకరించారు!`);
+      window.renderLabourWidget();
+    };
+
+    wrapper.appendChild(card);
+  });
+}
+
+// ఖరారైన పనుల రెండరింగ్ (Pure Template)
+function renderLabourConfirmedList(myProf) {
+  const confSec = document.getElementById("labour-confirmed-section");
+  const confList = document.getElementById("labour-confirmed-list");
+  const confCardTpl = document.getElementById("labour-confirmed-card-template");
+  if (!confSec || !confList || !confCardTpl) return;
+
+  const myConfirmedJobs = postedFarmerJobs.filter(j => 
+    myProf.phone && j.confirmedLabours && j.confirmedLabours.some(l => l.phone === myProf.phone)
+  );
+
+  if (myConfirmedJobs.length > 0) {
+    confSec.classList.remove("is-hidden");
+    confList.replaceChildren();
+
+    myConfirmedJobs.forEach(c => {
+      const card = confCardTpl.content.cloneNode(true);
+      card.querySelector(".labour-confirmed-title").textContent = `${c.crop} - ${c.workType} (📅 ${c.workDate || c.date})`;
+      card.querySelector(".labour-confirmed-sub").innerHTML = `రైతు: <b>${c.farmerName}</b> (${c.village || 'స్థానిక పరిధి'}) | వేతనం: ₹${c.wage}/రోజు`;
+      card.querySelector(".labour-cbtn-call").href = `tel:${c.farmerPhone}`;
+      card.querySelector(".labour-cbtn-wa").href = `https://wa.me/91${c.farmerPhone}`;
+      card.querySelector(".labour-cbtn-map").href = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(c.village || myProf.village || '')}`;
+
+      confList.appendChild(card);
+    });
+  } else {
+    confSec.classList.add("is-hidden");
+    confList.replaceChildren();
+  }
+}
 
 // 6. Accept / Reject Handlers
 window.acceptFarmerJob = function(jobId) {
@@ -354,22 +397,29 @@ window.openLabourProfileModal = function() {
   const allSkills = ["వరి నాట్లు", "కలుపు తీత", "పంట కోత", "మందు స్ప్రేయింగ్", "పత్తి ఏరడం", "మొక్కజొన్న పనులు"];
   const skillsBox = document.getElementById("lpm-skills-box");
   if (skillsBox) {
-    skillsBox.innerHTML = allSkills.map(s => {
-      const checked = prof.skills && prof.skills.includes(s) ? 'checked' : '';
-      return `
-        <label class="lpm-skill-item">
-          <input type="checkbox" name="labour_skills" value="${s}" ${checked}>${s}
-        </label>
-      `;
-    }).join('');
+    skillsBox.replaceChildren();
+    allSkills.forEach(s => {
+      const label = document.createElement("label");
+      label.className = "lpm-skill-item";
+      
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = "labour_skills";
+      input.value = s;
+      if (prof.skills && prof.skills.includes(s)) input.checked = true;
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(s));
+      skillsBox.appendChild(label);
+    });
   }
 
-  if (modal) modal.style.display = "flex";
+  if (modal) modal.classList.remove("is-hidden");
 };
 
 window.closeLabourProfileModal = function() {
   const modal = document.getElementById("labourProfileModal");
-  if (modal) modal.style.display = "none";
+  if (modal) modal.classList.add("is-hidden");
 };
 
 window.handleLabourProfileSubmit = function(e) {
