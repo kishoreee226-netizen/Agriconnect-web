@@ -34,6 +34,9 @@
       </button>
     </div>
 
+    <!-- ⚡ అత్యవసర స్పాట్ అలర్ట్స్ విభాగం (రైతు SOS పంపినప్పుడు మాత్రమే కనిపిస్తుంది) -->
+    <div id="labour-spot-alerts-container" class="labour-spot-alerts-wrapper is-hidden"></div>
+
     <!-- Job Alerts Section -->
     <div class="labour-alerts-section">
       <div class="labour-alerts-header">
@@ -42,13 +45,13 @@
       </div>
 
       <!-- Duty OFF Notice Box -->
-      <div id="labour-duty-off-box" class="labour-duty-off-card" style="display: none;">
+      <div id="labour-duty-off-box" class="labour-duty-off-card is-hidden">
         🛑 మీ డ్యూటీ <b>OFF</b> లో ఉంది.<br>
         పనుల అలర్ట్స్ అందుకోవడానికి మరియు రైతులకు లైవ్‌గా కనిపించడానికి పైన డ్యూటీ <b>ON</b> చేసుకోండి.
       </div>
 
       <!-- Empty Jobs Notice Box -->
-      <div id="labour-empty-jobs-box" class="labour-empty-jobs-card" style="display: none;">
+      <div id="labour-empty-jobs-box" class="labour-empty-jobs-card is-hidden">
         ప్రస్తుతం మీ ప్రాంతంలో కొత్త పనుల అలర్ట్స్ ఏవీ లేవు.
       </div>
 
@@ -57,14 +60,67 @@
     </div>
 
     <!-- Confirmed Work Section -->
-    <div id="labour-confirmed-section" class="labour-confirmed-section" style="display: none;">
+    <div id="labour-confirmed-section" class="labour-confirmed-section is-hidden">
       <h4 class="labour-confirmed-heading">🎉 మీరు ఒప్పుకున్న ఖరారైన పనులు:</h4>
       <div id="labour-confirmed-list" class="labour-confirmed-list"></div>
     </div>
   </div>
 </template>
 
-<!-- 3. కూలీ ప్రొఫైల్ & స్కిల్స్ పాప్-అప్ మోడల్ టెంప్లేట్ -->
+<!-- 3. ⚡ రైతు అత్యవసర స్పాట్ బుకింగ్ అలర్ట్ కార్డ్ టెంప్లేట్ -->
+<template id="labour-spot-card-template">
+  <div class="labour-spot-card">
+    <div class="labour-spot-card-top">
+      <div>
+        <span class="badge-sos-blink">🚨 తక్షణ అత్యవసరం (SOS)</span>
+        <h4 class="labour-spot-title"></h4>
+        <div class="labour-spot-farmer-info"></div>
+        <div class="labour-spot-desc"></div>
+      </div>
+      <div class="labour-spot-wage"></div>
+    </div>
+    <div class="labour-spot-actions">
+      <button type="button" class="btn-spot-accept">✅ అత్యవసర పనిని స్వీకరించండి</button>
+    </div>
+  </div>
+</template>
+
+<!-- 4. సాధారణ జాబ్ కార్డ్ టెంప్లేట్ -->
+<template id="labour-job-card-template">
+  <div class="labour-job-card" data-village="">
+    <div class="labour-job-card-top">
+      <div>
+        <h4 class="labour-job-title"></h4>
+        <div class="labour-job-farmer-info"></div>
+        <div class="labour-job-schedule"></div>
+        <div class="labour-job-quota"></div>
+      </div>
+      <div class="labour-job-wage"></div>
+    </div>
+    <div class="labour-job-actions">
+      <button type="button" class="btn-job-accept">✅ పని Accept చేయండి</button>
+      <button type="button" class="btn-job-reject">❌ తిరస్కరించు</button>
+      <button type="button" disabled class="btn-job-accepted-disabled is-hidden">
+        ✅ మీరు ఇప్పటికే అంగీకరించారు
+      </button>
+    </div>
+  </div>
+</template>
+
+<!-- 5. కన్ఫర్మ్ అయిన పని కార్డ్ టెంప్లేట్ -->
+<template id="labour-confirmed-card-template">
+  <div class="labour-confirmed-card">
+    <div class="labour-confirmed-title"></div>
+    <div class="labour-confirmed-sub"></div>
+    <div class="labour-confirmed-btn-row">
+      <a class="labour-cbtn labour-cbtn-call">📞 రైతుకు కాల్</a>
+      <a target="_blank" class="labour-cbtn labour-cbtn-wa">💬 వాట్సాప్</a>
+      <a target="_blank" class="labour-cbtn labour-cbtn-map">🗺️ రూట్ Map</a>
+    </div>
+  </div>
+</template>
+
+<!-- 6. కూలీ ప్రొఫైల్ & స్కిల్స్ పాప్-అప్ మోడల్ టెంప్లేట్ -->
 <template id="labour-profile-modal-template">
   <div id="labourProfileModal" class="lpm-modal-overlay">
     <div class="lpm-modal-card">
