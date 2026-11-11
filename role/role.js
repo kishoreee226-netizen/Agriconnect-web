@@ -53,7 +53,27 @@ window.RoleController = {
 
     // 2. లాగిన్ అయినప్పుడు: ప్రొఫైల్ బ్యానర్ & రోల్ స్విచ్ బార్
     this.renderUserProfileBanner();
-    this.renderRoleSwitchBar();
+        // 🌾 హెడర్/బ్యానర్‌లో పేరు పక్కన బ్యాడ్జ్ టెక్స్ట్ & కలర్ అప్‌డేట్
+    const badgeEl = document.querySelector(".profile-banner-badge") || document.querySelector(".badge-role") || document.getElementById("profile-badge");
+    const current = String(state.currentRole || "FARMER").toUpperCase();
+
+    if (badgeEl) {
+      if (current === "LABOUR") {
+        badgeEl.textContent = "కూలీ (Labour)";
+        badgeEl.style.background = "#ea580c"; // కూలీ ఆరెంజ్ రంగు
+      } else if (current === "PROVIDER") {
+        badgeEl.textContent = "యజమాని (Provider)";
+        badgeEl.style.background = "#0284c7"; // యజమాని బ్లూ రంగు
+      } else {
+        badgeEl.textContent = "రైతు (Farmer)";
+        badgeEl.style.background = "#16a34a"; // రైతు ఆకుపచ్చ రంగు
+      }
+    }
+
+    // 🌾 శాశ్వత స్విచ్ బార్‌ను గ్యాప్‌లో మౌంట్ చేసి బటన్ కలర్ అప్‌డేట్ చేయడం
+    if (typeof window.mountFarmerPersistentSwitchBar === "function") {
+      window.mountFarmerPersistentSwitchBar();
+    }
 
     // A. కూలీ మోడ్ (LABOUR)
     if (state.currentRole === "LABOUR") {
