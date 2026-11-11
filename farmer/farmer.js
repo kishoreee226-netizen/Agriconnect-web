@@ -5,7 +5,9 @@ window.renderFarmerLandingCard = function() {
   const tpl = document.getElementById("farmer-landing-template");
   if (!mount || !tpl) return;
 
-  mount.replaceChildren(tpl.content.cloneNode(true));
+    mount.innerHTML = "";
+  mount.appendChild(tpl.content.cloneNode(true));
+
   mount.classList.remove("is-hidden");
   mount.style.display = "block";
 
