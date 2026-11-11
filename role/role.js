@@ -22,6 +22,8 @@ window.RoleController = {
     const walletBox = document.getElementById("wallet-container") || document.querySelector(".wallet-card");
     const mandiBox = document.getElementById("mandi-container") || document.querySelector(".mandi-card");
     const weatherBox = document.getElementById("weather-container") || document.querySelector(".weather-card");
+    const toolsBox = document.getElementById("agri-tools-box");
+    const utilsBox = document.getElementById("utilitiesMountSlot");
 
     // 1. లాగిన్ కానప్పుడు (Public Landing View)
     if (!state || !state.isLoggedIn) {
