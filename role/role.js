@@ -48,7 +48,6 @@ window.RoleController = {
       if (weatherBox) weatherBox.style.display = "block";
       if (toolsBox) toolsBox.style.display = "block";
       if (utilsBox) utilsBox.style.display = "block";
-
       return;
     }
 
@@ -70,7 +69,6 @@ window.RoleController = {
       if (weatherBox) weatherBox.style.display = "none";
       if (toolsBox) toolsBox.style.display = "none";
       if (utilsBox) utilsBox.style.display = "none";
-
     }
 
     // B. యజమాని మోడ్ (PROVIDER) - రైతు, కూలీ కంటైనర్లు పూర్తిగా ఆఫ్
@@ -87,6 +85,8 @@ window.RoleController = {
       if (walletBox) walletBox.style.display = "block";
       if (mandiBox) mandiBox.style.display = "none";
       if (weatherBox) weatherBox.style.display = "none";
+      if (toolsBox) toolsBox.style.display = "none";
+      if (utilsBox) utilsBox.style.display = "none";
     }
 
     // C. రైతు మోడ్ (FARMER)
@@ -101,6 +101,8 @@ window.RoleController = {
       if (walletBox) walletBox.style.display = "block";
       if (weatherBox) weatherBox.style.display = "block";
       if (mandiBox) mandiBox.style.display = "none";
+      if (toolsBox) toolsBox.style.display = "block";
+      if (utilsBox) utilsBox.style.display = "block";
     }
 
     if (window.WalletModule && typeof window.WalletModule.render === "function") {
