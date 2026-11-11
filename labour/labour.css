@@ -1,5 +1,10 @@
 /* labour/labour.css - Dedicated Styles for Labour Module */
 
+/* Utility Visibility */
+.is-hidden {
+  display: none !important;
+}
+
 /* 1. Landing Card */
 .agri-landing-card.labour-border {
   border: 2px solid #ea580c;
@@ -93,7 +98,94 @@
   cursor: pointer;
 }
 
-/* 4. Alerts & Job Cards */
+/* 4. ⚡ Spot Alerts (SOS Styles) */
+.labour-spot-alerts-wrapper {
+  margin-bottom: 14px;
+}
+
+.labour-spot-card {
+  background: #fff5f5;
+  border: 2px solid #ef4444;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  margin-bottom: 10px;
+  animation: pulse-sos 2s infinite ease-in-out;
+}
+
+@keyframes pulse-sos {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.badge-sos-blink {
+  display: inline-block;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.labour-spot-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.labour-spot-title {
+  margin: 2px 0 4px;
+  font-size: 15px;
+  color: #991b1b;
+}
+
+.labour-spot-farmer-info {
+  font-size: 12px;
+  color: #475569;
+  margin-bottom: 2px;
+}
+
+.labour-spot-desc {
+  font-size: 12px;
+  color: #7f1d1d;
+  font-weight: 600;
+}
+
+.labour-spot-wage {
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.labour-spot-actions {
+  margin-top: 10px;
+}
+
+.btn-spot-accept {
+  width: 100%;
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  padding: 9px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-spot-accept:hover {
+  background: #dc2626;
+}
+
+/* 5. Alerts & Regular Job Cards */
 .labour-alerts-header {
   display: flex;
   justify-content: space-between;
@@ -215,7 +307,7 @@
   font-size: 13px;
 }
 
-/* 5. Confirmed Section */
+/* 6. Confirmed Section */
 .labour-confirmed-section {
   margin-top: 16px;
   border-top: 2px dashed #fed7aa;
@@ -265,7 +357,37 @@
 .labour-cbtn-wa { background: #dcfce7; color: #166534; }
 .labour-cbtn-map { background: #f1f5f9; color: #334155; }
 
-/* 6. Profile Modal */
+/* 7. Scroll Lists */
+.labour-open-jobs-list {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-top: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.labour-confirmed-list {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  margin-top: 8px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.labour-open-jobs-list::-webkit-scrollbar,
+.labour-confirmed-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.labour-open-jobs-list::-webkit-scrollbar-thumb,
+.labour-confirmed-list::-webkit-scrollbar-thumb {
+  background: #fed7aa;
+  border-radius: 4px;
+}
+
+/* 8. Profile Modal */
 .lpm-modal-overlay {
   position: fixed;
   inset: 0;
@@ -360,35 +482,4 @@
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
-}
-/* labour/labour.css - స్క్రోలింగ్ ఫిక్స్ */
-
-.labour-open-jobs-list {
-  max-height: 420px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;
-  margin-top: 8px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.labour-confirmed-list {
-  max-height: 300px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding-right: 4px;
-  margin-top: 8px;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* అందమైన కస్టమ్ స్క్రోల్‌బార్ */
-.labour-open-jobs-list::-webkit-scrollbar,
-.labour-confirmed-list::-webkit-scrollbar {
-  width: 5px;
-}
-
-.labour-open-jobs-list::-webkit-scrollbar-thumb,
-.labour-confirmed-list::-webkit-scrollbar-thumb {
-  background: #fed7aa;
-  border-radius: 4px;
 }
