@@ -1,6 +1,6 @@
-/* farmer/farmer.css - Styles for Farmer Module */
+/* farmer/farmer.css - 100% External Stylesheet */
 
-/* 1. Landing Card Style */
+/* 1. Landing Card */
 .agri-landing-card.farmer-border {
   border: 2px solid #16a34a;
   background: #ffffff;
@@ -17,7 +17,7 @@
 
 .farmer-btn-bg {
   background: #16a34a;
-  color: #fff;
+  color: #ffffff;
   width: 100%;
   padding: 11px;
   border: none;
@@ -27,7 +27,7 @@
   cursor: pointer;
 }
 
-/* 2. Farmer Dashboard Card */
+/* 2. Dashboard Card */
 .farmer-card {
   background: #ffffff;
   border-radius: 14px;
@@ -61,38 +61,48 @@
   border-radius: 20px;
 }
 
-/* 3. 4 Tabs Bar */
+/* 3. 5 Tabs Bar (Responsive Pills) */
 .eq-tabs-bar {
   display: flex;
   background: #f1f5f9;
   padding: 6px;
   gap: 6px;
   overflow-x: auto;
-  flex-wrap: nowrap;          /* 👉 1. కింద లైన్‌కు విరిగిపోకుండా చేస్తుంది */
-  scrollbar-width: none;       /* 👉 2. Firefox లో స్క్రోల్‌బార్ కనిపించదు */
+  flex-wrap: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* 👉 3. Android/Chrome లో స్క్రోల్‌బార్ కనిపించకుండా చేస్తుంది */
 .eq-tabs-bar::-webkit-scrollbar {
   display: none;
 }
 
 .eq-tab-btn {
-  flex-shrink: 0;
-  min-width: fit-content;    /* 👉 75px తీసేసి ఇది పెట్టండి (అక్షరాల సైజును బట్టి బటన్ దానంతటదే సర్దుకుంటుంది) */
-  padding: 8px 14px;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: max-content !important;
+  padding: 8px 14px !important;
   font-size: 13px;
   font-weight: 600;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   background: #ffffff;
   color: #475569;
   cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  transition: all 0.2s ease;
+  white-space: nowrap !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* 👉 5వ బటన్: ఎరుపు రంగు (SOS / అత్యవసరం కాబట్టి 2వ బటన్ ఆరెంజ్‌తో కలవదు) */
+.eq-tab-btn.active {
+  background: #16a34a !important;
+  color: #ffffff !important;
+  border-color: #16a34a !important;
+  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
+}
+
 .eq-tab-btn.pill-spot {
   background: #ffebee !important;
   color: #d32f2f !important;
@@ -100,14 +110,42 @@
   font-weight: 700;
 }
 
-.eq-tab-btn.active {
-  background: #16a34a;
-  color: #ffffff;
-  box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
-}
-
 .farmer-card-body {
   padding: 14px;
+}
+
+.farmer-pane {
+  display: block;
+}
+
+.farmer-pane.is-hidden {
+  display: none !important;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+/* Tab Placeholders */
+.tab-placeholder-card {
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px dashed #cbd5e1;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.tab-placeholder-card h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.tab-placeholder-desc {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
 }
 
 /* 4. Form Styles */
@@ -128,6 +166,7 @@
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   font-size: 13px;
+  box-sizing: border-box;
 }
 
 .form-action-row {
@@ -146,6 +185,12 @@
   white-space: nowrap;
 }
 
+.gps-status-text {
+  font-size: 11px;
+  color: #166534;
+  font-weight: bold;
+}
+
 .btn-farmer-post {
   width: 100%;
   padding: 11px;
@@ -158,19 +203,28 @@
   cursor: pointer;
 }
 
-/* 5. Slot Tracker & Accepted Lists */
+/* 5. Slot Tracking & Lists */
+.accepted-section {
+  margin-top: 14px;
+}
+
 .slot-tracker-box {
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
   border-radius: 10px;
-  padding: 10px;
-  margin-top: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
 }
 
 .slot-tracker-title {
   margin: 0 0 8px;
   font-size: 13px;
   color: #166534;
+}
+
+.slot-tracker-scroll {
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 .slot-job-card {
@@ -187,40 +241,230 @@
   align-items: center;
 }
 
+.slot-job-title {
+  font-size: 13px;
+  color: #1e293b;
+}
+
 .slot-status-badge {
-  font-size: 11px;
+  font-size: 10px;
   padding: 2px 6px;
   border-radius: 4px;
   background: #fef3c7;
   color: #b45309;
+  font-weight: bold;
 }
 
 .slot-status-badge.is-full {
   background: #dcfce7;
-  color: #15803d;
+  color: #166534;
+}
+
+.slot-job-details {
+  font-size: 11px;
+  color: #64748b;
+  margin: 4px 0;
+}
+
+.slot-labours-wrapper {
+  margin-top: 6px;
+  padding-top: 4px;
+  border-top: 1px dashed #e2e8f0;
 }
 
 .slot-labour-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 6px;
-  padding-top: 4px;
-  border-top: 1px dashed #e2e8f0;
+  margin-top: 4px;
 }
 
-.slot-btn-group a {
-  padding: 4px 8px;
-  border-radius: 6px;
+.slot-labour-info {
   font-size: 11px;
+}
+
+.slot-btn-group {
+  display: flex;
+  gap: 6px;
+}
+
+.slot-btn-call {
+  padding: 3px 8px;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 4px;
   text-decoration: none;
+  font-size: 11px;
   font-weight: bold;
 }
 
-.slot-btn-call { background: #dbeafe; color: #1e40af; }
-.slot-btn-whatsapp { background: #dcfce7; color: #166534; margin-left: 4px; }
+.slot-btn-whatsapp {
+  padding: 3px 8px;
+  background: #dcfce7;
+  color: #166534;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: bold;
+}
 
-/* 6. Modals */
+.confirmed-labours-box {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.confirmed-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+.confirmed-labour-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.confirmed-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge-wage {
+  background: #dcfce7;
+  color: #166534;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.labour-work-info {
+  font-size: 12px;
+  color: #475569;
+  margin: 4px 0;
+}
+
+.contact-actions {
+  margin-top: 6px;
+}
+
+/* 6. Booking Records */
+.booking-records-section {
+  margin-top: 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.booking-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.booking-title {
+  margin: 0;
+  font-size: 13px;
+  color: #1e293b;
+}
+
+.btn-clear-records {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.booking-records-scroll {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.booking-record-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 8px;
+  background: #f8fafc;
+}
+
+.booking-record-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.booking-item-title {
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.booking-status-tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.booking-status-tag.locked {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.booking-status-tag.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.booking-record-details {
+  font-size: 12px;
+  color: #475569;
+  margin: 4px 0;
+}
+
+.booking-actions-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.btn-escrow {
+  padding: 4px 8px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #b45309;
+}
+
+.txt-escrow-locked {
+  color: #16a34a;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.empty-state-text {
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+  padding: 10px;
+}
+
+/* 7. Modals */
 .fjm-modal-overlay, .booking-modal-overlay {
   position: fixed;
   inset: 0;
@@ -290,9 +534,86 @@
   flex: 2;
   padding: 10px;
   background: #16a34a;
-  color: #fff;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   font-weight: bold;
   cursor: pointer;
+}
+
+.spot-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.spot-modal-box {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.spot-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+}
+
+.spot-modal-header h4 {
+  margin: 0;
+  color: #d32f2f;
+  font-size: 15px;
+}
+
+.spot-modal-close {
+  font-size: 24px;
+  cursor: pointer;
+  color: #64748b;
+  line-height: 1;
+}
+
+.spot-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.spot-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: -4px;
+}
+
+.spot-select, .spot-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.btn-spot-submit {
+  width: 100%;
+  padding: 11px;
+  background: #d32f2f;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 6px;
 }
