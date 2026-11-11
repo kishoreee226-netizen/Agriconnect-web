@@ -1,27 +1,23 @@
-// provider/provider.js - Complete Provider Dashboard & Service Controller with Cloud Sync
+// provider/provider.js - 100% Pure Architecture & Real-Time Sync Controller
 
 let selectedProviderType = 'equipment';
 
 // 1. Landing Card Render (Guest View)
 window.renderProviderLandingCard = function() {
   const mount = document.getElementById("provider-hub-container") || document.getElementById("provider-container");
-  if (!mount) return;
-
   const tpl = document.getElementById("provider-landing-template");
-  if (!tpl) return;
+  if (!mount || !tpl) return;
 
   mount.replaceChildren(tpl.content.cloneNode(true));
-  mount.style.setProperty('display', 'block', 'important');
+  mount.classList.remove("is-hidden");
 };
 window.injectProviderLandingCard = window.renderProviderLandingCard;
 
 // 2. Main Dashboard View Renderer
 window.renderProviderDashboardView = function(container, type) {
   const mount = container || document.getElementById("provider-hub-container") || document.getElementById("provider-container");
-  if (!mount) return;
-
   const tpl = document.getElementById("provider-dashboard-template");
-  if (!tpl) return;
+  if (!mount || !tpl) return;
 
   mount.replaceChildren(tpl.content.cloneNode(true));
 
@@ -29,23 +25,69 @@ window.renderProviderDashboardView = function(container, type) {
   selectedProviderType = pType;
 
   const titles = {
-    equipment: { name: '🚜 పరికరాల నిర్వహణ డ్యాష్‌బోర్డ్', color: '#f57c00', desc: 'మీ ట్రాక్టర్లు, హార్వెస్టర్లు మొదలైన పరికరాలను జోడించండి' },
-    transport: { name: '🚚 రవాణా వాహనాల డ్యాష్‌బోర్డ్', color: '#7b1fa2', desc: 'మీ రవాణా వాహనాలు, ట్రాలీలు, ఆటోలను అద్దెకు చేర్చండి' },
-    seeds: { name: '🌱 విత్తనాలు & ఎరువుల డీలర్ డ్యాష్‌బోర్డ్', color: '#2e7d32', desc: 'మీ వద్ద ఉన్న స్టాక్ మరియు ధరల వివరాలను నమోదు చేయండి' }
+    equipment: { name: '🚜 పరికరాల నిర్వహణ డ్యాష్‌బోర్డ్', theme: 'theme-equipment', desc: 'మీ ట్రాక్టర్లు, హార్వెస్టర్లు మొదలైన పరికరాలను జోడించండి' },
+    transport: { name: '🚚 రవాణా వాహనాల డ్యాష్‌బోర్డ్', theme: 'theme-transport', desc: 'మీ రవాణా వాహనాలు, ట్రాలీలు, ఆటోలను అద్దెకు చేర్చండి' },
+    seeds: { name: '🌱 విత్తనాలు & ఎరువుల డీలర్ డ్యాష్‌బోర్డ్', theme: 'theme-seeds', desc: 'మీ వద్ద ఉన్న స్టాక్ మరియు ధరల వివరాలను నమోదు చేయండి' }
   };
   const conf = titles[pType] || titles.equipment;
 
   const cardBox = document.getElementById("provider-dash-card-box");
-  if (cardBox) cardBox.style.setProperty('--provider-theme', conf.color);
+  if (cardBox) {
+    cardBox.classList.remove('theme-equipment', 'theme-transport', 'theme-seeds');
+    cardBox.classList.add(conf.theme);
+  }
 
   const tEl = document.getElementById("p-dash-title");
   const dEl = document.getElementById("p-dash-desc");
   if (tEl) tEl.textContent = conf.name;
   if (dEl) dEl.textContent = conf.desc;
 
+  // ⚡ అత్యవసర స్పాట్ అలర్ట్స్ రెండర్
+  renderProviderSpotAlerts(pType);
+
   window.renderProviderItemsList(pType);
   window.renderIncomingBookingsForProvider('provider-incoming-requests');
 };
+
+// ⚡ రైతు పంపిన అత్యవసర స్పాట్ బుకింగ్‌లు
+function renderProviderSpotAlerts(currentPType) {
+  const wrapper = document.getElementById("provider-spot-alerts-container");
+  const spotTpl = document.getElementById("provider-spot-card-template");
+  if (!wrapper || !spotTpl) return;
+
+  let allSpotAlerts = [];
+  try {
+    allSpotAlerts = JSON.parse(localStorage.getItem("agri_spot_alerts") || "[]");
+  } catch (e) { allSpotAlerts = []; }
+
+  const targetRole = currentPType === 'transport' ? 'TRANSPORT' : 'TRACTOR';
+  const matchingSpots = allSpotAlerts.filter(a => a.roleTarget === targetRole && a.status === "URGENT_BROADCAST");
+
+  if (matchingSpots.length === 0) {
+    wrapper.classList.add("is-hidden");
+    wrapper.replaceChildren();
+    return;
+  }
+
+  wrapper.classList.remove("is-hidden");
+  wrapper.replaceChildren();
+
+  matchingSpots.forEach(spot => {
+    const card = spotTpl.content.cloneNode(true);
+    card.querySelector(".provider-spot-title").textContent = `⚡ అత్యవసర అవసరం: ${spot.quantity}`;
+    card.querySelector(".provider-spot-farmer").textContent = `రైతు: ${spot.farmerName} (${spot.location}) | సమయం: ${spot.createdAt}`;
+    card.querySelector(".provider-spot-wage").textContent = `₹${spot.wage}`;
+
+    card.querySelector(".btn-spot-accept-provider").onclick = function() {
+      spot.status = "ACCEPTED";
+      localStorage.setItem("agri_spot_alerts", JSON.stringify(allSpotAlerts));
+      alert(`🎉 మీరు రైతు ${spot.farmerName} అత్యవసర ఆర్డర్‌ను స్వీకరించారు!`);
+      window.renderProviderDashboardView(null, currentPType);
+    };
+
+    wrapper.appendChild(card);
+  });
+}
 
 // 3. Provider Auth Modal
 window.openProviderModal = function() {
@@ -59,12 +101,12 @@ window.openProviderModal = function() {
   }
   selectedProviderType = 'equipment';
   window.selectProviderTab('equipment');
-  if (modal) modal.style.display = 'flex';
+  if (modal) modal.classList.remove('is-hidden');
 };
 
 window.closeProviderModal = function() {
   const modal = document.getElementById('provider-auth-modal');
-  if (modal) modal.style.display = 'none';
+  if (modal) modal.classList.add('is-hidden');
 };
 
 window.selectProviderTab = function(type) {
@@ -79,15 +121,16 @@ window.selectProviderTab = function(type) {
   if (sdBtn) sdBtn.classList.remove('active');
 
   const configs = {
-    equipment: { color: '#f57c00', text: '🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔', btn: eqBtn },
-    transport: { color: '#7b1fa2', text: '🚚 రవాణా ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔', btn: trBtn },
-    seeds: { color: '#2e7d32', text: '🌱 విత్తనాల డీలర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔', btn: sdBtn }
+    equipment: { theme: 'theme-equipment', text: '🚜 పరికరాల ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔', btn: eqBtn },
+    transport: { theme: 'theme-transport', text: '🚚 రవాణా ఓనర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔', btn: trBtn },
+    seeds: { theme: 'theme-seeds', text: '🌱 విత్తనాల డీలర్‌గా డాష్‌బోర్డ్‌కు వెళ్లండి ➔', btn: sdBtn }
   };
 
   const curr = configs[type] || configs.equipment;
   if (curr.btn) curr.btn.classList.add('active');
   if (submitBtn) {
-    submitBtn.style.setProperty('--provider-theme', curr.color);
+    submitBtn.classList.remove('theme-equipment', 'theme-transport', 'theme-seeds');
+    submitBtn.classList.add(curr.theme);
     submitBtn.textContent = curr.text;
   }
 };
@@ -130,7 +173,7 @@ window.handleProviderLogin = function(e) {
   }
 };
 
-// 4. Add Service Item Modal
+// 4. Add Service Item Modal (Pure Template Cloning)
 window.openAddServiceModal = function() {
   const type = selectedProviderType || 'equipment';
   let modal = document.getElementById('provider-item-modal');
@@ -142,79 +185,32 @@ window.openAddServiceModal = function() {
     }
   }
 
-  const configs = {
-    equipment: {
-      title: '🚜 పరికరం వివరాలు జోడించండి',
-      color: '#f57c00',
-      fields: `
-        <div class="provider-form-group">
-          <label class="provider-form-label">పరికరం రకం / మోడల్:</label>
-          <input type="text" id="item-field-1" placeholder="ఉదా: మహీంద్రా 575 ట్రాక్టర్ / రోటవేటర్" required class="provider-form-input" />
-        </div>
-        <div class="provider-form-group">
-          <label class="provider-form-label">అద్దె ధర (గంటకు ₹):</label>
-          <input type="number" id="item-field-2" placeholder="ఉదా: 900" required class="provider-form-input" />
-        </div>
-        <div class="provider-form-group last">
-          <label class="provider-form-label">పని స్థితి (Availability):</label>
-          <select id="item-field-3" class="provider-form-input">
-            <option value="అందుబాటులో ఉంది (Available)">అందుబాటులో ఉంది (Available)</option>
-            <option value="బిజీగా ఉంది (Busy)">బిజీగా ఉంది (Busy)</option>
-          </select>
-        </div>
-      `
-    },
-    transport: {
-      title: '🚚 రవాణా వాహనం వివరాలు జోడించండి',
-      color: '#7b1fa2',
-      fields: `
-        <div class="provider-form-group">
-          <label class="provider-form-label">వాహనం రకం:</label>
-          <input type="text" id="item-field-1" placeholder="ఉదా: బొలెరో పికప్ / 407 DCM" required class="provider-form-input" />
-        </div>
-        <div class="provider-form-group">
-          <label class="provider-form-label">ఛార్జీ (కి.మీ / ట్రిప్ ₹):</label>
-          <input type="text" id="item-field-2" placeholder="ఉదా: ₹35 / కి.మీ లేదా ₹1200 / ట్రిప్" required class="provider-form-input" />
-        </div>
-        <div class="provider-form-group last">
-          <label class="provider-form-label">మోసే సామర్థ్యం:</label>
-          <input type="text" id="item-field-3" placeholder="ఉదా: 2 టన్నులు / 50 బస్తాలు" required class="provider-form-input" />
-        </div>
-      `
-    },
-    seeds: {
-      title: '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి',
-      color: '#2e7d32',
-      fields: `
-        <div class="provider-form-group">
-          <label class="provider-form-label">పంట రకం & బ్రాండ్:</label>
-          <input type="text" id="item-field-1" placeholder="ఉదా: వరి BPT 5204 / కాటన్ సీడ్స్" required class="provider-form-input" />
-        </div>
-        <div class="provider-form-group">
-          <label class="provider-form-label">ధర (బ్యాగ్ / ప్యాకెట్ ₹):</label>
-          <input type="number" id="item-field-2" placeholder="ఉదా: 850" required class="provider-form-input" />
-        </div>
-        <div class="provider-form-group last">
-          <label class="provider-form-label">స్టాక్ లభ్యత:</label>
-          <input type="text" id="item-field-3" placeholder="ఉదా: 100 బ్యాగులు అందుబాటులో ఉన్నాయి" required class="provider-form-input" />
-        </div>
-      `
-    }
+  const titles = {
+    equipment: '🚜 పరికరం వివరాలు జోడించండి',
+    transport: '🚚 రవాణా వాహనం వివరాలు జోడించండి',
+    seeds: '🌱 విత్తనాలు / ఎరువుల వివరాలు జోడించండి'
   };
 
-  const curr = configs[type] || configs.equipment;
-  document.getElementById('pitem-modal-title').textContent = curr.title;
-  document.getElementById('pitem-dynamic-fields').innerHTML = curr.fields;
+  document.getElementById('pitem-modal-title').textContent = titles[type] || titles.equipment;
+
+  const fieldsBox = document.getElementById('pitem-dynamic-fields');
+  const fieldTpl = document.getElementById(`fields-${type}-template`);
+  if (fieldsBox && fieldTpl) {
+    fieldsBox.replaceChildren(fieldTpl.content.cloneNode(true));
+  }
 
   const subBtn = modal.querySelector('.pitem-submit-btn');
-  if (subBtn) subBtn.style.setProperty('--provider-theme', curr.color);
+  if (subBtn) {
+    subBtn.classList.remove('theme-equipment', 'theme-transport', 'theme-seeds');
+    subBtn.classList.add(`theme-${type}`);
+  }
 
-  modal.style.display = 'flex';
+  modal.classList.remove('is-hidden');
 };
 
 window.closeAddServiceModal = function() {
   const modal = document.getElementById('provider-item-modal');
-  if (modal) modal.style.display = 'none';
+  if (modal) modal.classList.add('is-hidden');
 };
 
 window.handleSaveProviderItem = async function(e) {
@@ -236,8 +232,8 @@ window.handleSaveProviderItem = async function(e) {
   const newItem = {
     id: autoId,
     name: val1,
-    rate: '₹' + val2,
-    rawRate: val2,
+    rate: val2.startsWith('₹') ? val2 : ('₹' + val2),
+    rawRate: val2.replace(/[^\d.]/g, ''),
     type: type,
     category: type,
     status: val3,
@@ -248,52 +244,50 @@ window.handleSaveProviderItem = async function(e) {
     createdAt: new Date().toISOString()
   };
 
-  // Firebase Firestore లో సేవ్ చేయడం (నిర్దిష్ట Doc ID తో)
   if (window.db) {
     window.db.collection("provider_items").doc(autoId).set(newItem).catch(err => console.warn("Firebase save error:", err));
   }
 
-  // LocalStorage లో కూడా బ్యాకప్ సేవ్ చేయడం
   let items = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
   items.unshift(newItem);
   localStorage.setItem('agri_provider_items', JSON.stringify(items));
 
   window.closeAddServiceModal();
   window.renderProviderItemsList(type);
+
+  if (window.switchFarmerTab) {
+    window.switchFarmerTab(type);
+  }
+
   alert("🎉 విజయవంతంగా చేర్చబడింది!");
 };
 
-// 5. Render Provider Saved Items (Firebase Cloud First + Local Fallback)
+// 5. Render Provider Saved Items (Pure Template Cloning)
 window.renderProviderItemsList = async function(type) {
   const container = document.getElementById('provider-items-list');
-  if (!container) return;
+  const boxTpl = document.getElementById('provider-items-box-template');
+  const rowTpl = document.getElementById('provider-item-row-template');
+  if (!container || !boxTpl || !rowTpl) return;
 
   const profile = window.AppState?.userProfile || {};
   const currentUserPhone = String(profile.phone || '').trim();
 
   let items = [];
-
-  // A. ముందుగా Firebase నుండి లోడ్ చేయడానికి ప్రయత్నించడం
   if (window.db && currentUserPhone) {
     try {
-      const snap = await window.db.collection("provider_items")
-        .where("phone", "==", currentUserPhone)
-        .get();
-
+      const snap = await window.db.collection("provider_items").where("phone", "==", currentUserPhone).get();
       if (!snap.empty) {
         snap.forEach(doc => {
           const d = doc.data();
           items.push({ ...d, id: d.id || doc.id });
         });
-        // క్లౌడ్ డేటాను లోకల్ స్టోరేజ్‌కి కూడా సింక్ చేయడం
         localStorage.setItem('agri_provider_items', JSON.stringify(items));
       }
     } catch (e) {
-      console.warn("Firebase Fetching Fallback to LocalStorage:", e);
+      console.warn("Firebase fallback to local:", e);
     }
   }
 
-  // B. Firebase లో లేకపోతే లేదా ఆఫ్‌లైన్ అయితే LocalStorage నుండి లోడ్ చేయడం
   if (items.length === 0) {
     try {
       const local = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
@@ -302,71 +296,61 @@ window.renderProviderItemsList = async function(type) {
   }
 
   if (items.length === 0) {
-    container.innerHTML = `
-      <div style="font-size:12px; color:#64748b; padding:8px; text-align:center;">
-        మీరు ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.
-      </div>
-    `;
+    const emptyEl = document.createElement("div");
+    emptyEl.className = "empty-provider-notice";
+    emptyEl.textContent = "మీరు ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.";
+    container.replaceChildren(emptyEl);
     return;
   }
 
-  container.innerHTML = `
-    <div class="pitem-box">
-      <div class="pitem-header">
-        <div class="pitem-title-text">మీరు జోడించినవి <span class="pitem-count-badge">${items.length}</span></div>
-      </div>
-      <div class="pitem-scroll-list">
-        ${items.map((item, idx) => {
-          // ID లేని పాత రికార్డులకు కూడా పక్కాగా వర్క్ అయ్యేలా సేఫ్ కీ
-          const safeId = item.id || `idx_${idx}`;
-          return `
-            <div class="pitem-card-row">
-              <div>
-                <div class="pitem-card-title">${item.name}</div>
-                <div class="pitem-card-details">ధర: <b class="pitem-price-text">${item.rate}</b> | ${item.status || 'లభ్యం'}</div>
-              </div>
-              <button onclick="window.deleteProviderItem('${safeId}', '${type}', '${item.name}')" class="pitem-delete-btn">తీసివేయి</button>
-            </div>
-          `;
-        }).join('')}
-      </div>
-    </div>
-  `;
+  const boxNode = boxTpl.content.cloneNode(true);
+  boxNode.querySelector("#pitem-badge-count").textContent = items.length;
+  const listTarget = boxNode.querySelector("#pitem-scroll-target");
+
+  items.forEach((item, idx) => {
+    const row = rowTpl.content.cloneNode(true);
+    const safeId = item.id || `idx_${idx}`;
+
+    row.querySelector(".pitem-card-title").textContent = item.name;
+    row.querySelector(".pitem-price-text").textContent = item.rate;
+    row.querySelector(".pitem-status-text").textContent = item.status || 'లభ్యం';
+
+    row.querySelector(".pitem-delete-btn").onclick = function() {
+      window.deleteProviderItem(safeId, type, item.name);
+    };
+
+    listTarget.appendChild(row);
+  });
+
+  container.replaceChildren(boxNode);
 };
 
-// 6. Delete Provider Item (Firebase + LocalStorage Complete Fix)
+// 6. Delete Provider Item
 window.deleteProviderItem = async function(id, type, itemName) {
   if (!confirm("ఖచ్చితంగా తొలగించాలనుకుంటున్నారా?")) return;
 
-  // A. Firebase Firestore నుండి తొలగించడం
   if (window.db && id && !id.startsWith("idx_")) {
     try {
       await window.db.collection("provider_items").doc(id).delete();
-    } catch (err) {
-      console.warn("Firebase Delete Error:", err);
-    }
+    } catch (err) {}
   }
 
-  // B. LocalStorage నుండి తొలగించడం (ID లేదా నేమ్ మ్యాచింగ్ తో)
   let localItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
   localItems = localItems.filter(item => {
-    if (item.id && id && !id.startsWith("idx_")) {
-      return item.id !== id;
-    }
-    // పాత డెమో ఐటెమ్స్ కి ID లేకపోతే పేరు ద్వారా మ్యాచ్ చేసి తీసేయడం
+    if (item.id && id && !id.startsWith("idx_")) return item.id !== id;
     return item.name !== itemName;
   });
 
   localStorage.setItem('agri_provider_items', JSON.stringify(localItems));
-
-  // C. స్క్రీన్ వెంటనే రీ-రెండర్ చేయడం
   window.renderProviderItemsList(type);
 };
 
-// 7. Incoming Orders Inbox (With Firebase Realtime Listener + Phone Isolation)
+// 7. Incoming Orders Inbox (Pure Template Based - No innerHTML)
 window.renderIncomingBookingsForProvider = function(containerId) {
   const box = document.getElementById(containerId);
-  if (!box) return;
+  const boxTpl = document.getElementById('provider-orders-box-template');
+  const cardTpl = document.getElementById('provider-order-card-template');
+  if (!box || !boxTpl || !cardTpl) return;
 
   const currentPhone = window.AppState?.userProfile?.phone || "";
 
@@ -377,57 +361,65 @@ window.renderIncomingBookingsForProvider = function(containerId) {
     });
 
     if (bookings.length === 0) {
-      box.innerHTML = `<p style="font-size:12px; color:#64748b; text-align:center; padding:10px;">ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.</p>`;
+      const emptyEl = document.createElement("p");
+      emptyEl.className = "empty-provider-notice";
+      emptyEl.textContent = "ప్రస్తుతం కొత్త ఆర్డర్‌లు లేవు.";
+      box.replaceChildren(emptyEl);
       return;
     }
 
-    box.innerHTML = `
-      <div class="porders-box">
-        <div class="porders-header">
-          <div class="porders-title">🔔 రైతుల నుండి వచ్చిన రిక్వెస్ట్‌లు <span class="porders-count-badge">${bookings.length}</span></div>
-        </div>
-        <div class="porders-scroll-list">
-          ${bookings.map(b => `
-            <div class="porders-card ${b.status === 'ACCEPTED' ? 'accepted' : ''}">
-              <div class="porders-card-top">
-                <span class="porders-type-tag ${b.type === 'SPOT' ? 'spot' : 'advance'}">
-                  ${b.type === 'SPOT' ? '⚡ SPOT (వెంటనే)' : '📅 ADVANCE బుకింగ్'}
-                </span>
-                <span style="font-size:11px; color:#64748b;">${b.createdAt || ''}</span>
-              </div>
-              <div class="porders-veh-name">${b.vehicleType || b.itemName || ''}</div>
-              <div class="porders-work-details">
-                పని: <b>${b.workSize || ''}</b> | సమయం: <b>${b.schedule || ''}</b><br>
-                రైతు: <b>${b.farmerName || ''}</b> (${b.village || ''})
-              </div>
-              <div class="porders-btn-row">
-                <a href="tel:${b.farmerPhone || ''}" class="porders-action-btn porders-call-btn">📞 కాల్</a>
-                ${b.status !== 'ACCEPTED' ? `
-                  <button onclick="window.acceptBookingOrder('${b.id}')" class="porders-action-btn porders-accept-btn">✅ ఒప్పుకోండి</button>
-                ` : `<span class="porders-accepted-badge">✅ కన్ఫర్మ్ అయింది</span>`}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
+    const boxNode = boxTpl.content.cloneNode(true);
+    boxNode.querySelector("#porders-badge-count").textContent = bookings.length;
+    const scrollTarget = boxNode.querySelector("#porders-scroll-target");
+
+    bookings.forEach(b => {
+      const card = cardTpl.content.cloneNode(true);
+      const isAccepted = b.status === 'ACCEPTED';
+      const rootCard = card.querySelector(".porders-card");
+      if (isAccepted) rootCard.classList.add("accepted");
+
+      const typeTag = card.querySelector(".porders-type-tag");
+      typeTag.textContent = b.type === 'SPOT' ? '⚡ SPOT (వెంటనే)' : '📅 ADVANCE బుకింగ్';
+      typeTag.classList.add(b.type === 'SPOT' ? 'spot' : 'advance');
+
+      card.querySelector(".porders-time-text").textContent = b.createdAt || '';
+      card.querySelector(".porders-veh-name").textContent = b.vehicleType || b.itemName || '';
+      
+      // Pure Text Binding
+      card.querySelector(".porders-work-val").textContent = b.workSize || b.duration || '';
+      card.querySelector(".porders-time-val").textContent = b.schedule || b.date || '';
+      card.querySelector(".porders-farmer-val").textContent = b.farmerName || '';
+      card.querySelector(".porders-village-val").textContent = b.village || '';
+
+      const callBtn = card.querySelector(".porders-call-btn");
+      callBtn.href = `tel:${b.farmerPhone || b.phone || ''}`;
+
+      const acceptBtn = card.querySelector(".porders-accept-btn");
+      const acceptedBadge = card.querySelector(".porders-accepted-badge");
+
+      if (isAccepted) {
+        acceptBtn.remove();
+        acceptedBadge.classList.remove("is-hidden");
+      } else {
+        acceptBtn.onclick = function() {
+          window.acceptBookingOrder(b.id);
+        };
+      }
+
+      scrollTarget.appendChild(card);
+    });
+
+    box.replaceChildren(boxNode);
   }
 
-  // Firebase లైవ్ లిజనర్ లేదా LocalStorage
   if (window.db && currentPhone) {
-    window.db.collection("farmer_bookings")
-      .where("providerPhone", "==", currentPhone)
-      .onSnapshot(snap => {
-        let bList = [];
-        snap.forEach(doc => bList.push({ ...doc.data(), id: doc.id }));
-        if (bList.length > 0) {
-          renderUI(bList);
-        } else {
-          renderUI(JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
-        }
-      }, () => {
-        renderUI(JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
-      });
+    window.db.collection("farmer_bookings").where("providerPhone", "==", currentPhone).onSnapshot(snap => {
+      let bList = [];
+      snap.forEach(doc => bList.push({ ...doc.data(), id: doc.id }));
+      renderUI(bList.length > 0 ? bList : JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
+    }, () => {
+      renderUI(JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
+    });
   } else {
     renderUI(JSON.parse(localStorage.getItem('agri_active_bookings') || '[]'));
   }
@@ -441,7 +433,6 @@ window.acceptBookingOrder = async function(bookingId) {
     localStorage.setItem('agri_active_bookings', JSON.stringify(bookings));
   }
 
-  // Firebase లో కూడా అప్‌డేట్ చేయడం
   if (window.db && bookingId) {
     try {
       await window.db.collection("farmer_bookings").doc(bookingId).update({ status: 'ACCEPTED' });
@@ -450,4 +441,53 @@ window.acceptBookingOrder = async function(bookingId) {
 
   window.renderIncomingBookingsForProvider('provider-incoming-requests');
   alert("ఆర్డర్ కన్ఫర్మ్ చేయబడింది!");
+};
+
+// 8. 🚜 🌱 🚚 రైతు ట్యాబ్‌లలో ప్రొవైడర్ ఐటమ్స్ రెండరింగ్ (Pure Template)
+function renderFarmerCategoryWidget(containerId, categoryType) {
+  const mount = document.getElementById(containerId);
+  const itemTpl = document.getElementById("farmer-category-item-template");
+  if (!mount || !itemTpl) return;
+
+  let allItems = [];
+  try {
+    allItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
+  } catch (e) { allItems = []; }
+
+  const filtered = allItems.filter(it => it.type === categoryType || it.category === categoryType);
+
+  if (filtered.length === 0) {
+    return;
+  }
+
+  mount.replaceChildren();
+
+  filtered.forEach(item => {
+    const card = itemTpl.content.cloneNode(true);
+    card.querySelector(".market-item-name").textContent = item.name;
+    card.querySelector(".market-item-owner").textContent = `👤 యజమాని: ${item.owner} (${item.village || 'సమీప ప్రాంతం'})`;
+    card.querySelector(".market-item-meta").textContent = `లభ్యత: ${item.status || 'అందుబాటులో ఉంది'}`;
+    card.querySelector(".market-item-rate").textContent = item.rate;
+
+    card.querySelector(".market-btn-call").href = `tel:${item.phone}`;
+    card.querySelector(".market-btn-wa").href = `https://wa.me/91${item.phone}`;
+
+    card.querySelector(".market-btn-book").onclick = function() {
+      if (typeof window.openBookingModal === 'function') {
+        window.openBookingModal(item.name, item.owner, item.rate, item.phone);
+      }
+    };
+
+    mount.appendChild(card);
+  });
+}
+
+window.renderEquipmentWidget = function(paneId) {
+  renderFarmerCategoryWidget(paneId, 'equipment');
+};
+window.renderSeedsWidget = function(paneId) {
+  renderFarmerCategoryWidget(paneId, 'seeds');
+};
+window.renderTransportWidget = function(paneId) {
+  renderFarmerCategoryWidget(paneId, 'transport');
 };
