@@ -160,23 +160,43 @@ window.RoleController = {
     if (banner) banner.remove();
   },
 
-    renderRoleSwitchBar: function() {
+      renderRoleSwitchBar: function() {
     const state = window.AppState;
     if (!state || !state.isLoggedIn) {
       this.removeRoleSwitchBar();
       return;
     }
 
-    // ప్రొఫైల్ నుంచి బేస్ రోల్ వివరాలను తీసుకోవడం
     const profile = state.userProfile || state.user || {};
-    const originalRole = String(profile.accountType || profile.originalRole || profile.baseRole || '').toUpperCase().trim();
-    const explicitRole = String(profile.roleType || profile.userType || '').toUpperCase().trim();
 
-    // కేవలం ప్రత్యేకంగా కూలీ లేదా ప్రొవైడర్‌గా లాగిన్ అయితే మాత్రమే స్విచ్ బార్ రాకూడదు
-    const isStrictLabour = (originalRole === "LABOUR" || originalRole === "LABOURONLY" || explicitRole === "LABOURONLY" || explicitRole === "LABOUR_ONLY");
-    const isStrictProvider = (originalRole === "PROVIDER" && !profile.isFarmer);
+    // లాగిన్ డేటాలో రోల్ ఏ ప్రాపర్టీలో ఉన్నా రీడ్ చేయడం
+    const rawRole = String(
+      profile.role || 
+      profile.roleType || 
+      profile.userType || 
+      profile.type || 
+      profile.accountType || 
+      state.userType || 
+      ''
+    ).toUpperCase().trim();
 
-    if (isStrictLabour || isStrictProvider) {
+    // కూలీ లేదా యజమాని డైరెక్ట్ లాగిన్ అయితే స్విచ్ బటన్లు దాగిపోతాయి
+    const isDedicatedLabour = (
+      rawRole === "LABOUR" || 
+      rawRole === "LABOURONLY" || 
+      rawRole === "LABOUR_ONLY" || 
+      rawRole.includes("LABOUR")
+    );
+    
+    const isDedicatedProvider = (
+      rawRole === "PROVIDER" || 
+      rawRole === "EQUIPMENT" || 
+      rawRole === "TRANSPORT" || 
+      rawRole === "SEEDS" || 
+      rawRole.includes("PROVIDER")
+    );
+
+    if (isDedicatedLabour || isDedicatedProvider) {
       this.removeRoleSwitchBar();
       return;
     }
@@ -228,7 +248,7 @@ window.RoleController = {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
 
-    // తాత్కాలిక వ్యూ కోసం మాత్రమే సేవ్ అవుతుంది, అసలు ప్రొఫైల్ మారదు
+    // తాత్కాలిక మోడ్ మాత్రమే సేవ్ అవుతుంది, అసలు ప్రొఫైల్ మారదు
     localStorage.setItem("agri_current_active_role", targetRole);
 
     this.applyUserRoleView();
