@@ -202,9 +202,7 @@ window.RoleController = {
   switchRoleMode: function(targetRole) {
     if (!window.AppState) window.AppState = {};
     window.AppState.currentRole = targetRole;
-
     localStorage.setItem("agri_current_active_role", targetRole);
-    localStorage.setItem("agri_user_role", targetRole);
 
     this.applyUserRoleView();
   },
