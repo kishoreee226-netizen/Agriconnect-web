@@ -262,7 +262,7 @@ window.handleSaveProviderItem = async function(e) {
   alert("🎉 విజయవంతంగా చేర్చబడింది!");
 };
 
-// 5. Render Provider Saved Items (Pure Template Cloning)
+// 5. Render Provider Saved Items (Pure Template Cloning - Category Fix)
 window.renderProviderItemsList = async function(type) {
   const container = document.getElementById('provider-items-list');
   const boxTpl = document.getElementById('provider-items-box-template');
@@ -271,34 +271,48 @@ window.renderProviderItemsList = async function(type) {
 
   const profile = window.AppState?.userProfile || {};
   const currentUserPhone = String(profile.phone || '').trim();
+  const currentType = String(type || selectedProviderType || 'equipment').toLowerCase();
 
-  let items = [];
+  let rawItems = [];
+
+  // A. Firebase ఫెచింగ్
   if (window.db && currentUserPhone) {
     try {
-      const snap = await window.db.collection("provider_items").where("phone", "==", currentUserPhone).get();
+      const snap = await window.db.collection("provider_items")
+        .where("phone", "==", currentUserPhone)
+        .get();
+
       if (!snap.empty) {
         snap.forEach(doc => {
           const d = doc.data();
-          items.push({ ...d, id: d.id || doc.id });
+          rawItems.push({ ...d, id: d.id || doc.id });
         });
-        localStorage.setItem('agri_provider_items', JSON.stringify(items));
+        localStorage.setItem('agri_provider_items', JSON.stringify(rawItems));
       }
     } catch (e) {
       console.warn("Firebase fallback to local:", e);
     }
   }
 
-  if (items.length === 0) {
+  // B. LocalStorage ఫాల్‌బ్యాక్
+  if (rawItems.length === 0) {
     try {
-      const local = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
-      items = local.filter(it => !currentUserPhone || it.phone === currentUserPhone);
+      rawItems = JSON.parse(localStorage.getItem('agri_provider_items') || '[]');
     } catch (err) {}
   }
+
+  // ⚡ ఫోన్ నంబర్ + కేటగిరీ (equipment / transport / seeds) రెండింటినీ ఫిల్టర్ చేయడం
+  const items = rawItems.filter(it => {
+    const isOwner = !currentUserPhone || String(it.phone || '').trim() === currentUserPhone;
+    const itemCat = String(it.type || it.category || 'equipment').toLowerCase();
+    return isOwner && itemCat === currentType;
+  });
 
   if (items.length === 0) {
     const emptyEl = document.createElement("div");
     emptyEl.className = "empty-provider-notice";
-    emptyEl.textContent = "మీరు ఇంకా ఏ వస్తువులు లేదా సేవలు జోడించలేదు.";
+    const catTelugu = currentType === 'transport' ? 'రవాణా వాహనాలు' : (currentType === 'seeds' ? 'విత్తనాలు / ఎరువులు' : 'పరికరాలు');
+    emptyEl.textContent = `మీరు ఇంకా ఏ ${catTelugu} జోడించలేదు.`;
     container.replaceChildren(emptyEl);
     return;
   }
@@ -316,7 +330,7 @@ window.renderProviderItemsList = async function(type) {
     row.querySelector(".pitem-status-text").textContent = item.status || 'లభ్యం';
 
     row.querySelector(".pitem-delete-btn").onclick = function() {
-      window.deleteProviderItem(safeId, type, item.name);
+      window.deleteProviderItem(safeId, currentType, item.name);
     };
 
     listTarget.appendChild(row);
