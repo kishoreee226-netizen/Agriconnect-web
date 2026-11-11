@@ -434,6 +434,7 @@ window.lockBookingEscrow = function(bookingId, amount, itemName) {
     alert(`🔒 ₹${amount} ఎస్క్రో లాక్ చేయబడింది (${itemName})!`);
   }
 };
+/*
 // ⚡ 5. స్పాట్ బుకింగ్ ఫంక్షన్స్
 window.openSpotModal = function() {
   const modal = document.getElementById("spot-booking-modal");
@@ -488,3 +489,4 @@ if (window.FarmerModule) {
   window.FarmerModule.closeSpotModal = window.closeSpotModal;
   window.FarmerModule.submitSpotAlert = window.submitSpotAlert;
 }
+*/
