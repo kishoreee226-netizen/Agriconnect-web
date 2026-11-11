@@ -46,6 +46,9 @@ window.RoleController = {
       if (walletBox) walletBox.style.display = "none";
       if (mandiBox) mandiBox.style.display = "block";
       if (weatherBox) weatherBox.style.display = "block";
+      if (toolsBox) toolsBox.style.display = "block";
+      if (utilsBox) utilsBox.style.display = "block";
+
       return;
     }
 
