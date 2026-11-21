@@ -2,7 +2,7 @@
 
 /* 1. Landing Card */
 .agri-landing-card.farmer-border {
-  border: 2px solid #16a34a;
+  border: 2px solid #2e7d32;
   background: #ffffff;
   border-radius: 14px;
   padding: 14px;
@@ -97,9 +97,9 @@
 }
 
 .eq-tab-btn.active {
-  background: #16a34a !important;
+  background: #2e7d32 !important;
   color: #ffffff !important;
-  border-color: #16a34a !important;
+  border-color: #2e7d32 !important;
   box-shadow: 0 2px 4px rgba(22, 163, 74, 0.25);
 }
 
@@ -194,7 +194,7 @@
 .btn-farmer-post {
   width: 100%;
   padding: 11px;
-  background: #16a34a;
+  background: #2e7d32;
   color: #ffffff;
   border: none;
   border-radius: 8px;
