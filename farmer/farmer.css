@@ -646,21 +646,21 @@
 }
 /* 🌾 రైతు మోడ్ యాక్టివ్ కలర్ (పచ్చ రంగు) */
 .farmer-switch-btn.active.active-farmer {
-  background: #16a34a !important;
+  background: #2e7d32 !important;
   color: #ffffff !important;
   box-shadow: 0 2px 6px rgba(22, 163, 74, 0.25);
 }
 
-/* 👷 కూలీ మోడ్ యాక్టివ్ కలర్ (ఆరెంజ్ రంగు) */
+/* 👷 కూలీ మోడ్ యాక్టివ్ కలర్ (బ్లూ రంగు) */
 .farmer-switch-btn.active.active-labour {
-  background: #ea580c !important;
+  background: #0284c7 !important;
   color: #ffffff !important;
   box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
 }
 
-/* 🤝 యజమాని మోడ్ యాక్టివ్ కలర్ (బ్లూ రంగు) */
+/* 🤝 యజమాని మోడ్ యాక్టివ్ కలర్ (ఆరెంజ్ రంగు) */
 .farmer-switch-btn.active.active-provider {
-  background: #0284c7 !important;
+  background: #ffa000 !important;
   color: #ffffff !important;
   box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
 }
